@@ -23,6 +23,8 @@ import { Module as CosmosUpgradeV1Beta1, msgTypes as CosmosUpgradeV1Beta1MsgType
 import { Module as CosmosVestingV1Beta1, msgTypes as CosmosVestingV1Beta1MsgTypes } from './cosmos.vesting.v1beta1'
 import { Module as EthermintEvmV1, msgTypes as EthermintEvmV1MsgTypes } from './ethermint.evm.v1'
 import { Module as EthermintFeemarketV1, msgTypes as EthermintFeemarketV1MsgTypes } from './ethermint.feemarket.v1'
+import { Module as EvmosErc20V1, msgTypes as EvmosErc20V1MsgTypes } from './evmos.erc20.v1'
+import { Module as EvmosRecoveryV1, msgTypes as EvmosRecoveryV1MsgTypes } from './evmos.recovery.v1'
 import { Module as IbcApplicationsInterchainAccountsControllerV1, msgTypes as IbcApplicationsInterchainAccountsControllerV1MsgTypes } from './ibc.applications.interchain_accounts.controller.v1'
 import { Module as IbcApplicationsInterchainAccountsHostV1, msgTypes as IbcApplicationsInterchainAccountsHostV1MsgTypes } from './ibc.applications.interchain_accounts.host.v1'
 import { Module as IbcApplicationsTransferV1, msgTypes as IbcApplicationsTransferV1MsgTypes } from './ibc.applications.transfer.v1'
@@ -32,7 +34,7 @@ import { Module as IbcCoreConnectionV1, msgTypes as IbcCoreConnectionV1MsgTypes 
 
 
 const Client = IgniteClient.plugin([
-    CosmosAuthV1Beta1, CosmosAuthzV1Beta1, CosmosBankV1Beta1, CosmosBaseTendermintV1Beta1, CosmosCrisisV1Beta1, CosmosDistributionV1Beta1, CosmosEvidenceV1Beta1, CosmosFeegrantV1Beta1, CosmosGovV1, CosmosGovV1Beta1, CosmosGroupV1, CosmosMintV1Beta1, CosmosNftV1Beta1, CosmosParamsV1Beta1, CosmosSlashingV1Beta1, CosmosStakingV1Beta1, CosmosTxV1Beta1, CosmosUpgradeV1Beta1, CosmosVestingV1Beta1, EthermintEvmV1, EthermintFeemarketV1, IbcApplicationsInterchainAccountsControllerV1, IbcApplicationsInterchainAccountsHostV1, IbcApplicationsTransferV1, IbcCoreChannelV1, IbcCoreClientV1, IbcCoreConnectionV1
+    CosmosAuthV1Beta1, CosmosAuthzV1Beta1, CosmosBankV1Beta1, CosmosBaseTendermintV1Beta1, CosmosCrisisV1Beta1, CosmosDistributionV1Beta1, CosmosEvidenceV1Beta1, CosmosFeegrantV1Beta1, CosmosGovV1, CosmosGovV1Beta1, CosmosGroupV1, CosmosMintV1Beta1, CosmosNftV1Beta1, CosmosParamsV1Beta1, CosmosSlashingV1Beta1, CosmosStakingV1Beta1, CosmosTxV1Beta1, CosmosUpgradeV1Beta1, CosmosVestingV1Beta1, EthermintEvmV1, EthermintFeemarketV1, EvmosErc20V1, EvmosRecoveryV1, IbcApplicationsInterchainAccountsControllerV1, IbcApplicationsInterchainAccountsHostV1, IbcApplicationsTransferV1, IbcCoreChannelV1, IbcCoreClientV1, IbcCoreConnectionV1
 ]);
 
 const registry = new Registry([
@@ -57,6 +59,8 @@ const registry = new Registry([
   ...CosmosVestingV1Beta1MsgTypes,
   ...EthermintEvmV1MsgTypes,
   ...EthermintFeemarketV1MsgTypes,
+  ...EvmosErc20V1MsgTypes,
+  ...EvmosRecoveryV1MsgTypes,
   ...IbcApplicationsInterchainAccountsControllerV1MsgTypes,
   ...IbcApplicationsInterchainAccountsHostV1MsgTypes,
   ...IbcApplicationsTransferV1MsgTypes,
