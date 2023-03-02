@@ -1,0 +1,14 @@
+syntax = "proto3";
+package sidechain.devearn;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "sidechain/x/devearn/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+  bool enableDevEarn = 1 [(gogoproto.moretags) = "yaml:\"enable_dev_earn\""];
+  string devEarnEpoch = 2 [(gogoproto.moretags) = "yaml:\"dev_earn_epoch\""];
+}

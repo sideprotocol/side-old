@@ -615,7 +615,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 ERC721Enumerable
  * @request GET:/cosmos/nft/v1beta1/nfts
  */
-  queryNfTs = (
+  queryNFTs = (
     query?: {
       class_id?: string;
       owner?: string;
@@ -643,7 +643,7 @@ ERC721Enumerable
    * @summary NFT queries an NFT based on its class and id.
    * @request GET:/cosmos/nft/v1beta1/nfts/{class_id}/{id}
    */
-  queryNft = (classId: string, id: string, params: RequestParams = {}) =>
+  queryNFT = (classId: string, id: string, params: RequestParams = {}) =>
     this.request<V1Beta1QueryNFTResponse, RpcStatus>({
       path: `/cosmos/nft/v1beta1/nfts/${classId}/${id}`,
       method: "GET",

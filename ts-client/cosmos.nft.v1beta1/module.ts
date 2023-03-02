@@ -8,6 +8,12 @@ import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
 
+import { EventSend as typeEventSend} from "./types"
+import { EventMint as typeEventMint} from "./types"
+import { EventBurn as typeEventBurn} from "./types"
+import { Entry as typeEntry} from "./types"
+import { Class as typeClass} from "./types"
+import { NFT as typeNFT} from "./types"
 
 export {  };
 
@@ -15,6 +21,18 @@ export {  };
 
 export const registry = new Registry(msgTypes);
 
+type Field = {
+	name: string;
+	type: unknown;
+}
+function getStructure(template) {
+	const structure: {fields: Field[]} = { fields: [] }
+	for (let [key, value] of Object.entries(template)) {
+		let field = { name: key, type: typeof value }
+		structure.fields.push(field)
+	}
+	return structure
+}
 const defaultFee = {
   amount: [],
   gas: "200000",
@@ -45,13 +63,22 @@ export const queryClient = ({ addr: addr }: QueryClientOptions = { addr: "http:/
 class SDKModule {
 	public query: ReturnType<typeof queryClient>;
 	public tx: ReturnType<typeof txClient>;
-	
+	public structure: Record<string,unknown>;
 	public registry: Array<[string, GeneratedType]> = [];
 
 	constructor(client: IgniteClient) {		
 	
 		this.query = queryClient({ addr: client.env.apiURL });		
 		this.updateTX(client);
+		this.structure =  {
+						EventSend: getStructure(typeEventSend.fromPartial({})),
+						EventMint: getStructure(typeEventMint.fromPartial({})),
+						EventBurn: getStructure(typeEventBurn.fromPartial({})),
+						Entry: getStructure(typeEntry.fromPartial({})),
+						Class: getStructure(typeClass.fromPartial({})),
+						NFT: getStructure(typeNFT.fromPartial({})),
+						
+		};
 		client.on('signer-changed',(signer) => {			
 		 this.updateTX(client);
 		})

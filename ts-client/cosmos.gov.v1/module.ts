@@ -12,6 +12,14 @@ import { MsgVote } from "./types/cosmos/gov/v1/tx";
 import { MsgDeposit } from "./types/cosmos/gov/v1/tx";
 import { MsgVoteWeighted } from "./types/cosmos/gov/v1/tx";
 
+import { WeightedVoteOption as typeWeightedVoteOption} from "./types"
+import { Deposit as typeDeposit} from "./types"
+import { Proposal as typeProposal} from "./types"
+import { TallyResult as typeTallyResult} from "./types"
+import { Vote as typeVote} from "./types"
+import { DepositParams as typeDepositParams} from "./types"
+import { VotingParams as typeVotingParams} from "./types"
+import { TallyParams as typeTallyParams} from "./types"
 
 export { MsgSubmitProposal, MsgVote, MsgDeposit, MsgVoteWeighted };
 
@@ -59,6 +67,18 @@ type msgVoteWeightedParams = {
 
 export const registry = new Registry(msgTypes);
 
+type Field = {
+	name: string;
+	type: unknown;
+}
+function getStructure(template) {
+	const structure: {fields: Field[]} = { fields: [] }
+	for (let [key, value] of Object.entries(template)) {
+		let field = { name: key, type: typeof value }
+		structure.fields.push(field)
+	}
+	return structure
+}
 const defaultFee = {
   amount: [],
   gas: "200000",
@@ -177,13 +197,24 @@ export const queryClient = ({ addr: addr }: QueryClientOptions = { addr: "http:/
 class SDKModule {
 	public query: ReturnType<typeof queryClient>;
 	public tx: ReturnType<typeof txClient>;
-	
+	public structure: Record<string,unknown>;
 	public registry: Array<[string, GeneratedType]> = [];
 
 	constructor(client: IgniteClient) {		
 	
 		this.query = queryClient({ addr: client.env.apiURL });		
 		this.updateTX(client);
+		this.structure =  {
+						WeightedVoteOption: getStructure(typeWeightedVoteOption.fromPartial({})),
+						Deposit: getStructure(typeDeposit.fromPartial({})),
+						Proposal: getStructure(typeProposal.fromPartial({})),
+						TallyResult: getStructure(typeTallyResult.fromPartial({})),
+						Vote: getStructure(typeVote.fromPartial({})),
+						DepositParams: getStructure(typeDepositParams.fromPartial({})),
+						VotingParams: getStructure(typeVotingParams.fromPartial({})),
+						TallyParams: getStructure(typeTallyParams.fromPartial({})),
+						
+		};
 		client.on('signer-changed',(signer) => {			
 		 this.updateTX(client);
 		})

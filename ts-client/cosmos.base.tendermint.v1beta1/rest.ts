@@ -1016,7 +1016,7 @@ the application, bypassing Tendermint completely. The ABCI query must
 contain a valid and supported path, including app, custom, p2p, and store.
  * @request GET:/cosmos/base/tendermint/v1beta1/abci_query
  */
-  serviceAbciQuery = (
+  serviceABCIQuery = (
     query?: { data?: string; path?: string; height?: string; prove?: boolean },
     params: RequestParams = {},
   ) =>

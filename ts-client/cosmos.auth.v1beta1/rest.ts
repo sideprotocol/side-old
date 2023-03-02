@@ -535,7 +535,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @summary AccountAddressByID returns account address based on account number.
    * @request GET:/cosmos/auth/v1beta1/address_by_id/{id}
    */
-  queryAccountAddressById = (id: string, params: RequestParams = {}) =>
+  queryAccountAddressByID = (id: string, params: RequestParams = {}) =>
     this.request<V1Beta1QueryAccountAddressByIDResponse, RpcStatus>({
       path: `/cosmos/auth/v1beta1/address_by_id/${id}`,
       method: "GET",

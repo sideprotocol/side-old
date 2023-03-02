@@ -116,6 +116,10 @@ import (
 	erc20keeper "github.com/evmos/evmos/v10/x/erc20/keeper"
 	erc20types "github.com/evmos/evmos/v10/x/erc20/types"
 
+	devearnmodule "sidechain/x/devearn"
+	devearnmodulekeeper "sidechain/x/devearn/keeper"
+	devearnmoduletypes "sidechain/x/devearn/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "sidechain/app/params"
@@ -179,6 +183,8 @@ var (
 		vesting.AppModuleBasic{},
 		evm.AppModuleBasic{},
 		erc20.AppModuleBasic{},
+		devearnmodule.AppModuleBasic{},
+		devearnmodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -194,6 +200,7 @@ var (
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		evmtypes.ModuleName:            {authtypes.Minter, authtypes.Burner},
 		erc20types.ModuleName:          {authtypes.Minter, authtypes.Burner},
+		devearnmoduletypes.ModuleName:  {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -262,6 +269,9 @@ type App struct {
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 	ScopedICAHostKeeper  capabilitykeeper.ScopedKeeper
 
+	DevearnKeeper devearnmodulekeeper.Keeper
+
+	DevearnKeeper devearnmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -309,6 +319,8 @@ func New(
 		// ethermint keys
 		evmtypes.StoreKey,
 		erc20types.StoreKey,
+		devearnmoduletypes.StoreKey,
+		devearnmoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey)
@@ -548,6 +560,26 @@ func New(
 		),
 	)
 
+	app.DevearnKeeper = *devearnmodulekeeper.NewKeeper(
+		appCodec,
+		keys[devearnmoduletypes.StoreKey],
+		keys[devearnmoduletypes.MemStoreKey],
+		app.GetSubspace(devearnmoduletypes.ModuleName),
+	)
+	devearnModule := devearnmodule.NewAppModule(appCodec, app.DevearnKeeper, app.AccountKeeper, app.BankKeeper)
+
+	app.DevearnKeeper = *devearnmodulekeeper.NewKeeper(
+		appCodec,
+		keys[devearnmoduletypes.StoreKey],
+		keys[devearnmoduletypes.MemStoreKey],
+		app.GetSubspace(devearnmoduletypes.ModuleName),
+
+		app.BankKeeper,
+		app.AccountKeeper,
+		app.MintKeeper,
+	)
+	devearnModule := devearnmodule.NewAppModule(appCodec, app.DevearnKeeper, app.AccountKeeper, app.BankKeeper)
+
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	// Sealing prevents other modules from creating scoped sub-keepers
@@ -593,6 +625,8 @@ func New(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		icaModule,
+		devearnModule,
+		devearnModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 		// Ethermint app modules
 		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper, app.GetSubspace(evmtypes.ModuleName)),
@@ -627,6 +661,8 @@ func New(
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
 		erc20types.ModuleName,
+		devearnmoduletypes.ModuleName,
+		devearnmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -653,6 +689,8 @@ func New(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		erc20types.ModuleName,
+		devearnmoduletypes.ModuleName,
+		devearnmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -684,6 +722,8 @@ func New(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		erc20types.ModuleName,
+		devearnmoduletypes.ModuleName,
+		devearnmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -713,6 +753,8 @@ func New(
 		evidence.NewAppModule(app.EvidenceKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
+		devearnModule,
+		devearnModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 	app.sm.RegisterStoreDecoders()
@@ -911,6 +953,8 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
+	paramsKeeper.Subspace(devearnmoduletypes.ModuleName)
+	paramsKeeper.Subspace(devearnmoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 	// ethermint subspaces
 	paramsKeeper.Subspace(evmtypes.ModuleName)

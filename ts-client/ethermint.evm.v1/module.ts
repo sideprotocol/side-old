@@ -9,6 +9,25 @@ import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
 import { MsgEthereumTx } from "./types/ethermint/evm/v1/tx";
 
+import { EventEthereumTx as typeEventEthereumTx} from "./types"
+import { EventTxLog as typeEventTxLog} from "./types"
+import { EventMessage as typeEventMessage} from "./types"
+import { EventBlockBloom as typeEventBlockBloom} from "./types"
+import { Params as typeParams} from "./types"
+import { ChainConfig as typeChainConfig} from "./types"
+import { State as typeState} from "./types"
+import { TransactionLogs as typeTransactionLogs} from "./types"
+import { Log as typeLog} from "./types"
+import { TxResult as typeTxResult} from "./types"
+import { AccessTuple as typeAccessTuple} from "./types"
+import { TraceConfig as typeTraceConfig} from "./types"
+import { GenesisAccount as typeGenesisAccount} from "./types"
+import { QueryTxLogsRequest as typeQueryTxLogsRequest} from "./types"
+import { QueryTxLogsResponse as typeQueryTxLogsResponse} from "./types"
+import { LegacyTx as typeLegacyTx} from "./types"
+import { AccessListTx as typeAccessListTx} from "./types"
+import { DynamicFeeTx as typeDynamicFeeTx} from "./types"
+import { ExtensionOptionsEthereumTx as typeExtensionOptionsEthereumTx} from "./types"
 
 export { MsgEthereumTx };
 
@@ -26,6 +45,18 @@ type msgEthereumTxParams = {
 
 export const registry = new Registry(msgTypes);
 
+type Field = {
+	name: string;
+	type: unknown;
+}
+function getStructure(template) {
+	const structure: {fields: Field[]} = { fields: [] }
+	for (let [key, value] of Object.entries(template)) {
+		let field = { name: key, type: typeof value }
+		structure.fields.push(field)
+	}
+	return structure
+}
 const defaultFee = {
   amount: [],
   gas: "200000",
@@ -78,13 +109,35 @@ export const queryClient = ({ addr: addr }: QueryClientOptions = { addr: "http:/
 class SDKModule {
 	public query: ReturnType<typeof queryClient>;
 	public tx: ReturnType<typeof txClient>;
-	
+	public structure: Record<string,unknown>;
 	public registry: Array<[string, GeneratedType]> = [];
 
 	constructor(client: IgniteClient) {		
 	
 		this.query = queryClient({ addr: client.env.apiURL });		
 		this.updateTX(client);
+		this.structure =  {
+						EventEthereumTx: getStructure(typeEventEthereumTx.fromPartial({})),
+						EventTxLog: getStructure(typeEventTxLog.fromPartial({})),
+						EventMessage: getStructure(typeEventMessage.fromPartial({})),
+						EventBlockBloom: getStructure(typeEventBlockBloom.fromPartial({})),
+						Params: getStructure(typeParams.fromPartial({})),
+						ChainConfig: getStructure(typeChainConfig.fromPartial({})),
+						State: getStructure(typeState.fromPartial({})),
+						TransactionLogs: getStructure(typeTransactionLogs.fromPartial({})),
+						Log: getStructure(typeLog.fromPartial({})),
+						TxResult: getStructure(typeTxResult.fromPartial({})),
+						AccessTuple: getStructure(typeAccessTuple.fromPartial({})),
+						TraceConfig: getStructure(typeTraceConfig.fromPartial({})),
+						GenesisAccount: getStructure(typeGenesisAccount.fromPartial({})),
+						QueryTxLogsRequest: getStructure(typeQueryTxLogsRequest.fromPartial({})),
+						QueryTxLogsResponse: getStructure(typeQueryTxLogsResponse.fromPartial({})),
+						LegacyTx: getStructure(typeLegacyTx.fromPartial({})),
+						AccessListTx: getStructure(typeAccessListTx.fromPartial({})),
+						DynamicFeeTx: getStructure(typeDynamicFeeTx.fromPartial({})),
+						ExtensionOptionsEthereumTx: getStructure(typeExtensionOptionsEthereumTx.fromPartial({})),
+						
+		};
 		client.on('signer-changed',(signer) => {			
 		 this.updateTX(client);
 		})

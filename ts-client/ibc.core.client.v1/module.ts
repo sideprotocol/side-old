@@ -8,6 +8,15 @@ import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
 
+import { IdentifiedClientState as typeIdentifiedClientState} from "./types"
+import { ConsensusStateWithHeight as typeConsensusStateWithHeight} from "./types"
+import { ClientConsensusStates as typeClientConsensusStates} from "./types"
+import { ClientUpdateProposal as typeClientUpdateProposal} from "./types"
+import { UpgradeProposal as typeUpgradeProposal} from "./types"
+import { Height as typeHeight} from "./types"
+import { Params as typeParams} from "./types"
+import { GenesisMetadata as typeGenesisMetadata} from "./types"
+import { IdentifiedGenesisMetadata as typeIdentifiedGenesisMetadata} from "./types"
 
 export {  };
 
@@ -15,6 +24,18 @@ export {  };
 
 export const registry = new Registry(msgTypes);
 
+type Field = {
+	name: string;
+	type: unknown;
+}
+function getStructure(template) {
+	const structure: {fields: Field[]} = { fields: [] }
+	for (let [key, value] of Object.entries(template)) {
+		let field = { name: key, type: typeof value }
+		structure.fields.push(field)
+	}
+	return structure
+}
 const defaultFee = {
   amount: [],
   gas: "200000",
@@ -45,13 +66,25 @@ export const queryClient = ({ addr: addr }: QueryClientOptions = { addr: "http:/
 class SDKModule {
 	public query: ReturnType<typeof queryClient>;
 	public tx: ReturnType<typeof txClient>;
-	
+	public structure: Record<string,unknown>;
 	public registry: Array<[string, GeneratedType]> = [];
 
 	constructor(client: IgniteClient) {		
 	
 		this.query = queryClient({ addr: client.env.apiURL });		
 		this.updateTX(client);
+		this.structure =  {
+						IdentifiedClientState: getStructure(typeIdentifiedClientState.fromPartial({})),
+						ConsensusStateWithHeight: getStructure(typeConsensusStateWithHeight.fromPartial({})),
+						ClientConsensusStates: getStructure(typeClientConsensusStates.fromPartial({})),
+						ClientUpdateProposal: getStructure(typeClientUpdateProposal.fromPartial({})),
+						UpgradeProposal: getStructure(typeUpgradeProposal.fromPartial({})),
+						Height: getStructure(typeHeight.fromPartial({})),
+						Params: getStructure(typeParams.fromPartial({})),
+						GenesisMetadata: getStructure(typeGenesisMetadata.fromPartial({})),
+						IdentifiedGenesisMetadata: getStructure(typeIdentifiedGenesisMetadata.fromPartial({})),
+						
+		};
 		client.on('signer-changed',(signer) => {			
 		 this.updateTX(client);
 		})
