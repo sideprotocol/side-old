@@ -1,25 +1,54 @@
 version: 1
+build:
+  binary: sidechaind
+  proto:
+    path: proto
+    third_party_paths:
+    - third_party/proto
+    - proto_vendor
 accounts:
-  - name: alice
-    coins: ["990000000000000000000000aside"]
-  - name: bob
-    coins: ["10000000000000000000000aside"]
+- name: alice
+  coins:
+  - 990000000000000000000000aside
+- name: bob
+  coins:
+  - 10000000000000000000000aside
+faucet:
+  name: bob
+  coins:
+  - 10aside
+  host: 0.0.0.0:4500
+genesis:
+  app_state:
+    crisis:
+      constant_fee:
+        denom: aside
+    evm:
+      params:
+        evm_denom: aside
+    gov:
+      deposit_params:
+        min_deposit:
+        - amount: "10000000"
+          denom: aside
+    mint:
+      params:
+        mint_denom: aside
+    staking:
+      params:
+        bond_denom: aside
+  chain_id: sidechain_7070-1
+  consensus_params:
+    block:
+      max_gas: "100000000"
 validators:
-  - name: alice
-    bonded: "10000000000000000000000aside"
+- name: alice
+  bonded: 10000000000000000000000aside
+  app:
+    evm-rpc:
+      address: 0.0.0.0:8545
+      ws-address: 0.0.0.0:8546
+  home: $HOME/.sidechaind
 client:
   openapi:
     path: "docs/static/openapi.yml"
-  typescript:
-    path: "ts-client"
-  vuex:
-    path: "vue/src/store"
-faucet:
-  name: bob
-  coins: ["5aside"]
-genesis:
-  chain_id: side_7070-1
-  app_state:
-    staking:
-      params:
-        bond_denom: "aside"
