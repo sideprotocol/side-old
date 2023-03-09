@@ -9,4 +9,6 @@ option go_package = "sidechain/x/devearn/types";
 // GenesisState defines the devearn module's genesis state.
 message GenesisState {
   Params params = 1 [(gogoproto.nullable) = false];
+  // DevEarnInfo is a slice of active incentives
+  repeated DevEarnInfo incentives = 2 [(gogoproto.nullable) = false];
 }

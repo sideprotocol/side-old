@@ -120,6 +120,9 @@ import (
 	devearnmodulekeeper "sidechain/x/devearn/keeper"
 	devearnmoduletypes "sidechain/x/devearn/types"
 
+	epochsmodule "sidechain/x/epochs"
+	epochsmodulekeeper "sidechain/x/epochs/keeper"
+	epochsmoduletypes "sidechain/x/epochs/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "sidechain/app/params"
@@ -185,6 +188,7 @@ var (
 		erc20.AppModuleBasic{},
 		devearnmodule.AppModuleBasic{},
 		devearnmodule.AppModuleBasic{},
+		epochsmodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -271,7 +275,7 @@ type App struct {
 
 	DevearnKeeper devearnmodulekeeper.Keeper
 
-	DevearnKeeper devearnmodulekeeper.Keeper
+	EpochsKeeper epochsmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -321,6 +325,7 @@ func New(
 		erc20types.StoreKey,
 		devearnmoduletypes.StoreKey,
 		devearnmoduletypes.StoreKey,
+		epochsmoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey)
@@ -527,7 +532,6 @@ func New(
 		app.AccountKeeper, app.BankKeeper, &stakingKeeper, nil,
 		nil, geth.NewEVM, tracer, app.GetSubspace(evmtypes.ModuleName),
 	)
-
 	app.Erc20Keeper = erc20keeper.NewKeeper(
 		keys[erc20types.StoreKey], appCodec, app.GetSubspace(erc20types.ModuleName),
 		app.AccountKeeper, app.BankKeeper, app.EvmKeeper, app.StakingKeeper, nil,
@@ -565,20 +569,19 @@ func New(
 		keys[devearnmoduletypes.StoreKey],
 		keys[devearnmoduletypes.MemStoreKey],
 		app.GetSubspace(devearnmoduletypes.ModuleName),
-	)
-	devearnModule := devearnmodule.NewAppModule(appCodec, app.DevearnKeeper, app.AccountKeeper, app.BankKeeper)
-
-	app.DevearnKeeper = *devearnmodulekeeper.NewKeeper(
-		appCodec,
-		keys[devearnmoduletypes.StoreKey],
-		keys[devearnmoduletypes.MemStoreKey],
-		app.GetSubspace(devearnmoduletypes.ModuleName),
 
 		app.BankKeeper,
 		app.AccountKeeper,
 		app.MintKeeper,
+		app.EvmKeeper,
 	)
-	devearnModule := devearnmodule.NewAppModule(appCodec, app.DevearnKeeper, app.AccountKeeper, app.BankKeeper)
+	devearnModule := devearnmodule.NewAppModule(appCodec, app.DevearnKeeper, app.AccountKeeper, app.BankKeeper, app.EvmKeeper)
+
+	app.EpochsKeeper = *epochsmodulekeeper.NewKeeper(
+		appCodec,
+		keys[epochsmoduletypes.StoreKey],
+	)
+	epochsModule := epochsmodule.NewAppModule(appCodec, app.EpochsKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
@@ -627,6 +630,7 @@ func New(
 		icaModule,
 		devearnModule,
 		devearnModule,
+		epochsModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 		// Ethermint app modules
 		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper, app.GetSubspace(evmtypes.ModuleName)),
@@ -663,6 +667,7 @@ func New(
 		erc20types.ModuleName,
 		devearnmoduletypes.ModuleName,
 		devearnmoduletypes.ModuleName,
+		epochsmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -691,6 +696,7 @@ func New(
 		erc20types.ModuleName,
 		devearnmoduletypes.ModuleName,
 		devearnmoduletypes.ModuleName,
+		epochsmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -724,6 +730,7 @@ func New(
 		erc20types.ModuleName,
 		devearnmoduletypes.ModuleName,
 		devearnmoduletypes.ModuleName,
+		epochsmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -753,8 +760,6 @@ func New(
 		evidence.NewAppModule(app.EvidenceKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
-		devearnModule,
-		devearnModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 	app.sm.RegisterStoreDecoders()
@@ -954,7 +959,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(devearnmoduletypes.ModuleName)
-	paramsKeeper.Subspace(devearnmoduletypes.ModuleName)
+	paramsKeeper.Subspace(epochsmoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 	// ethermint subspaces
 	paramsKeeper.Subspace(evmtypes.ModuleName)

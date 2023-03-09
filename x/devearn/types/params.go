@@ -2,23 +2,25 @@ package types
 
 import (
 	"fmt"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	epochstypes "sidechain/x/epochs/types"
 
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"gopkg.in/yaml.v2"
 )
 
-var _ paramtypes.ParamSet = (*Params)(nil)
-
+// ParamsKey params store key
 var (
-	KeyEnableDevEarn = []byte("EnableDevEarn")
-	// TODO: Determine the default value
-	DefaultEnableDevEarn bool = false
+	DefaultEnableDevEarn              bool    = true
+	DefaultRewardEpochIdentifier      string  = epochstypes.WeekEpochID
+	DefaultDevEarnInflationPercentage sdk.Dec = sdk.NewDecWithPrec(5, 2)
 )
 
 var (
-	KeyDevEarnEpoch = []byte("DevEarnEpoch")
-	// TODO: Determine the default value
-	DefaultDevEarnEpoch string = "dev_earn_epoch"
+	ParamsKey                               = []byte("Params")
+	ParamStoreKeyEnableDevEarn              = []byte("EnableDevEarn")
+	ParamStoreKeyRewardEpochIdentifier      = []byte("EarnEpochIdentifier")
+	ParamStoreKeyDevEarnInflationPercentage = []byte("EarnInflationPercentage")
 )
 
 // ParamKeyTable the param key table for launch module
@@ -29,11 +31,13 @@ func ParamKeyTable() paramtypes.KeyTable {
 // NewParams creates a new Params instance
 func NewParams(
 	enableDevEarn bool,
-	devEarnEpoch string,
+	rewardEpochIdentifier string,
+	devEarnInflationPercentage sdk.Dec,
 ) Params {
 	return Params{
-		EnableDevEarn: enableDevEarn,
-		DevEarnEpoch:  devEarnEpoch,
+		EnableDevEarn:              enableDevEarn,
+		RewardEpochIdentifier:      rewardEpochIdentifier,
+		DevEarnInflationPercentage: devEarnInflationPercentage,
 	}
 }
 
@@ -41,29 +45,18 @@ func NewParams(
 func DefaultParams() Params {
 	return NewParams(
 		DefaultEnableDevEarn,
-		DefaultDevEarnEpoch,
+		DefaultRewardEpochIdentifier,
+		DefaultDevEarnInflationPercentage,
 	)
 }
 
 // ParamSetPairs get the params.ParamSet
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
-		paramtypes.NewParamSetPair(KeyEnableDevEarn, &p.EnableDevEarn, validateEnableDevEarn),
-		paramtypes.NewParamSetPair(KeyDevEarnEpoch, &p.DevEarnEpoch, validateDevEarnEpoch),
+		paramtypes.NewParamSetPair(ParamStoreKeyEnableDevEarn, &p.EnableDevEarn, validateBool),
+		paramtypes.NewParamSetPair(ParamStoreKeyRewardEpochIdentifier, &p.RewardEpochIdentifier, epochstypes.ValidateEpochIdentifierInterface),
+		paramtypes.NewParamSetPair(ParamStoreKeyDevEarnInflationPercentage, &p.DevEarnInflationPercentage, validatePercentage),
 	}
-}
-
-// Validate validates the set of params
-func (p Params) Validate() error {
-	if err := validateEnableDevEarn(p.EnableDevEarn); err != nil {
-		return err
-	}
-
-	if err := validateDevEarnEpoch(p.DevEarnEpoch); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 // String implements the Stringer interface.
@@ -73,27 +66,27 @@ func (p Params) String() string {
 }
 
 // validateEnableDevEarn validates the EnableDevEarn param
-func validateEnableDevEarn(v interface{}) error {
-	enableDevEarn, ok := v.(bool)
+func validateBool(v interface{}) error {
+	_, ok := v.(bool)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", v)
 	}
-
-	// TODO implement validation
-	_ = enableDevEarn
 
 	return nil
 }
 
 // validateDevEarnEpoch validates the DevEarnEpoch param
-func validateDevEarnEpoch(v interface{}) error {
-	devEarnEpoch, ok := v.(string)
+func validatePercentage(v interface{}) error {
+	dec, ok := v.(sdk.Dec)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", v)
 	}
-
-	// TODO implement validation
-	_ = devEarnEpoch
+	if dec.IsNegative() {
+		return fmt.Errorf("DevEarnInflationPercentage must be positive: %s", dec)
+	}
+	if dec.GT(sdk.OneDec()) {
+		return fmt.Errorf("DevEarnInflationPercentage must <= 100: %s", dec)
+	}
 
 	return nil
 }

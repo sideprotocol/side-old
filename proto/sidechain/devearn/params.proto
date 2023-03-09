@@ -2,13 +2,61 @@ syntax = "proto3";
 package sidechain.devearn;
 
 import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "sidechain/x/devearn/types";
 
 // Params defines the parameters for the module.
 message Params {
   option (gogoproto.goproto_stringer) = false;
-  
-  bool enableDevEarn = 1 [(gogoproto.moretags) = "yaml:\"enable_dev_earn\""];
-  string devEarnEpoch = 2 [(gogoproto.moretags) = "yaml:\"dev_earn_epoch\""];
+  //  enable_dev_earn is the parameter to enable dev_earn
+  bool enable_dev_earn = 1 ;
+  // reward_epoch_identifier for the epochs module hooks
+  string reward_epoch_identifier = 2 ;
+  // dev_earn_percentage is parameter to define the dev_earn_pool as a percentage of the inflation
+  string dev_earn_inflation_APR = 3 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
 }
+
+
+// DevEarnInfo defines an instance that organizes distribution conditions for a
+// given smart contract
+message DevEarnInfo {
+  // contract address of the smart contract that register dev earn
+  string contract = 1;
+  // gas meter tracks the cumulative gas spent per contract in one epoch
+  uint64 gas_meter = 2;
+  // start_time of the dev_earn distribution
+  google.protobuf.Timestamp start_time = 3 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  // the owner's address is used to receive the reward
+  string owner_address = 4;
+  // epochs defines the number of remaining epochs for the dev earn
+  uint32 epochs = 5;
+}
+
+// RegisterDevEarnInfoProposal is a gov Content type to register an incentive
+message RegisterDevEarnInfoProposal {
+  option (gogoproto.equal) = false;
+  // title of the proposal
+  string title = 1;
+  // description of the proposal
+  string description = 2;
+  // contract address to be registered
+  string contract = 3;
+  // the owner's address is used to receive the reward
+  string owner_address = 4;
+  // epochs is the number of remaining epochs for the incentive
+  uint32 epochs = 5;
+}
+
+// CancelDevEarnInfoProposal is a gov Content type to cancel an incentive
+message CancelDevEarnInfoProposal {
+  option (gogoproto.equal) = false;
+  // title of the proposal
+  string title = 1;
+  // description of the proposal
+  string description = 2;
+  // contract address of the incentivized smart contract
+  string contract = 3;
+}
+

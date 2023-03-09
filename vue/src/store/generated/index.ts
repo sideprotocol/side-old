@@ -1,7 +1,11 @@
 // THIS FILE IS GENERATED AUTOMATICALLY. DO NOT MODIFY.
 
 import SidechainDevearn from './sidechain.devearn'
+import SidechainEpochs from './sidechain.epochs'
+import SidechainEvm from './sidechain.evm'
 import SidechainSide from './sidechain.side'
+import EthermintEvmV1 from './ethermint.evm.v1'
+import EthermintFeemarketV1 from './ethermint.feemarket.v1'
 import CosmosAuthV1Beta1 from './cosmos.auth.v1beta1'
 import CosmosAuthzV1Beta1 from './cosmos.authz.v1beta1'
 import CosmosBankV1Beta1 from './cosmos.bank.v1beta1'
@@ -27,13 +31,15 @@ import IbcApplicationsTransferV1 from './ibc.applications.transfer.v1'
 import IbcCoreChannelV1 from './ibc.core.channel.v1'
 import IbcCoreClientV1 from './ibc.core.client.v1'
 import IbcCoreConnectionV1 from './ibc.core.connection.v1'
-import EthermintEvmV1 from './ethermint.evm.v1'
-import EthermintFeemarketV1 from './ethermint.feemarket.v1'
 
 
 export default { 
   SidechainDevearn: load(SidechainDevearn, 'sidechain.devearn'),
+  SidechainEpochs: load(SidechainEpochs, 'sidechain.epochs'),
+  SidechainEvm: load(SidechainEvm, 'sidechain.evm'),
   SidechainSide: load(SidechainSide, 'sidechain.side'),
+  EthermintEvmV1: load(EthermintEvmV1, 'ethermint.evm.v1'),
+  EthermintFeemarketV1: load(EthermintFeemarketV1, 'ethermint.feemarket.v1'),
   CosmosAuthV1Beta1: load(CosmosAuthV1Beta1, 'cosmos.auth.v1beta1'),
   CosmosAuthzV1Beta1: load(CosmosAuthzV1Beta1, 'cosmos.authz.v1beta1'),
   CosmosBankV1Beta1: load(CosmosBankV1Beta1, 'cosmos.bank.v1beta1'),
@@ -59,8 +65,6 @@ export default {
   IbcCoreChannelV1: load(IbcCoreChannelV1, 'ibc.core.channel.v1'),
   IbcCoreClientV1: load(IbcCoreClientV1, 'ibc.core.client.v1'),
   IbcCoreConnectionV1: load(IbcCoreConnectionV1, 'ibc.core.connection.v1'),
-  EthermintEvmV1: load(EthermintEvmV1, 'ethermint.evm.v1'),
-  EthermintFeemarketV1: load(EthermintFeemarketV1, 'ethermint.feemarket.v1'),
   
 }
 
