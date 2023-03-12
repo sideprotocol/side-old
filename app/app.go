@@ -355,10 +355,6 @@ func NewSidechain(
 		feegrant.StoreKey, authzkeeper.StoreKey,
 		// ibc keys
 		ibchost.StoreKey, ibctransfertypes.StoreKey,
-		// ethermint keys
-		evmtypes.StoreKey,
-		erc20types.StoreKey,
-		devearnmoduletypes.StoreKey,
 		devearnmoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 		evmtypes.StoreKey, feemarkettypes.StoreKey,

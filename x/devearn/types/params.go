@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	epochstypes "sidechain/x/epochs/types"
+	epochstypes "github.com/evmos/evmos/v10/x/epochs/types"
 
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"gopkg.in/yaml.v2"
@@ -32,12 +32,12 @@ func ParamKeyTable() paramtypes.KeyTable {
 func NewParams(
 	enableDevEarn bool,
 	rewardEpochIdentifier string,
-	devEarnInflationPercentage sdk.Dec,
+	devEarnInflationAPR sdk.Dec,
 ) Params {
 	return Params{
-		EnableDevEarn:              enableDevEarn,
-		RewardEpochIdentifier:      rewardEpochIdentifier,
-		DevEarnInflationPercentage: devEarnInflationPercentage,
+		EnableDevEarn:         enableDevEarn,
+		RewardEpochIdentifier: rewardEpochIdentifier,
+		DevEarnInflation_APR:  devEarnInflationAPR,
 	}
 }
 
@@ -55,7 +55,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
 		paramtypes.NewParamSetPair(ParamStoreKeyEnableDevEarn, &p.EnableDevEarn, validateBool),
 		paramtypes.NewParamSetPair(ParamStoreKeyRewardEpochIdentifier, &p.RewardEpochIdentifier, epochstypes.ValidateEpochIdentifierInterface),
-		paramtypes.NewParamSetPair(ParamStoreKeyDevEarnInflationPercentage, &p.DevEarnInflationPercentage, validatePercentage),
+		paramtypes.NewParamSetPair(ParamStoreKeyDevEarnInflationPercentage, &p.DevEarnInflation_APR, validatePercentage),
 	}
 }
 
@@ -89,4 +89,15 @@ func validatePercentage(v interface{}) error {
 	}
 
 	return nil
+}
+func (p Params) Validate() error {
+	if err := validateBool(p.EnableDevEarn); err != nil {
+		return err
+	}
+
+	if err := validatePercentage(p.DevEarnInflation_APR); err != nil {
+		return err
+	}
+
+	return epochstypes.ValidateEpochIdentifierString(p.RewardEpochIdentifier)
 }

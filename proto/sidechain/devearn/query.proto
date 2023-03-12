@@ -1,4 +1,5 @@
 syntax = "proto3";
+
 package sidechain.devearn;
 
 import "gogoproto/gogo.proto";
@@ -10,17 +11,53 @@ option go_package = "sidechain/x/devearn/types";
 
 // Query defines the gRPC querier service.
 service Query {
+  
   // Parameters queries the parameters of the module.
-  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+  rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/sidechain/devearn/params";
+  
+  }
+  
+  // Queries a list of DevEarnInfos items.
+  rpc DevEarnInfos (QueryDevEarnInfosRequest) returns (QueryDevEarnInfosResponse) {
+    option (google.api.http).get = "/sidechain/devearn/dev_earn_infos";
+  
+  }
+  
+  // Queries a list of DevEarnInfo items.
+  rpc DevEarnInfo (QueryDevEarnInfoRequest) returns (QueryDevEarnInfoResponse) {
+    option (google.api.http).get = "/sidechain/devearn/dev_earn_info";
+  
   }
 }
-
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
 
 // QueryParamsResponse is response type for the Query/Params RPC method.
 message QueryParamsResponse {
+  
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
 }
+
+message QueryDevEarnInfosRequest {
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryDevEarnInfosResponse {
+  // dev_earn_infos is a slice of dev earn infos
+  repeated DevEarnInfo dev_earn_infos = 1 [(gogoproto.nullable) = false];
+  // pagination defines the pagination in the response.
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+
+}
+
+message QueryDevEarnInfoRequest {
+  string contract = 1;
+}
+
+message QueryDevEarnInfoResponse {
+  DevEarnInfo dev_earn_info = 1 [(gogoproto.nullable) = false];
+}
+

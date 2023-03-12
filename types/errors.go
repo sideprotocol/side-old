@@ -10,9 +10,11 @@ const RootCodespace = "sidechain"
 // root error codes for Sidechain
 const (
 	codeKeyTypeNotSupported = iota + 2
+	codeKeyInvalidChainId
 )
 
 // errors
 var (
 	ErrKeyTypeNotSupported = errorsmod.Register(RootCodespace, codeKeyTypeNotSupported, "key type 'secp256k1' not supported")
+	ErrInvalidChainID      = errorsmod.Register(RootCodespace, codeKeyInvalidChainId, "invalid chain ID")
 )

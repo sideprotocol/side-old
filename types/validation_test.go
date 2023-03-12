@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/stretchr/testify/require"
 	utiltx "sidechain/testutil/tx"
 	"sidechain/types"
-	"github.com/stretchr/testify/require"
 )
 
 func TestIsEmptyHash(t *testing.T) {

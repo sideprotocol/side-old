@@ -15,6 +15,7 @@ func TestGetParams(t *testing.T) {
 	k.SetParams(ctx, params)
 
 	require.EqualValues(t, params, k.GetParams(ctx))
-	require.EqualValues(t, params.EnableDevEarn, k.EnableDevEarn(ctx))
-	require.EqualValues(t, params.DevEarnEpoch, k.DevEarnEpoch(ctx))
+	require.EqualValues(t, params.EnableDevEarn, k.GetParams(ctx).EnableDevEarn)
+	require.EqualValues(t, params.RewardEpochIdentifier, k.GetParams(ctx).RewardEpochIdentifier)
+	require.EqualValues(t, params.DevEarnInflation_APR, k.GetParams(ctx).DevEarnInflation_APR)
 }

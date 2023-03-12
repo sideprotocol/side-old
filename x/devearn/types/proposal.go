@@ -92,8 +92,8 @@ func validateEpochs(epochs uint32) error {
 	return nil
 }
 
-// NewCancelIncentiveProposal returns new instance of RegisterIncentiveProposal
-func NewCancelIncentiveProposal(
+// NewCancelDevEarnProposal returns new instance of RegisterIncentiveProposal
+func NewCancelDevEarnProposal(
 	title, description, contract string,
 ) govv1beta1.Content {
 	return &CancelDevEarnInfoProposal{
