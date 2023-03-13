@@ -25,8 +25,8 @@ import (
 
 	sidechainkr "sidechain/crypto/keyring"
 
-	vestingcli "github.com/evmos/evmos/v10/x/vesting/client/cli"
-	vestingtypes "github.com/evmos/evmos/v10/x/vesting/types"
+	vestingcli "github.com/evmos/evmos/v11/x/vesting/client/cli"
+	vestingtypes "github.com/evmos/evmos/v11/x/vesting/types"
 )
 
 const (
