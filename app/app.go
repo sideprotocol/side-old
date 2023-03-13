@@ -381,7 +381,7 @@ func NewSidechain(
 		evmtypes.StoreKey, feemarkettypes.StoreKey,
 		// sidechain keys
 		inflationtypes.StoreKey, erc20types.StoreKey, incentivestypes.StoreKey,
-		epochstypes.StoreKey, claimstypes.StoreKey, vestingtypes.StoreKey,
+		epochstypes.StoreKey, claimstypes.StoreKey, vestingtypes.StoreKey,recoverytypes.StoreKey,
 		revenuetypes.StoreKey,
 
 		//ibcswap
