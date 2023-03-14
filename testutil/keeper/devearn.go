@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -41,6 +43,7 @@ func DevearnKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		storeKey,
 		memStoreKey,
 		paramsSubspace,
+		authtypes.NewModuleAddress(govtypes.ModuleName),
 		nil,
 		nil,
 		nil,

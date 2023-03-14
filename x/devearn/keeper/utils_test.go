@@ -2,7 +2,6 @@ package keeper_test
 
 import (
 	"encoding/json"
-
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -17,16 +16,20 @@ import (
 	"github.com/evmos/ethermint/crypto/ethsecp256k1"
 	"github.com/evmos/ethermint/encoding"
 	"github.com/evmos/ethermint/server/config"
+	ethermint "github.com/evmos/ethermint/types"
 	evm "github.com/evmos/ethermint/x/evm/types"
 	epochstypes "github.com/evmos/evmos/v10/x/epochs/types"
 	"github.com/stretchr/testify/require"
+	"github.com/tendermint/tendermint/crypto/tmhash"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+	tmversion "github.com/tendermint/tendermint/proto/tendermint/version"
+	"github.com/tendermint/tendermint/version"
 	"math"
 	"math/big"
 	"sidechain/app"
 	"sidechain/contracts"
 	"sidechain/testutil"
 	utiltx "sidechain/testutil/tx"
-	sidetypes "sidechain/types"
 	"sidechain/utils"
 	"sidechain/x/devearn/types"
 	"time"
@@ -38,15 +41,15 @@ var (
 )
 
 var (
-	denomMint      = evm.DefaultEVMDenom
-	denomCoin      = "acoin"
-	allocationRate = int64(5)
-	epochs         = uint32(10)
-	erc20Name      = "Coin Token"
-	erc20Symbol    = "CTKN"
-	erc20Name2     = "Coin Token 2"
-	erc20Symbol2   = "CTKN2"
-	erc20Decimals  = uint8(18)
+	denomMint     = "aside"
+	epochs        = uint32(10)
+	erc20Name     = "Coin Token"
+	erc20Symbol   = "CTKN"
+	erc20Name2    = "Coin Token 2"
+	erc20Symbol2  = "CTKN2"
+	erc20Decimals = uint8(18)
+	ownerPriv1    *ethsecp256k1.PrivKey
+	ownerPriv2    *ethsecp256k1.PrivKey
 )
 
 func (suite *KeeperTestSuite) DoSetupTest(t require.TestingT) {
@@ -54,6 +57,8 @@ func (suite *KeeperTestSuite) DoSetupTest(t require.TestingT) {
 
 	// account key
 	priv, err := ethsecp256k1.GenerateKey()
+	ownerPriv1, err = ethsecp256k1.GenerateKey()
+	ownerPriv2, err = ethsecp256k1.GenerateKey()
 	require.NoError(t, err)
 	suite.address = common.BytesToAddress(priv.PubKey().Address().Bytes())
 	suite.signer = utiltx.NewSigner(priv)
@@ -67,9 +72,30 @@ func (suite *KeeperTestSuite) DoSetupTest(t require.TestingT) {
 	suite.app = app.Setup(checkTx, nil)
 
 	// Set Context
-	header := testutil.NewHeader(
-		1, time.Now().UTC(), "sidechain_7071-1", suite.consAddress, nil, nil,
-	)
+	header := tmproto.Header{
+		Height:          1,
+		ChainID:         "sidechain_7071-1",
+		Time:            time.Now().UTC(),
+		ProposerAddress: suite.consAddress.Bytes(),
+
+		Version: tmversion.Consensus{
+			Block: version.BlockProtocol,
+		},
+		LastBlockId: tmproto.BlockID{
+			Hash: tmhash.Sum([]byte("block_id")),
+			PartSetHeader: tmproto.PartSetHeader{
+				Total: 11,
+				Hash:  tmhash.Sum([]byte("partset_header")),
+			},
+		},
+		AppHash:            tmhash.Sum([]byte("app")),
+		DataHash:           tmhash.Sum([]byte("data")),
+		EvidenceHash:       tmhash.Sum([]byte("evidence")),
+		ValidatorsHash:     tmhash.Sum([]byte("validators")),
+		NextValidatorsHash: tmhash.Sum([]byte("next_validators")),
+		ConsensusHash:      tmhash.Sum([]byte("consensus")),
+		LastResultsHash:    tmhash.Sum([]byte("last_result")),
+	}
 	suite.ctx = suite.app.BaseApp.NewContext(checkTx, header)
 
 	// Setup query helpers
@@ -91,13 +117,11 @@ func (suite *KeeperTestSuite) DoSetupTest(t require.TestingT) {
 		epoch.CurrentEpochStartHeight = suite.ctx.BlockHeight()
 		suite.app.EpochsKeeper.SetEpochInfo(suite.ctx, epoch)
 	}
-
-	acc := &sidetypes.EthAccount{
+	acc := &ethermint.EthAccount{
 		BaseAccount: authtypes.NewBaseAccount(sdk.AccAddress(suite.address.Bytes()), nil, 0, 0),
 		CodeHash:    common.BytesToHash(crypto.Keccak256(nil)).String(),
 	}
 	suite.app.AccountKeeper.SetAccount(suite.ctx, acc)
-
 	// fund signer acc to pay for tx fees
 	amt := sdk.NewInt(int64(math.Pow10(18) * 2))
 	err = testutil.FundAccount(
@@ -125,7 +149,11 @@ func (suite *KeeperTestSuite) DoSetupTest(t require.TestingT) {
 
 func (suite *KeeperTestSuite) deployContracts() {
 	// Deploy contracts
-	contract, _ = suite.DeployContract(erc20Name, erc20Symbol, erc20Decimals)
+	var err error
+	contract, err = suite.DeployContract(erc20Name, erc20Symbol, erc20Decimals)
+	if err != nil {
+		fmt.Println(err)
+	}
 	contract2, _ = suite.DeployContract(erc20Name2, erc20Symbol2, erc20Decimals)
 }
 

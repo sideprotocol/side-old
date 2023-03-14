@@ -16,14 +16,11 @@ import (
 //   - sets the cumulative totalGas to zero
 func (k Keeper) DistributeRewards(ctx sdk.Context) error {
 	logger := k.Logger(ctx)
-	var totalGas uint64
 	devEarnGasMeters := make(map[string]uint64)
 	devEarnRewardReceivers := make(map[string]string)
 	k.IterateDevEarnInfos(ctx, func(devEarnInfo types.DevEarnInfo) (stop bool) {
-		totalGas += devEarnInfo.GetGasMeter()
 		devEarnGasMeters[devEarnInfo.GetContract()] = devEarnInfo.GetGasMeter()
 		devEarnRewardReceivers[devEarnInfo.GetContract()] = devEarnInfo.GetOwnerAddress()
-		k.SendReward(ctx, devEarnGasMeters, devEarnRewardReceivers)
 		devEarnInfo.Epochs--
 
 		// Update dev_earn info and reset its total gas count. Remove dev_earn info if it
@@ -51,6 +48,7 @@ func (k Keeper) DistributeRewards(ctx sdk.Context) error {
 		)
 		return false
 	})
+	k.SendReward(ctx, devEarnGasMeters, devEarnRewardReceivers)
 
 	return nil
 }

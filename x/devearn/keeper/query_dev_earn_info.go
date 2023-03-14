@@ -15,7 +15,7 @@ import (
 
 func (k Keeper) DevEarnInfo(goCtx context.Context, req *types.QueryDevEarnInfoRequest) (*types.QueryDevEarnInfoResponse, error) {
 	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid request")
+		return nil, status.Error(codes.InvalidArgument, "request is nil")
 	}
 	if strings.TrimSpace(req.Contract) == "" {
 		return nil, status.Error(
@@ -35,7 +35,7 @@ func (k Keeper) DevEarnInfo(goCtx context.Context, req *types.QueryDevEarnInfoRe
 	contractAddr := common.HexToAddress(contract)
 	devEarninfo, ok := k.GetDevEarnInfo(ctx, contractAddr)
 	if !ok {
-		return nil, status.Error(codes.InvalidArgument, "invalid request")
+		return nil, status.Error(codes.InvalidArgument, "didn't found this devEarnInfo!!")
 	}
 	resp := &types.QueryDevEarnInfoResponse{devEarninfo}
 	return resp, nil

@@ -18,8 +18,8 @@ import (
 
 func NewRegisterDevEarnProposalCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "register-dev-earn-info CONTRACT_ADDRESS  EPOCHS",
-		Args:    cobra.ExactArgs(2),
+		Use:     "register-dev-earn-info CONTRACT_ADDRESS  EPOCHS OWNERADDR",
+		Args:    cobra.ExactArgs(3),
 		Short:   "Submit a proposal to register a contract dev earn",
 		Long:    "Submit a proposal to register a contract dev earn.",
 		Example: fmt.Sprintf("$ %s tx gov submit-legacy-proposal register-dev-earn-info <contract> <epoches>--from=<key_or_address>", version.AppName),
@@ -59,9 +59,9 @@ func NewRegisterDevEarnProposalCmd() *cobra.Command {
 			}
 
 			contract := args[0]
-
+			ownerAddr := args[2]
 			from := clientCtx.GetFromAddress()
-			content := types.NewRegisterDevEarnInfoProposal(title, description, contract, uint32(epochs))
+			content := types.NewRegisterDevEarnInfoProposal(title, description, contract, ownerAddr, uint32(epochs))
 
 			msg, err := govv1beta1.NewMsgSubmitProposal(content, deposit, from)
 			if err != nil {

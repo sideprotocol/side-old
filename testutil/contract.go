@@ -37,13 +37,11 @@ func DeployContract(
 	if err != nil {
 		return common.Address{}, err
 	}
-
 	data := append(contract.Bin, ctorArgs...) //nolint:gocritic
 	gas, err := tx.GasLimit(ctx, from, data, queryClientEvm)
 	if err != nil {
 		return common.Address{}, err
 	}
-
 	msgEthereumTx := evm.NewTx(chainID, nonce, nil, nil, gas, nil, sideApp.FeeMarketKeeper.GetBaseFee(ctx), big.NewInt(1), data, &ethtypes.AccessList{})
 	msgEthereumTx.From = from.String()
 

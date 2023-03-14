@@ -33,10 +33,10 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 
 func CmdDevEarnInfo() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "dev-earn-info",
+		Use:   "dev-earn-info CONTRACT_ADDRESS",
 		Short: "Query dev-earn-info",
 		Long:  "Query dev-earn-info by contract address",
-		Args:  cobra.ExactArgs(0),
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			if !common.IsHexAddress(args[0]) {
 				return fmt.Errorf("invalid contract address: %s", args[0])
@@ -56,7 +56,6 @@ func CmdDevEarnInfo() *cobra.Command {
 			if err != nil {
 				return err
 			}
-
 			return clientCtx.PrintProto(res)
 		},
 	}

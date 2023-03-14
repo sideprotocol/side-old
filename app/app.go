@@ -113,8 +113,6 @@ import (
 	// unnamed import of statik for swagger UI support
 	_ "sidechain/client/docs/statik"
 
-	"sidechain/app/ante"
-
 	"github.com/evmos/evmos/v10/x/claims"
 	claimskeeper "github.com/evmos/evmos/v10/x/claims/keeper"
 	claimstypes "github.com/evmos/evmos/v10/x/claims/types"
@@ -125,6 +123,8 @@ import (
 	erc20client "github.com/evmos/evmos/v10/x/erc20/client"
 	erc20keeper "github.com/evmos/evmos/v10/x/erc20/keeper"
 	erc20types "github.com/evmos/evmos/v10/x/erc20/types"
+	"sidechain/app/ante"
+	devearnclient "sidechain/x/devearn/client"
 
 	devearnmodule "sidechain/x/devearn"
 	devearnmodulekeeper "sidechain/x/devearn/keeper"
@@ -196,6 +196,7 @@ var (
 				// Sidechain proposal types
 				erc20client.RegisterCoinProposalHandler, erc20client.RegisterERC20ProposalHandler, erc20client.ToggleTokenConversionProposalHandler,
 				incentivesclient.RegisterIncentiveProposalHandler, incentivesclient.CancelIncentiveProposalHandler,
+				devearnclient.RegisterDevEarnProposalHandler, devearnclient.CancelDevEarnProposalHandler,
 			},
 		),
 		params.AppModuleBasic{},
@@ -212,7 +213,6 @@ var (
 		feemarket.AppModuleBasic{},
 		inflation.AppModuleBasic{},
 		erc20.AppModuleBasic{},
-		devearnmodule.AppModuleBasic{},
 		devearnmodule.AppModuleBasic{},
 		incentives.AppModuleBasic{},
 		epochs.AppModuleBasic{},
@@ -240,7 +240,8 @@ var (
 
 	// module accounts that are allowed to receive tokens
 	allowedReceivingModAcc = map[string]bool{
-		incentivestypes.ModuleName: true,
+		incentivestypes.ModuleName:    true,
+		devearnmoduletypes.ModuleName: true,
 	}
 )
 
@@ -451,7 +452,8 @@ func NewSidechain(
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper)).
 		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper)).
 		AddRoute(erc20types.RouterKey, erc20.NewErc20ProposalHandler(&app.Erc20Keeper)).
-		AddRoute(incentivestypes.RouterKey, incentives.NewIncentivesProposalHandler(&app.IncentivesKeeper))
+		AddRoute(incentivestypes.RouterKey, incentives.NewIncentivesProposalHandler(&app.IncentivesKeeper)).
+		AddRoute(devearnmoduletypes.RouterKey, devearnmodule.NewDevEarnProposalHanodler(&app.DevearnKeeper))
 
 	govConfig := govtypes.DefaultConfig()
 	/*
@@ -506,6 +508,17 @@ func NewSidechain(
 		app.BankKeeper, app.EvmKeeper,
 		authtypes.FeeCollectorName,
 	)
+	app.DevearnKeeper = *devearnmodulekeeper.NewKeeper(
+		appCodec,
+		keys[devearnmoduletypes.StoreKey],
+		keys[devearnmoduletypes.MemStoreKey],
+		app.GetSubspace(devearnmoduletypes.ModuleName),
+		authtypes.NewModuleAddress(govtypes.ModuleName),
+		app.BankKeeper,
+		app.AccountKeeper,
+		app.EvmKeeper,
+	)
+	devearnModule := devearnmodule.NewAppModule(appCodec, app.DevearnKeeper, app.AccountKeeper, app.BankKeeper, app.EvmKeeper)
 
 	epochsKeeper := epochskeeper.NewKeeper(appCodec, keys[epochstypes.StoreKey])
 	app.EpochsKeeper = *epochsKeeper.SetHooks(
@@ -513,6 +526,7 @@ func NewSidechain(
 			// insert epoch hooks receivers here
 			app.IncentivesKeeper.Hooks(),
 			app.InflationKeeper.Hooks(),
+			app.DevearnKeeper.Hooks(),
 		),
 	)
 
@@ -528,6 +542,7 @@ func NewSidechain(
 			app.IncentivesKeeper.Hooks(),
 			app.RevenueKeeper.Hooks(),
 			app.ClaimsKeeper.Hooks(),
+			app.DevearnKeeper.Hooks(),
 		),
 	)
 	app.TransferKeeper = transferkeeper.NewKeeper(
@@ -548,18 +563,6 @@ func NewSidechain(
 	)
 
 	// NOTE: app.Erc20Keeper is already initialized elsewhere
-
-	app.DevearnKeeper = *devearnmodulekeeper.NewKeeper(
-		appCodec,
-		keys[devearnmoduletypes.StoreKey],
-		keys[devearnmoduletypes.MemStoreKey],
-		app.GetSubspace(devearnmoduletypes.ModuleName),
-
-		app.BankKeeper,
-		app.AccountKeeper,
-		app.EvmKeeper,
-	)
-	devearnModule := devearnmodule.NewAppModule(appCodec, app.DevearnKeeper, app.AccountKeeper, app.BankKeeper, app.EvmKeeper)
 
 	// Set the ICS4 wrappers for custom module middlewares
 	app.RecoveryKeeper.SetICS4Wrapper(app.IBCKeeper.ChannelKeeper)
@@ -636,7 +639,6 @@ func NewSidechain(
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
 		devearnModule,
-		devearnModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 		// Ethermint app modules
 		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper),
@@ -684,7 +686,6 @@ func NewSidechain(
 		inflationtypes.ModuleName,
 		erc20types.ModuleName,
 		devearnmoduletypes.ModuleName,
-		devearnmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 		claimstypes.ModuleName,
 		incentivestypes.ModuleName,
@@ -720,7 +721,6 @@ func NewSidechain(
 		vestingtypes.ModuleName,
 		inflationtypes.ModuleName,
 		erc20types.ModuleName,
-		devearnmoduletypes.ModuleName,
 		devearnmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 		incentivestypes.ModuleName,
@@ -762,7 +762,6 @@ func NewSidechain(
 		vestingtypes.ModuleName,
 		inflationtypes.ModuleName,
 		erc20types.ModuleName,
-		devearnmoduletypes.ModuleName,
 		devearnmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 		incentivestypes.ModuleName,

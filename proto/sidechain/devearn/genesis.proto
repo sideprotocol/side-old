@@ -10,5 +10,5 @@ option go_package = "sidechain/x/devearn/types";
 message GenesisState {
   Params params = 1 [(gogoproto.nullable) = false];
   // DevEarnInfo is a slice of active incentives
-  repeated DevEarnInfo incentives = 2 [(gogoproto.nullable) = false];
+  repeated DevEarnInfo devEarnInfos = 2 [(gogoproto.nullable) = false];
 }

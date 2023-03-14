@@ -12,6 +12,7 @@ func (k Keeper) RegisterDevEarn(
 	ctx sdk.Context,
 	contract common.Address,
 	epochs uint32,
+	ownerAddr string,
 ) (*types.DevEarnInfo, error) {
 	// Check if the Incentives are globally enabled
 	params := k.GetParams(ctx)
@@ -26,7 +27,7 @@ func (k Keeper) RegisterDevEarn(
 	acc := k.evmKeeper.GetAccountWithoutBalance(ctx, contract)
 	if acc == nil || !acc.IsContract() {
 		return nil, errorsmod.Wrapf(
-			types.ErrInternalDevEarn,
+			types.ErrContractNotFound,
 			"contract doesn't exist: %s", contract,
 		)
 	}
@@ -40,7 +41,7 @@ func (k Keeper) RegisterDevEarn(
 	}
 
 	// create incentive and set to store
-	devEarnInfo := types.NewDevEarn(contract, 0, epochs)
+	devEarnInfo := types.NewDevEarn(contract, 0, epochs, ownerAddr)
 	devEarnInfo.StartTime = ctx.BlockTime()
 	k.SetDevEarnInfo(ctx, devEarnInfo)
 

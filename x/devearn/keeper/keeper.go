@@ -14,11 +14,11 @@ import (
 
 type (
 	Keeper struct {
-		cdc        codec.BinaryCodec
-		storeKey   storetypes.StoreKey
-		memKey     storetypes.StoreKey
-		paramstore paramtypes.Subspace
-
+		cdc           codec.BinaryCodec
+		storeKey      storetypes.StoreKey
+		memKey        storetypes.StoreKey
+		paramstore    paramtypes.Subspace
+		authority     sdk.AccAddress
 		bankKeeper    types.BankKeeper
 		accountKeeper types.AccountKeeper
 		evmKeeper     types.EvmKeeper
@@ -30,7 +30,7 @@ func NewKeeper(
 	storeKey,
 	memKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
-
+	authority sdk.AccAddress,
 	bankKeeper types.BankKeeper,
 	accountKeeper types.AccountKeeper,
 	evmKeeper types.EvmKeeper,
@@ -41,11 +41,11 @@ func NewKeeper(
 	}
 
 	return &Keeper{
-		cdc:        cdc,
-		storeKey:   storeKey,
-		memKey:     memKey,
-		paramstore: ps,
-
+		cdc:           cdc,
+		storeKey:      storeKey,
+		memKey:        memKey,
+		paramstore:    ps,
+		authority:     authority,
 		bankKeeper:    bankKeeper,
 		accountKeeper: accountKeeper,
 		evmKeeper:     evmKeeper,

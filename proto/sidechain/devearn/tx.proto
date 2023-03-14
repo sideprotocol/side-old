@@ -1,7 +1,30 @@
 syntax = "proto3";
 package sidechain.devearn;
 
+import "cosmos/msg/v1/msg.proto";
+import "cosmos_proto/cosmos.proto";
+import "sidechain/devearn/genesis.proto";
+import "gogoproto/gogo.proto";
+import "sidechain/devearn/params.proto";
 option go_package = "sidechain/x/devearn/types";
 
 // Msg defines the Msg service.
-service Msg {}
+service Msg {
+  // UpdateParams defined a governance operation for updating the x/incentives module parameters.
+  // The authority is hard-coded to the Cosmos SDK x/gov module account
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
+}
+
+// MsgUpdateParams defines a Msg for updating the x/incentives module parameters.
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "authority";
+  // authority is the address of the governance account.
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  // params defines the x/feemarket parameters to update.
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [(gogoproto.nullable) = false];
+}
+
+// MsgUpdateParamsResponse defines the response structure for executing a
+// MsgUpdateParams message.
+message MsgUpdateParamsResponse {}

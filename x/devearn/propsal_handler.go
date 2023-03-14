@@ -28,7 +28,7 @@ func NewDevEarnProposalHanodler(k *keeper.Keeper) govv1beta1.Handler {
 }
 
 func handleRegisterDevEarnProposal(ctx sdk.Context, k *keeper.Keeper, p *types.RegisterDevEarnInfoProposal) error {
-	in, err := k.RegisterDevEarn(ctx, common.HexToAddress(p.Contract), p.Epochs)
+	in, err := k.RegisterDevEarn(ctx, common.HexToAddress(p.Contract), p.Epochs, p.OwnerAddress)
 	if err != nil {
 		return err
 	}

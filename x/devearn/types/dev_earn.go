@@ -12,12 +12,14 @@ func NewDevEarn(
 	contract common.Address,
 	gasMeter uint64,
 	epochs uint32,
+	ownerAddr string,
 ) DevEarnInfo {
 	return DevEarnInfo{
-		Contract:  contract.String(),
-		GasMeter:  gasMeter,
-		StartTime: time.Time{},
-		Epochs:    epochs,
+		Contract:     contract.String(),
+		GasMeter:     gasMeter,
+		StartTime:    time.Time{},
+		OwnerAddress: ownerAddr,
+		Epochs:       epochs,
 	}
 }
 

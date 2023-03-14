@@ -18,7 +18,6 @@ func (k Keeper) GetAllDevEarnInfos(ctx sdk.Context) []types.DevEarnInfo {
 	for ; iterator.Valid(); iterator.Next() {
 		var devEarnInfo types.DevEarnInfo
 		k.cdc.MustUnmarshal(iterator.Value(), &devEarnInfo)
-
 		devEarnInfos = append(devEarnInfos, devEarnInfo)
 	}
 

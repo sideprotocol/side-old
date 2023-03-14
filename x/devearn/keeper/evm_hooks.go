@@ -27,7 +27,6 @@ func (k Keeper) PostTxProcessing(ctx sdk.Context, msg core.Message, receipt *eth
 	if !params.EnableDevEarn {
 		return nil
 	}
-
 	contract := msg.To()
 	// If theres no dev earn registered for the contract, do nothing
 	if contract == nil || !k.IsDevEarnInfoRegistered(ctx, *contract) {

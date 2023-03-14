@@ -29,14 +29,15 @@ func init() {
 
 // NewRegisterDevEarnInfoProposal returns new instance of RegisterIncentiveProposal
 func NewRegisterDevEarnInfoProposal(
-	title, description, contract string,
+	title, description, contract, ownerAddr string,
 	epochs uint32,
 ) govv1beta1.Content {
 	return &RegisterDevEarnInfoProposal{
-		Title:       title,
-		Description: description,
-		Contract:    contract,
-		Epochs:      epochs,
+		Title:        title,
+		Description:  description,
+		Contract:     contract,
+		OwnerAddress: ownerAddr,
+		Epochs:       epochs,
 	}
 }
 

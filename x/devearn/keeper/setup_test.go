@@ -46,3 +46,7 @@ func TestKeeperTestSuite(t *testing.T) {
 func (suite *KeeperTestSuite) SetupTest() {
 	suite.DoSetupTest(suite.T())
 }
+
+func (suite *KeeperTestSuite) TestSetupTest() {
+	suite.SetupTest()
+}

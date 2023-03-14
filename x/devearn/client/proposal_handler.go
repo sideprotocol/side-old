@@ -7,6 +7,6 @@ import (
 )
 
 var (
-	RegisterIncentiveProposalHandler = govclient.NewProposalHandler(cli.NewRegisterDevEarnProposalCmd)
-	CancelIncentiveProposalHandler   = govclient.NewProposalHandler(cli.NewCancelDevEarnProposalCmd)
+	RegisterDevEarnProposalHandler = govclient.NewProposalHandler(cli.NewRegisterDevEarnProposalCmd)
+	CancelDevEarnProposalHandler   = govclient.NewProposalHandler(cli.NewCancelDevEarnProposalCmd)
 )
