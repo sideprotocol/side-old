@@ -85,18 +85,36 @@ import (
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	ibctestingtypes "github.com/cosmos/ibc-go/v5/testing/types"
+	ibctestingtypes "github.com/cosmos/ibc-go/v6/testing/types"
 
-	ibctransfer "github.com/cosmos/ibc-go/v5/modules/apps/transfer"
-	ibctransfertypes "github.com/cosmos/ibc-go/v5/modules/apps/transfer/types"
-	ibc "github.com/cosmos/ibc-go/v5/modules/core"
-	ibcclient "github.com/cosmos/ibc-go/v5/modules/core/02-client"
-	ibcclientclient "github.com/cosmos/ibc-go/v5/modules/core/02-client/client"
-	ibcclienttypes "github.com/cosmos/ibc-go/v5/modules/core/02-client/types"
-	porttypes "github.com/cosmos/ibc-go/v5/modules/core/05-port/types"
-	ibchost "github.com/cosmos/ibc-go/v5/modules/core/24-host"
-	ibckeeper "github.com/cosmos/ibc-go/v5/modules/core/keeper"
-	ibctesting "github.com/cosmos/ibc-go/v5/testing"
+	ibctransfer "github.com/cosmos/ibc-go/v6/modules/apps/transfer"
+	ibctransfertypes "github.com/cosmos/ibc-go/v6/modules/apps/transfer/types"
+
+	ibcfee "github.com/cosmos/ibc-go/v6/modules/apps/29-fee"
+	ibcfeekeeper "github.com/cosmos/ibc-go/v6/modules/apps/29-fee/keeper"
+	ibcfeetypes "github.com/cosmos/ibc-go/v6/modules/apps/29-fee/types"
+
+	ibcatomicswap "github.com/ibcswap/ibcswap/v6/modules/apps/100-atomic-swap"
+	atomicswapkeeper "github.com/ibcswap/ibcswap/v6/modules/apps/100-atomic-swap/keeper"
+	ibcatomicswaptypes "github.com/ibcswap/ibcswap/v6/modules/apps/100-atomic-swap/types"
+
+	ibcinterchainswap "github.com/ibcswap/ibcswap/v6/modules/apps/101-interchain-swap"
+	interchainswapkeeper "github.com/ibcswap/ibcswap/v6/modules/apps/101-interchain-swap/keeper"
+	ibcinterchainswaptypes "github.com/ibcswap/ibcswap/v6/modules/apps/101-interchain-swap/types"
+
+	ibc "github.com/cosmos/ibc-go/v6/modules/core"
+	ibcclient "github.com/cosmos/ibc-go/v6/modules/core/02-client"
+	ibcclientclient "github.com/cosmos/ibc-go/v6/modules/core/02-client/client"
+	ibcclienttypes "github.com/cosmos/ibc-go/v6/modules/core/02-client/types"
+	porttypes "github.com/cosmos/ibc-go/v6/modules/core/05-port/types"
+	ibchost "github.com/cosmos/ibc-go/v6/modules/core/24-host"
+	ibckeeper "github.com/cosmos/ibc-go/v6/modules/core/keeper"
+	ibctesting "github.com/cosmos/ibc-go/v6/testing"
+
+	// ibcswap
+	// ibcswap
+
+	// ibcinterchainswap
 
 	"github.com/evmos/ethermint/encoding"
 	"github.com/evmos/ethermint/ethereum/eip712"
@@ -115,36 +133,36 @@ import (
 
 	"sidechain/app/ante"
 
-	"github.com/evmos/evmos/v10/x/claims"
-	claimskeeper "github.com/evmos/evmos/v10/x/claims/keeper"
-	claimstypes "github.com/evmos/evmos/v10/x/claims/types"
-	"github.com/evmos/evmos/v10/x/epochs"
-	epochskeeper "github.com/evmos/evmos/v10/x/epochs/keeper"
-	epochstypes "github.com/evmos/evmos/v10/x/epochs/types"
-	"github.com/evmos/evmos/v10/x/erc20"
-	erc20client "github.com/evmos/evmos/v10/x/erc20/client"
-	erc20keeper "github.com/evmos/evmos/v10/x/erc20/keeper"
-	erc20types "github.com/evmos/evmos/v10/x/erc20/types"
-	"github.com/evmos/evmos/v10/x/incentives"
-	incentivesclient "github.com/evmos/evmos/v10/x/incentives/client"
-	incentiveskeeper "github.com/evmos/evmos/v10/x/incentives/keeper"
-	incentivestypes "github.com/evmos/evmos/v10/x/incentives/types"
-	"github.com/evmos/evmos/v10/x/inflation"
-	inflationkeeper "github.com/evmos/evmos/v10/x/inflation/keeper"
-	inflationtypes "github.com/evmos/evmos/v10/x/inflation/types"
-	"github.com/evmos/evmos/v10/x/recovery"
-	recoverykeeper "github.com/evmos/evmos/v10/x/recovery/keeper"
-	recoverytypes "github.com/evmos/evmos/v10/x/recovery/types"
-	"github.com/evmos/evmos/v10/x/revenue"
-	revenuekeeper "github.com/evmos/evmos/v10/x/revenue/keeper"
-	revenuetypes "github.com/evmos/evmos/v10/x/revenue/types"
-	"github.com/evmos/evmos/v10/x/vesting"
-	vestingkeeper "github.com/evmos/evmos/v10/x/vesting/keeper"
-	vestingtypes "github.com/evmos/evmos/v10/x/vesting/types"
+	"github.com/evmos/evmos/v11/x/claims"
+	claimskeeper "github.com/evmos/evmos/v11/x/claims/keeper"
+	claimstypes "github.com/evmos/evmos/v11/x/claims/types"
+	"github.com/evmos/evmos/v11/x/epochs"
+	epochskeeper "github.com/evmos/evmos/v11/x/epochs/keeper"
+	epochstypes "github.com/evmos/evmos/v11/x/epochs/types"
+	"github.com/evmos/evmos/v11/x/erc20"
+	erc20client "github.com/evmos/evmos/v11/x/erc20/client"
+	erc20keeper "github.com/evmos/evmos/v11/x/erc20/keeper"
+	erc20types "github.com/evmos/evmos/v11/x/erc20/types"
+	"github.com/evmos/evmos/v11/x/incentives"
+	incentivesclient "github.com/evmos/evmos/v11/x/incentives/client"
+	incentiveskeeper "github.com/evmos/evmos/v11/x/incentives/keeper"
+	incentivestypes "github.com/evmos/evmos/v11/x/incentives/types"
+	"github.com/evmos/evmos/v11/x/inflation"
+	inflationkeeper "github.com/evmos/evmos/v11/x/inflation/keeper"
+	inflationtypes "github.com/evmos/evmos/v11/x/inflation/types"
+	"github.com/evmos/evmos/v11/x/recovery"
+	recoverykeeper "github.com/evmos/evmos/v11/x/recovery/keeper"
+	recoverytypes "github.com/evmos/evmos/v11/x/recovery/types"
+	"github.com/evmos/evmos/v11/x/revenue"
+	revenuekeeper "github.com/evmos/evmos/v11/x/revenue/keeper"
+	revenuetypes "github.com/evmos/evmos/v11/x/revenue/types"
+	"github.com/evmos/evmos/v11/x/vesting"
+	vestingkeeper "github.com/evmos/evmos/v11/x/vesting/keeper"
+	vestingtypes "github.com/evmos/evmos/v11/x/vesting/types"
 
 	// NOTE: override ICS20 keeper to support IBC transfers of ERC20 tokens
-	"github.com/evmos/evmos/v10/x/ibc/transfer"
-	transferkeeper "github.com/evmos/evmos/v10/x/ibc/transfer/keeper"
+	"github.com/evmos/evmos/v11/x/ibc/transfer"
+	transferkeeper "github.com/evmos/evmos/v11/x/ibc/transfer/keeper"
 
 	"github.com/ignite/cli/docs"
 	"github.com/ignite/cli/ignite/pkg/openapiconsole"
@@ -202,6 +220,7 @@ var (
 		upgrade.AppModuleBasic{},
 		evidence.AppModuleBasic{},
 		transfer.AppModuleBasic{AppModuleBasic: &ibctransfer.AppModuleBasic{}},
+
 		vesting.AppModuleBasic{},
 		evm.AppModuleBasic{},
 		feemarket.AppModuleBasic{},
@@ -212,21 +231,29 @@ var (
 		claims.AppModuleBasic{},
 		recovery.AppModuleBasic{},
 		revenue.AppModuleBasic{},
+		ibcfee.AppModuleBasic{},
+
+		ibcatomicswap.AppModuleBasic{},
+		ibcinterchainswap.AppModuleBasic{},
 	)
 
 	// module account permissions
 	maccPerms = map[string][]string{
-		authtypes.FeeCollectorName:     nil,
-		distrtypes.ModuleName:          nil,
-		stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
-		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
-		govtypes.ModuleName:            {authtypes.Burner},
-		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
-		evmtypes.ModuleName:            {authtypes.Minter, authtypes.Burner}, // used for secure addition and subtraction of balance using module account
-		inflationtypes.ModuleName:      {authtypes.Minter},
-		erc20types.ModuleName:          {authtypes.Minter, authtypes.Burner},
-		claimstypes.ModuleName:         nil,
-		incentivestypes.ModuleName:     {authtypes.Minter, authtypes.Burner},
+		authtypes.FeeCollectorName:        nil,
+		distrtypes.ModuleName:             nil,
+		stakingtypes.BondedPoolName:       {authtypes.Burner, authtypes.Staking},
+		stakingtypes.NotBondedPoolName:    {authtypes.Burner, authtypes.Staking},
+		govtypes.ModuleName:               {authtypes.Burner},
+		ibctransfertypes.ModuleName:       {authtypes.Minter, authtypes.Burner},
+		ibcatomicswaptypes.ModuleName:     nil,
+		ibcinterchainswaptypes.ModuleName: {authtypes.Minter, authtypes.Burner},
+
+		evmtypes.ModuleName:        {authtypes.Minter, authtypes.Burner}, // used for secure addition and subtraction of balance using module account
+		inflationtypes.ModuleName:  {authtypes.Minter},
+		erc20types.ModuleName:      {authtypes.Minter, authtypes.Burner},
+		claimstypes.ModuleName:     nil,
+		incentivestypes.ModuleName: {authtypes.Minter, authtypes.Burner},
+		ibcfeetypes.ModuleName:     nil,
 	}
 
 	// module accounts that are allowed to receive tokens
@@ -259,25 +286,32 @@ type Sidechain struct {
 	memKeys map[string]*storetypes.MemoryStoreKey
 
 	// keepers
-	AccountKeeper    authkeeper.AccountKeeper
-	BankKeeper       bankkeeper.Keeper
-	CapabilityKeeper *capabilitykeeper.Keeper
-	StakingKeeper    stakingkeeper.Keeper
-	SlashingKeeper   slashingkeeper.Keeper
-	DistrKeeper      distrkeeper.Keeper
-	GovKeeper        govkeeper.Keeper
-	CrisisKeeper     crisiskeeper.Keeper
-	UpgradeKeeper    upgradekeeper.Keeper
-	ParamsKeeper     paramskeeper.Keeper
-	FeeGrantKeeper   feegrantkeeper.Keeper
-	AuthzKeeper      authzkeeper.Keeper
-	IBCKeeper        *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
-	EvidenceKeeper   evidencekeeper.Keeper
-	TransferKeeper   transferkeeper.Keeper
+	AccountKeeper        authkeeper.AccountKeeper
+	BankKeeper           bankkeeper.Keeper
+	CapabilityKeeper     *capabilitykeeper.Keeper
+	StakingKeeper        stakingkeeper.Keeper
+	SlashingKeeper       slashingkeeper.Keeper
+	DistrKeeper          distrkeeper.Keeper
+	GovKeeper            govkeeper.Keeper
+	CrisisKeeper         crisiskeeper.Keeper
+	UpgradeKeeper        upgradekeeper.Keeper
+	ParamsKeeper         paramskeeper.Keeper
+	FeeGrantKeeper       feegrantkeeper.Keeper
+	AuthzKeeper          authzkeeper.Keeper
+	IBCKeeper            *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
+	IBCFeeKeeper         ibcfeekeeper.Keeper
+	EvidenceKeeper       evidencekeeper.Keeper
+	TransferKeeper       transferkeeper.Keeper
+	AtomicSwapKeeper     atomicswapkeeper.Keeper
+	InterchainSwapKeeper interchainswapkeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
+
+	// atomic swap
+	ScopedAtomicSwapKeeper     capabilitykeeper.ScopedKeeper
+	ScopedInterchainSwapKeeper capabilitykeeper.ScopedKeeper
 
 	// Ethermint keepers
 	EvmKeeper       *evmkeeper.Keeper
@@ -342,12 +376,17 @@ func NewSidechain(
 		feegrant.StoreKey, authzkeeper.StoreKey,
 		// ibc keys
 		ibchost.StoreKey, ibctransfertypes.StoreKey,
+
 		// ethermint keys
 		evmtypes.StoreKey, feemarkettypes.StoreKey,
 		// sidechain keys
 		inflationtypes.StoreKey, erc20types.StoreKey, incentivestypes.StoreKey,
-		epochstypes.StoreKey, claimstypes.StoreKey, vestingtypes.StoreKey,
+		epochstypes.StoreKey, claimstypes.StoreKey, vestingtypes.StoreKey,recoverytypes.StoreKey,
 		revenuetypes.StoreKey,
+
+		//ibcswap
+		ibcatomicswaptypes.StoreKey,
+		ibcinterchainswaptypes.StoreKey,
 	)
 
 	// Add the EVM transient store key
@@ -382,6 +421,9 @@ func NewSidechain(
 	scopedIBCKeeper := app.CapabilityKeeper.ScopeToModule(ibchost.ModuleName)
 	scopedTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
 
+	scopedAtomicSwapKeeper := app.CapabilityKeeper.ScopeToModule(ibcatomicswaptypes.ModuleName)
+	scopedInterchainSwapKeeper := app.CapabilityKeeper.ScopeToModule(ibcinterchainswaptypes.ModuleName)
+
 	// Applications that wish to enforce statically created ScopedKeepers should call `Seal` after creating
 	// their scoped modules in `NewApp` with `ScopeToModule`
 	app.CapabilityKeeper.Seal()
@@ -415,13 +457,20 @@ func NewSidechain(
 
 	// Create Ethermint keepers
 	app.FeeMarketKeeper = feemarketkeeper.NewKeeper(
-		appCodec, app.GetSubspace(feemarkettypes.ModuleName), keys[feemarkettypes.StoreKey], tkeys[feemarkettypes.TransientKey],
+		appCodec,
+		// need to add correct address
+		authtypes.NewModuleAddress(govtypes.ModuleName),
+		keys[feemarkettypes.StoreKey],
+		keys[feemarkettypes.StoreKey],
+		app.GetSubspace(feemarkettypes.ModuleName),
 	)
 
 	app.EvmKeeper = evmkeeper.NewKeeper(
-		appCodec, keys[evmtypes.StoreKey], tkeys[evmtypes.TransientKey], app.GetSubspace(evmtypes.ModuleName),
+		appCodec, keys[evmtypes.StoreKey], tkeys[evmtypes.TransientKey],
+		// same here. need to define fee address and add here.
+		authtypes.NewModuleAddress(govtypes.ModuleName),
 		app.AccountKeeper, app.BankKeeper, &stakingKeeper, app.FeeMarketKeeper,
-		nil, geth.NewEVM, tracer,
+		nil, geth.NewEVM, tracer, app.GetSubspace(evmtypes.ModuleName),
 	)
 
 	// Create IBC Keeper
@@ -451,13 +500,13 @@ func NewSidechain(
 
 	// Sidechain Keeper
 	app.InflationKeeper = inflationkeeper.NewKeeper(
-		keys[inflationtypes.StoreKey], appCodec, app.GetSubspace(inflationtypes.ModuleName),
+		keys[inflationtypes.StoreKey], appCodec, authtypes.NewModuleAddress(govtypes.ModuleName),
 		app.AccountKeeper, app.BankKeeper, app.DistrKeeper, &stakingKeeper,
 		authtypes.FeeCollectorName,
 	)
 
 	app.ClaimsKeeper = claimskeeper.NewKeeper(
-		appCodec, keys[claimstypes.StoreKey], app.GetSubspace(claimstypes.ModuleName),
+		appCodec, keys[claimstypes.StoreKey], authtypes.NewModuleAddress(govtypes.ModuleName),
 		app.AccountKeeper, app.BankKeeper, &stakingKeeper, app.DistrKeeper,
 	)
 
@@ -478,17 +527,17 @@ func NewSidechain(
 	)
 
 	app.Erc20Keeper = erc20keeper.NewKeeper(
-		keys[erc20types.StoreKey], appCodec, app.GetSubspace(erc20types.ModuleName),
+		keys[erc20types.StoreKey], appCodec, authtypes.NewModuleAddress(govtypes.ModuleName),
 		app.AccountKeeper, app.BankKeeper, app.EvmKeeper, app.StakingKeeper, app.ClaimsKeeper,
 	)
 
 	app.IncentivesKeeper = incentiveskeeper.NewKeeper(
-		keys[incentivestypes.StoreKey], appCodec, app.GetSubspace(incentivestypes.ModuleName),
+		keys[incentivestypes.StoreKey], appCodec, authtypes.NewModuleAddress(govtypes.ModuleName),
 		app.AccountKeeper, app.BankKeeper, app.InflationKeeper, app.StakingKeeper, app.EvmKeeper,
 	)
 
 	app.RevenueKeeper = revenuekeeper.NewKeeper(
-		keys[revenuetypes.StoreKey], appCodec, app.GetSubspace(revenuetypes.ModuleName),
+		keys[revenuetypes.StoreKey], appCodec, authtypes.NewModuleAddress(govtypes.ModuleName),
 		app.BankKeeper, app.EvmKeeper,
 		authtypes.FeeCollectorName,
 	)
@@ -517,6 +566,14 @@ func NewSidechain(
 		),
 	)
 
+	// IBC Fee Module keeper
+	app.IBCFeeKeeper = ibcfeekeeper.NewKeeper(
+		appCodec, keys[ibcfeetypes.StoreKey],
+		app.IBCKeeper.ChannelKeeper, // may be replaced with IBC middleware
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper, app.AccountKeeper, app.BankKeeper,
+	)
+
 	app.TransferKeeper = transferkeeper.NewKeeper(
 		appCodec, keys[ibctransfertypes.StoreKey], app.GetSubspace(ibctransfertypes.ModuleName),
 		app.ClaimsKeeper, // ICS4 Wrapper: claims IBC middleware
@@ -525,8 +582,34 @@ func NewSidechain(
 		app.Erc20Keeper, // Add ERC20 Keeper for ERC20 transfers
 	)
 
+	app.AtomicSwapKeeper = atomicswapkeeper.NewKeeper(
+		appCodec,
+		keys[ibcatomicswaptypes.StoreKey],
+		app.GetSubspace(ibcatomicswaptypes.ModuleName),
+		app.IBCFeeKeeper,
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
+		scopedAtomicSwapKeeper,
+	)
+
+	app.InterchainSwapKeeper = *interchainswapkeeper.NewKeeper(
+		appCodec,
+		keys[ibcinterchainswaptypes.StoreKey],
+		app.GetSubspace(ibcinterchainswaptypes.ModuleName),
+		app.IBCFeeKeeper,
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		app.BankKeeper,
+		app.AccountKeeper,
+		scopedInterchainSwapKeeper,
+	)
+
 	app.RecoveryKeeper = recoverykeeper.NewKeeper(
-		app.GetSubspace(recoverytypes.ModuleName),
+		keys[recoverytypes.StoreKey],
+		appCodec,
+		authtypes.NewModuleAddress(govtypes.ModuleName),
 		app.AccountKeeper,
 		app.BankKeeper,
 		app.IBCKeeper.ChannelKeeper,
@@ -567,9 +650,22 @@ func NewSidechain(
 	transferStack = recovery.NewIBCMiddleware(*app.RecoveryKeeper, transferStack)
 	transferStack = erc20.NewIBCMiddleware(app.Erc20Keeper, transferStack)
 
+	// atomic stack
+	var atomicStack porttypes.IBCModule
+	atomicStack = ibcatomicswap.NewIBCModule(app.AtomicSwapKeeper)
+
+	// interchain stack
+	var interchainStack porttypes.IBCModule
+	interchainStack = ibcinterchainswap.NewIBCModule(app.InterchainSwapKeeper)
+
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferStack)
+
+	// Add ibcswap module
+	ibcRouter.AddRoute(ibcatomicswaptypes.ModuleName, atomicStack)
+	ibcRouter.AddRoute(ibcinterchainswaptypes.ModuleName, interchainStack)
+
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	// create evidence keeper with router
@@ -610,18 +706,23 @@ func NewSidechain(
 		// ibc modules
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
+
+		// Swap modules
+		ibcatomicswap.NewAppModule(app.AtomicSwapKeeper),
+		ibcinterchainswap.NewAppModule(app.InterchainSwapKeeper),
+
 		// Ethermint app modules
-		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper),
-		feemarket.NewAppModule(app.FeeMarketKeeper),
+		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper, app.GetSubspace(evmtypes.ModuleName),),
+		feemarket.NewAppModule(app.FeeMarketKeeper,app.GetSubspace(feemarkettypes.ModuleName),),
 		// Sidechain app modules
-		inflation.NewAppModule(app.InflationKeeper, app.AccountKeeper, app.StakingKeeper),
-		erc20.NewAppModule(app.Erc20Keeper, app.AccountKeeper),
-		incentives.NewAppModule(app.IncentivesKeeper, app.AccountKeeper),
+		inflation.NewAppModule(app.InflationKeeper, app.AccountKeeper, app.StakingKeeper,app.GetSubspace(inflationtypes.ModuleName),),
+		erc20.NewAppModule(app.Erc20Keeper, app.AccountKeeper,app.GetSubspace(erc20types.ModuleName),),
+		incentives.NewAppModule(app.IncentivesKeeper, app.AccountKeeper,app.GetSubspace(incentivestypes.ModuleName)),
 		epochs.NewAppModule(appCodec, app.EpochsKeeper),
-		claims.NewAppModule(appCodec, *app.ClaimsKeeper),
+		claims.NewAppModule(appCodec, *app.ClaimsKeeper,app.GetSubspace(claimstypes.ModuleName)),
 		vesting.NewAppModule(app.VestingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
-		recovery.NewAppModule(*app.RecoveryKeeper),
-		revenue.NewAppModule(app.RevenueKeeper, app.AccountKeeper),
+		recovery.NewAppModule(*app.RecoveryKeeper,app.GetSubspace(recoverytypes.ModuleName)),
+		revenue.NewAppModule(app.RevenueKeeper, app.AccountKeeper,app.GetSubspace(revenuetypes.ModuleName)),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -659,6 +760,8 @@ func NewSidechain(
 		incentivestypes.ModuleName,
 		recoverytypes.ModuleName,
 		revenuetypes.ModuleName,
+		ibcatomicswaptypes.ModuleName,
+		ibcinterchainswaptypes.ModuleName,
 	)
 
 	// NOTE: fee market module must go last in order to retrieve the block gas used.
@@ -692,6 +795,8 @@ func NewSidechain(
 		incentivestypes.ModuleName,
 		recoverytypes.ModuleName,
 		revenuetypes.ModuleName,
+		ibcatomicswaptypes.ModuleName,
+		ibcinterchainswaptypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -734,6 +839,8 @@ func NewSidechain(
 		revenuetypes.ModuleName,
 		// NOTE: crisis module must go at the end to check for invariants on each module
 		crisistypes.ModuleName,
+		ibcatomicswaptypes.ModuleName,
+		ibcinterchainswaptypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -784,6 +891,8 @@ func NewSidechain(
 
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedTransferKeeper = scopedTransferKeeper
+	app.ScopedAtomicSwapKeeper = scopedAtomicSwapKeeper
+	app.ScopedInterchainSwapKeeper = scopedInterchainSwapKeeper
 
 	// Finally start the tpsCounter.
 	app.tpsCounter = newTPSCounter(logger)
@@ -1053,5 +1162,9 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(incentivestypes.ModuleName)
 	paramsKeeper.Subspace(recoverytypes.ModuleName)
 	paramsKeeper.Subspace(revenuetypes.ModuleName)
+
+	// ibcswap subspaces
+	paramsKeeper.Subspace(ibcatomicswaptypes.ModuleName)
+	paramsKeeper.Subspace(ibcinterchainswaptypes.ModuleName)
 	return paramsKeeper
 }

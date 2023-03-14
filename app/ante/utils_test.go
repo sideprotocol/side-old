@@ -21,7 +21,7 @@ import (
 	"github.com/evmos/ethermint/encoding"
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
 	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
-	claimstypes "github.com/evmos/evmos/v10/x/claims/types"
+	claimstypes "github.com/evmos/evmos/v11/x/claims/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto/tmhash"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"

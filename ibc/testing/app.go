@@ -17,7 +17,7 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/stretchr/testify/require"
 
-	ibcgotesting "github.com/cosmos/ibc-go/v5/testing"
+	ibcgotesting "github.com/cosmos/ibc-go/v6/testing"
 
 	sidechainapp "sidechain/app"
 
