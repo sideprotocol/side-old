@@ -18,7 +18,7 @@ import (
 	"github.com/evmos/ethermint/server/config"
 	ethermint "github.com/evmos/ethermint/types"
 	evm "github.com/evmos/ethermint/x/evm/types"
-	epochstypes "github.com/evmos/evmos/v10/x/epochs/types"
+	epochstypes "github.com/evmos/evmos/v11/x/epochs/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/tmhash"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"

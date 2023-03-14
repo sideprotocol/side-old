@@ -3,7 +3,7 @@ package keeper_test
 import (
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	epochstypes "github.com/evmos/evmos/v10/x/epochs/types"
+	epochstypes "github.com/evmos/evmos/v11/x/epochs/types"
 	"sidechain/x/devearn/types"
 	"time"
 )
