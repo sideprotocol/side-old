@@ -20,7 +20,7 @@ require (
 	github.com/golang/protobuf v1.5.3
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
-	github.com/ibcswap/ibcswap/v6 v6.0.0-20230312023512-f4e05a70c85a
+	github.com/ibcswap/ibcswap/v6 v6.0.0-20230315183743-679830f081dd
 	github.com/ignite/cli v0.26.0
 	github.com/miguelmota/go-ethereum-hdwallet v0.1.1
 	github.com/onsi/ginkgo/v2 v2.7.0
@@ -199,6 +199,7 @@ require (
 replace (
 	// use cosmos keyring
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
+
 	// ics23 patch for dragonberry
 	github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
 	// use Cosmos-SDK fork to enable Ledger functionality
@@ -207,5 +208,5 @@ replace (
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
 	// use github dev branch code
-	github.com/ibcswap/ibcswap@dev => github.com/ibcswap/ibcswap/v6 v6.0.0-20230312023512-f4e05a70c85a
+	github.com/ibcswap/ibcswap/v6@dev => github.com/ibcswap/ibcswap/v6 v6.0.0-20230312023512-f4e05a70c85a
 )
