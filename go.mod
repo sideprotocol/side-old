@@ -15,7 +15,6 @@ require (
 	github.com/ethereum/go-ethereum v1.10.26
 	github.com/evmos/ethermint v0.21.0
 	github.com/evmos/evmos-ledger-go v0.2.1
-	github.com/evmos/evmos/v10 v10.0.1
 	github.com/evmos/evmos/v11 v11.0.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.3

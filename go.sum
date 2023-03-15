@@ -332,8 +332,6 @@ github.com/evmos/ethermint v0.21.0 h1:NnK59k+7rwq8nIaRrtC6YoJrPOhElPirxSElzgIcLA
 github.com/evmos/ethermint v0.21.0/go.mod h1:KJwIgGVkT8l/rREHvBV7c1/DhyoHzeAiJKvwrlK3IDI=
 github.com/evmos/evmos-ledger-go v0.2.1 h1:bUXA6/frc7FvN+z6GTaOcnprFCshUGh7Hd1mFmRe39s=
 github.com/evmos/evmos-ledger-go v0.2.1/go.mod h1:7Go/1+QmM0xw5VYK3nOUfluNFL4iy5BWxDwh1x3bUFs=
-github.com/evmos/evmos/v10 v10.0.1 h1:wxtsfcH0dJ5q8U/LmLj5oo8w1MCZEdNrTvRzqXIXLEI=
-github.com/evmos/evmos/v10 v10.0.1/go.mod h1:B+AASfZSAq366dVI3DLkyp1gPaHE0pr6yWBaGiQI/9Y=
 github.com/evmos/evmos/v11 v11.0.0 h1:gFlnczcfplfRToA+M3vU1i/1GJgsIQAasBY1qhuSZOc=
 github.com/evmos/evmos/v11 v11.0.0/go.mod h1:vmf5Y1qwpbLtsgYz28kxDOrN1U7H03ZPzgz9nvMrcqE=
 github.com/facebookgo/ensure v0.0.0-20200202191622-63f1cf65ac4c h1:8ISkoahWXwZR41ois5lSJBSVw4D0OV19Ht/JSTzvSv0=
