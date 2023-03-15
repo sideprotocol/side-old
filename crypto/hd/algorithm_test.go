@@ -15,9 +15,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 
+	ethaccounts "github.com/ethereum/go-ethereum/accounts"
 	cryptocodec "sidechain/crypto/codec"
-	enccodec "sidechain/encoding/codec"
-	evmostypes "sidechain/types"
 )
 
 var TestCodec amino.Codec
@@ -28,7 +27,7 @@ func init() {
 
 	interfaceRegistry := types.NewInterfaceRegistry()
 	TestCodec = amino.NewProtoCodec(interfaceRegistry)
-	enccodec.RegisterInterfaces(interfaceRegistry)
+	cryptocodec.RegisterInterfaces(interfaceRegistry)
 }
 
 const (
@@ -52,7 +51,7 @@ func TestKeyring(t *testing.T) {
 	require.Nil(t, info)
 
 	mockIn.Reset("password\npassword\n")
-	info, mnemonic, err := kr.NewMnemonic("foo", keyring.English, evmostypes.BIP44HDPath, keyring.DefaultBIP39Passphrase, EthSecp256k1)
+	info, mnemonic, err := kr.NewMnemonic("foo", keyring.English, ethaccounts.DefaultBaseDerivationPath.String(), keyring.DefaultBIP39Passphrase, EthSecp256k1)
 	require.NoError(t, err)
 	require.NotEmpty(t, mnemonic)
 	require.Equal(t, "foo", info.Name)
@@ -61,7 +60,7 @@ func TestKeyring(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, string(EthSecp256k1Type), pubKey.Type())
 
-	hdPath := evmostypes.BIP44HDPath
+	hdPath := ethaccounts.DefaultBaseDerivationPath.String()
 
 	bz, err := EthSecp256k1.Derive()(mnemonic, keyring.DefaultBIP39Passphrase, hdPath)
 	require.NoError(t, err)
@@ -87,7 +86,7 @@ func TestKeyring(t *testing.T) {
 }
 
 func TestDerivation(t *testing.T) {
-	bz, err := EthSecp256k1.Derive()(mnemonic, keyring.DefaultBIP39Passphrase, evmostypes.BIP44HDPath)
+	bz, err := EthSecp256k1.Derive()(mnemonic, keyring.DefaultBIP39Passphrase, ethaccounts.DefaultBaseDerivationPath.String())
 	require.NoError(t, err)
 	require.NotEmpty(t, bz)
 
@@ -105,7 +104,7 @@ func TestDerivation(t *testing.T) {
 	wallet, err := hdwallet.NewFromMnemonic(mnemonic)
 	require.NoError(t, err)
 
-	path := hdwallet.MustParseDerivationPath(evmostypes.BIP44HDPath)
+	path := hdwallet.MustParseDerivationPath(ethaccounts.DefaultBaseDerivationPath.String())
 	account, err := wallet.Derive(path, false)
 	require.NoError(t, err)
 
