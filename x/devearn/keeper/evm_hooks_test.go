@@ -8,7 +8,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	ethermint "github.com/evmos/ethermint/types"
 	evm "github.com/evmos/ethermint/x/evm/types"
-	vestingtypes "github.com/evmos/evmos/v10/x/vesting/types"
+	vestingtypes "github.com/evmos/evmos/v11/x/vesting/types"
 	"math/big"
 	"sidechain/testutil"
 	utiltx "sidechain/testutil/tx"
