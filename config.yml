@@ -11,6 +11,7 @@ accounts:
   coins:
   - 990000000000000000000000aside
 - name: bob
+  mnemonic: actress letter whip youth flip sort announce chief traffic side destroy seek parade warrior awake scan panther nominee harsh spawn differ enroll glue become
   coins:
   - 10000000000000000000000aside
 faucet:
