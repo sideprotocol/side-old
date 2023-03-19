@@ -20,7 +20,7 @@ require (
 	github.com/golang/protobuf v1.5.3
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
-	github.com/ibcswap/ibcswap/v6 v6.0.0-20230318104105-7106ad7bbc51
+	github.com/ibcswap/ibcswap/v6 v6.0.0-20230319040847-32fc02befbab
 	github.com/ignite/cli v0.26.0
 	github.com/miguelmota/go-ethereum-hdwallet v0.1.1
 	github.com/onsi/ginkgo/v2 v2.7.0
@@ -208,5 +208,5 @@ replace (
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
 	// use github dev branch code
-	github.com/ibcswap/ibcswap/v6@dev => github.com/ibcswap/ibcswap/v6 v6.0.0-20230318104105-7106ad7bbc51
+	github.com/ibcswap/ibcswap/v6@dev => github.com/ibcswap/ibcswap/v6 v6.0.0-20230319040847-32fc02befbab
 )
