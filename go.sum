@@ -607,6 +607,8 @@ github.com/ibcswap/ibcswap/v6 v6.0.0-20230319040847-32fc02befbab h1:dEB3yqt5804I
 github.com/ibcswap/ibcswap/v6 v6.0.0-20230319040847-32fc02befbab/go.mod h1:fZmCtFaEIrCJD8x2LM8ErIh9wL/LWmzBBM9PUkMZtr8=
 github.com/ibcswap/ibcswap/v6 v6.0.0-20230319061813-6bab80d65781 h1:vZefecRrZ+b0wmf2G2c9M2PK9Wys3VbxaTno4jy0Jrs=
 github.com/ibcswap/ibcswap/v6 v6.0.0-20230319061813-6bab80d65781/go.mod h1:fZmCtFaEIrCJD8x2LM8ErIh9wL/LWmzBBM9PUkMZtr8=
+github.com/ibcswap/ibcswap/v6 v6.0.0-20230319132705-468c2a23cf07 h1:XFWNwHq6iTI7ByecriylKsu6/OeQFCYIef8Urw2f+r4=
+github.com/ibcswap/ibcswap/v6 v6.0.0-20230319132705-468c2a23cf07/go.mod h1:fZmCtFaEIrCJD8x2LM8ErIh9wL/LWmzBBM9PUkMZtr8=
 github.com/ignite/cli v0.26.0 h1:ZXWOxaQWvqeK5XEmdcRbf9j/HYtUF4xIEmpyDttwKdY=
 github.com/ignite/cli v0.26.0/go.mod h1:0BQcJCseK0O5RG8HYP/lvVTFbZQjkw+AY8B+wDklj38=
 github.com/improbable-eng/grpc-web v0.15.0 h1:BN+7z6uNXZ1tQGcNAuaU1YjsLTApzkjt2tzCixLaUPQ=
