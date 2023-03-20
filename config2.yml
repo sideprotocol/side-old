@@ -14,6 +14,10 @@ accounts:
   mnemonic: actress letter whip youth flip sort announce chief traffic side destroy seek parade warrior awake scan panther nominee harsh spawn differ enroll glue become
   coins:
   - 10000000000000000000000bside
+- name: david
+  mnemonic: model talent wild salmon planet sure hill extra select curve royal super split swing liberty february country sibling label donkey pink butter picnic body
+  coins:
+    - 1000000000000000000bside
 faucet:
   name: bob
   coins:
