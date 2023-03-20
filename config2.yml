@@ -38,7 +38,7 @@ genesis:
     staking:
       params:
         bond_denom: bside
-  chain_id: sidechain_7070-1
+  chain_id: sidechain_7070-2
   consensus_params:
     block:
       max_gas: "100000000"
