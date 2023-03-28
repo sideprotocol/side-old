@@ -133,42 +133,25 @@ import (
 
 	"sidechain/app/ante"
 
-	"github.com/evmos/evmos/v11/x/claims"
-	claimskeeper "github.com/evmos/evmos/v11/x/claims/keeper"
-	claimstypes "github.com/evmos/evmos/v11/x/claims/types"
-	"github.com/evmos/evmos/v11/x/epochs"
-	epochskeeper "github.com/evmos/evmos/v11/x/epochs/keeper"
-	epochstypes "github.com/evmos/evmos/v11/x/epochs/types"
+	"sidechain/x/mint"
+	mintkeeper "sidechain/x/mint/keeper"
+	minttypes "sidechain/x/mint/types"
+
 	"github.com/evmos/evmos/v11/x/erc20"
 	erc20client "github.com/evmos/evmos/v11/x/erc20/client"
 	erc20keeper "github.com/evmos/evmos/v11/x/erc20/keeper"
 	erc20types "github.com/evmos/evmos/v11/x/erc20/types"
-	"github.com/evmos/evmos/v11/x/incentives"
-	incentivesclient "github.com/evmos/evmos/v11/x/incentives/client"
-	incentiveskeeper "github.com/evmos/evmos/v11/x/incentives/keeper"
-	incentivestypes "github.com/evmos/evmos/v11/x/incentives/types"
-	"github.com/evmos/evmos/v11/x/inflation"
-	inflationkeeper "github.com/evmos/evmos/v11/x/inflation/keeper"
-	inflationtypes "github.com/evmos/evmos/v11/x/inflation/types"
-	"github.com/evmos/evmos/v11/x/recovery"
-	recoverykeeper "github.com/evmos/evmos/v11/x/recovery/keeper"
-	recoverytypes "github.com/evmos/evmos/v11/x/recovery/types"
-	"github.com/evmos/evmos/v11/x/revenue"
-	revenuekeeper "github.com/evmos/evmos/v11/x/revenue/keeper"
-	revenuetypes "github.com/evmos/evmos/v11/x/revenue/types"
-	"github.com/evmos/evmos/v11/x/vesting"
-	vestingkeeper "github.com/evmos/evmos/v11/x/vesting/keeper"
-	vestingtypes "github.com/evmos/evmos/v11/x/vesting/types"
 
 	// NOTE: override ICS20 keeper to support IBC transfers of ERC20 tokens
-	"github.com/evmos/evmos/v11/x/ibc/transfer"
-	transferkeeper "github.com/evmos/evmos/v11/x/ibc/transfer/keeper"
-	"github.com/ignite/cli/docs"
-	"github.com/ignite/cli/ignite/pkg/openapiconsole"
 	devearnmodule "sidechain/x/devearn"
 	devearnclient "sidechain/x/devearn/client"
 	devearnmodulekeeper "sidechain/x/devearn/keeper"
 	devearnmoduletypes "sidechain/x/devearn/types"
+
+	"github.com/evmos/evmos/v11/x/ibc/transfer"
+	transferkeeper "github.com/evmos/evmos/v11/x/ibc/transfer/keeper"
+	"github.com/ignite/cli/docs"
+	"github.com/ignite/cli/ignite/pkg/openapiconsole"
 )
 
 func init() {
@@ -211,7 +194,6 @@ var (
 				ibcclientclient.UpdateClientProposalHandler, ibcclientclient.UpgradeProposalHandler,
 				// Sidechain proposal types
 				erc20client.RegisterCoinProposalHandler, erc20client.RegisterERC20ProposalHandler, erc20client.ToggleTokenConversionProposalHandler,
-				incentivesclient.RegisterIncentiveProposalHandler, incentivesclient.CancelIncentiveProposalHandler,
 				devearnclient.RegisterDevEarnProposalHandler, devearnclient.CancelDevEarnProposalHandler,
 			},
 		),
@@ -225,17 +207,11 @@ var (
 		evidence.AppModuleBasic{},
 		transfer.AppModuleBasic{AppModuleBasic: &ibctransfer.AppModuleBasic{}},
 
-		vesting.AppModuleBasic{},
 		evm.AppModuleBasic{},
 		feemarket.AppModuleBasic{},
-		inflation.AppModuleBasic{},
+		mint.AppModuleBasic{},
 		erc20.AppModuleBasic{},
 		devearnmodule.AppModuleBasic{},
-		incentives.AppModuleBasic{},
-		epochs.AppModuleBasic{},
-		claims.AppModuleBasic{},
-		recovery.AppModuleBasic{},
-		revenue.AppModuleBasic{},
 		ibcfee.AppModuleBasic{},
 
 		ibcatomicswap.AppModuleBasic{},
@@ -254,17 +230,14 @@ var (
 		ibcinterchainswaptypes.ModuleName: {authtypes.Minter, authtypes.Burner},
 
 		evmtypes.ModuleName:           {authtypes.Minter, authtypes.Burner}, // used for secure addition and subtraction of balance using module account
-		inflationtypes.ModuleName:     {authtypes.Minter},
+		minttypes.ModuleName:          {authtypes.Minter},
 		erc20types.ModuleName:         {authtypes.Minter, authtypes.Burner},
-		claimstypes.ModuleName:        nil,
-		incentivestypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		ibcfeetypes.ModuleName:        nil,
 		devearnmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 	}
 
 	// module accounts that are allowed to receive tokens
 	allowedReceivingModAcc = map[string]bool{
-		incentivestypes.ModuleName:    true,
 		devearnmoduletypes.ModuleName: true,
 	}
 )
@@ -326,14 +299,8 @@ type Sidechain struct {
 	FeeMarketKeeper feemarketkeeper.Keeper
 
 	// Sidechain keepers
-	InflationKeeper  inflationkeeper.Keeper
-	ClaimsKeeper     *claimskeeper.Keeper
-	Erc20Keeper      erc20keeper.Keeper
-	IncentivesKeeper incentiveskeeper.Keeper
-	EpochsKeeper     epochskeeper.Keeper
-	VestingKeeper    vestingkeeper.Keeper
-	RecoveryKeeper   *recoverykeeper.Keeper
-	RevenueKeeper    revenuekeeper.Keeper
+	MintKeeper  mintkeeper.Keeper
+	Erc20Keeper erc20keeper.Keeper
 
 	// the module manager
 	mm *module.Manager
@@ -387,11 +354,9 @@ func NewSidechain(
 		devearnmoduletypes.StoreKey,
 		// ethermint keys
 		// this line is used by starport scaffolding # stargate/app/storeKey
-		evmtypes.StoreKey, feemarkettypes.StoreKey,
+		minttypes.StoreKey, evmtypes.StoreKey, feemarkettypes.StoreKey,
 		// sidechain keys
-		inflationtypes.StoreKey, erc20types.StoreKey, incentivestypes.StoreKey,
-		epochstypes.StoreKey, claimstypes.StoreKey, vestingtypes.StoreKey, recoverytypes.StoreKey,
-		revenuetypes.StoreKey,
+		erc20types.StoreKey,
 
 		//ibcswap
 		ibcatomicswaptypes.StoreKey,
@@ -495,7 +460,6 @@ func NewSidechain(
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper)).
 		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper)).
 		AddRoute(erc20types.RouterKey, erc20.NewErc20ProposalHandler(&app.Erc20Keeper)).
-		AddRoute(incentivestypes.RouterKey, incentives.NewIncentivesProposalHandler(&app.IncentivesKeeper)).
 		AddRoute(devearnmoduletypes.RouterKey, devearnmodule.NewDevEarnProposalHanodler(&app.DevearnKeeper))
 
 	govConfig := govtypes.DefaultConfig()
@@ -509,15 +473,10 @@ func NewSidechain(
 	)
 
 	// Sidechain Keeper
-	app.InflationKeeper = inflationkeeper.NewKeeper(
-		keys[inflationtypes.StoreKey], appCodec, authtypes.NewModuleAddress(govtypes.ModuleName),
-		app.AccountKeeper, app.BankKeeper, app.DistrKeeper, &stakingKeeper,
-		authtypes.FeeCollectorName,
-	)
 
-	app.ClaimsKeeper = claimskeeper.NewKeeper(
-		appCodec, keys[claimstypes.StoreKey], authtypes.NewModuleAddress(govtypes.ModuleName),
-		app.AccountKeeper, app.BankKeeper, &stakingKeeper, app.DistrKeeper,
+	app.MintKeeper = mintkeeper.NewKeeper(
+		appCodec, keys[minttypes.StoreKey], app.GetSubspace(minttypes.ModuleName), &stakingKeeper,
+		app.AccountKeeper, app.BankKeeper, authtypes.FeeCollectorName,
 	)
 
 	// register the staking hooks
@@ -527,30 +486,14 @@ func NewSidechain(
 		stakingtypes.NewMultiStakingHooks(
 			app.DistrKeeper.Hooks(),
 			app.SlashingKeeper.Hooks(),
-			app.ClaimsKeeper.Hooks(),
 		),
-	)
-
-	app.VestingKeeper = vestingkeeper.NewKeeper(
-		keys[vestingtypes.StoreKey], appCodec,
-		app.AccountKeeper, app.BankKeeper, app.StakingKeeper,
 	)
 
 	app.Erc20Keeper = erc20keeper.NewKeeper(
 		keys[erc20types.StoreKey], appCodec, authtypes.NewModuleAddress(govtypes.ModuleName),
-		app.AccountKeeper, app.BankKeeper, app.EvmKeeper, app.StakingKeeper, app.ClaimsKeeper,
+		app.AccountKeeper, app.BankKeeper, app.EvmKeeper, app.StakingKeeper, nil,
 	)
 
-	app.IncentivesKeeper = incentiveskeeper.NewKeeper(
-		keys[incentivestypes.StoreKey], appCodec, authtypes.NewModuleAddress(govtypes.ModuleName),
-		app.AccountKeeper, app.BankKeeper, app.InflationKeeper, app.StakingKeeper, app.EvmKeeper,
-	)
-
-	app.RevenueKeeper = revenuekeeper.NewKeeper(
-		keys[revenuetypes.StoreKey], appCodec, authtypes.NewModuleAddress(govtypes.ModuleName),
-		app.BankKeeper, app.EvmKeeper,
-		authtypes.FeeCollectorName,
-	)
 	app.DevearnKeeper = *devearnmodulekeeper.NewKeeper(
 		appCodec,
 		keys[devearnmoduletypes.StoreKey],
@@ -563,28 +506,13 @@ func NewSidechain(
 	)
 	devearnModule := devearnmodule.NewAppModule(appCodec, app.DevearnKeeper, app.AccountKeeper, app.BankKeeper, app.EvmKeeper)
 
-	epochsKeeper := epochskeeper.NewKeeper(appCodec, keys[epochstypes.StoreKey])
-	app.EpochsKeeper = *epochsKeeper.SetHooks(
-		epochskeeper.NewMultiEpochHooks(
-			// insert epoch hooks receivers here
-			app.IncentivesKeeper.Hooks(),
-			app.InflationKeeper.Hooks(),
-			app.DevearnKeeper.Hooks(),
-		),
-	)
-
 	app.GovKeeper = *govKeeper.SetHooks(
-		govtypes.NewMultiGovHooks(
-			app.ClaimsKeeper.Hooks(),
-		),
+		govtypes.NewMultiGovHooks(),
 	)
 
 	app.EvmKeeper = app.EvmKeeper.SetHooks(
 		evmkeeper.NewMultiEvmHooks(
 			app.Erc20Keeper.Hooks(),
-			app.IncentivesKeeper.Hooks(),
-			app.RevenueKeeper.Hooks(),
-			app.ClaimsKeeper.Hooks(),
 			app.DevearnKeeper.Hooks(),
 		),
 	)
@@ -599,7 +527,7 @@ func NewSidechain(
 
 	app.TransferKeeper = transferkeeper.NewKeeper(
 		appCodec, keys[ibctransfertypes.StoreKey], app.GetSubspace(ibctransfertypes.ModuleName),
-		app.ClaimsKeeper, // ICS4 Wrapper: claims IBC middleware
+		app.IBCKeeper.ChannelKeeper, // ICS4 Wrapper: claims IBC middleware
 		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
 		app.AccountKeeper, app.BankKeeper, scopedTransferKeeper,
 		app.Erc20Keeper, // Add ERC20 Keeper for ERC20 transfers
@@ -629,22 +557,7 @@ func NewSidechain(
 		scopedInterchainSwapKeeper,
 	)
 
-	app.RecoveryKeeper = recoverykeeper.NewKeeper(
-		keys[recoverytypes.StoreKey],
-		appCodec,
-		authtypes.NewModuleAddress(govtypes.ModuleName),
-		app.AccountKeeper,
-		app.BankKeeper,
-		app.IBCKeeper.ChannelKeeper,
-		app.TransferKeeper,
-		app.ClaimsKeeper,
-	)
-
 	// NOTE: app.Erc20Keeper is already initialized elsewhere
-
-	// Set the ICS4 wrappers for custom module middlewares
-	app.RecoveryKeeper.SetICS4Wrapper(app.IBCKeeper.ChannelKeeper)
-	app.ClaimsKeeper.SetICS4Wrapper(app.RecoveryKeeper)
 
 	// Override the ICS20 app module
 	transferModule := transfer.NewAppModule(app.TransferKeeper)
@@ -669,8 +582,6 @@ func NewSidechain(
 	var transferStack porttypes.IBCModule
 
 	transferStack = transfer.NewIBCModule(app.TransferKeeper)
-	transferStack = claims.NewIBCMiddleware(*app.ClaimsKeeper, transferStack)
-	transferStack = recovery.NewIBCMiddleware(*app.RecoveryKeeper, transferStack)
 	transferStack = erc20.NewIBCMiddleware(app.Erc20Keeper, transferStack)
 
 	// atomic stack
@@ -739,14 +650,8 @@ func NewSidechain(
 		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper, app.GetSubspace(evmtypes.ModuleName)),
 		feemarket.NewAppModule(app.FeeMarketKeeper, app.GetSubspace(feemarkettypes.ModuleName)),
 		// Sidechain app modules
-		inflation.NewAppModule(app.InflationKeeper, app.AccountKeeper, app.StakingKeeper, app.GetSubspace(inflationtypes.ModuleName)),
+		mint.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper, nil),
 		erc20.NewAppModule(app.Erc20Keeper, app.AccountKeeper, app.GetSubspace(erc20types.ModuleName)),
-		incentives.NewAppModule(app.IncentivesKeeper, app.AccountKeeper, app.GetSubspace(incentivestypes.ModuleName)),
-		epochs.NewAppModule(appCodec, app.EpochsKeeper),
-		claims.NewAppModule(appCodec, *app.ClaimsKeeper, app.GetSubspace(claimstypes.ModuleName)),
-		vesting.NewAppModule(app.VestingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
-		recovery.NewAppModule(*app.RecoveryKeeper, app.GetSubspace(recoverytypes.ModuleName)),
-		revenue.NewAppModule(app.RevenueKeeper, app.AccountKeeper, app.GetSubspace(revenuetypes.ModuleName)),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -759,7 +664,6 @@ func NewSidechain(
 		upgradetypes.ModuleName,
 		capabilitytypes.ModuleName,
 		// Note: epochs' begin should be "real" start of epochs, we keep epochs beginblock at the beginning
-		epochstypes.ModuleName,
 		feemarkettypes.ModuleName,
 		evmtypes.ModuleName,
 		distrtypes.ModuleName,
@@ -777,15 +681,10 @@ func NewSidechain(
 		authz.ModuleName,
 		feegrant.ModuleName,
 		paramstypes.ModuleName,
-		vestingtypes.ModuleName,
-		inflationtypes.ModuleName,
+		minttypes.ModuleName,
 		erc20types.ModuleName,
 		devearnmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
-		claimstypes.ModuleName,
-		incentivestypes.ModuleName,
-		recoverytypes.ModuleName,
-		revenuetypes.ModuleName,
 		ibcatomicswaptypes.ModuleName,
 		ibcinterchainswaptypes.ModuleName,
 	)
@@ -798,8 +697,6 @@ func NewSidechain(
 		evmtypes.ModuleName,
 		feemarkettypes.ModuleName,
 		// Note: epochs' endblock should be "real" end of epochs, we keep epochs endblock at the end
-		epochstypes.ModuleName,
-		claimstypes.ModuleName,
 		// no-op modules
 		ibchost.ModuleName,
 		ibctransfertypes.ModuleName,
@@ -815,14 +712,10 @@ func NewSidechain(
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		// Sidechain modules
-		vestingtypes.ModuleName,
-		inflationtypes.ModuleName,
+		minttypes.ModuleName,
 		erc20types.ModuleName,
 		devearnmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
-		incentivestypes.ModuleName,
-		recoverytypes.ModuleName,
-		revenuetypes.ModuleName,
 		ibcatomicswaptypes.ModuleName,
 		ibcinterchainswaptypes.ModuleName,
 	)
@@ -839,10 +732,10 @@ func NewSidechain(
 		banktypes.ModuleName,
 		distrtypes.ModuleName,
 		// NOTE: staking requires the claiming hook
-		claimstypes.ModuleName,
 		stakingtypes.ModuleName,
 		slashingtypes.ModuleName,
 		govtypes.ModuleName,
+		minttypes.ModuleName,
 		ibchost.ModuleName,
 		// Ethermint modules
 		// evm module denomination is used by the revenue module, in AnteHandle
@@ -858,15 +751,9 @@ func NewSidechain(
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		// Sidechain modules
-		vestingtypes.ModuleName,
-		inflationtypes.ModuleName,
 		erc20types.ModuleName,
 		devearnmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
-		incentivestypes.ModuleName,
-		epochstypes.ModuleName,
-		recoverytypes.ModuleName,
-		revenuetypes.ModuleName,
 		// NOTE: crisis module must go at the end to check for invariants on each module
 		crisistypes.ModuleName,
 		ibcatomicswaptypes.ModuleName,
@@ -1175,6 +1062,7 @@ func initParamsKeeper(
 	// SDK subspaces
 	paramsKeeper.Subspace(authtypes.ModuleName)
 	paramsKeeper.Subspace(banktypes.ModuleName)
+	paramsKeeper.Subspace(minttypes.ModuleName)
 	paramsKeeper.Subspace(stakingtypes.ModuleName)
 	paramsKeeper.Subspace(distrtypes.ModuleName)
 	paramsKeeper.Subspace(slashingtypes.ModuleName)
@@ -1188,12 +1076,7 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(evmtypes.ModuleName)
 	paramsKeeper.Subspace(feemarkettypes.ModuleName)
 	// sidechain subspaces
-	paramsKeeper.Subspace(inflationtypes.ModuleName)
 	paramsKeeper.Subspace(erc20types.ModuleName)
-	paramsKeeper.Subspace(claimstypes.ModuleName)
-	paramsKeeper.Subspace(incentivestypes.ModuleName)
-	paramsKeeper.Subspace(recoverytypes.ModuleName)
-	paramsKeeper.Subspace(revenuetypes.ModuleName)
 
 	// ibcswap subspaces
 	paramsKeeper.Subspace(ibcatomicswaptypes.ModuleName)

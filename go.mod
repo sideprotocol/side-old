@@ -20,7 +20,7 @@ require (
 	github.com/golang/protobuf v1.5.3
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
-	github.com/ibcswap/ibcswap/v6 v6.0.0-20230312023512-f4e05a70c85a
+	github.com/ibcswap/ibcswap/v6 v6.0.0-20230315183743-679830f081dd
 	github.com/ignite/cli v0.26.0
 	github.com/miguelmota/go-ethereum-hdwallet v0.1.1
 	github.com/onsi/ginkgo/v2 v2.7.0
@@ -38,6 +38,7 @@ require (
 	google.golang.org/grpc v1.53.0
 	google.golang.org/protobuf v1.28.2-0.20220831092852-f930b1dc76e8
 	gopkg.in/yaml.v2 v2.4.0
+	sigs.k8s.io/yaml v1.3.0
 )
 
 require (
@@ -193,7 +194,6 @@ require (
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	nhooyr.io/websocket v1.8.7 // indirect
-	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
 replace (
