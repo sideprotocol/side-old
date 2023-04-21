@@ -555,6 +555,7 @@ func NewSidechain(
 		app.BankKeeper,
 		app.AccountKeeper,
 		scopedInterchainSwapKeeper,
+		app.MsgServiceRouter(),
 	)
 
 	// NOTE: app.Erc20Keeper is already initialized elsewhere
