@@ -21,3 +21,10 @@ fi
 # Update the fields
 $SEDCMD -i 's/^\(  title: \).*$/\1Sidechain Chain - gRPC Gateway docs/' ./client/docs/swagger-ui/swagger.yaml
 $SEDCMD -i 's/^\(  description: \).*$/\1A REST interface for state queries and transactions/' ./client/docs/swagger-ui/swagger.yaml
+
+# Remove the existing version field
+$SEDCMD -i '/^  version: /d' ./client/docs/swagger-ui/swagger.yaml
+
+# Add the version field after the description field
+$SEDCMD -i '/^\(  description: \).*$/a\
+  version: 1.0.0' ./client/docs/swagger-ui/swagger.yaml

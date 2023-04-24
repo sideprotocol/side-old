@@ -3,6 +3,7 @@ info:
   title: Sidechain Chain - gRPC Gateway docs
   name: ''
   description: A REST interface for state queries and transactions
+  version: 1.0.0
 paths:
   /cosmos/auth/v1beta1/accounts:
     get:
