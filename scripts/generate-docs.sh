@@ -9,17 +9,15 @@ ignite generate openapi -y
 awk '
   /^openapi:/ { print "swagger: '\''2.0'\''"; next }
   1
-' ./docs/static/openapi.yml > ./client/docs/swagger-ui/swagger.yml
+' ./docs/static/openapi.yml > ./client/docs/swagger-ui/swagger.yaml
+
+# Determine the platform and set the appropriate sed command
+if [[ "$(uname)" == "Darwin" ]]; then
+    SEDCMD="gsed"
+else
+    SEDCMD="sed"
+fi
 
 # Update the fields
-gsed -i 's/^\(  title: \).*$/\1Sidechain Chain - gRPC Gateway docs/' ./client/docs/swagger-ui/swagger.yml
-gsed -i 's/^\(  description: \).*$/\1A REST interface for state queries and transactions/' ./client/docs/swagger-ui/swagger.yml
-
-# Check if version field exists
-if ! grep -q "^  version:" ./client/docs/swagger-ui/swagger.yml; then
-    gsed -i '/^info:/ a\
-\  version: 1.0.0
-' ./client/docs/swagger-ui/swagger.yml
-else
-    gsed -i 's/^\(  version: \).*$/\11.0.0/' ./client/docs/swagger-ui/swagger.yml
-fi
+$SEDCMD -i 's/^\(  title: \).*$/\1Sidechain Chain - gRPC Gateway docs/' ./client/docs/swagger-ui/swagger.yaml
+$SEDCMD -i 's/^\(  description: \).*$/\1A REST interface for state queries and transactions/' ./client/docs/swagger-ui/swagger.yaml
