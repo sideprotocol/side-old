@@ -11,7 +11,6 @@ import (
 	"sort"
 
 	"github.com/gorilla/mux"
-	"github.com/rakyll/statik/fs"
 	"github.com/spf13/cast"
 
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -129,7 +128,7 @@ import (
 	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
 
 	// unnamed import of statik for swagger UI support
-	_ "sidechain/client/docs/statik"
+	//_ "sidechain/client/docs/statik"
 
 	"sidechain/app/ante"
 
@@ -974,6 +973,7 @@ func (app *Sidechain) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.API
 	apiSvr.Router.Handle("/static/openapi.yml", http.FileServer(http.FS(docs.Docs)))
 	apiSvr.Router.HandleFunc("/openapi", openapiconsole.Handler(Name, "/static/openapi.yml"))
 
+
 	// register swagger API from root so that other applications can override easily
 	// if apiConfig.Swagger {
 	RegisterSwaggerAPI(clientCtx, apiSvr.Router)
@@ -1035,13 +1035,9 @@ func (app *Sidechain) GetTxConfig() client.TxConfig {
 
 // RegisterSwaggerAPI registers swagger route with API Server
 func RegisterSwaggerAPI(_ client.Context, rtr *mux.Router) {
-	statikFS, err := fs.New()
-	if err != nil {
-		panic(err)
-	}
+	// Register Swagger UI
+	rtr.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger", http.FileServer(http.Dir("./client/docs/swagger-ui/"))))
 
-	staticServer := http.FileServer(statikFS)
-	rtr.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", staticServer))
 }
 
 // GetMaccPerms returns a copy of the module account permissions

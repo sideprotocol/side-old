@@ -21,7 +21,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/ibcswap/ibcswap/v6 v6.0.0-20230421121336-c2c79d16e6ee
-	github.com/ignite/cli v0.26.0
+	github.com/ignite/cli v0.26.1
 	github.com/miguelmota/go-ethereum-hdwallet v0.1.1
 	github.com/onsi/ginkgo/v2 v2.7.0
 	github.com/onsi/gomega v1.24.2
