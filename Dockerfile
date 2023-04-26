@@ -18,6 +18,13 @@ WORKDIR /root
 
 COPY --from=build-env /go/src/github.com/sideprotocol/sidchain/build/sidechaind /usr/bin/sidechaind
 
+# Copy the setup_node_ubuntu.sh script to the container
+COPY --from=build-env /go/src/github.com/sideprotocol/sidchain/scripts/setup_node_container.sh /root/setup_node_container.sh
+
+# Copy the entrypoint.sh script to the container
+COPY --from=build-env /go/src/github.com/sideprotocol/sidchain/scripts/entrypoint.sh /root/entrypoint.sh
+RUN  chmod +x /root/setup_node_container.sh /root/entrypoint.sh
+
 EXPOSE 26656 26657 1317 9090 8545 8546
 
-CMD ["sidechaind"]
+ENTRYPOINT ["/root/entrypoint.sh"]
