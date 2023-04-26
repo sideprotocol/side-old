@@ -605,6 +605,8 @@ github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:
 github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/ibcswap/ibcswap/v6 v6.0.0-20230421121336-c2c79d16e6ee h1:dSK156/w8YsCPXkhSimPwHHngOgukPckm/3QL5Id/ac=
 github.com/ibcswap/ibcswap/v6 v6.0.0-20230421121336-c2c79d16e6ee/go.mod h1:7/d9VL0fE5wPrZ75x9MRsavH56/3mwRqYrTqjIpmLEo=
+github.com/ibcswap/ibcswap/v6 v6.0.0-20230426192839-3046394b2719 h1:b76Uhdwd9n00gQLV/Gf8kIKAN7Kn+uvSe1NyphYTD+c=
+github.com/ibcswap/ibcswap/v6 v6.0.0-20230426192839-3046394b2719/go.mod h1:7/d9VL0fE5wPrZ75x9MRsavH56/3mwRqYrTqjIpmLEo=
 github.com/ignite/cli v0.26.1 h1:T4qMjM9H38JOBsgCruilGcsfrlDGHO2K1V88gIe0ubs=
 github.com/ignite/cli v0.26.1/go.mod h1:0BQcJCseK0O5RG8HYP/lvVTFbZQjkw+AY8B+wDklj38=
 github.com/improbable-eng/grpc-web v0.15.0 h1:BN+7z6uNXZ1tQGcNAuaU1YjsLTApzkjt2tzCixLaUPQ=
