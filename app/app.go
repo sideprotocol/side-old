@@ -459,6 +459,7 @@ func NewSidechain(
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper)).
 		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper)).
 		AddRoute(erc20types.RouterKey, erc20.NewErc20ProposalHandler(&app.Erc20Keeper)).
+		AddRoute(ibcinterchainswaptypes.RouterKey, ibcinterchainswap.NewMarketFeeUpdateProposalHandler(app.InterchainSwapKeeper)).
 		AddRoute(devearnmoduletypes.RouterKey, devearnmodule.NewDevEarnProposalHanodler(&app.DevearnKeeper))
 
 	govConfig := govtypes.DefaultConfig()
@@ -972,7 +973,6 @@ func (app *Sidechain) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.API
 	// register app's OpenAPI routes.
 	apiSvr.Router.Handle("/static/openapi.yml", http.FileServer(http.FS(docs.Docs)))
 	apiSvr.Router.HandleFunc("/openapi", openapiconsole.Handler(Name, "/static/openapi.yml"))
-
 
 	// register swagger API from root so that other applications can override easily
 	// if apiConfig.Swagger {

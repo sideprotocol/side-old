@@ -20,7 +20,7 @@ require (
 	github.com/golang/protobuf v1.5.3
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
-	github.com/ibcswap/ibcswap/v6 v6.0.0-20230426192839-3046394b2719
+	github.com/ibcswap/ibcswap/v6 v6.0.0-20230502190649-f40a205159a6
 	github.com/ignite/cli v0.26.1
 	github.com/miguelmota/go-ethereum-hdwallet v0.1.1
 	github.com/onsi/ginkgo/v2 v2.7.0
