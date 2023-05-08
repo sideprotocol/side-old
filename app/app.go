@@ -132,6 +132,8 @@ import (
 
 	"sidechain/app/ante"
 
+	epochskeeper "sidechain/x/epochs/keeper"
+	epochstypes "sidechain/x/epochs/types"
 	"sidechain/x/mint"
 	mintkeeper "sidechain/x/mint/keeper"
 	minttypes "sidechain/x/mint/types"
@@ -292,6 +294,7 @@ type Sidechain struct {
 	ScopedInterchainSwapKeeper capabilitykeeper.ScopedKeeper
 
 	DevearnKeeper devearnmodulekeeper.Keeper
+	EpochsKeeper  epochskeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 	// Ethermint keepers
 	EvmKeeper       *evmkeeper.Keeper
@@ -513,6 +516,14 @@ func NewSidechain(
 	app.EvmKeeper = app.EvmKeeper.SetHooks(
 		evmkeeper.NewMultiEvmHooks(
 			app.Erc20Keeper.Hooks(),
+			app.DevearnKeeper.Hooks(),
+		),
+	)
+
+	epochsKeeper := epochskeeper.NewKeeper(appCodec, keys[epochstypes.StoreKey])
+	app.EpochsKeeper = *epochsKeeper.SetHooks(
+		epochskeeper.NewMultiEpochHooks(
+			// insert epoch hooks receivers here
 			app.DevearnKeeper.Hooks(),
 		),
 	)

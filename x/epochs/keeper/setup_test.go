@@ -11,15 +11,16 @@ import (
 
 	evm "github.com/evmos/evmos/v13/x/evm/types"
 
-	"github.com/evmos/evmos/v13/app"
-	"github.com/evmos/evmos/v13/x/epochs/types"
+	"sidechain/x/epochs/types"
+
+	"sidechain/app"
 )
 
 type KeeperTestSuite struct {
 	suite.Suite
 
 	ctx            sdk.Context
-	app            *app.Evmos
+	app            *app.Sidechain
 	queryClientEvm evm.QueryClient
 	queryClient    types.QueryClient
 	consAddress    sdk.ConsAddress

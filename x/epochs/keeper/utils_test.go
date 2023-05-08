@@ -3,10 +3,11 @@ package keeper_test
 import (
 	"time"
 
+	"sidechain/app"
+	"sidechain/testutil"
+	"sidechain/x/epochs/types"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	"github.com/evmos/evmos/v13/app"
-	"github.com/evmos/evmos/v13/testutil"
-	"github.com/evmos/evmos/v13/x/epochs/types"
 	evm "github.com/evmos/evmos/v13/x/evm/types"
 )
 

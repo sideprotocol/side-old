@@ -23,9 +23,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	"github.com/evmos/evmos/v13/x/epochs/client/cli"
-	"github.com/evmos/evmos/v13/x/epochs/keeper"
-	"github.com/evmos/evmos/v13/x/epochs/types"
+	"sidechain/x/epochs/client/cli"
+	"sidechain/x/epochs/keeper"
+	"sidechain/x/epochs/types"
 )
 
 var (
