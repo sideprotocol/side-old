@@ -132,6 +132,9 @@ import (
 
 	"sidechain/app/ante"
 
+	"sidechain/x/epochs"
+	epochskeeper "sidechain/x/epochs/keeper"
+	epochstypes "sidechain/x/epochs/types"
 	"sidechain/x/mint"
 	mintkeeper "sidechain/x/mint/keeper"
 	minttypes "sidechain/x/mint/types"
@@ -211,6 +214,7 @@ var (
 		mint.AppModuleBasic{},
 		erc20.AppModuleBasic{},
 		devearnmodule.AppModuleBasic{},
+		epochs.AppModuleBasic{},
 		ibcfee.AppModuleBasic{},
 
 		ibcatomicswap.AppModuleBasic{},
@@ -292,6 +296,7 @@ type Sidechain struct {
 	ScopedInterchainSwapKeeper capabilitykeeper.ScopedKeeper
 
 	DevearnKeeper devearnmodulekeeper.Keeper
+	EpochsKeeper  epochskeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 	// Ethermint keepers
 	EvmKeeper       *evmkeeper.Keeper
@@ -351,6 +356,7 @@ func NewSidechain(
 		// ibc keys
 		ibchost.StoreKey, ibctransfertypes.StoreKey,
 		devearnmoduletypes.StoreKey,
+		epochstypes.StoreKey,
 		// ethermint keys
 		// this line is used by starport scaffolding # stargate/app/storeKey
 		minttypes.StoreKey, evmtypes.StoreKey, feemarkettypes.StoreKey,
@@ -517,6 +523,14 @@ func NewSidechain(
 		),
 	)
 
+	epochsKeeper := epochskeeper.NewKeeper(appCodec, keys[epochstypes.StoreKey])
+	app.EpochsKeeper = *epochsKeeper.SetHooks(
+		epochskeeper.NewMultiEpochHooks(
+			// insert epoch hooks receivers here
+			app.DevearnKeeper.Hooks(),
+		),
+	)
+
 	// IBC Fee Module keeper
 	app.IBCFeeKeeper = ibcfeekeeper.NewKeeper(
 		appCodec, keys[ibcfeetypes.StoreKey],
@@ -646,6 +660,7 @@ func NewSidechain(
 		ibcatomicswap.NewAppModule(app.AtomicSwapKeeper),
 		ibcinterchainswap.NewAppModule(app.InterchainSwapKeeper),
 		devearnModule,
+		epochs.NewAppModule(appCodec, app.EpochsKeeper),
 		// this line is used by starport scaffolding # stargate/app/appModule
 		// Ethermint app modules
 		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper, app.GetSubspace(evmtypes.ModuleName)),
@@ -665,6 +680,7 @@ func NewSidechain(
 		upgradetypes.ModuleName,
 		capabilitytypes.ModuleName,
 		// Note: epochs' begin should be "real" start of epochs, we keep epochs beginblock at the beginning
+		epochstypes.ModuleName,
 		feemarkettypes.ModuleName,
 		evmtypes.ModuleName,
 		distrtypes.ModuleName,
@@ -697,6 +713,7 @@ func NewSidechain(
 		stakingtypes.ModuleName,
 		evmtypes.ModuleName,
 		feemarkettypes.ModuleName,
+		epochstypes.ModuleName,
 		// Note: epochs' endblock should be "real" end of epochs, we keep epochs endblock at the end
 		// no-op modules
 		ibchost.ModuleName,
@@ -754,6 +771,7 @@ func NewSidechain(
 		// Sidechain modules
 		erc20types.ModuleName,
 		devearnmoduletypes.ModuleName,
+		epochstypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 		// NOTE: crisis module must go at the end to check for invariants on each module
 		crisistypes.ModuleName,
