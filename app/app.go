@@ -86,7 +86,6 @@ import (
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	ibctestingtypes "github.com/cosmos/ibc-go/v6/testing/types"
 
-	ibctransfer "github.com/cosmos/ibc-go/v6/modules/apps/transfer"
 	ibctransfertypes "github.com/cosmos/ibc-go/v6/modules/apps/transfer/types"
 
 	ibcfee "github.com/cosmos/ibc-go/v6/modules/apps/29-fee"
@@ -151,8 +150,9 @@ import (
 	devearnmodulekeeper "sidechain/x/devearn/keeper"
 	devearnmoduletypes "sidechain/x/devearn/types"
 
-	"github.com/evmos/evmos/v11/x/ibc/transfer"
-	transferkeeper "github.com/evmos/evmos/v11/x/ibc/transfer/keeper"
+	transferkeeper "github.com/cosmos/ibc-go/v6/modules/apps/transfer/keeper"
+
+	"github.com/cosmos/ibc-go/v6/modules/apps/transfer"
 	"github.com/ignite/cli/docs"
 	"github.com/ignite/cli/ignite/pkg/openapiconsole"
 )
@@ -208,7 +208,7 @@ var (
 		feegrantmodule.AppModuleBasic{},
 		upgrade.AppModuleBasic{},
 		evidence.AppModuleBasic{},
-		transfer.AppModuleBasic{AppModuleBasic: &ibctransfer.AppModuleBasic{}},
+		transfer.AppModuleBasic{},
 
 		evm.AppModuleBasic{},
 		feemarket.AppModuleBasic{},
@@ -498,7 +498,7 @@ func NewSidechain(
 
 	app.Erc20Keeper = erc20keeper.NewKeeper(
 		keys[erc20types.StoreKey], appCodec, authtypes.NewModuleAddress(govtypes.ModuleName),
-		app.AccountKeeper, app.BankKeeper, app.EvmKeeper, app.StakingKeeper, nil,
+		app.AccountKeeper, app.BankKeeper, app.EvmKeeper, app.StakingKeeper,
 	)
 
 	app.DevearnKeeper = *devearnmodulekeeper.NewKeeper(
@@ -545,7 +545,7 @@ func NewSidechain(
 		app.IBCKeeper.ChannelKeeper, // ICS4 Wrapper: claims IBC middleware
 		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
 		app.AccountKeeper, app.BankKeeper, scopedTransferKeeper,
-		app.Erc20Keeper, // Add ERC20 Keeper for ERC20 transfers
+		// app.Erc20Keeper, // Add ERC20 Keeper for ERC20 transfers
 	)
 
 	app.AtomicSwapKeeper = atomicswapkeeper.NewKeeper(
