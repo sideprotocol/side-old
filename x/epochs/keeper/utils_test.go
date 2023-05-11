@@ -8,7 +8,7 @@ import (
 	"sidechain/x/epochs/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	//evm "github.com/evmos/evmos/v13/x/evm/types"
+	//evm "sidechain/x/evm/types"
 )
 
 // Test helpers
