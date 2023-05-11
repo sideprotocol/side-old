@@ -1,5 +1,18 @@
-// Copyright Tharsis Labs Ltd.(Evmos)
-// SPDX-License-Identifier:LGPL-3.0-only
+// Copyright 2022 Evmos Foundation
+// This file is part of the Evmos Network packages.
+//
+// Evmos is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The Evmos packages are distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the Evmos packages. If not, see https://github.com/evmos/evmos/blob/main/LICENSE
 
 package keeper
 
@@ -46,7 +59,7 @@ func (k Keeper) RegisterCoin(
 		)
 	}
 
-	pair := types.NewTokenPair(addr, coinMetadata.Base, types.OWNER_MODULE)
+	pair := types.NewTokenPair(addr, coinMetadata.Base, true, types.OWNER_MODULE)
 	k.SetTokenPair(ctx, pair)
 	k.SetDenomMap(ctx, pair.Denom, pair.GetID())
 	k.SetERC20Map(ctx, common.HexToAddress(pair.Erc20Address), pair.GetID())
@@ -74,7 +87,7 @@ func (k Keeper) RegisterERC20(
 		)
 	}
 
-	pair := types.NewTokenPair(contract, metadata.Name, types.OWNER_EXTERNAL)
+	pair := types.NewTokenPair(contract, metadata.Name, true, types.OWNER_EXTERNAL)
 	k.SetTokenPair(ctx, pair)
 	k.SetDenomMap(ctx, pair.Denom, pair.GetID())
 	k.SetERC20Map(ctx, common.HexToAddress(pair.Erc20Address), pair.GetID())

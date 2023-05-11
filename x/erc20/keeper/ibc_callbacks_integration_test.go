@@ -6,20 +6,16 @@ import (
 	"strconv"
 	"time"
 
-	"sidechain/app"
 	"sidechain/contracts"
-	ibctesting "sidechain/ibc/testing"
 	"sidechain/testutil"
 	teststypes "sidechain/types/tests"
-	"sidechain/utils"
-	claimstypes "sidechain/x/claims/types"
 	"sidechain/x/erc20/types"
 
-	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	transfertypes "github.com/cosmos/ibc-go/v6/modules/apps/transfer/types"
 	channeltypes "github.com/cosmos/ibc-go/v6/modules/core/04-channel/types"
+	"github.com/cosmos/ibc-go/v6/testing/simapp"
 	"github.com/ethereum/go-ethereum/common"
 	. "github.com/onsi/ginkgo/v2"
 )
@@ -49,19 +45,19 @@ var _ = Describe("Convert receiving IBC to Erc20", Ordered, func() {
 		Display: teststypes.UosmoDenomtrace.BaseDenom,
 	}
 
-	evmosMeta := banktypes.Metadata{
-		Description: "Base Denom for Evmos Chain",
-		Base:        utils.BaseDenom,
-		DenomUnits: []*banktypes.DenomUnit{
-			{
-				Denom:    teststypes.AevmosDenomtrace.BaseDenom,
-				Exponent: 0,
-			},
-		},
-		Name:    utils.BaseDenom,
-		Symbol:  erc20Symbol,
-		Display: teststypes.AevmosDenomtrace.BaseDenom,
-	}
+	// evmosMeta := banktypes.Metadata{
+	// 	Description: "Base Denom for Evmos Chain",
+	// 	Base:        claimstypes.DefaultClaimsDenom,
+	// 	DenomUnits: []*banktypes.DenomUnit{
+	// 		{
+	// 			Denom:    teststypes.AevmosDenomtrace.BaseDenom,
+	// 			Exponent: 0,
+	// 		},
+	// 	},
+	// 	Name:    claimstypes.DefaultClaimsDenom,
+	// 	Symbol:  erc20Symbol,
+	// 	Display: teststypes.AevmosDenomtrace.BaseDenom,
+	// }
 
 	BeforeEach(func() {
 		s.suiteIBCTesting = true
@@ -73,8 +69,7 @@ var _ = Describe("Convert receiving IBC to Erc20", Ordered, func() {
 		BeforeEach(func() {
 			erc20params := types.DefaultParams()
 			erc20params.EnableErc20 = false
-			err := s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), erc20params)
-			s.Require().NoError(err)
+			s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), erc20params)
 
 			sender = s.IBCOsmosisChain.SenderAccount.GetAddress().String()
 			receiver = s.EvmosChain.SenderAccount.GetAddress().String()
@@ -104,8 +99,7 @@ var _ = Describe("Convert receiving IBC to Erc20", Ordered, func() {
 		BeforeEach(func() {
 			erc20params := types.DefaultParams()
 			erc20params.EnableErc20 = true
-			err := s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), erc20params)
-			s.Require().NoError(err)
+			s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), erc20params)
 
 			sender = s.IBCOsmosisChain.SenderAccount.GetAddress().String()
 			receiver = s.EvmosChain.SenderAccount.GetAddress().String()
@@ -113,6 +107,7 @@ var _ = Describe("Convert receiving IBC to Erc20", Ordered, func() {
 			receiverAcc = sdk.MustAccAddressFromBech32(receiver)
 
 			// Register uosmo pair
+			var err error
 			pair, err = s.app.Erc20Keeper.RegisterCoin(s.EvmosChain.GetContext(), osmoMeta)
 			s.Require().NoError(err)
 		})
@@ -155,13 +150,13 @@ var _ = Describe("Convert receiving IBC to Erc20", Ordered, func() {
 			pair, err := s.app.Erc20Keeper.RegisterCoin(s.EvmosChain.GetContext(), evmosMeta)
 			s.Require().NoError(err)
 
-			aevmosInitialBalance := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), receiverAcc, utils.BaseDenom)
+			aevmosInitialBalance := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), receiverAcc, claimstypes.DefaultClaimsDenom)
 
 			// 1. Send aevmos from Evmos to Osmosis
-			s.SendAndReceiveMessage(s.pathOsmosisEvmos, s.EvmosChain, utils.BaseDenom, amount, receiver, sender, 1, "")
+			s.SendAndReceiveMessage(s.pathOsmosisEvmos, s.EvmosChain, claimstypes.DefaultClaimsDenom, amount, receiver, sender, 1, "")
 
-			aevmosAfterBalance := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), receiverAcc, utils.BaseDenom)
-			s.Require().Equal(aevmosInitialBalance.Amount.Sub(math.NewInt(amount)).Sub(sendAndReceiveMsgFee), aevmosAfterBalance.Amount)
+			aevmosAfterBalance := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), receiverAcc, claimstypes.DefaultClaimsDenom)
+			s.Require().Equal(aevmosInitialBalance.Amount.Int64()-amount, aevmosAfterBalance.Amount.Int64())
 
 			// check ibc aevmos coins balance on Osmosis
 			aevmosIBCBalanceBefore := s.IBCOsmosisChain.GetSimApp().BankKeeper.GetBalance(s.IBCOsmosisChain.GetContext(), senderAcc, teststypes.AevmosIbcdenom)
@@ -176,10 +171,8 @@ var _ = Describe("Convert receiving IBC to Erc20", Ordered, func() {
 			s.Require().Equal(int64(0), aevmosIBCSenderFinalBalance.Amount.Int64())
 
 			// check aevmos balance after transfer - should be equal to initial balance
-			aevmosFinalBalance := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), receiverAcc, utils.BaseDenom)
-
-			totalFees := sendBackCoinsFee.Add(sendAndReceiveMsgFee)
-			s.Require().Equal(aevmosInitialBalance.Amount.Sub(totalFees), aevmosFinalBalance.Amount)
+			aevmosFinalBalance := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), receiverAcc, claimstypes.DefaultClaimsDenom)
+			s.Require().Equal(aevmosInitialBalance.Amount.Int64(), aevmosFinalBalance.Amount.Int64())
 
 			// check IBC Coin balance - should be zero
 			ibcCoinsBalance := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), receiverAcc, teststypes.AevmosIbcdenom)
@@ -195,7 +188,7 @@ var _ = Describe("Convert receiving IBC to Erc20", Ordered, func() {
 			// 1. Send 'uosmo' from Osmosis to Evmos
 			s.SendAndReceiveMessage(s.pathOsmosisEvmos, s.IBCOsmosisChain, "uosmo", amount, sender, receiver, 1, "")
 
-			// validate 'uosmo' was transferred successfully and converted to ERC20
+			// validate 'uosmo' was transfered successfully and converted to ERC20
 			balanceERC20Token := s.app.Erc20Keeper.BalanceOf(s.EvmosChain.GetContext(), contracts.ERC20MinterBurnerDecimalsContract.ABI, pair.GetERC20Contract(), common.BytesToAddress(receiverAcc.Bytes()))
 			s.Require().Equal(amount, balanceERC20Token.Int64())
 
@@ -220,17 +213,17 @@ var _ = Describe("Convert receiving IBC to Erc20", Ordered, func() {
 		BeforeEach(func() {
 			erc20params := types.DefaultParams()
 			erc20params.EnableErc20 = true
-			err := s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), erc20params)
-			s.Require().NoError(err)
+			s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), erc20params)
 
 			sender = s.IBCOsmosisChain.SenderAccount.GetAddress().String()
 			// receiver address is on Osmosis Chain also,
-			// but funds are transferred to this address in Evmos chain
+			// but funds are transfered to this address in Evmos chain
 			receiver = sender
 			senderAcc = sdk.MustAccAddressFromBech32(sender)
 			receiverAcc = sdk.MustAccAddressFromBech32(receiver)
 
 			// Register uosmo pair
+			var err error
 			pair, err = s.app.Erc20Keeper.RegisterCoin(s.EvmosChain.GetContext(), osmoMeta)
 			s.Require().NoError(err)
 		})
@@ -264,11 +257,11 @@ var _ = Describe("Convert receiving IBC to Erc20", Ordered, func() {
 
 	Describe("Performing claims with registered coin", func() {
 		BeforeEach(func() {
-			s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), types.DefaultParams()) //nolint:errcheck
+			s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), types.DefaultParams())
 
 			sender = s.IBCOsmosisChain.SenderAccount.GetAddress().String()
 			// receiver address is on Osmosis Chain also,
-			// but funds are transferred to this address in Evmos chain
+			// but funds are transfered to this address in Evmos chain
 			receiver = s.EvmosChain.SenderAccount.GetAddress().String()
 			senderAcc = sdk.MustAccAddressFromBech32(sender)
 			receiverAcc = sdk.MustAccAddressFromBech32(receiver)
@@ -283,7 +276,7 @@ var _ = Describe("Convert receiving IBC to Erc20", Ordered, func() {
 			params.AuthorizedChannels = []string{
 				"channel-0",
 			}
-			s.app.ClaimsKeeper.SetParams(s.EvmosChain.GetContext(), params) //nolint:errcheck
+			s.app.ClaimsKeeper.SetParams(s.EvmosChain.GetContext(), params)
 		})
 		It("it should perform the claim and convert the received tokens", func() {
 			// Register claims record
@@ -295,11 +288,11 @@ var _ = Describe("Convert receiving IBC to Erc20", Ordered, func() {
 			})
 
 			// escrow coins in module
-			coins := sdk.NewCoins(sdk.NewCoin(utils.BaseDenom, claimableAmount))
+			coins := sdk.NewCoins(sdk.NewCoin(claimstypes.DefaultClaimsDenom, claimableAmount))
 			err := testutil.FundModuleAccount(s.EvmosChain.GetContext(), s.app.BankKeeper, claimstypes.ModuleName, coins)
 			s.Require().NoError(err)
 
-			receiverInitialAevmosBalance := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), receiverAcc, utils.BaseDenom)
+			receiverInitialAevmosBalance := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), receiverAcc, claimstypes.DefaultClaimsDenom)
 
 			uosmoInitialBalance := s.IBCOsmosisChain.GetSimApp().BankKeeper.GetBalance(s.IBCOsmosisChain.GetContext(), senderAcc, "uosmo")
 
@@ -310,7 +303,7 @@ var _ = Describe("Convert receiving IBC to Erc20", Ordered, func() {
 
 			// should trigger claims logic and send aevmos coins from claims to receiver
 
-			// ERC-20 balance should be the transferred amount
+			// ERC-20 balance should be the transfered amount
 			balanceTokenAfter := s.app.Erc20Keeper.BalanceOf(s.EvmosChain.GetContext(), contracts.ERC20MinterBurnerDecimalsContract.ABI, pair.GetERC20Contract(), common.BytesToAddress(receiverAcc.Bytes()))
 			s.Require().Equal(amount, balanceTokenAfter.Int64())
 
@@ -323,17 +316,15 @@ var _ = Describe("Convert receiving IBC to Erc20", Ordered, func() {
 			s.Require().Equal(uosmoInitialBalance.Amount.Int64()-amount, uosmoFinalBalance.Amount.Int64())
 
 			// validate that Receiver address on Evmos got the claims tokens
-			receiverFinalAevmosBalance := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), receiverAcc, utils.BaseDenom)
-
-			s.Require().Equal(receiverInitialAevmosBalance.Amount.Add(claimableAmount).Sub(sendBackCoinsFee), receiverFinalAevmosBalance.Amount)
+			receiverFinalAevmosBalance := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), receiverAcc, claimstypes.DefaultClaimsDenom)
+			s.Require().Equal(receiverInitialAevmosBalance.Amount.Int64()+claimableAmount.Int64(), receiverFinalAevmosBalance.Amount.Int64())
 		})
 	})
 	Describe("registered erc20", func() {
-		BeforeEach(func() { //nolint:dupl
+		BeforeEach(func() {
 			erc20params := types.DefaultParams()
 			erc20params.EnableErc20 = true
-			err := s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), erc20params)
-			s.Require().NoError(err)
+			s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), erc20params)
 
 			receiver = s.IBCOsmosisChain.SenderAccount.GetAddress().String()
 			sender = s.EvmosChain.SenderAccount.GetAddress().String()
@@ -341,6 +332,7 @@ var _ = Describe("Convert receiving IBC to Erc20", Ordered, func() {
 			senderAcc = sdk.MustAccAddressFromBech32(sender)
 
 			// Register ERC20 pair
+			var err error
 			addr, err := s.DeployContractToChain("testcoin", "tt", 18)
 			s.Require().NoError(err)
 			pair, err = s.app.Erc20Keeper.RegisterERC20(s.EvmosChain.GetContext(), addr)
@@ -351,7 +343,7 @@ var _ = Describe("Convert receiving IBC to Erc20", Ordered, func() {
 				BaseDenom: pair.Denom,
 			}
 
-			s.EvmosChain.SenderAccount.SetSequence(s.EvmosChain.SenderAccount.GetSequence() + 1) //nolint:errcheck
+			s.EvmosChain.SenderAccount.SetSequence(s.EvmosChain.SenderAccount.GetSequence() + 1)
 		})
 		It("should convert erc20 ibc voucher to original erc20", func() {
 			// Mint tokens and send to receiver
@@ -521,8 +513,7 @@ var _ = Describe("Convert outgoing ERC20 to IBC", Ordered, func() {
 		BeforeEach(func() {
 			erc20params := types.DefaultParams()
 			erc20params.EnableErc20 = true
-			err := s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), erc20params)
-			s.Require().NoError(err)
+			s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), erc20params)
 
 			receiver = s.IBCOsmosisChain.SenderAccount.GetAddress().String()
 			sender = s.EvmosChain.SenderAccount.GetAddress().String()
@@ -530,14 +521,14 @@ var _ = Describe("Convert outgoing ERC20 to IBC", Ordered, func() {
 			senderAcc = sdk.MustAccAddressFromBech32(sender)
 
 			// Register ERC20 pair
+			var err error
 			addr, err := s.DeployContractToChain("testcoin", "tt", 18)
 			s.Require().NoError(err)
 			pair, err = s.app.Erc20Keeper.RegisterERC20(s.EvmosChain.GetContext(), addr)
 			s.Require().NoError(err)
 			s.EvmosChain.Coordinator.CommitBlock()
 			erc20params.EnableErc20 = false
-			err = s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), erc20params)
-			s.Require().NoError(err)
+			s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), erc20params)
 		})
 		It("should fail transfer and not convert to IBC", func() {
 			// Mint tokens and send to receiver
@@ -556,19 +547,17 @@ var _ = Describe("Convert outgoing ERC20 to IBC", Ordered, func() {
 			transferMsg := transfertypes.NewMsgTransfer(originEndpoint.ChannelConfig.PortID, originEndpoint.ChannelID, sdk.NewCoin(coin, sdk.NewInt(amount*2)), sender, receiver, timeoutHeight, 0, "")
 
 			originChain.Coordinator.UpdateTimeForChain(originChain)
-			denom := originChain.App.(*app.Evmos).StakingKeeper.BondDenom(originChain.GetContext())
-			fee := sdk.Coins{sdk.NewInt64Coin(denom, ibctesting.DefaultFeeAmt)}
 
-			_, _, err = ibctesting.SignAndDeliver(
+			_, _, err = simapp.SignAndDeliver(
 				originChain.T,
 				originChain.TxConfig,
 				originChain.App.GetBaseApp(),
+				originChain.GetContext().BlockHeader(),
 				[]sdk.Msg{transferMsg},
-				fee,
 				originChain.ChainID,
 				[]uint64{originChain.SenderAccount.GetAccountNumber()},
 				[]uint64{originChain.SenderAccount.GetSequence()},
-				false, originChain.SenderPrivKey,
+				true, false, originChain.SenderPrivKey,
 			)
 			s.Require().Error(err)
 			// NextBlock calls app.Commit()
@@ -590,11 +579,10 @@ var _ = Describe("Convert outgoing ERC20 to IBC", Ordered, func() {
 		})
 	})
 	Describe("registered erc20", func() {
-		BeforeEach(func() { //nolint:dupl
+		BeforeEach(func() {
 			erc20params := types.DefaultParams()
 			erc20params.EnableErc20 = true
-			err := s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), erc20params)
-			s.Require().NoError(err)
+			s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), erc20params)
 
 			receiver = s.IBCOsmosisChain.SenderAccount.GetAddress().String()
 			sender = s.EvmosChain.SenderAccount.GetAddress().String()
@@ -602,6 +590,7 @@ var _ = Describe("Convert outgoing ERC20 to IBC", Ordered, func() {
 			senderAcc = sdk.MustAccAddressFromBech32(sender)
 
 			// Register ERC20 pair
+			var err error
 			addr, err := s.DeployContractToChain("testcoin", "tt", 18)
 			s.Require().NoError(err)
 			pair, err = s.app.Erc20Keeper.RegisterERC20(s.EvmosChain.GetContext(), addr)
@@ -612,7 +601,7 @@ var _ = Describe("Convert outgoing ERC20 to IBC", Ordered, func() {
 				BaseDenom: pair.Denom,
 			}
 
-			s.EvmosChain.SenderAccount.SetSequence(s.EvmosChain.SenderAccount.GetSequence() + 1) //nolint:errcheck
+			s.EvmosChain.SenderAccount.SetSequence(s.EvmosChain.SenderAccount.GetSequence() + 1)
 		})
 		It("should transfer available balance", func() {
 			// Mint tokens and send to receiver
@@ -696,19 +685,16 @@ var _ = Describe("Convert outgoing ERC20 to IBC", Ordered, func() {
 
 			originChain.Coordinator.UpdateTimeForChain(originChain)
 
-			denom := originChain.App.(*app.Evmos).StakingKeeper.BondDenom(originChain.GetContext())
-			fee := sdk.Coins{sdk.NewInt64Coin(denom, ibctesting.DefaultFeeAmt)}
-
-			_, _, err = ibctesting.SignAndDeliver(
+			_, _, err = simapp.SignAndDeliver(
 				originChain.T,
 				originChain.TxConfig,
 				originChain.App.GetBaseApp(),
+				originChain.GetContext().BlockHeader(),
 				[]sdk.Msg{transferMsg},
-				fee,
 				originChain.ChainID,
 				[]uint64{originChain.SenderAccount.GetAccountNumber()},
 				[]uint64{originChain.SenderAccount.GetSequence()},
-				false, originChain.SenderPrivKey,
+				true, false, originChain.SenderPrivKey,
 			)
 
 			// Require a failing transfer
@@ -733,17 +719,16 @@ var _ = Describe("Convert outgoing ERC20 to IBC", Ordered, func() {
 
 			erc20params := types.DefaultParams()
 			erc20params.EnableErc20 = false
-			err := s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), erc20params)
-			s.Require().NoError(err)
+			s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), erc20params)
 
 			// Send from osmosis to Evmos
 			s.SendAndReceiveMessage(s.pathOsmosisEvmos, s.IBCOsmosisChain, "uosmo", amount, receiver, sender, 1, "")
 			s.EvmosChain.Coordinator.CommitBlock(s.EvmosChain)
 			erc20params.EnableErc20 = true
-			err = s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), erc20params)
-			s.Require().NoError(err)
+			s.app.Erc20Keeper.SetParams(s.EvmosChain.GetContext(), erc20params)
 
 			// Register uosmo pair
+			var err error
 			pair, err = s.app.Erc20Keeper.RegisterCoin(s.EvmosChain.GetContext(), osmoMeta)
 			s.Require().NoError(err)
 		})
@@ -820,22 +805,17 @@ var _ = Describe("Convert outgoing ERC20 to IBC", Ordered, func() {
 				sdk.NewCoin(coin, sdk.NewInt(amount)), sender, receiver, timeoutHeight, timeout, "")
 
 			originChain.Coordinator.UpdateTimeForChain(originChain)
-
-			denom := originChain.App.(*app.Evmos).StakingKeeper.BondDenom(originChain.GetContext())
-			fee := sdk.Coins{sdk.NewInt64Coin(denom, ibctesting.DefaultFeeAmt)}
-
-			_, _, err = ibctesting.SignAndDeliver(
+			_, _, err = simapp.SignAndDeliver(
 				originChain.T,
 				originChain.TxConfig,
 				originChain.App.GetBaseApp(),
+				originChain.GetContext().BlockHeader(),
 				[]sdk.Msg{transferMsg},
-				fee,
 				originChain.ChainID,
 				[]uint64{originChain.SenderAccount.GetAccountNumber()},
 				[]uint64{originChain.SenderAccount.GetSequence()},
-				true, originChain.SenderPrivKey,
+				true, true, originChain.SenderPrivKey,
 			)
-			s.Require().NoError(err)
 
 			// check ERC20 balance was converted to ibc and sent
 			balanceERC20TokenAfter := s.app.Erc20Keeper.BalanceOf(s.EvmosChain.GetContext(), contracts.ERC20MinterBurnerDecimalsContract.ABI, pair.GetERC20Contract(), common.BytesToAddress(senderAcc.Bytes()))
@@ -846,7 +826,6 @@ var _ = Describe("Convert outgoing ERC20 to IBC", Ordered, func() {
 
 			// increment sequence for successful transaction execution
 			err = originChain.SenderAccount.SetSequence(originChain.SenderAccount.GetSequence() + 1)
-			s.Require().NoError(err)
 
 			// Increment time so packet will timeout
 			originChain.Coordinator.IncrementTime()
@@ -904,7 +883,7 @@ var _ = Describe("Convert outgoing ERC20 to IBC", Ordered, func() {
 			transferMsg := transfertypes.NewMsgTransfer(originEndpoint.ChannelConfig.PortID, originEndpoint.ChannelID,
 				sdk.NewCoin(coin, sdk.NewInt(amount)), sender, receiver, timeoutHeight, timeout, "")
 
-			_, err = ibctesting.SendMsgs(originChain, ibctesting.DefaultFeeAmt, transferMsg)
+			_, err = originChain.SendMsgs(transferMsg)
 			s.Require().NoError(err) // message committed
 
 			// Recreate the packet that was sent

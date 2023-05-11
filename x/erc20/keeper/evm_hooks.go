@@ -1,22 +1,34 @@
-// Copyright Tharsis Labs Ltd.(Evmos)
-// SPDX-License-Identifier:ENCL-1.0(https://github.com/evmos/evmos/blob/main/LICENSE)
+// Copyright 2022 Evmos Foundation
+// This file is part of the Evmos Network packages.
+//
+// Evmos is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The Evmos packages are distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the Evmos packages. If not, see https://github.com/evmos/evmos/blob/main/LICENSE
 
 package keeper
 
 import (
 	"bytes"
+	// nolint: typecheck
 	"math/big"
-
-	evmtypes "sidechain/x/evm/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
-
-	"sidechain/x/erc20/types"
+	evmtypes "github.com/evmos/ethermint/x/evm/types"
 
 	"sidechain/contracts"
+	"sidechain/x/erc20/types"
 )
 
 var _ evmtypes.EvmHooks = Hooks{}
@@ -50,7 +62,7 @@ func (h Hooks) PostTxProcessing(ctx sdk.Context, msg core.Message, receipt *etht
 // `ConvertERC20` msg does not trigger the hook as it only calls `ApplyMessage`.
 func (k Keeper) PostTxProcessing(
 	ctx sdk.Context,
-	_ core.Message,
+	msg core.Message,
 	receipt *ethtypes.Receipt,
 ) error {
 	params := k.GetParams(ctx)

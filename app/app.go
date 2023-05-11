@@ -139,10 +139,11 @@ import (
 	mintkeeper "sidechain/x/mint/keeper"
 	minttypes "sidechain/x/mint/types"
 
-	"github.com/evmos/evmos/v11/x/erc20"
-	erc20client "github.com/evmos/evmos/v11/x/erc20/client"
-	erc20keeper "github.com/evmos/evmos/v11/x/erc20/keeper"
-	erc20types "github.com/evmos/evmos/v11/x/erc20/types"
+	erc20client "sidechain/x/erc20/client"
+	erc20keeper "sidechain/x/erc20/keeper"
+	erc20types "sidechain/x/erc20/types"
+
+	"sidechain/x/erc20"
 
 	// NOTE: override ICS20 keeper to support IBC transfers of ERC20 tokens
 	devearnmodule "sidechain/x/devearn"

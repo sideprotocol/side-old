@@ -1,5 +1,18 @@
-// Copyright Tharsis Labs Ltd.(Evmos)
-// SPDX-License-Identifier:ENCL-1.0(https://github.com/evmos/evmos/blob/main/LICENSE)
+// Copyright 2022 Evmos Foundation
+// This file is part of the Evmos Network packages.
+//
+// Evmos is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The Evmos packages are distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the Evmos packages. If not, see https://github.com/evmos/evmos/blob/main/LICENSE
 
 package types
 
@@ -7,13 +20,12 @@ import (
 	"fmt"
 	"strings"
 
-	sidetypes "sidechain/types"
-
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	v1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	ibctransfertypes "github.com/cosmos/ibc-go/v6/modules/apps/transfer/types"
+	ethermint "github.com/evmos/ethermint/types"
 )
 
 // constants
@@ -120,7 +132,7 @@ func ValidateErc20Denom(denom string) error {
 		return fmt.Errorf("invalid denom. %s denomination should be prefixed with the format 'erc20/", denom)
 	}
 
-	return sidetypes.ValidateAddress(denomSplit[1])
+	return ethermint.ValidateAddress(denomSplit[1])
 }
 
 // NewRegisterERC20Proposal returns new instance of RegisterERC20Proposal
@@ -143,7 +155,7 @@ func (*RegisterERC20Proposal) ProposalType() string {
 // ValidateBasic performs a stateless check of the proposal fields
 func (rtbp *RegisterERC20Proposal) ValidateBasic() error {
 	for _, address := range rtbp.Erc20Addresses {
-		if err := sidetypes.ValidateAddress(address); err != nil {
+		if err := ethermint.ValidateAddress(address); err != nil {
 			return errorsmod.Wrap(err, "ERC20 address")
 		}
 	}
@@ -172,7 +184,7 @@ func (*ToggleTokenConversionProposal) ProposalType() string {
 func (ttcp *ToggleTokenConversionProposal) ValidateBasic() error {
 	// check if the token is a hex address, if not, check if it is a valid SDK
 	// denom
-	if err := sidetypes.ValidateAddress(ttcp.Token); err != nil {
+	if err := ethermint.ValidateAddress(ttcp.Token); err != nil {
 		if err := sdk.ValidateDenom(ttcp.Token); err != nil {
 			return err
 		}

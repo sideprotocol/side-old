@@ -5,8 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/evmos/ethermint/tests"
 
-	utiltx "sidechain/testutil/tx"
 	"sidechain/x/erc20/types"
 )
 
@@ -35,7 +35,7 @@ func (suite *KeeperTestSuite) TestTokenPairs() {
 				req = &types.QueryTokenPairsRequest{
 					Pagination: &query.PageRequest{Limit: 10, CountTotal: true},
 				}
-				pair := types.NewTokenPair(utiltx.GenerateAddress(), "coin", types.OWNER_MODULE)
+				pair := types.NewTokenPair(tests.GenerateAddress(), "coin", true, types.OWNER_MODULE)
 				suite.app.Erc20Keeper.SetTokenPair(suite.ctx, pair)
 
 				expRes = &types.QueryTokenPairsResponse{
@@ -49,8 +49,8 @@ func (suite *KeeperTestSuite) TestTokenPairs() {
 			"2 pairs registered wo/pagination",
 			func() {
 				req = &types.QueryTokenPairsRequest{}
-				pair := types.NewTokenPair(utiltx.GenerateAddress(), "coin", types.OWNER_MODULE)
-				pair2 := types.NewTokenPair(utiltx.GenerateAddress(), "coin2", types.OWNER_MODULE)
+				pair := types.NewTokenPair(tests.GenerateAddress(), "coin", true, types.OWNER_MODULE)
+				pair2 := types.NewTokenPair(tests.GenerateAddress(), "coin2", true, types.OWNER_MODULE)
 				suite.app.Erc20Keeper.SetTokenPair(suite.ctx, pair)
 				suite.app.Erc20Keeper.SetTokenPair(suite.ctx, pair2)
 
@@ -104,7 +104,7 @@ func (suite *KeeperTestSuite) TestTokenPair() {
 			"token pair not found",
 			func() {
 				req = &types.QueryTokenPairRequest{
-					Token: utiltx.GenerateAddress().Hex(),
+					Token: tests.GenerateAddress().Hex(),
 				}
 				expRes = &types.QueryTokenPairResponse{}
 			},
@@ -113,8 +113,8 @@ func (suite *KeeperTestSuite) TestTokenPair() {
 		{
 			"token pair found",
 			func() {
-				addr := utiltx.GenerateAddress()
-				pair := types.NewTokenPair(addr, "coin", types.OWNER_MODULE)
+				addr := tests.GenerateAddress()
+				pair := types.NewTokenPair(addr, "coin", true, types.OWNER_MODULE)
 				suite.app.Erc20Keeper.SetTokenPair(suite.ctx, pair)
 				suite.app.Erc20Keeper.SetERC20Map(suite.ctx, addr, pair.GetID())
 				suite.app.Erc20Keeper.SetDenomMap(suite.ctx, pair.Denom, pair.GetID())
@@ -127,10 +127,10 @@ func (suite *KeeperTestSuite) TestTokenPair() {
 			true,
 		},
 		{
-			"token pair not found - with erc20 existent",
+			"token pair not found - with erc20 existant",
 			func() {
-				addr := utiltx.GenerateAddress()
-				pair := types.NewTokenPair(addr, "coin", types.OWNER_MODULE)
+				addr := tests.GenerateAddress()
+				pair := types.NewTokenPair(addr, "coin", true, types.OWNER_MODULE)
 				suite.app.Erc20Keeper.SetERC20Map(suite.ctx, addr, pair.GetID())
 				suite.app.Erc20Keeper.SetDenomMap(suite.ctx, pair.Denom, pair.GetID())
 

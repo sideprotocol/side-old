@@ -1,4 +1,4 @@
-package types_test
+package types
 
 import (
 	"strings"
@@ -6,11 +6,10 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
+	"github.com/evmos/ethermint/tests"
+
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	length "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-
-	utiltx "sidechain/testutil/tx"
-	"sidechain/x/erc20/types"
 )
 
 type ProposalTestSuite struct {
@@ -22,12 +21,12 @@ func TestProposalTestSuite(t *testing.T) {
 }
 
 func (suite *ProposalTestSuite) TestKeysTypes() {
-	suite.Require().Equal("erc20", (&types.RegisterCoinProposal{}).ProposalRoute())
-	suite.Require().Equal("RegisterCoin", (&types.RegisterCoinProposal{}).ProposalType())
-	suite.Require().Equal("erc20", (&types.RegisterERC20Proposal{}).ProposalRoute())
-	suite.Require().Equal("RegisterERC20", (&types.RegisterERC20Proposal{}).ProposalType())
-	suite.Require().Equal("erc20", (&types.ToggleTokenConversionProposal{}).ProposalRoute())
-	suite.Require().Equal("ToggleTokenConversion", (&types.ToggleTokenConversionProposal{}).ProposalType())
+	suite.Require().Equal("erc20", (&RegisterCoinProposal{}).ProposalRoute())
+	suite.Require().Equal("RegisterCoin", (&RegisterCoinProposal{}).ProposalType())
+	suite.Require().Equal("erc20", (&RegisterERC20Proposal{}).ProposalRoute())
+	suite.Require().Equal("RegisterERC20", (&RegisterERC20Proposal{}).ProposalType())
+	suite.Require().Equal("erc20", (&ToggleTokenConversionProposal{}).ProposalRoute())
+	suite.Require().Equal("ToggleTokenConversion", (&ToggleTokenConversionProposal{}).ProposalType())
 }
 
 func (suite *ProposalTestSuite) TestCreateDenomDescription() {
@@ -48,7 +47,7 @@ func (suite *ProposalTestSuite) TestCreateDenomDescription() {
 		},
 	}
 	for _, tc := range testCases {
-		desc := types.CreateDenomDescription(tc.denom)
+		desc := CreateDenomDescription(tc.denom)
 		suite.Require().Equal(desc, tc.expString)
 	}
 }
@@ -71,7 +70,7 @@ func (suite *ProposalTestSuite) TestCreateDenom() {
 		},
 	}
 	for _, tc := range testCases {
-		desc := types.CreateDenom(tc.denom)
+		desc := CreateDenom(tc.denom)
 		suite.Require().Equal(desc, tc.expString)
 	}
 }
@@ -109,7 +108,7 @@ func (suite *ProposalTestSuite) TestValidateErc20Denom() {
 		},
 	}
 	for _, tc := range testCases {
-		err := types.ValidateErc20Denom(tc.denom)
+		err := ValidateErc20Denom(tc.denom)
 
 		if tc.expPass {
 			suite.Require().Nil(err, tc.name)
@@ -124,24 +123,24 @@ func (suite *ProposalTestSuite) TestRegisterERC20Proposal() {
 		msg         string
 		title       string
 		description string
-		pair        types.TokenPair
+		pair        TokenPair
 		expectPass  bool
 	}{
 		// Valid tests
-		{msg: "Register token pair - valid pair enabled", title: "test", description: "test desc", pair: types.TokenPair{utiltx.GenerateAddress().String(), "test", true, types.OWNER_MODULE}, expectPass: true},
-		{msg: "Register token pair - valid pair dissabled", title: "test", description: "test desc", pair: types.TokenPair{utiltx.GenerateAddress().String(), "test", false, types.OWNER_MODULE}, expectPass: true},
+		{msg: "Register token pair - valid pair enabled", title: "test", description: "test desc", pair: TokenPair{tests.GenerateAddress().String(), "test", true, OWNER_MODULE}, expectPass: true},
+		{msg: "Register token pair - valid pair dissabled", title: "test", description: "test desc", pair: TokenPair{tests.GenerateAddress().String(), "test", false, OWNER_MODULE}, expectPass: true},
 		// Missing params valid
-		{msg: "Register token pair - invalid missing title ", title: "", description: "test desc", pair: types.TokenPair{utiltx.GenerateAddress().String(), "test", false, types.OWNER_MODULE}, expectPass: false},
-		{msg: "Register token pair - invalid missing description ", title: "test", description: "", pair: types.TokenPair{utiltx.GenerateAddress().String(), "test", false, types.OWNER_MODULE}, expectPass: false},
+		{msg: "Register token pair - invalid missing title ", title: "", description: "test desc", pair: TokenPair{tests.GenerateAddress().String(), "test", false, OWNER_MODULE}, expectPass: false},
+		{msg: "Register token pair - invalid missing description ", title: "test", description: "", pair: TokenPair{tests.GenerateAddress().String(), "test", false, OWNER_MODULE}, expectPass: false},
 		// Invalid address
-		{msg: "Register token pair - invalid address (no hex)", title: "test", description: "test desc", pair: types.TokenPair{"0x5dCA2483280D9727c80b5518faC4556617fb19ZZ", "test", true, types.OWNER_MODULE}, expectPass: false},
-		{msg: "Register token pair - invalid address (invalid length 1)", title: "test", description: "test desc", pair: types.TokenPair{"0x5dCA2483280D9727c80b5518faC4556617fb19", "test", true, types.OWNER_MODULE}, expectPass: false},
-		{msg: "Register token pair - invalid address (invalid length 2)", title: "test", description: "test desc", pair: types.TokenPair{"0x5dCA2483280D9727c80b5518faC4556617fb194FFF", "test", true, types.OWNER_MODULE}, expectPass: false},
-		{msg: "Register token pair - invalid address (invalid prefix)", title: "test", description: "test desc", pair: types.TokenPair{"1x5dCA2483280D9727c80b5518faC4556617fb19F", "test", true, types.OWNER_MODULE}, expectPass: false},
+		{msg: "Register token pair - invalid address (no hex)", title: "test", description: "test desc", pair: TokenPair{"0x5dCA2483280D9727c80b5518faC4556617fb19ZZ", "test", true, OWNER_MODULE}, expectPass: false},
+		{msg: "Register token pair - invalid address (invalid length 1)", title: "test", description: "test desc", pair: TokenPair{"0x5dCA2483280D9727c80b5518faC4556617fb19", "test", true, OWNER_MODULE}, expectPass: false},
+		{msg: "Register token pair - invalid address (invalid length 2)", title: "test", description: "test desc", pair: TokenPair{"0x5dCA2483280D9727c80b5518faC4556617fb194FFF", "test", true, OWNER_MODULE}, expectPass: false},
+		{msg: "Register token pair - invalid address (invalid prefix)", title: "test", description: "test desc", pair: TokenPair{"1x5dCA2483280D9727c80b5518faC4556617fb19F", "test", true, OWNER_MODULE}, expectPass: false},
 	}
 
 	for i, tc := range testCases {
-		tx := types.NewRegisterERC20Proposal(tc.title, tc.description, tc.pair.Erc20Address)
+		tx := NewRegisterERC20Proposal(tc.title, tc.description, tc.pair.Erc20Address)
 		err := tx.ValidateBasic()
 
 		if tc.expectPass {
@@ -173,7 +172,7 @@ func createFullMetadata(denom, symbol, name string) banktypes.Metadata {
 	}
 }
 
-func createMetadata(denom, symbol string) banktypes.Metadata { //nolint:unparam
+func createMetadata(denom, symbol string) banktypes.Metadata {
 	return createFullMetadata(denom, symbol, denom)
 }
 
@@ -230,7 +229,7 @@ func (suite *ProposalTestSuite) TestRegisterCoinProposal() {
 	}
 
 	for i, tc := range testCases {
-		tx := types.NewRegisterCoinProposal(tc.title, tc.description, tc.metadata)
+		tx := NewRegisterCoinProposal(tc.title, tc.description, tc.metadata)
 		err := tx.ValidateBasic()
 
 		if tc.expectPass {
@@ -250,7 +249,7 @@ func (suite *ProposalTestSuite) TestToggleTokenConversionProposal() {
 		expectPass  bool
 	}{
 		{msg: "Enable token conversion proposal - valid denom", title: "test", description: "test desc", token: "test", expectPass: true},
-		{msg: "Enable token conversion proposal - valid address", title: "test", description: "test desc", token: "0x5dCA2483280D9727c80b5518faC4556617fb194F", expectPass: true}, //gitleaks:allow
+		{msg: "Enable token conversion proposal - valid address", title: "test", description: "test desc", token: "0x5dCA2483280D9727c80b5518faC4556617fb194F", expectPass: true},
 		{msg: "Enable token conversion proposal - invalid address", title: "test", description: "test desc", token: "0x123", expectPass: false},
 
 		// Invalid missing params
@@ -269,7 +268,7 @@ func (suite *ProposalTestSuite) TestToggleTokenConversionProposal() {
 	}
 
 	for i, tc := range testCases {
-		tx := types.NewToggleTokenConversionProposal(tc.title, tc.description, tc.token)
+		tx := NewToggleTokenConversionProposal(tc.title, tc.description, tc.token)
 		err := tx.ValidateBasic()
 
 		if tc.expectPass {

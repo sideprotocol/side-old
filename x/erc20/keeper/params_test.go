@@ -8,7 +8,7 @@ import (
 
 func (suite *KeeperTestSuite) TestParams() {
 	params := suite.app.Erc20Keeper.GetParams(suite.ctx)
-	suite.app.Erc20Keeper.SetParams(suite.ctx, params) //nolint:errcheck
+	suite.app.Erc20Keeper.SetParams(suite.ctx, params)
 
 	testCases := []struct {
 		name      string

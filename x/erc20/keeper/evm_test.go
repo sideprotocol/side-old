@@ -6,17 +6,14 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
-	utiltx "sidechain/testutil/tx"
-
-	evmtypes "sidechain/x/evm/types"
-
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/evmos/ethermint/tests"
+	evmtypes "github.com/evmos/ethermint/x/evm/types"
 	"github.com/stretchr/testify/mock"
 
+	"sidechain/contracts"
 	"sidechain/x/erc20/keeper"
 	"sidechain/x/erc20/types"
-
-	"sidechain/contracts"
 )
 
 func (suite *KeeperTestSuite) TestQueryERC20() {
@@ -57,7 +54,7 @@ func (suite *KeeperTestSuite) TestQueryERC20() {
 
 func (suite *KeeperTestSuite) TestBalanceOf() {
 	var mockEVMKeeper *MockEVMKeeper
-	contract := utiltx.GenerateAddress()
+	contract := tests.GenerateAddress()
 	testCases := []struct {
 		name       string
 		malleate   func()
@@ -98,12 +95,12 @@ func (suite *KeeperTestSuite) TestBalanceOf() {
 			suite.app.GetKey("erc20"), suite.app.AppCodec(),
 			authtypes.NewModuleAddress(govtypes.ModuleName),
 			suite.app.AccountKeeper, suite.app.BankKeeper,
-			mockEVMKeeper, suite.app.StakingKeeper, suite.app.ClaimsKeeper)
+			mockEVMKeeper, suite.app.StakingKeeper)
 
 		tc.malleate()
 
 		abi := contracts.ERC20BurnableContract.ABI
-		balance := suite.app.Erc20Keeper.BalanceOf(suite.ctx, abi, contract, utiltx.GenerateAddress())
+		balance := suite.app.Erc20Keeper.BalanceOf(suite.ctx, abi, contract, tests.GenerateAddress())
 		if tc.res {
 			suite.Require().Equal(balance.Int64(), tc.expBalance)
 		} else {
@@ -135,7 +132,7 @@ func (suite *KeeperTestSuite) TestCallEVM() {
 		erc20 := contracts.ERC20MinterBurnerDecimalsContract.ABI
 		contract, err := suite.DeployContract("coin", "token", erc20Decimals)
 		suite.Require().NoError(err)
-		account := utiltx.GenerateAddress()
+		account := tests.GenerateAddress()
 
 		res, err := suite.app.Erc20Keeper.CallEVM(suite.ctx, erc20, types.ModuleAddress, contract, true, tc.method, account)
 		if tc.expPass {
@@ -161,7 +158,7 @@ func (suite *KeeperTestSuite) TestCallEVMWithData() {
 			func() ([]byte, *common.Address) {
 				contract, err := suite.DeployContract("coin", "token", erc20Decimals)
 				suite.Require().NoError(err)
-				account := utiltx.GenerateAddress()
+				account := tests.GenerateAddress()
 				data, _ := erc20.Pack("", account)
 				return data, &contract
 			},
@@ -173,7 +170,7 @@ func (suite *KeeperTestSuite) TestCallEVMWithData() {
 			func() ([]byte, *common.Address) {
 				contract, err := suite.DeployContract("coin", "token", erc20Decimals)
 				suite.Require().NoError(err)
-				account := utiltx.GenerateAddress()
+				account := tests.GenerateAddress()
 				data, _ := erc20.Pack("balanceOf", account)
 				return data, &contract
 			},
@@ -205,7 +202,7 @@ func (suite *KeeperTestSuite) TestCallEVMWithData() {
 			types.ModuleAddress,
 			func() ([]byte, *common.Address) {
 				ctorArgs, _ := contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("", "test", "test", uint8(18))
-				data := append(contracts.ERC20MinterBurnerDecimalsContract.Bin, ctorArgs...) //nolint:gocritic
+				data := append(contracts.ERC20MinterBurnerDecimalsContract.Bin, ctorArgs...)
 				return data, nil
 			},
 			true,
@@ -216,9 +213,9 @@ func (suite *KeeperTestSuite) TestCallEVMWithData() {
 			func() ([]byte, *common.Address) {
 				params := suite.app.EvmKeeper.GetParams(suite.ctx)
 				params.EnableCreate = false
-				_ = suite.app.EvmKeeper.SetParams(suite.ctx, params)
+				suite.app.EvmKeeper.SetParams(suite.ctx, params)
 				ctorArgs, _ := contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("", "test", "test", uint8(18))
-				data := append(contracts.ERC20MinterBurnerDecimalsContract.Bin, ctorArgs...) //nolint:gocritic
+				data := append(contracts.ERC20MinterBurnerDecimalsContract.Bin, ctorArgs...)
 				return data, nil
 			},
 			false,
@@ -286,13 +283,13 @@ func (suite *KeeperTestSuite) TestForceFail() {
 			suite.app.Erc20Keeper = keeper.NewKeeper(
 				suite.app.GetKey("erc20"), suite.app.AppCodec(),
 				authtypes.NewModuleAddress(govtypes.ModuleName), suite.app.AccountKeeper,
-				suite.app.BankKeeper, mockEVMKeeper, suite.app.StakingKeeper, suite.app.ClaimsKeeper)
+				suite.app.BankKeeper, mockEVMKeeper, suite.app.StakingKeeper)
 
 			tc.malleate()
 
 			contract, err := suite.DeployContract("coin", "token", erc20Decimals)
 			suite.Require().NoError(err)
-			account := utiltx.GenerateAddress()
+			account := tests.GenerateAddress()
 			data, _ := erc20.Pack("balanceOf", account)
 
 			res, err := suite.app.Erc20Keeper.CallEVMWithData(suite.ctx, types.ModuleAddress, &contract, data, tc.commit)
@@ -308,7 +305,7 @@ func (suite *KeeperTestSuite) TestForceFail() {
 
 func (suite *KeeperTestSuite) TestQueryERC20ForceFail() {
 	var mockEVMKeeper *MockEVMKeeper
-	contract := utiltx.GenerateAddress()
+	contract := tests.GenerateAddress()
 	testCases := []struct {
 		name     string
 		malleate func()
@@ -375,7 +372,7 @@ func (suite *KeeperTestSuite) TestQueryERC20ForceFail() {
 		suite.app.Erc20Keeper = keeper.NewKeeper(
 			suite.app.GetKey("erc20"), suite.app.AppCodec(),
 			authtypes.NewModuleAddress(govtypes.ModuleName), suite.app.AccountKeeper,
-			suite.app.BankKeeper, mockEVMKeeper, suite.app.StakingKeeper, suite.app.ClaimsKeeper)
+			suite.app.BankKeeper, mockEVMKeeper, suite.app.StakingKeeper)
 
 		tc.malleate()
 

@@ -15,8 +15,8 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"sidechain/crypto/ethsecp256k1"
-	"sidechain/utils"
+	"github.com/evmos/ethermint/crypto/ethsecp256k1"
+	ethermint "github.com/evmos/ethermint/types"
 
 	"sidechain/app"
 	"sidechain/testutil"
@@ -30,8 +30,7 @@ var _ = Describe("Performing EVM transactions", Ordered, func() {
 		params := s.app.Erc20Keeper.GetParams(s.ctx)
 		params.EnableEVMHook = true
 		params.EnableErc20 = true
-		err := s.app.Erc20Keeper.SetParams(s.ctx, params)
-		Expect(err).To(BeNil())
+		s.app.Erc20Keeper.SetParams(s.ctx, params)
 	})
 
 	// Epoch mechanism for triggering allocation and distribution
@@ -40,7 +39,7 @@ var _ = Describe("Performing EVM transactions", Ordered, func() {
 			params := s.app.Erc20Keeper.GetParams(s.ctx)
 			params.EnableEVMHook = false
 			params.EnableErc20 = false
-			s.app.Erc20Keeper.SetParams(s.ctx, params) //nolint:errcheck
+			s.app.Erc20Keeper.SetParams(s.ctx, params)
 		})
 		It("should be successful", func() {
 			_, err := s.DeployContract("coin", "token", erc20Decimals)
@@ -52,7 +51,7 @@ var _ = Describe("Performing EVM transactions", Ordered, func() {
 		BeforeEach(func() {
 			params := s.app.Erc20Keeper.GetParams(s.ctx)
 			params.EnableErc20 = false
-			s.app.Erc20Keeper.SetParams(s.ctx, params) //nolint:errcheck
+			s.app.Erc20Keeper.SetParams(s.ctx, params)
 		})
 		It("should be successful", func() {
 			_, err := s.DeployContract("coin", "token", erc20Decimals)
@@ -64,7 +63,7 @@ var _ = Describe("Performing EVM transactions", Ordered, func() {
 		BeforeEach(func() {
 			params := s.app.Erc20Keeper.GetParams(s.ctx)
 			params.EnableEVMHook = false
-			s.app.Erc20Keeper.SetParams(s.ctx, params) //nolint:errcheck
+			s.app.Erc20Keeper.SetParams(s.ctx, params)
 		})
 		It("should be successful", func() {
 			_, err := s.DeployContract("coin", "token", erc20Decimals)
@@ -82,8 +81,6 @@ var _ = Describe("Performing EVM transactions", Ordered, func() {
 
 var _ = Describe("ERC20:", Ordered, func() {
 	amt := sdk.NewInt(100)
-	fundsAmt, _ := sdk.NewIntFromString("100000000000000000000000")
-
 	privKey, _ := ethsecp256k1.GenerateKey()
 	addrBz := privKey.PubKey().Address().Bytes()
 	accAddr := sdk.AccAddress(addrBz)
@@ -110,8 +107,8 @@ var _ = Describe("ERC20:", Ordered, func() {
 			BeforeEach(func() {
 				// Mint coins to pay gas fee, gov deposit and registering coins in Bankkeeper
 				coins := sdk.NewCoins(
-					sdk.NewCoin("aevmos", fundsAmt),
-					sdk.NewCoin(stakingtypes.DefaultParams().BondDenom, fundsAmt),
+					sdk.NewCoin("aevmos", sdk.NewInt(1000000000000000000)),
+					sdk.NewCoin(stakingtypes.DefaultParams().BondDenom, sdk.NewInt(10000000000)),
 					sdk.NewCoin(metadataIbc.Base, sdk.NewInt(1)),
 					sdk.NewCoin(metadataCoin.Base, sdk.NewInt(1)),
 				)
@@ -174,18 +171,15 @@ var _ = Describe("ERC20:", Ordered, func() {
 		})
 		Context("with deployed contracts", func() {
 			BeforeEach(func() {
-				var err error
 				// Mint coins to pay gas fee, gov deposit and registering coins in Bankkeeper
-				contract, err = s.DeployContract(erc20Name, erc20Symbol, erc20Decimals)
-				s.Require().NoError(err)
-				contract2, err = s.DeployContract(erc20Name, erc20Symbol, erc20Decimals)
-				s.Require().NoError(err)
+				contract, _ = s.DeployContract(erc20Name, erc20Symbol, erc20Decimals)
+				contract2, _ = s.DeployContract(erc20Name, erc20Symbol, erc20Decimals)
 
 				coins := sdk.NewCoins(
-					sdk.NewCoin("aevmos", fundsAmt),
-					sdk.NewCoin(stakingtypes.DefaultParams().BondDenom, fundsAmt),
+					sdk.NewCoin("aevmos", sdk.NewInt(1000000000000000000)),
+					sdk.NewCoin(stakingtypes.DefaultParams().BondDenom, sdk.NewInt(10000000000)),
 				)
-				err = testutil.FundAccount(s.ctx, s.app.BankKeeper, accAddr, coins)
+				err := testutil.FundAccount(s.ctx, s.app.BankKeeper, accAddr, coins)
 				s.Require().NoError(err)
 				s.Commit()
 			})
@@ -251,7 +245,8 @@ var _ = Describe("ERC20:", Ordered, func() {
 				pair = s.setupRegisterCoin(metadataCoin)
 				coin = sdk.NewCoin(pair.Denom, amt)
 
-				err := testutil.FundAccount(s.ctx, s.app.BankKeeper, accAddr, sdk.NewCoins(sdk.NewCoin(utils.BaseDenom, fundsAmt)))
+				denom := s.app.ClaimsKeeper.GetParams(s.ctx).ClaimsDenom
+				err := testutil.FundAccount(s.ctx, s.app.BankKeeper, accAddr, sdk.NewCoins(sdk.NewCoin(denom, sdk.TokensFromConsensusPower(100, ethermint.PowerReduction))))
 				s.Require().NoError(err)
 				err = testutil.FundAccount(s.ctx, s.app.BankKeeper, accAddr, sdk.NewCoins(coin))
 				s.Require().NoError(err)
@@ -309,7 +304,8 @@ var _ = Describe("ERC20:", Ordered, func() {
 				*pair, _ = s.app.Erc20Keeper.GetTokenPair(s.ctx, id)
 				coin = sdk.NewCoin(pair.Denom, amt)
 
-				err := testutil.FundAccount(s.ctx, s.app.BankKeeper, accAddr, sdk.NewCoins(sdk.NewCoin(utils.BaseDenom, fundsAmt)))
+				denom := s.app.ClaimsKeeper.GetParams(s.ctx).ClaimsDenom
+				err := testutil.FundAccount(s.ctx, s.app.BankKeeper, accAddr, sdk.NewCoins(sdk.NewCoin(denom, sdk.NewInt(1000))))
 				s.Require().NoError(err)
 
 				_ = s.MintERC20Token(contract, s.address, addr, big.NewInt(amt.Int64()))
@@ -379,9 +375,9 @@ func convertCoin(ctx sdk.Context, appEvmos *app.Evmos, pk *ethsecp256k1.PrivKey,
 	addrBz := pk.PubKey().Address().Bytes()
 
 	convertCoinMsg := types.NewMsgConvertCoin(coin, common.BytesToAddress(addrBz), sdk.AccAddress(addrBz))
-	res, err := testutil.DeliverTx(ctx, appEvmos, pk, nil, convertCoinMsg)
+	res, err := testutil.DeliverTx(ctx, appEvmos, pk, convertCoinMsg)
 	s.Require().NoError(err)
-
+	// res := deliverTx(pk, convertCoinMsg)
 	Expect(res.IsOK()).To(BeTrue(), "failed to convert coin: %s", res.Log)
 }
 
@@ -389,7 +385,7 @@ func convertERC20(ctx sdk.Context, appEvmos *app.Evmos, pk *ethsecp256k1.PrivKey
 	addrBz := pk.PubKey().Address().Bytes()
 
 	convertERC20Msg := types.NewMsgConvertERC20(amt, sdk.AccAddress(addrBz), contract, common.BytesToAddress(addrBz))
-	res, err := testutil.DeliverTx(ctx, appEvmos, pk, nil, convertERC20Msg)
+	res, err := testutil.DeliverTx(ctx, appEvmos, pk, convertERC20Msg)
 	s.Require().NoError(err)
 	Expect(res.IsOK()).To(BeTrue(), "failed to convert ERC20: %s", res.Log)
 }

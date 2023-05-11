@@ -13,9 +13,8 @@ import (
 	tmversion "github.com/tendermint/tendermint/proto/tendermint/version"
 	"github.com/tendermint/tendermint/version"
 
-	utiltx "sidechain/testutil/tx"
-	"sidechain/utils"
-	feemarkettypes "sidechain/x/feemarket/types"
+	"github.com/evmos/ethermint/tests"
+	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
 
 	"sidechain/app"
 	"sidechain/x/erc20"
@@ -25,7 +24,7 @@ import (
 type GenesisTestSuite struct {
 	suite.Suite
 	ctx     sdk.Context
-	app     *app.Evmos
+	app     *app.Sidechain
 	genesis types.GenesisState
 }
 
@@ -35,12 +34,12 @@ func TestGenesisTestSuite(t *testing.T) {
 
 func (suite *GenesisTestSuite) SetupTest() {
 	// consensus key
-	consAddress := sdk.ConsAddress(utiltx.GenerateAddress().Bytes())
+	consAddress := sdk.ConsAddress(tests.GenerateAddress().Bytes())
 
 	suite.app = app.Setup(false, feemarkettypes.DefaultGenesisState())
 	suite.ctx = suite.app.BaseApp.NewContext(false, tmproto.Header{
 		Height:          1,
-		ChainID:         utils.TestnetChainID + "-1",
+		ChainID:         "sidechain_9000-1",
 		Time:            time.Now().UTC(),
 		ProposerAddress: consAddress.Bytes(),
 

@@ -1,5 +1,18 @@
-// Copyright Tharsis Labs Ltd.(Evmos)
-// SPDX-License-Identifier:ENCL-1.0(https://github.com/evmos/evmos/blob/main/LICENSE)
+// Copyright 2022 Evmos Foundation
+// This file is part of the Evmos Network packages.
+//
+// Evmos is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The Evmos packages are distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the Evmos packages. If not, see https://github.com/evmos/evmos/blob/main/LICENSE
 
 package types
 
@@ -16,9 +29,8 @@ import (
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/vm"
 
-	claimstypes "sidechain/x/claims/types"
-	"sidechain/x/evm/statedb"
-	evmtypes "sidechain/x/evm/types"
+	"github.com/evmos/ethermint/x/evm/statedb"
+	evmtypes "github.com/evmos/ethermint/x/evm/types"
 )
 
 // AccountKeeper defines the expected interface needed to retrieve account info.
@@ -53,11 +65,6 @@ type EVMKeeper interface {
 	GetAccountWithoutBalance(ctx sdk.Context, addr common.Address) *statedb.Account
 	EstimateGas(c context.Context, req *evmtypes.EthCallRequest) (*evmtypes.EstimateGasResponse, error)
 	ApplyMessage(ctx sdk.Context, msg core.Message, tracer vm.EVMLogger, commit bool) (*evmtypes.MsgEthereumTxResponse, error)
-}
-
-// StakingKeeper defines the expected interface needed to retrieve the staking denom.
-type ClaimsKeeper interface {
-	GetParams(ctx sdk.Context) claimstypes.Params
 }
 
 type (

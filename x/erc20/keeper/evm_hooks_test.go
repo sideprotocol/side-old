@@ -8,10 +8,10 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 
-	utiltx "sidechain/testutil/tx"
+	"sidechain/contracts"
 	"sidechain/x/erc20/types"
 
-	"sidechain/contracts"
+	"github.com/evmos/ethermint/tests"
 )
 
 // ensureHooksSet tries to set the hooks on EVMKeeper, this will fail if the erc20 hook is already set
@@ -114,6 +114,7 @@ func (suite *KeeperTestSuite) TestEvmHooksRegisteredERC20() {
 
 			contractAddr, err := suite.DeployContract("coin test erc20", "token", erc20Decimals)
 			suite.Require().NoError(err)
+			suite.Commit()
 
 			tc.malleate(contractAddr)
 
@@ -157,10 +158,8 @@ func (suite *KeeperTestSuite) TestEvmHooksRegisteredCoin() {
 			contractAddr := common.HexToAddress(pair.Erc20Address)
 
 			coins := sdk.NewCoins(sdk.NewCoin(cosmosTokenBase, sdk.NewInt(tc.mint)))
-			err := suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, coins)
-			suite.Require().NoError(err, tc.name)
-			err = suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, types.ModuleName, sender, coins)
-			suite.Require().NoError(err, tc.name)
+			suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, coins)
+			suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, types.ModuleName, sender, coins)
 
 			convertCoin := types.NewMsgConvertCoin(
 				sdk.NewCoin(cosmosTokenBase, sdk.NewInt(tc.burn)),
@@ -169,7 +168,7 @@ func (suite *KeeperTestSuite) TestEvmHooksRegisteredCoin() {
 			)
 
 			ctx := sdk.WrapSDKContext(suite.ctx)
-			_, err = suite.app.Erc20Keeper.ConvertCoin(ctx, convertCoin)
+			_, err := suite.app.Erc20Keeper.ConvertCoin(ctx, convertCoin)
 			suite.Require().NoError(err, tc.name)
 			suite.Commit()
 
@@ -185,7 +184,6 @@ func (suite *KeeperTestSuite) TestEvmHooksRegisteredCoin() {
 			cosmosBalance = suite.app.BankKeeper.GetBalance(suite.ctx, sender, metadataCoin.Base)
 
 			if tc.result {
-				suite.Require().Equal(balance, big.NewInt(tc.burn-tc.reconvert))
 				// Check if the execution was successful
 				suite.Require().NoError(err)
 				suite.Require().Equal(cosmosBalance.Amount, sdk.NewInt(tc.mint-tc.burn+tc.reconvert))
@@ -219,7 +217,7 @@ func (suite *KeeperTestSuite) TestPostTxProcessing() {
 		true,                  // checkNonce
 	)
 
-	account := utiltx.GenerateAddress()
+	account := tests.GenerateAddress()
 
 	transferData := []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	transferData[31] = uint8(10)
@@ -317,6 +315,7 @@ func (suite *KeeperTestSuite) TestPostTxProcessing() {
 			func() {
 				contractAddr, err := suite.DeployContract("coin", "token", erc20Decimals)
 				suite.Require().NoError(err)
+				suite.Commit()
 
 				_, err = suite.app.Erc20Keeper.RegisterERC20(suite.ctx, contractAddr)
 				suite.Require().NoError(err)
@@ -338,6 +337,7 @@ func (suite *KeeperTestSuite) TestPostTxProcessing() {
 			func() {
 				contractAddr, err := suite.DeployContract("coin", "token", erc20Decimals)
 				suite.Require().NoError(err)
+				suite.Commit()
 
 				pair, err = suite.app.Erc20Keeper.RegisterERC20(suite.ctx, contractAddr)
 				suite.Require().NoError(err)
@@ -359,6 +359,7 @@ func (suite *KeeperTestSuite) TestPostTxProcessing() {
 			func() {
 				contractAddr, err := suite.DeployContract("coin", "token", erc20Decimals)
 				suite.Require().NoError(err)
+				suite.Commit()
 
 				pair, err := suite.app.Erc20Keeper.RegisterERC20(suite.ctx, contractAddr)
 				suite.Require().NoError(err)
@@ -383,6 +384,7 @@ func (suite *KeeperTestSuite) TestPostTxProcessing() {
 			func() {
 				contractAddr, err := suite.DeployContract("coin", "token", erc20Decimals)
 				suite.Require().NoError(err)
+				suite.Commit()
 
 				pair, err := suite.app.Erc20Keeper.RegisterERC20(suite.ctx, contractAddr)
 				suite.Require().NoError(err)
@@ -408,7 +410,6 @@ func (suite *KeeperTestSuite) TestPostTxProcessing() {
 			suite.mintFeeCollector = true
 			suite.SetupTest()
 			suite.ensureHooksSet()
-			suite.Commit()
 
 			tc.malleate()
 
