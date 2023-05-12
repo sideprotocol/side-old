@@ -6,10 +6,10 @@ order: 8
 
 ## CLI
 
-Find below a list of  `evmosd` commands added with the  `x/erc20` module. You can obtain the full list by using the `evmosd -h` command. A CLI command can look like this:
+Find below a list of  `sidechaind` commands added with the  `x/erc20` module. You can obtain the full list by using the `sidechaind -h` command. A CLI command can look like this:
 
 ```bash
-evmosd query erc20 params
+sidechaind query erc20 params
 ```
 
 ### Queries
@@ -36,7 +36,7 @@ The `tx gov submit-legacy-proposal` commands allow users to query create a propo
 Allows users to submit a `RegisterCoinProposal`. Submit a proposal to register a Cosmos coin to the erc20 along with an initial deposit. Upon passing, the proposal details must be supplied via a JSON file.
 
 ```bash
-evmosd tx gov submit-legacy-proposal register-coin METADATA_FILE [flags]
+sidechaind tx gov submit-legacy-proposal register-coin METADATA_FILE [flags]
 ```
 
 Where METADATA_FILE contains (example):
@@ -71,7 +71,7 @@ Where METADATA_FILE contains (example):
 Allows users to submit a `RegisterERC20Proposal`. Submit a proposal to register ERC20 tokens along with an initial deposit. To register multiple tokens in one proposal pass them after each other e.g. `register-erc20 <contract-address1> <contract-address2>`.
 
 ```bash
-evmosd tx gov submit-legacy-proposal register-erc20 ERC20_ADDRESS... [flags]
+sidechaind tx gov submit-legacy-proposal register-erc20 ERC20_ADDRESS... [flags]
 ```
 
 **`toggle-token-conversion`**
@@ -79,7 +79,7 @@ evmosd tx gov submit-legacy-proposal register-erc20 ERC20_ADDRESS... [flags]
 Allows users to submit a `ToggleTokenConversionProposal`.
 
 ```bash
-evmosd tx gov submit-legacy-proposal toggle-token-conversion TOKEN [flags]
+sidechaind tx gov submit-legacy-proposal toggle-token-conversion TOKEN [flags]
 ```
 
 **`param-change`**
@@ -87,7 +87,7 @@ evmosd tx gov submit-legacy-proposal toggle-token-conversion TOKEN [flags]
 Allows users to submit a `ParameterChangeProposal``.
 
 ```bash
-evmosd tx gov submit-legacy-proposal param-change PROPOSAL_FILE [flags]
+sidechaind tx gov submit-legacy-proposal param-change PROPOSAL_FILE [flags]
 ```
 
 ## gRPC
@@ -96,18 +96,18 @@ evmosd tx gov submit-legacy-proposal param-change PROPOSAL_FILE [flags]
 
 | Verb   | Method                            | Description                    |
 | ------ | --------------------------------- | ------------------------------ |
-| `gRPC` | `evmos.erc20.v1.Query/Params`     | Get erc20 params               |
-| `gRPC` | `evmos.erc20.v1.Query/TokenPair`  | Get registered token pair      |
-| `gRPC` | `evmos.erc20.v1.Query/TokenPairs` | Get all registered token pairs |
-| `GET`  | `/evmos/erc20/v1/params`          | Get erc20 params               |
-| `GET`  | `/evmos/erc20/v1/token_pair`      | Get registered token pair      |
-| `GET`  | `/evmos/erc20/v1/token_pairs`     | Get all registered token pairs |
+| `gRPC` | `sidechain.erc20.v1.Query/Params`     | Get erc20 params               |
+| `gRPC` | `sidechain.erc20.v1.Query/TokenPair`  | Get registered token pair      |
+| `gRPC` | `sidechain.erc20.v1.Query/TokenPairs` | Get all registered token pairs |
+| `GET`  | `/sidechain/erc20/v1/params`          | Get erc20 params               |
+| `GET`  | `/sidechain/erc20/v1/token_pair`      | Get registered token pair      |
+| `GET`  | `/sidechain/erc20/v1/token_pairs`     | Get all registered token pairs |
 
 ### Transactions
 
 | Verb   | Method                             | Description                    |
 | ------ | ---------------------------------- | ------------------------------ |
-| `gRPC` | `evmos.erc20.v1.Msg/ConvertCoin`   | Convert a Cosmos Coin to ERC20 |
-| `gRPC` | `evmos.erc20.v1.Msg/ConvertERC20`  | Convert a ERC20 to Cosmos Coin |
-| `GET`  | `/evmos/erc20/v1/tx/convert_coin`  | Convert a Cosmos Coin to ERC20 |
-| `GET`  | `/evmos/erc20/v1/tx/convert_erc20` | Convert a ERC20 to Cosmos Coin |
+| `gRPC` | `sidechain.erc20.v1.Msg/ConvertCoin`   | Convert a Cosmos Coin to ERC20 |
+| `gRPC` | `sidechain.erc20.v1.Msg/ConvertERC20`  | Convert a ERC20 to Cosmos Coin |
+| `GET`  | `/sidechain/erc20/v1/tx/convert_coin`  | Convert a Cosmos Coin to ERC20 |
+| `GET`  | `/sidechain/erc20/v1/tx/convert_erc20` | Convert a ERC20 to Cosmos Coin |
