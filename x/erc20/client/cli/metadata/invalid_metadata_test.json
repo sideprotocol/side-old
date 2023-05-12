@@ -1,0 +1,21 @@
+{
+  "metadata": [
+    {
+      "description": 1,
+      "denom_units": [
+        {
+          "denom": "uside",
+          "exponent": 0
+        },
+        {
+          "denom": "side",
+          "exponent": 18
+        }
+      ],
+      "base": "uside",
+      "display": "uside",
+      "name": "uside",
+      "symbol": "SIDE"
+    }
+  ]
+}

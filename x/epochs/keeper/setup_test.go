@@ -9,7 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
 
-	//evm "github.com/evmos/evmos/v13/x/evm/types"
+	//evm "sidechain/x/evm/types"
 
 	"sidechain/x/epochs/types"
 
