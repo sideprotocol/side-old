@@ -5,6 +5,7 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"github.com/cosmos/cosmos-sdk/crypto/types/multisig"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
@@ -45,7 +46,11 @@ func SigVerificationGasConsumer(
 		// Validator keys
 		meter.ConsumeGas(params.SigVerifyCostED25519, "ante verify: ed25519")
 		return errorsmod.Wrap(errortypes.ErrInvalidPubKey, "ED25519 public keys are unsupported")
+	case *secp256k1.PubKey:
+		// Handle secp256k1 keys
+		meter.ConsumeGas(secp256k1VerifyCost, "ante verify: secp256k1")
 
+		return nil
 	case multisig.PubKey:
 		// Multisig keys
 		multisignature, ok := sig.Data.(*signing.MultiSignatureData)
