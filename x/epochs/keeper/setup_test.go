@@ -9,7 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
 
-	//evm "sidechain/x/evm/types"
+	evm "github.com/evmos/ethermint/x/evm/types"
 
 	"sidechain/x/epochs/types"
 
@@ -19,11 +19,11 @@ import (
 type KeeperTestSuite struct {
 	suite.Suite
 
-	ctx sdk.Context
-	app *app.Sidechain
-	//queryClientEvm evm.QueryClient
-	queryClient types.QueryClient
-	consAddress sdk.ConsAddress
+	ctx            sdk.Context
+	app            *app.Sidechain
+	queryClientEvm evm.QueryClient
+	queryClient    types.QueryClient
+	consAddress    sdk.ConsAddress
 }
 
 var s *KeeperTestSuite

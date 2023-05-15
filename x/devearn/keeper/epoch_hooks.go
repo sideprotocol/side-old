@@ -1,11 +1,12 @@
 package keeper
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/query"
 	"sidechain/x/devearn/types"
 
-	epochstypes "github.com/evmos/evmos/v11/x/epochs/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
+
+	epochstypes "sidechain/x/epochs/types"
 )
 
 // BeforeEpochStart performs a no-op

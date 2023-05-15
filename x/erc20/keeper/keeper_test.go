@@ -49,7 +49,6 @@ import (
 	ibctesting "sidechain/ibc/testing"
 	claimstypes "sidechain/x/claims/types"
 	"sidechain/x/erc20/types"
-	inflationtypes "sidechain/x/inflation/types"
 
 	teststypes "sidechain/types/tests"
 
@@ -276,9 +275,9 @@ func (suite *KeeperTestSuite) SetupIBCTest() {
 	// Mint coins locked on the evmos account generated with secp.
 	coinEvmos := sdk.NewCoin("aevmos", sdk.NewInt(10000))
 	coins := sdk.NewCoins(coinEvmos)
-	err = s.app.BankKeeper.MintCoins(suite.EvmosChain.GetContext(), inflationtypes.ModuleName, coins)
+	err = s.app.BankKeeper.MintCoins(suite.EvmosChain.GetContext(), minttypes.ModuleName, coins)
 	suite.Require().NoError(err)
-	err = s.app.BankKeeper.SendCoinsFromModuleToAccount(suite.EvmosChain.GetContext(), inflationtypes.ModuleName, suite.EvmosChain.SenderAccount.GetAddress(), coins)
+	err = s.app.BankKeeper.SendCoinsFromModuleToAccount(suite.EvmosChain.GetContext(), minttypes.ModuleName, suite.EvmosChain.SenderAccount.GetAddress(), coins)
 	suite.Require().NoError(err)
 
 	// we need some coins in the bankkeeper to be able to register the coins later

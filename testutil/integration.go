@@ -93,7 +93,7 @@ func DeliverTx(
 ) (abci.ResponseDeliverTx, error) {
 	encodingConfig := encoding.MakeConfig(app.ModuleBasics)
 	accountAddress := sdk.AccAddress(priv.PubKey().Address().Bytes())
-	denom := appSidechain.ClaimsKeeper.GetParams(ctx).ClaimsDenom
+	denom := appSidechain.MintKeeper.GetParams(ctx).MintDenom
 
 	txBuilder := encodingConfig.TxConfig.NewTxBuilder()
 

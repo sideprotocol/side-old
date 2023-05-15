@@ -48653,6 +48653,202 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
+  /sidechain/epochs/v1/current_epoch:
+    get:
+      summary: CurrentEpoch provide current epoch of specified identifier
+      operationId: SidechainEpochsV1CurrentEpoch
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              current_epoch:
+                type: string
+                format: int64
+                title: current_epoch is the number of the current epoch
+            description: >-
+              QueryCurrentEpochResponse is the response type for the
+              Query/EpochInfos RPC
+
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: identifier
+          description: identifier of the current epoch
+          in: query
+          required: false
+          type: string
+      tags:
+        - Query
+  /sidechain/epochs/v1/epochs:
+    get:
+      summary: EpochInfos provide running epochInfos
+      operationId: SidechainEpochsV1EpochInfos
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              epochs:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    identifier:
+                      type: string
+                      title: identifier of the epoch
+                    start_time:
+                      type: string
+                      format: date-time
+                      title: start_time of the epoch
+                    duration:
+                      type: string
+                      title: duration of the epoch
+                    current_epoch:
+                      type: string
+                      format: int64
+                      title: current_epoch is the integer identifier of the epoch
+                    current_epoch_start_time:
+                      type: string
+                      format: date-time
+                      title: >-
+                        current_epoch_start_time defines the timestamp of the
+                        start of the epoch
+                    epoch_counting_started:
+                      type: boolean
+                      title: >-
+                        epoch_counting_started reflects if the counting for the
+                        epoch has started
+                    current_epoch_start_height:
+                      type: string
+                      format: int64
+                      title: current_epoch_start_height of the epoch
+                  description: >-
+                    EpochInfo defines the message interface containing the
+                    relevant informations about
+
+                    an epoch.
+                title: epochs is a slice of all EpochInfos
+              pagination:
+                description: pagination defines an optional pagination for the request.
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+            description: >-
+              QueryEpochsInfoResponse is the response type for the
+              Query/EpochInfos RPC
+
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
   /sidechain/mint/v1beta1/annual_provisions:
     get:
       summary: AnnualProvisions current minting annual provisions value.
@@ -78230,6 +78426,120 @@ definitions:
               dev_earn_percentage is parameter to define the dev_earn_pool as a
               percentage of the inflation
     description: QueryParamsResponse is response type for the Query/Params RPC method.
+  sidechain.epochs.v1.EpochInfo:
+    type: object
+    properties:
+      identifier:
+        type: string
+        title: identifier of the epoch
+      start_time:
+        type: string
+        format: date-time
+        title: start_time of the epoch
+      duration:
+        type: string
+        title: duration of the epoch
+      current_epoch:
+        type: string
+        format: int64
+        title: current_epoch is the integer identifier of the epoch
+      current_epoch_start_time:
+        type: string
+        format: date-time
+        title: >-
+          current_epoch_start_time defines the timestamp of the start of the
+          epoch
+      epoch_counting_started:
+        type: boolean
+        title: >-
+          epoch_counting_started reflects if the counting for the epoch has
+          started
+      current_epoch_start_height:
+        type: string
+        format: int64
+        title: current_epoch_start_height of the epoch
+    description: >-
+      EpochInfo defines the message interface containing the relevant
+      informations about
+
+      an epoch.
+  sidechain.epochs.v1.QueryCurrentEpochResponse:
+    type: object
+    properties:
+      current_epoch:
+        type: string
+        format: int64
+        title: current_epoch is the number of the current epoch
+    description: >-
+      QueryCurrentEpochResponse is the response type for the Query/EpochInfos
+      RPC
+
+      method.
+  sidechain.epochs.v1.QueryEpochsInfoResponse:
+    type: object
+    properties:
+      epochs:
+        type: array
+        items:
+          type: object
+          properties:
+            identifier:
+              type: string
+              title: identifier of the epoch
+            start_time:
+              type: string
+              format: date-time
+              title: start_time of the epoch
+            duration:
+              type: string
+              title: duration of the epoch
+            current_epoch:
+              type: string
+              format: int64
+              title: current_epoch is the integer identifier of the epoch
+            current_epoch_start_time:
+              type: string
+              format: date-time
+              title: >-
+                current_epoch_start_time defines the timestamp of the start of
+                the epoch
+            epoch_counting_started:
+              type: boolean
+              title: >-
+                epoch_counting_started reflects if the counting for the epoch
+                has started
+            current_epoch_start_height:
+              type: string
+              format: int64
+              title: current_epoch_start_height of the epoch
+          description: >-
+            EpochInfo defines the message interface containing the relevant
+            informations about
+
+            an epoch.
+        title: epochs is a slice of all EpochInfos
+      pagination:
+        description: pagination defines an optional pagination for the request.
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+    description: |-
+      QueryEpochsInfoResponse is the response type for the Query/EpochInfos RPC
+      method.
   sidechain.mint.v1beta1.Params:
     type: object
     properties:

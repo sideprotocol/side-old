@@ -2,8 +2,9 @@ package types
 
 import (
 	"fmt"
+	epochstypes "sidechain/x/epochs/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	epochstypes "github.com/evmos/evmos/v11/x/epochs/types"
 
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"gopkg.in/yaml.v2"

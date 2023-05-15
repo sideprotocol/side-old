@@ -70064,7 +70064,7 @@ definitions:
       Query/TotalUnclaimed
 
       RPC method.
-  evmos.epochs.v1.EpochInfo:
+  sidechain.epochs.v1.EpochInfo:
     type: object
     properties:
       identifier:
@@ -70101,7 +70101,7 @@ definitions:
       informations about
 
       an epoch.
-  evmos.epochs.v1.QueryCurrentEpochResponse:
+  sidechain.epochs.v1.QueryCurrentEpochResponse:
     type: object
     properties:
       current_epoch:
@@ -70113,7 +70113,7 @@ definitions:
       RPC
 
       method.
-  evmos.epochs.v1.QueryEpochsInfoResponse:
+  sidechain.epochs.v1.QueryEpochsInfoResponse:
     type: object
     properties:
       epochs:

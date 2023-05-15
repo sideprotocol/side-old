@@ -27,8 +27,7 @@ import (
 	"sidechain/contracts"
 	claimstypes "sidechain/x/claims/types"
 	"sidechain/x/erc20/types"
-	inflationtypes "sidechain/x/inflation/types"
-	vestingtypes "sidechain/x/vesting/types"
+	minttypes "sidechain/x/mint/types"
 )
 
 var erc20Denom = "erc20/0xdac17f958d2ee523a2206206994597c13d831ec7"
@@ -245,29 +244,6 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			expCoins:      coins,
 		},
 		{
-			name: "ibc conversion - sender == receiver and from evm chain",
-			malleate: func() {
-				claimsParams := suite.app.ClaimsKeeper.GetParams(suite.ctx)
-				claimsParams.EVMChannels = []string{evmosChannel}
-				suite.app.ClaimsKeeper.SetParams(suite.ctx, claimsParams)
-
-				sourcePrefix := transfertypes.GetDenomPrefix(transfertypes.PortID, sourceChannel)
-				prefixedDenom := sourcePrefix + registeredDenom
-				transfer := transfertypes.NewFungibleTokenPacketData(prefixedDenom, "100", secpAddrCosmos, secpAddrEvmos, "")
-				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
-				packet = channeltypes.NewPacket(bz, 100, transfertypes.PortID, sourceChannel, transfertypes.PortID, evmosChannel, timeoutHeight, 0)
-			},
-			receiver:      secpAddr,
-			ackSuccess:    true,
-			checkBalances: true,
-			expErc20s:     big.NewInt(1000),
-			expCoins: sdk.NewCoins(
-				sdk.NewCoin(claimstypes.DefaultClaimsDenom, sdk.NewInt(1000)),
-				sdk.NewCoin(registeredDenom, sdk.NewInt(0)),
-				sdk.NewCoin(ibcBase, sdk.NewInt(1000)),
-			),
-		},
-		{
 			name: "ibc conversion - sender != receiver",
 			malleate: func() {
 				pk1 := secp256k1.GenPrivKey()
@@ -286,31 +262,6 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 				sdk.NewCoin(claimstypes.DefaultClaimsDenom, sdk.NewInt(1000)),
 				sdk.NewCoin(registeredDenom, sdk.NewInt(0)),
 				sdk.NewCoin(ibcBase, sdk.NewInt(1000)),
-			),
-		},
-		{
-			name: "ibc conversion - receiver is a vesting account (eth address)",
-			malleate: func() {
-				// Set vesting account
-				bacc := authtypes.NewBaseAccount(ethsecpAddr, nil, 0, 0)
-				acc := vestingtypes.NewClawbackVestingAccount(bacc, ethsecpAddr, nil, suite.ctx.BlockTime(), nil, nil)
-
-				suite.app.AccountKeeper.SetAccount(suite.ctx, acc)
-				sourcePrefix := transfertypes.GetDenomPrefix(transfertypes.PortID, sourceChannel)
-				prefixedDenom := sourcePrefix + registeredDenom
-
-				transfer := transfertypes.NewFungibleTokenPacketData(prefixedDenom, "1000", secpAddrCosmos, ethsecpAddrEvmos, "")
-				bz := transfertypes.ModuleCdc.MustMarshalJSON(&transfer)
-				packet = channeltypes.NewPacket(bz, 100, transfertypes.PortID, sourceChannel, transfertypes.PortID, evmosChannel, timeoutHeight, 0)
-			},
-			receiver:      ethsecpAddr,
-			ackSuccess:    true,
-			checkBalances: true,
-			expErc20s:     big.NewInt(1000),
-			expCoins: sdk.NewCoins(
-				sdk.NewCoin(ibcBase, sdk.NewInt(1000)),
-				sdk.NewCoin(claimstypes.DefaultClaimsDenom, sdk.NewInt(1000)),
-				sdk.NewCoin(registeredDenom, sdk.NewInt(0)),
 			),
 		},
 	}
@@ -348,7 +299,6 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 				suite.app.BankKeeper,
 				suite.app.EvmKeeper,
 				suite.app.StakingKeeper,
-				suite.app.ClaimsKeeper,
 			)
 
 			// Fund receiver account with EVMOS, ERC20 coins and IBC vouchers
@@ -448,9 +398,9 @@ func (suite *KeeperTestSuite) TestConvertCoinToERC20FromPacket() {
 				// Mint coins on account to simulate receiving ibc transfer
 				coinEvmos := sdk.NewCoin(pair.Denom, sdk.NewInt(10))
 				coins := sdk.NewCoins(coinEvmos)
-				err := suite.app.BankKeeper.MintCoins(suite.ctx, inflationtypes.ModuleName, coins)
+				err := suite.app.BankKeeper.MintCoins(suite.ctx, minttypes.ModuleName, coins)
 				suite.Require().NoError(err)
-				err = suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, inflationtypes.ModuleName, sender, coins)
+				err = suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, minttypes.ModuleName, sender, coins)
 				suite.Require().NoError(err)
 
 				return transfertypes.NewFungibleTokenPacketData(pair.Denom, "10", senderAddr, "", "")
@@ -643,9 +593,9 @@ func (suite *KeeperTestSuite) TestOnTimeoutPacket() {
 				// Mint coins on account to simulate receiving ibc transfer
 				coinEvmos := sdk.NewCoin(pair.Denom, sdk.NewInt(10))
 				coins := sdk.NewCoins(coinEvmos)
-				err := suite.app.BankKeeper.MintCoins(suite.ctx, inflationtypes.ModuleName, coins)
+				err := suite.app.BankKeeper.MintCoins(suite.ctx, minttypes.ModuleName, coins)
 				suite.Require().NoError(err)
-				err = suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, inflationtypes.ModuleName, sender, coins)
+				err = suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, minttypes.ModuleName, sender, coins)
 				suite.Require().NoError(err)
 
 				return transfertypes.NewFungibleTokenPacketData(pair.Denom, "10", senderAddr, "", "")
