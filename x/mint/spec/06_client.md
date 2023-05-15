@@ -72,7 +72,7 @@ goal_bonded: "0.670000000000000000"
 inflation_max: "0.200000000000000000"
 inflation_min: "0.070000000000000000"
 inflation_rate_change: "0.130000000000000000"
-mint_denom: stake
+mint_denom: aside
 ```
 
 ## gRPC
@@ -142,7 +142,7 @@ Example Output:
 ```json
 {
   "params": {
-    "mintDenom": "stake",
+    "mintDenom": "aside",
     "inflationRateChange": "130000000000000000",
     "inflationMax": "200000000000000000",
     "inflationMin": "70000000000000000",
@@ -213,7 +213,7 @@ Example Output:
 ```json
 {
   "params": {
-    "mintDenom": "stake",
+    "mintDenom": "aside",
     "inflationRateChange": "130000000000000000",
     "inflationMax": "200000000000000000",
     "inflationMin": "70000000000000000",

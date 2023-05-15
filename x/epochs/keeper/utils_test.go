@@ -1,28 +1,88 @@
 package keeper_test
 
 import (
+	"testing"
 	"time"
 
-	"sidechain/app"
-	"sidechain/testutil"
-	"sidechain/x/epochs/types"
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	abci "github.com/tendermint/tendermint/abci/types"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
+	"github.com/tendermint/tendermint/crypto/tmhash"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+	tmversion "github.com/tendermint/tendermint/proto/tendermint/version"
+	"github.com/tendermint/tendermint/version"
+
 	evm "github.com/evmos/ethermint/x/evm/types"
+
+	"sidechain/app"
+	"sidechain/x/epochs/types"
 )
 
+var denomMint = evm.DefaultEVMDenom
+
+type KeeperTestSuite struct {
+	suite.Suite
+
+	ctx            sdk.Context
+	app            *app.Sidechain
+	queryClientEvm evm.QueryClient
+	queryClient    types.QueryClient
+	consAddress    sdk.ConsAddress
+}
+
+var s *KeeperTestSuite
+
+func TestKeeperTestSuite(t *testing.T) {
+	s = new(KeeperTestSuite)
+	suite.Run(t, s)
+
+	// Run Ginkgo integration tests
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "Keeper Suite")
+}
+
+func (suite *KeeperTestSuite) SetupTest() {
+	suite.DoSetupTest(suite.T())
+}
+
 // Test helpers
-func (suite *KeeperTestSuite) DoSetupTest() {
+func (suite *KeeperTestSuite) DoSetupTest(t require.TestingT) {
 	checkTx := false
 
 	// init app
 	suite.app = app.Setup(checkTx, nil)
 
 	// setup context
-	header := testutil.NewHeader(
-		1, time.Now().UTC(), "sidechain_9001-1", suite.consAddress, nil, nil,
-	)
-	suite.ctx = suite.app.BaseApp.NewContext(checkTx, header)
+	suite.ctx = suite.app.BaseApp.NewContext(checkTx, tmproto.Header{
+		Height:          1,
+		ChainID:         "sidechain_7071-1",
+		Time:            time.Now().UTC(),
+		ProposerAddress: suite.consAddress.Bytes(),
+
+		Version: tmversion.Consensus{
+			Block: version.BlockProtocol,
+		},
+		LastBlockId: tmproto.BlockID{
+			Hash: tmhash.Sum([]byte("block_id")),
+			PartSetHeader: tmproto.PartSetHeader{
+				Total: 11,
+				Hash:  tmhash.Sum([]byte("partset_header")),
+			},
+		},
+		AppHash:            tmhash.Sum([]byte("app")),
+		DataHash:           tmhash.Sum([]byte("data")),
+		EvidenceHash:       tmhash.Sum([]byte("evidence")),
+		ValidatorsHash:     tmhash.Sum([]byte("validators")),
+		NextValidatorsHash: tmhash.Sum([]byte("next_validators")),
+		ConsensusHash:      tmhash.Sum([]byte("consensus")),
+		LastResultsHash:    tmhash.Sum([]byte("last_result")),
+	})
 
 	// setup query helpers
 	queryHelper := baseapp.NewQueryServerTestHelper(suite.ctx, suite.app.InterfaceRegistry())
@@ -45,28 +105,18 @@ func (suite *KeeperTestSuite) Commit() {
 }
 
 func (suite *KeeperTestSuite) CommitAfter(t time.Duration) {
-	var err error
-	suite.ctx, err = testutil.Commit(suite.ctx, suite.app, t, nil)
-	suite.Require().NoError(err)
+	_ = suite.app.Commit()
+	header := suite.ctx.BlockHeader()
+	header.Height += 1
+	header.Time = header.Time.Add(t)
+	suite.app.BeginBlock(abci.RequestBeginBlock{
+		Header: header,
+	})
+
+	// update ctx
+	suite.ctx = suite.app.BaseApp.NewContext(false, header)
 
 	queryHelper := baseapp.NewQueryServerTestHelper(suite.ctx, suite.app.InterfaceRegistry())
 	evm.RegisterQueryServer(queryHelper, suite.app.EvmKeeper)
 	suite.queryClientEvm = evm.NewQueryClient(queryHelper)
 }
-
-// func (suite *KeeperTestSuite) CommitAfter(t time.Duration) {
-// 	_ = suite.app.Commit()
-// 	header := suite.ctx.BlockHeader()
-// 	header.Height += 1
-// 	header.Time = header.Time.Add(t)
-// 	suite.app.BeginBlock(abci.RequestBeginBlock{
-// 		Header: header,
-// 	})
-
-// 	// update ctx
-// 	suite.ctx = suite.app.BaseApp.NewContext(false, header)
-
-// 	queryHelper := baseapp.NewQueryServerTestHelper(suite.ctx, suite.app.InterfaceRegistry())
-// 	evm.RegisterQueryServer(queryHelper, suite.app.EvmKeeper)
-// 	suite.queryClientEvm = evm.NewQueryClient(queryHelper)
-// }

@@ -68,7 +68,7 @@ func (s *IntegrationTestSuite) TestGetCmdQueryParams() {
 		{
 			"json output",
 			[]string{fmt.Sprintf("--%s=1", flags.FlagHeight), fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
-			`{"mint_denom":"stake","inflation_rate_change":"0.130000000000000000","inflation_max":"1.000000000000000000","inflation_min":"1.000000000000000000","goal_bonded":"0.670000000000000000","blocks_per_year":"6311520"}`,
+			`{"mint_denom":"aside","inflation_rate_change":"0.130000000000000000","inflation_max":"1.000000000000000000","inflation_min":"1.000000000000000000","goal_bonded":"0.670000000000000000","blocks_per_year":"6311520"}`,
 		},
 		{
 			"text output",
@@ -78,7 +78,7 @@ goal_bonded: "0.670000000000000000"
 inflation_max: "1.000000000000000000"
 inflation_min: "1.000000000000000000"
 inflation_rate_change: "0.130000000000000000"
-mint_denom: stake`,
+mint_denom: aside`,
 		},
 	}
 
