@@ -31785,1771 +31785,6 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
-  /evmos/claims/v1/claims_records:
-    get:
-      summary: ClaimsRecords returns all claims records
-      operationId: EvmosClaimsV1ClaimsRecords
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              claims:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    address:
-                      type: string
-                      title: address of claiming user in either bech32 or hex format
-                    initial_claimable_amount:
-                      type: string
-                      title: initial_claimable_amount for the user
-                    actions_completed:
-                      type: array
-                      items:
-                        type: boolean
-                      title: >-
-                        actions_completed is a slice that describes which
-                        actions were completed
-                  description: >-
-                    ClaimsRecordAddress is the claims metadata per address that
-                    is used at
-
-                    Genesis.
-                title: claims defines all claims records
-              pagination:
-                description: pagination defines the pagination in the response.
-                type: object
-                properties:
-                  next_key:
-                    type: string
-                    format: byte
-                    description: |-
-                      next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently. It will be empty if
-                      there are no more results.
-                  total:
-                    type: string
-                    format: uint64
-                    title: >-
-                      total is total number of results available if
-                      PageRequest.count_total
-
-                      was set, its value is undefined otherwise
-            description: >-
-              QueryClaimsRecordsResponse is the response type for the
-              Query/ClaimsRecords
-
-              RPC method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: pagination.key
-          description: |-
-            key is a value returned in PageResponse.next_key to begin
-            querying the next page most efficiently. Only one of offset or key
-            should be set.
-          in: query
-          required: false
-          type: string
-          format: byte
-        - name: pagination.offset
-          description: >-
-            offset is a numeric offset that can be used when key is unavailable.
-
-            It is less efficient than using key. Only one of offset or key
-            should
-
-            be set.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.limit
-          description: >-
-            limit is the total number of results to be returned in the result
-            page.
-
-            If left empty it will default to a value to be set by each app.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.count_total
-          description: >-
-            count_total is set to true  to indicate that the result set should
-            include
-
-            a count of the total number of items available for pagination in
-            UIs.
-
-            count_total is only respected when offset is used. It is ignored
-            when key
-
-            is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
-          in: query
-          required: false
-          type: boolean
-      tags:
-        - Query
-  /evmos/claims/v1/claims_records/{address}:
-    get:
-      summary: ClaimsRecord returns the claims record for a given address
-      operationId: EvmosClaimsV1ClaimsRecord
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              initial_claimable_amount:
-                type: string
-                title: initial_claimable_amount of the user
-              claims:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    action:
-                      title: action enum
-                      type: string
-                      enum:
-                        - ACTION_UNSPECIFIED
-                        - ACTION_VOTE
-                        - ACTION_DELEGATE
-                        - ACTION_EVM
-                        - ACTION_IBC_TRANSFER
-                      default: ACTION_UNSPECIFIED
-                      description: >-
-                        Action defines the list of available actions to claim
-                        the airdrop tokens.
-
-                         - ACTION_UNSPECIFIED: ACTION_UNSPECIFIED defines an invalid action.
-                         - ACTION_VOTE: ACTION_VOTE defines a proposal vote.
-                         - ACTION_DELEGATE: ACTION_DELEGATE defines an staking delegation.
-                         - ACTION_EVM: ACTION_EVM defines an EVM transaction.
-                         - ACTION_IBC_TRANSFER: ACTION_IBC_TRANSFER defines a fungible token transfer transaction via IBC.
-                    completed:
-                      type: boolean
-                      title: completed is true if the action has been completed
-                    claimable_amount:
-                      type: string
-                      title: >-
-                        claimable_amount of tokens for the action. Zero if
-                        completed
-                  description: >-
-                    Claim defines the action, completed flag and the remaining
-                    claimable amount
-
-                    for a given user. This is only used during client queries.
-                title: claims of the user
-            description: >-
-              QueryClaimsRecordResponse is the response type for the
-              Query/ClaimsRecord RPC
-
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: address
-          description: address defines the user to query claims record for
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  /evmos/claims/v1/params:
-    get:
-      summary: Params returns the claims module parameters
-      operationId: EvmosClaimsV1Params
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              params:
-                description: params defines the parameters of the module.
-                type: object
-                properties:
-                  enable_claims:
-                    type: boolean
-                    title: >-
-                      enable_claims is the parameter to enable the claiming
-                      process
-                  airdrop_start_time:
-                    type: string
-                    format: date-time
-                    title: >-
-                      airdrop_start_time defines the timestamp of the airdrop
-                      start
-                  duration_until_decay:
-                    type: string
-                    title: duration_until_decay of claimable tokens begin
-                  duration_of_decay:
-                    type: string
-                    title: duration_of_decay for token claim decay period
-                  claims_denom:
-                    type: string
-                    title: claims_denom is the denomination of the claimable coin
-                  authorized_channels:
-                    type: array
-                    items:
-                      type: string
-                    description: >-
-                      authorized_channels is the list of authorized channel
-                      identifiers that can perform address
-
-                      attestations via IBC.
-                  evm_channels:
-                    type: array
-                    items:
-                      type: string
-                    title: >-
-                      evm_channels is the list of channel identifiers from EVM
-                      compatible chains
-            description: >-
-              QueryParamsResponse is the response type for the Query/Params RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
-  /evmos/claims/v1/total_unclaimed:
-    get:
-      summary: TotalUnclaimed queries the total unclaimed tokens from the airdrop
-      operationId: EvmosClaimsV1TotalUnclaimed
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              coins:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    denom:
-                      type: string
-                    amount:
-                      type: string
-                  description: >-
-                    Coin defines a token with a denomination and an amount.
-
-
-                    NOTE: The amount field is an Int which implements the custom
-                    method
-
-                    signatures required by gogoproto.
-                title: coins defines the unclaimed coins
-            description: >-
-              QueryTotalUnclaimedResponse is the response type for the
-              Query/TotalUnclaimed
-
-              RPC method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
-  /evmos/erc20/v1/params:
-    get:
-      summary: Params retrieves the erc20 module params
-      operationId: EvmosErc20V1Params
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              params:
-                title: params are the erc20 module parameters
-                type: object
-                properties:
-                  enable_erc20:
-                    type: boolean
-                    description: >-
-                      enable_erc20 is the parameter to enable the conversion of
-                      Cosmos coins <--> ERC20 tokens.
-                  enable_evm_hook:
-                    type: boolean
-                    description: >-
-                      enable_evm_hook is the parameter to enable the EVM hook
-                      that converts an ERC20 token to a Cosmos
-
-                      Coin by transferring the Tokens through a MsgEthereumTx to
-                      the ModuleAddress Ethereum address.
-            description: |-
-              QueryParamsResponse is the response type for the Query/Params RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
-  /evmos/erc20/v1/token_pairs:
-    get:
-      summary: TokenPairs retrieves registered token pairs
-      operationId: EvmosErc20V1TokenPairs
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              token_pairs:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    erc20_address:
-                      type: string
-                      title: erc20_address is the hex address of ERC20 contract token
-                    denom:
-                      type: string
-                      title: >-
-                        denom defines the cosmos base denomination to be mapped
-                        to
-                    enabled:
-                      type: boolean
-                      title: enabled defines the token mapping enable status
-                    contract_owner:
-                      title: >-
-                        contract_owner is the an ENUM specifying the type of
-                        ERC20 owner (0 invalid, 1 ModuleAccount, 2 external
-                        address)
-                      type: string
-                      enum:
-                        - OWNER_UNSPECIFIED
-                        - OWNER_MODULE
-                        - OWNER_EXTERNAL
-                      default: OWNER_UNSPECIFIED
-                      description: |-
-                        Owner enumerates the ownership of a ERC20 contract.
-
-                         - OWNER_UNSPECIFIED: OWNER_UNSPECIFIED defines an invalid/undefined owner.
-                         - OWNER_MODULE: OWNER_MODULE - erc20 is owned by the erc20 module account.
-                         - OWNER_EXTERNAL: OWNER_EXTERNAL - erc20 is owned by an external account.
-                  description: >-
-                    TokenPair defines an instance that records a pairing
-                    consisting of a native
-                     Cosmos Coin and an ERC20 token address.
-                title: >-
-                  token_pairs is a slice of registered token pairs for the erc20
-                  module
-              pagination:
-                description: pagination defines the pagination in the response.
-                type: object
-                properties:
-                  next_key:
-                    type: string
-                    format: byte
-                    description: |-
-                      next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently. It will be empty if
-                      there are no more results.
-                  total:
-                    type: string
-                    format: uint64
-                    title: >-
-                      total is total number of results available if
-                      PageRequest.count_total
-
-                      was set, its value is undefined otherwise
-            description: >-
-              QueryTokenPairsResponse is the response type for the
-              Query/TokenPairs RPC
-
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: pagination.key
-          description: |-
-            key is a value returned in PageResponse.next_key to begin
-            querying the next page most efficiently. Only one of offset or key
-            should be set.
-          in: query
-          required: false
-          type: string
-          format: byte
-        - name: pagination.offset
-          description: >-
-            offset is a numeric offset that can be used when key is unavailable.
-
-            It is less efficient than using key. Only one of offset or key
-            should
-
-            be set.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.limit
-          description: >-
-            limit is the total number of results to be returned in the result
-            page.
-
-            If left empty it will default to a value to be set by each app.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.count_total
-          description: >-
-            count_total is set to true  to indicate that the result set should
-            include
-
-            a count of the total number of items available for pagination in
-            UIs.
-
-            count_total is only respected when offset is used. It is ignored
-            when key
-
-            is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
-          in: query
-          required: false
-          type: boolean
-      tags:
-        - Query
-  /evmos/erc20/v1/token_pairs/{token}:
-    get:
-      summary: TokenPair retrieves a registered token pair
-      operationId: EvmosErc20V1TokenPair
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              token_pair:
-                title: >-
-                  token_pairs returns the info about a registered token pair for
-                  the erc20 module
-                type: object
-                properties:
-                  erc20_address:
-                    type: string
-                    title: erc20_address is the hex address of ERC20 contract token
-                  denom:
-                    type: string
-                    title: denom defines the cosmos base denomination to be mapped to
-                  enabled:
-                    type: boolean
-                    title: enabled defines the token mapping enable status
-                  contract_owner:
-                    title: >-
-                      contract_owner is the an ENUM specifying the type of ERC20
-                      owner (0 invalid, 1 ModuleAccount, 2 external address)
-                    type: string
-                    enum:
-                      - OWNER_UNSPECIFIED
-                      - OWNER_MODULE
-                      - OWNER_EXTERNAL
-                    default: OWNER_UNSPECIFIED
-                    description: |-
-                      Owner enumerates the ownership of a ERC20 contract.
-
-                       - OWNER_UNSPECIFIED: OWNER_UNSPECIFIED defines an invalid/undefined owner.
-                       - OWNER_MODULE: OWNER_MODULE - erc20 is owned by the erc20 module account.
-                       - OWNER_EXTERNAL: OWNER_EXTERNAL - erc20 is owned by an external account.
-                description: >-
-                  TokenPair defines an instance that records a pairing
-                  consisting of a native
-                   Cosmos Coin and an ERC20 token address.
-            description: >-
-              QueryTokenPairResponse is the response type for the
-              Query/TokenPair RPC
-
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: token
-          description: >-
-            token identifier can be either the hex contract address of the ERC20
-            or the
-
-            Cosmos base denomination
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  /evmos/erc20/v1/tx/convert_coin:
-    get:
-      summary: |-
-        ConvertCoin mints a ERC20 representation of the native Cosmos coin denom
-        that is registered on the token mapping.
-      operationId: EvmosErc20V1ConvertCoin
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            title: MsgConvertCoinResponse returns no fields
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: coin.denom
-          in: query
-          required: false
-          type: string
-        - name: coin.amount
-          in: query
-          required: false
-          type: string
-        - name: receiver
-          description: receiver is the hex address to receive ERC20 token
-          in: query
-          required: false
-          type: string
-        - name: sender
-          description: >-
-            sender is the cosmos bech32 address from the owner of the given
-            Cosmos coins
-          in: query
-          required: false
-          type: string
-      tags:
-        - Msg
-  /evmos/erc20/v1/tx/convert_erc20:
-    get:
-      summary: >-
-        ConvertERC20 mints a native Cosmos coin representation of the ERC20
-        token
-
-        contract that is registered on the token mapping.
-      operationId: EvmosErc20V1ConvertERC20
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            title: MsgConvertERC20Response returns no fields
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: contract_address
-          description: >-
-            contract_address of an ERC20 token contract, that is registered in a
-            token pair
-          in: query
-          required: false
-          type: string
-        - name: amount
-          description: amount of ERC20 tokens to convert
-          in: query
-          required: false
-          type: string
-        - name: receiver
-          description: receiver is the bech32 address to receive native Cosmos coins
-          in: query
-          required: false
-          type: string
-        - name: sender
-          description: sender is the hex address from the owner of the given ERC20 tokens
-          in: query
-          required: false
-          type: string
-      tags:
-        - Msg
-  /evmos/incentives/v1/allocation_meters:
-    get:
-      summary: |-
-        AllocationMeters retrieves active allocation meters for a given
-        denomination
-      operationId: EvmosIncentivesV1AllocationMeters
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              allocation_meters:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    denom:
-                      type: string
-                    amount:
-                      type: string
-                  description: >-
-                    DecCoin defines a token with a denomination and a decimal
-                    amount.
-
-
-                    NOTE: The amount field is an Dec which implements the custom
-                    method
-
-                    signatures required by gogoproto.
-                title: allocation_meters is a slice of all allocations
-              pagination:
-                description: pagination defines the pagination in the response.
-                type: object
-                properties:
-                  next_key:
-                    type: string
-                    format: byte
-                    description: |-
-                      next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently. It will be empty if
-                      there are no more results.
-                  total:
-                    type: string
-                    format: uint64
-                    title: >-
-                      total is total number of results available if
-                      PageRequest.count_total
-
-                      was set, its value is undefined otherwise
-            description: |-
-              QueryAllocationMetersResponse is the response type for the
-              Query/AllocationMeters RPC method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: pagination.key
-          description: |-
-            key is a value returned in PageResponse.next_key to begin
-            querying the next page most efficiently. Only one of offset or key
-            should be set.
-          in: query
-          required: false
-          type: string
-          format: byte
-        - name: pagination.offset
-          description: >-
-            offset is a numeric offset that can be used when key is unavailable.
-
-            It is less efficient than using key. Only one of offset or key
-            should
-
-            be set.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.limit
-          description: >-
-            limit is the total number of results to be returned in the result
-            page.
-
-            If left empty it will default to a value to be set by each app.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.count_total
-          description: >-
-            count_total is set to true  to indicate that the result set should
-            include
-
-            a count of the total number of items available for pagination in
-            UIs.
-
-            count_total is only respected when offset is used. It is ignored
-            when key
-
-            is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
-          in: query
-          required: false
-          type: boolean
-      tags:
-        - Query
-  /evmos/incentives/v1/allocation_meters/{denom}:
-    get:
-      summary: AllocationMeter retrieves a active gas meter
-      operationId: EvmosIncentivesV1AllocationMeter
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              allocation_meter:
-                title: allocation_meter defines the allocation of the queried denom
-                type: object
-                properties:
-                  denom:
-                    type: string
-                  amount:
-                    type: string
-                description: >-
-                  DecCoin defines a token with a denomination and a decimal
-                  amount.
-
-
-                  NOTE: The amount field is an Dec which implements the custom
-                  method
-
-                  signatures required by gogoproto.
-            description: |-
-              QueryAllocationMeterResponse is the response type for the
-              Query/AllocationMeter RPC method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: denom
-          description: denom is the coin denom to query an allocation meter for.
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  /evmos/incentives/v1/gas_meters/{contract}:
-    get:
-      summary: GasMeters retrieves active gas meters for a given contract
-      operationId: EvmosIncentivesV1GasMeters
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              gas_meters:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    contract:
-                      type: string
-                      title: >-
-                        contract is the hex address of the incentivized smart
-                        contract
-                    participant:
-                      type: string
-                      title: participant address that interacts with the incentive
-                    cumulative_gas:
-                      type: string
-                      format: uint64
-                      title: cumulative_gas spent during the epoch
-                  title: >-
-                    GasMeter tracks the cumulative gas spent per participant in
-                    one epoch
-                title: >-
-                  gas_meters is a slice of the gas meters for an incentivized
-                  smart contract
-              pagination:
-                description: pagination defines the pagination in the response.
-                type: object
-                properties:
-                  next_key:
-                    type: string
-                    format: byte
-                    description: |-
-                      next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently. It will be empty if
-                      there are no more results.
-                  total:
-                    type: string
-                    format: uint64
-                    title: >-
-                      total is total number of results available if
-                      PageRequest.count_total
-
-                      was set, its value is undefined otherwise
-            description: >-
-              QueryGasMetersResponse is the response type for the
-              Query/Incentives RPC
-
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: contract
-          description: >-
-            contract is the hex contract address of a incentivized smart
-            contract
-          in: path
-          required: true
-          type: string
-        - name: pagination.key
-          description: |-
-            key is a value returned in PageResponse.next_key to begin
-            querying the next page most efficiently. Only one of offset or key
-            should be set.
-          in: query
-          required: false
-          type: string
-          format: byte
-        - name: pagination.offset
-          description: >-
-            offset is a numeric offset that can be used when key is unavailable.
-
-            It is less efficient than using key. Only one of offset or key
-            should
-
-            be set.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.limit
-          description: >-
-            limit is the total number of results to be returned in the result
-            page.
-
-            If left empty it will default to a value to be set by each app.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.count_total
-          description: >-
-            count_total is set to true  to indicate that the result set should
-            include
-
-            a count of the total number of items available for pagination in
-            UIs.
-
-            count_total is only respected when offset is used. It is ignored
-            when key
-
-            is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
-          in: query
-          required: false
-          type: boolean
-      tags:
-        - Query
-  /evmos/incentives/v1/gas_meters/{contract}/{participant}:
-    get:
-      summary: GasMeter retrieves a active gas meter
-      operationId: EvmosIncentivesV1GasMeter
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              gas_meter:
-                type: string
-                format: uint64
-                title: >-
-                  gas_meter is a gas meter for one participant on an
-                  incentivized smart contract
-            description: >-
-              QueryGasMeterResponse is the response type for the Query/Incentive
-              RPC
-
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: contract
-          description: contract is the hex contract address of a contract
-          in: path
-          required: true
-          type: string
-        - name: participant
-          description: participant is the hex address of a user
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  /evmos/incentives/v1/incentives:
-    get:
-      summary: Incentives retrieves registered incentives
-      operationId: EvmosIncentivesV1Incentives
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              incentives:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    contract:
-                      type: string
-                      title: >-
-                        contract address of the smart contract to be
-                        incentivized
-                    allocations:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          denom:
-                            type: string
-                          amount:
-                            type: string
-                        description: >-
-                          DecCoin defines a token with a denomination and a
-                          decimal amount.
-
-
-                          NOTE: The amount field is an Dec which implements the
-                          custom method
-
-                          signatures required by gogoproto.
-                      title: >-
-                        allocations is a slice of denoms and percentages of
-                        rewards to be allocated
-                    epochs:
-                      type: integer
-                      format: int64
-                      title: >-
-                        epochs defines the number of remaining epochs for the
-                        incentive
-                    start_time:
-                      type: string
-                      format: date-time
-                      title: start_time of the incentive distribution
-                    total_gas:
-                      type: string
-                      format: uint64
-                      title: >-
-                        total_gas is the cumulative gas spent by all gas meters
-                        of the incentive during the epoch
-                  title: >-
-                    Incentive defines an instance that organizes distribution
-                    conditions for a
-
-                    given smart contract
-                title: incentives is a slice of all incentives
-              pagination:
-                description: pagination defines the pagination in the response.
-                type: object
-                properties:
-                  next_key:
-                    type: string
-                    format: byte
-                    description: |-
-                      next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently. It will be empty if
-                      there are no more results.
-                  total:
-                    type: string
-                    format: uint64
-                    title: >-
-                      total is total number of results available if
-                      PageRequest.count_total
-
-                      was set, its value is undefined otherwise
-            description: >-
-              QueryIncentivesResponse is the response type for the
-              Query/Incentives RPC
-
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: pagination.key
-          description: |-
-            key is a value returned in PageResponse.next_key to begin
-            querying the next page most efficiently. Only one of offset or key
-            should be set.
-          in: query
-          required: false
-          type: string
-          format: byte
-        - name: pagination.offset
-          description: >-
-            offset is a numeric offset that can be used when key is unavailable.
-
-            It is less efficient than using key. Only one of offset or key
-            should
-
-            be set.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.limit
-          description: >-
-            limit is the total number of results to be returned in the result
-            page.
-
-            If left empty it will default to a value to be set by each app.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.count_total
-          description: >-
-            count_total is set to true  to indicate that the result set should
-            include
-
-            a count of the total number of items available for pagination in
-            UIs.
-
-            count_total is only respected when offset is used. It is ignored
-            when key
-
-            is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
-          in: query
-          required: false
-          type: boolean
-      tags:
-        - Query
-  /evmos/incentives/v1/incentives/{contract}:
-    get:
-      summary: Incentive retrieves a registered incentive
-      operationId: EvmosIncentivesV1Incentive
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              incentive:
-                title: incentive is the returned incentive for the queried contract
-                type: object
-                properties:
-                  contract:
-                    type: string
-                    title: contract address of the smart contract to be incentivized
-                  allocations:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        denom:
-                          type: string
-                        amount:
-                          type: string
-                      description: >-
-                        DecCoin defines a token with a denomination and a
-                        decimal amount.
-
-
-                        NOTE: The amount field is an Dec which implements the
-                        custom method
-
-                        signatures required by gogoproto.
-                    title: >-
-                      allocations is a slice of denoms and percentages of
-                      rewards to be allocated
-                  epochs:
-                    type: integer
-                    format: int64
-                    title: >-
-                      epochs defines the number of remaining epochs for the
-                      incentive
-                  start_time:
-                    type: string
-                    format: date-time
-                    title: start_time of the incentive distribution
-                  total_gas:
-                    type: string
-                    format: uint64
-                    title: >-
-                      total_gas is the cumulative gas spent by all gas meters of
-                      the incentive during the epoch
-            description: >-
-              QueryIncentiveResponse is the response type for the
-              Query/Incentive RPC
-
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: contract
-          description: >-
-            contract is the hex contract address of a incentivized smart
-            contract
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  /evmos/incentives/v1/params:
-    get:
-      summary: Params retrieves the incentives module params
-      operationId: EvmosIncentivesV1Params
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              params:
-                title: params are the incentives module parameters
-                type: object
-                properties:
-                  enable_incentives:
-                    type: boolean
-                    title: enable_incentives is the parameter to enable incentives
-                  allocation_limit:
-                    type: string
-                    title: >-
-                      allocation_limit is the maximum percentage an incentive
-                      can allocate per denomination
-                  incentives_epoch_identifier:
-                    type: string
-                    title: incentives_epoch_identifier for the epochs module hooks
-                  reward_scaler:
-                    type: string
-                    title: reward_scaler is the scaling factor for capping rewards
-            description: |-
-              QueryParamsResponse is the response type for the Query/Params RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
-  /evmos/inflation/v1/circulating_supply:
-    get:
-      summary: |-
-        CirculatingSupply retrieves the total number of tokens that are in
-        circulation (i.e. excluding unvested tokens).
-      operationId: EvmosInflationV1CirculatingSupply
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              circulating_supply:
-                title: circulating_supply is the total amount of coins in circulation
-                type: object
-                properties:
-                  denom:
-                    type: string
-                  amount:
-                    type: string
-                description: >-
-                  DecCoin defines a token with a denomination and a decimal
-                  amount.
-
-
-                  NOTE: The amount field is an Dec which implements the custom
-                  method
-
-                  signatures required by gogoproto.
-            description: |-
-              QueryCirculatingSupplyResponse is the response type for the
-              Query/CirculatingSupply RPC method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
-  /evmos/inflation/v1/epoch_mint_provision:
-    get:
-      summary: EpochMintProvision retrieves current minting epoch provision value.
-      operationId: EvmosInflationV1EpochMintProvision
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              epoch_mint_provision:
-                description: >-
-                  epoch_mint_provision is the current minting per epoch
-                  provision value.
-                type: object
-                properties:
-                  denom:
-                    type: string
-                  amount:
-                    type: string
-            description: |-
-              QueryEpochMintProvisionResponse is the response type for the
-              Query/EpochMintProvision RPC method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
-  /evmos/inflation/v1/inflation_rate:
-    get:
-      summary: InflationRate retrieves the inflation rate of the current period.
-      operationId: EvmosInflationV1InflationRate
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              inflation_rate:
-                type: string
-                title: >-
-                  inflation_rate by which the total supply increases within one
-                  period
-            description: >-
-              QueryInflationRateResponse is the response type for the
-              Query/InflationRate
-
-              RPC method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
-  /evmos/inflation/v1/params:
-    get:
-      summary: Params retrieves the total set of minting parameters.
-      operationId: EvmosInflationV1Params
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              params:
-                description: params defines the parameters of the module.
-                type: object
-                properties:
-                  mint_denom:
-                    type: string
-                    title: mint_denom specifies the type of coin to mint
-                  exponential_calculation:
-                    title: >-
-                      exponential_calculation takes in the variables to
-                      calculate exponential inflation
-                    type: object
-                    properties:
-                      a:
-                        type: string
-                        title: a defines the initial value
-                      r:
-                        type: string
-                        title: r defines the reduction factor
-                      c:
-                        type: string
-                        title: c defines the parameter for long term inflation
-                      bonding_target:
-                        type: string
-                        title: bonding_target
-                      max_variance:
-                        type: string
-                        title: max_variance
-                  inflation_distribution:
-                    title: inflation_distribution of the minted denom
-                    type: object
-                    properties:
-                      staking_rewards:
-                        type: string
-                        title: >-
-                          staking_rewards defines the proportion of the minted
-                          minted_denom that is
-
-                          to be allocated as staking rewards
-                      usage_incentives:
-                        type: string
-                        title: >-
-                          usage_incentives defines the proportion of the minted
-                          minted_denom that is
-
-                          to be allocated to the incentives module address
-                      community_pool:
-                        type: string
-                        title: >-
-                          community_pool defines the proportion of the minted
-                          minted_denom that is to
-
-                          be allocated to the community pool
-                  enable_inflation:
-                    type: boolean
-                    title: >-
-                      enable_inflation is the parameter that enables inflation
-                      and halts increasing the skipped_epochs
-            description: >-
-              QueryParamsResponse is the response type for the Query/Params RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
-  /evmos/inflation/v1/period:
-    get:
-      summary: Period retrieves current period.
-      operationId: EvmosInflationV1Period
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              period:
-                type: string
-                format: uint64
-                description: period is the current minting per epoch provision value.
-            description: >-
-              QueryPeriodResponse is the response type for the Query/Period RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
-  /evmos/inflation/v1/skipped_epochs:
-    get:
-      summary: SkippedEpochs retrieves the total number of skipped epochs.
-      operationId: EvmosInflationV1SkippedEpochs
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              skipped_epochs:
-                type: string
-                format: uint64
-                description: >-
-                  skipped_epochs is the number of epochs that the inflation
-                  module has been disabled.
-            description: >-
-              QuerySkippedEpochsResponse is the response type for the
-              Query/SkippedEpochs
-
-              RPC method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
-  /evmos/recovery/v1/params:
-    get:
-      summary: Params retrieves the total set of recovery parameters.
-      operationId: EvmosRecoveryV1Params
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              params:
-                description: params defines the parameters of the module.
-                type: object
-                properties:
-                  enable_recovery:
-                    type: boolean
-                    title: enable_recovery IBC middleware
-                  packet_timeout_duration:
-                    type: string
-                    title: >-
-                      packet_timeout_duration is the duration added to timeout
-                      timestamp for balances recovered via IBC packets
-                title: Params holds parameters for the recovery module
-            description: >-
-              QueryParamsResponse is the response type for the Query/Params RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
   /ibc/apps/atomicswap/v1/channels/{channel_id}/ports/{port_id}/escrow_address:
     get:
       summary: >-
@@ -37062,6 +35297,53 @@ paths:
           format: uint64
       tags:
         - Query
+  /ibc/apps/interchain_accounts/host/v1/params:
+    get:
+      summary: Params queries all parameters of the ICA host submodule.
+      operationId: IbcApplicationsInterchainAccountsHostV1Params
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params defines the parameters of the module.
+                type: object
+                properties:
+                  host_enabled:
+                    type: boolean
+                    description: host_enabled enables or disables the host submodule.
+                  allow_messages:
+                    type: array
+                    items:
+                      type: string
+                    description: >-
+                      allow_messages defines a list of sdk message typeURLs
+                      allowed to be executed on a host chain.
+            description: >-
+              QueryParamsResponse is the response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
   /ibc/apps/interchainswap/v1/channels/{channel_id}/ports/{port_id}/escrow_address:
     get:
       summary: >-
@@ -38563,6 +36845,1176 @@ paths:
                     title: >-
                       max_fee_rate set a max value of fee, it's base point,
                       1/10000
+            description: >-
+              QueryParamsResponse is the response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                  additionalProperties: {}
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
+                         ...
+                         foo := &pb.Foo{}
+                         if err := any.UnmarshalTo(foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      tags:
+        - Query
+  /ibc/apps/transfer/v1/channels/{channel_id}/ports/{port_id}/escrow_address:
+    get:
+      summary: >-
+        EscrowAddress returns the escrow address for a particular port and
+        channel id.
+      operationId: IbcApplicationsTransferV1EscrowAddress
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              escrow_address:
+                type: string
+                title: the escrow account address
+            description: >-
+              QueryEscrowAddressResponse is the response type of the
+              EscrowAddress RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                  additionalProperties: {}
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
+                         ...
+                         foo := &pb.Foo{}
+                         if err := any.UnmarshalTo(foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      parameters:
+        - name: channel_id
+          description: unique channel identifier
+          in: path
+          required: true
+          type: string
+        - name: port_id
+          description: unique port identifier
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /ibc/apps/transfer/v1/denom_hashes/{trace}:
+    get:
+      summary: DenomHash queries a denomination hash information.
+      operationId: IbcApplicationsTransferV1DenomHash
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              hash:
+                type: string
+                description: hash (in hex format) of the denomination trace information.
+            description: >-
+              QueryDenomHashResponse is the response type for the
+              Query/DenomHash RPC
+
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                  additionalProperties: {}
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
+                         ...
+                         foo := &pb.Foo{}
+                         if err := any.UnmarshalTo(foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      parameters:
+        - name: trace
+          description: The denomination trace ([port_id]/[channel_id])+/[denom]
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /ibc/apps/transfer/v1/denom_traces:
+    get:
+      summary: DenomTraces queries all denomination traces.
+      operationId: IbcApplicationsTransferV1DenomTraces
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              denom_traces:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    path:
+                      type: string
+                      description: >-
+                        path defines the chain of port/channel identifiers used
+                        for tracing the
+
+                        source of the fungible token.
+                    base_denom:
+                      type: string
+                      description: base denomination of the relayed fungible token.
+                  description: >-
+                    DenomTrace contains the base denomination for ICS20 fungible
+                    tokens and the
+
+                    source tracing information path.
+                description: denom_traces returns all denominations trace information.
+              pagination:
+                description: pagination defines the pagination in the response.
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+            description: >-
+              QueryConnectionsResponse is the response type for the
+              Query/DenomTraces RPC
+
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                  additionalProperties: {}
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
+                         ...
+                         foo := &pb.Foo{}
+                         if err := any.UnmarshalTo(foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /ibc/apps/transfer/v1/denom_traces/{hash}:
+    get:
+      summary: DenomTrace queries a denomination trace information.
+      operationId: IbcApplicationsTransferV1DenomTrace
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              denom_trace:
+                description: >-
+                  denom_trace returns the requested denomination trace
+                  information.
+                type: object
+                properties:
+                  path:
+                    type: string
+                    description: >-
+                      path defines the chain of port/channel identifiers used
+                      for tracing the
+
+                      source of the fungible token.
+                  base_denom:
+                    type: string
+                    description: base denomination of the relayed fungible token.
+            description: >-
+              QueryDenomTraceResponse is the response type for the
+              Query/DenomTrace RPC
+
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                  additionalProperties: {}
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
+                         ...
+                         foo := &pb.Foo{}
+                         if err := any.UnmarshalTo(foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      parameters:
+        - name: hash
+          description: >-
+            hash (in hex format) or denom (full denom with ibc prefix) of the
+            denomination trace information.
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /ibc/apps/transfer/v1/params:
+    get:
+      summary: Params queries all parameters of the ibc-transfer module.
+      operationId: IbcApplicationsTransferV1Params
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params defines the parameters of the module.
+                type: object
+                properties:
+                  send_enabled:
+                    type: boolean
+                    description: >-
+                      send_enabled enables or disables all cross-chain token
+                      transfers from this
+
+                      chain.
+                  receive_enabled:
+                    type: boolean
+                    description: >-
+                      receive_enabled enables or disables all cross-chain token
+                      transfers to this
+
+                      chain.
             description: >-
               QueryParamsResponse is the response type for the Query/Params RPC
               method.
@@ -70879,1108 +70331,6 @@ definitions:
     description: >-
       QueryParamsResponse defines the response type for querying x/evm
       parameters.
-  evmos.claims.v1.Action:
-    type: string
-    enum:
-      - ACTION_UNSPECIFIED
-      - ACTION_VOTE
-      - ACTION_DELEGATE
-      - ACTION_EVM
-      - ACTION_IBC_TRANSFER
-    default: ACTION_UNSPECIFIED
-    description: |-
-      Action defines the list of available actions to claim the airdrop tokens.
-
-       - ACTION_UNSPECIFIED: ACTION_UNSPECIFIED defines an invalid action.
-       - ACTION_VOTE: ACTION_VOTE defines a proposal vote.
-       - ACTION_DELEGATE: ACTION_DELEGATE defines an staking delegation.
-       - ACTION_EVM: ACTION_EVM defines an EVM transaction.
-       - ACTION_IBC_TRANSFER: ACTION_IBC_TRANSFER defines a fungible token transfer transaction via IBC.
-  evmos.claims.v1.Claim:
-    type: object
-    properties:
-      action:
-        title: action enum
-        type: string
-        enum:
-          - ACTION_UNSPECIFIED
-          - ACTION_VOTE
-          - ACTION_DELEGATE
-          - ACTION_EVM
-          - ACTION_IBC_TRANSFER
-        default: ACTION_UNSPECIFIED
-        description: >-
-          Action defines the list of available actions to claim the airdrop
-          tokens.
-
-           - ACTION_UNSPECIFIED: ACTION_UNSPECIFIED defines an invalid action.
-           - ACTION_VOTE: ACTION_VOTE defines a proposal vote.
-           - ACTION_DELEGATE: ACTION_DELEGATE defines an staking delegation.
-           - ACTION_EVM: ACTION_EVM defines an EVM transaction.
-           - ACTION_IBC_TRANSFER: ACTION_IBC_TRANSFER defines a fungible token transfer transaction via IBC.
-      completed:
-        type: boolean
-        title: completed is true if the action has been completed
-      claimable_amount:
-        type: string
-        title: claimable_amount of tokens for the action. Zero if completed
-    description: >-
-      Claim defines the action, completed flag and the remaining claimable
-      amount
-
-      for a given user. This is only used during client queries.
-  evmos.claims.v1.ClaimsRecordAddress:
-    type: object
-    properties:
-      address:
-        type: string
-        title: address of claiming user in either bech32 or hex format
-      initial_claimable_amount:
-        type: string
-        title: initial_claimable_amount for the user
-      actions_completed:
-        type: array
-        items:
-          type: boolean
-        title: >-
-          actions_completed is a slice that describes which actions were
-          completed
-    description: |-
-      ClaimsRecordAddress is the claims metadata per address that is used at
-      Genesis.
-  evmos.claims.v1.MsgUpdateParamsResponse:
-    type: object
-    description: |-
-      MsgUpdateParamsResponse defines the response structure for executing a
-      MsgUpdateParams message.
-  evmos.claims.v1.Params:
-    type: object
-    properties:
-      enable_claims:
-        type: boolean
-        title: enable_claims is the parameter to enable the claiming process
-      airdrop_start_time:
-        type: string
-        format: date-time
-        title: airdrop_start_time defines the timestamp of the airdrop start
-      duration_until_decay:
-        type: string
-        title: duration_until_decay of claimable tokens begin
-      duration_of_decay:
-        type: string
-        title: duration_of_decay for token claim decay period
-      claims_denom:
-        type: string
-        title: claims_denom is the denomination of the claimable coin
-      authorized_channels:
-        type: array
-        items:
-          type: string
-        description: >-
-          authorized_channels is the list of authorized channel identifiers that
-          can perform address
-
-          attestations via IBC.
-      evm_channels:
-        type: array
-        items:
-          type: string
-        title: >-
-          evm_channels is the list of channel identifiers from EVM compatible
-          chains
-    description: Params defines the claims module's parameters.
-  evmos.claims.v1.QueryClaimsRecordResponse:
-    type: object
-    properties:
-      initial_claimable_amount:
-        type: string
-        title: initial_claimable_amount of the user
-      claims:
-        type: array
-        items:
-          type: object
-          properties:
-            action:
-              title: action enum
-              type: string
-              enum:
-                - ACTION_UNSPECIFIED
-                - ACTION_VOTE
-                - ACTION_DELEGATE
-                - ACTION_EVM
-                - ACTION_IBC_TRANSFER
-              default: ACTION_UNSPECIFIED
-              description: >-
-                Action defines the list of available actions to claim the
-                airdrop tokens.
-
-                 - ACTION_UNSPECIFIED: ACTION_UNSPECIFIED defines an invalid action.
-                 - ACTION_VOTE: ACTION_VOTE defines a proposal vote.
-                 - ACTION_DELEGATE: ACTION_DELEGATE defines an staking delegation.
-                 - ACTION_EVM: ACTION_EVM defines an EVM transaction.
-                 - ACTION_IBC_TRANSFER: ACTION_IBC_TRANSFER defines a fungible token transfer transaction via IBC.
-            completed:
-              type: boolean
-              title: completed is true if the action has been completed
-            claimable_amount:
-              type: string
-              title: claimable_amount of tokens for the action. Zero if completed
-          description: >-
-            Claim defines the action, completed flag and the remaining claimable
-            amount
-
-            for a given user. This is only used during client queries.
-        title: claims of the user
-    description: >-
-      QueryClaimsRecordResponse is the response type for the Query/ClaimsRecord
-      RPC
-
-      method.
-  evmos.claims.v1.QueryClaimsRecordsResponse:
-    type: object
-    properties:
-      claims:
-        type: array
-        items:
-          type: object
-          properties:
-            address:
-              type: string
-              title: address of claiming user in either bech32 or hex format
-            initial_claimable_amount:
-              type: string
-              title: initial_claimable_amount for the user
-            actions_completed:
-              type: array
-              items:
-                type: boolean
-              title: >-
-                actions_completed is a slice that describes which actions were
-                completed
-          description: >-
-            ClaimsRecordAddress is the claims metadata per address that is used
-            at
-
-            Genesis.
-        title: claims defines all claims records
-      pagination:
-        description: pagination defines the pagination in the response.
-        type: object
-        properties:
-          next_key:
-            type: string
-            format: byte
-            description: |-
-              next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently. It will be empty if
-              there are no more results.
-          total:
-            type: string
-            format: uint64
-            title: >-
-              total is total number of results available if
-              PageRequest.count_total
-
-              was set, its value is undefined otherwise
-    description: >-
-      QueryClaimsRecordsResponse is the response type for the
-      Query/ClaimsRecords
-
-      RPC method.
-  evmos.claims.v1.QueryParamsResponse:
-    type: object
-    properties:
-      params:
-        description: params defines the parameters of the module.
-        type: object
-        properties:
-          enable_claims:
-            type: boolean
-            title: enable_claims is the parameter to enable the claiming process
-          airdrop_start_time:
-            type: string
-            format: date-time
-            title: airdrop_start_time defines the timestamp of the airdrop start
-          duration_until_decay:
-            type: string
-            title: duration_until_decay of claimable tokens begin
-          duration_of_decay:
-            type: string
-            title: duration_of_decay for token claim decay period
-          claims_denom:
-            type: string
-            title: claims_denom is the denomination of the claimable coin
-          authorized_channels:
-            type: array
-            items:
-              type: string
-            description: >-
-              authorized_channels is the list of authorized channel identifiers
-              that can perform address
-
-              attestations via IBC.
-          evm_channels:
-            type: array
-            items:
-              type: string
-            title: >-
-              evm_channels is the list of channel identifiers from EVM
-              compatible chains
-    description: QueryParamsResponse is the response type for the Query/Params RPC method.
-  evmos.claims.v1.QueryTotalUnclaimedResponse:
-    type: object
-    properties:
-      coins:
-        type: array
-        items:
-          type: object
-          properties:
-            denom:
-              type: string
-            amount:
-              type: string
-          description: |-
-            Coin defines a token with a denomination and an amount.
-
-            NOTE: The amount field is an Int which implements the custom method
-            signatures required by gogoproto.
-        title: coins defines the unclaimed coins
-    description: >-
-      QueryTotalUnclaimedResponse is the response type for the
-      Query/TotalUnclaimed
-
-      RPC method.
-  evmos.erc20.v1.MsgConvertCoinResponse:
-    type: object
-    title: MsgConvertCoinResponse returns no fields
-  evmos.erc20.v1.MsgConvertERC20Response:
-    type: object
-    title: MsgConvertERC20Response returns no fields
-  evmos.erc20.v1.MsgUpdateParamsResponse:
-    type: object
-    title: |-
-      MsgUpdateParamsResponse defines the response structure for executing a
-      MsgUpdateParams message.
-      Since: cosmos-sdk 0.47
-  evmos.erc20.v1.Owner:
-    type: string
-    enum:
-      - OWNER_UNSPECIFIED
-      - OWNER_MODULE
-      - OWNER_EXTERNAL
-    default: OWNER_UNSPECIFIED
-    description: |-
-      Owner enumerates the ownership of a ERC20 contract.
-
-       - OWNER_UNSPECIFIED: OWNER_UNSPECIFIED defines an invalid/undefined owner.
-       - OWNER_MODULE: OWNER_MODULE - erc20 is owned by the erc20 module account.
-       - OWNER_EXTERNAL: OWNER_EXTERNAL - erc20 is owned by an external account.
-  evmos.erc20.v1.Params:
-    type: object
-    properties:
-      enable_erc20:
-        type: boolean
-        description: >-
-          enable_erc20 is the parameter to enable the conversion of Cosmos coins
-          <--> ERC20 tokens.
-      enable_evm_hook:
-        type: boolean
-        description: >-
-          enable_evm_hook is the parameter to enable the EVM hook that converts
-          an ERC20 token to a Cosmos
-
-          Coin by transferring the Tokens through a MsgEthereumTx to the
-          ModuleAddress Ethereum address.
-    title: Params defines the erc20 module params
-  evmos.erc20.v1.QueryParamsResponse:
-    type: object
-    properties:
-      params:
-        title: params are the erc20 module parameters
-        type: object
-        properties:
-          enable_erc20:
-            type: boolean
-            description: >-
-              enable_erc20 is the parameter to enable the conversion of Cosmos
-              coins <--> ERC20 tokens.
-          enable_evm_hook:
-            type: boolean
-            description: >-
-              enable_evm_hook is the parameter to enable the EVM hook that
-              converts an ERC20 token to a Cosmos
-
-              Coin by transferring the Tokens through a MsgEthereumTx to the
-              ModuleAddress Ethereum address.
-    description: |-
-      QueryParamsResponse is the response type for the Query/Params RPC
-      method.
-  evmos.erc20.v1.QueryTokenPairResponse:
-    type: object
-    properties:
-      token_pair:
-        title: >-
-          token_pairs returns the info about a registered token pair for the
-          erc20 module
-        type: object
-        properties:
-          erc20_address:
-            type: string
-            title: erc20_address is the hex address of ERC20 contract token
-          denom:
-            type: string
-            title: denom defines the cosmos base denomination to be mapped to
-          enabled:
-            type: boolean
-            title: enabled defines the token mapping enable status
-          contract_owner:
-            title: >-
-              contract_owner is the an ENUM specifying the type of ERC20 owner
-              (0 invalid, 1 ModuleAccount, 2 external address)
-            type: string
-            enum:
-              - OWNER_UNSPECIFIED
-              - OWNER_MODULE
-              - OWNER_EXTERNAL
-            default: OWNER_UNSPECIFIED
-            description: |-
-              Owner enumerates the ownership of a ERC20 contract.
-
-               - OWNER_UNSPECIFIED: OWNER_UNSPECIFIED defines an invalid/undefined owner.
-               - OWNER_MODULE: OWNER_MODULE - erc20 is owned by the erc20 module account.
-               - OWNER_EXTERNAL: OWNER_EXTERNAL - erc20 is owned by an external account.
-        description: >-
-          TokenPair defines an instance that records a pairing consisting of a
-          native
-           Cosmos Coin and an ERC20 token address.
-    description: |-
-      QueryTokenPairResponse is the response type for the Query/TokenPair RPC
-      method.
-  evmos.erc20.v1.QueryTokenPairsResponse:
-    type: object
-    properties:
-      token_pairs:
-        type: array
-        items:
-          type: object
-          properties:
-            erc20_address:
-              type: string
-              title: erc20_address is the hex address of ERC20 contract token
-            denom:
-              type: string
-              title: denom defines the cosmos base denomination to be mapped to
-            enabled:
-              type: boolean
-              title: enabled defines the token mapping enable status
-            contract_owner:
-              title: >-
-                contract_owner is the an ENUM specifying the type of ERC20 owner
-                (0 invalid, 1 ModuleAccount, 2 external address)
-              type: string
-              enum:
-                - OWNER_UNSPECIFIED
-                - OWNER_MODULE
-                - OWNER_EXTERNAL
-              default: OWNER_UNSPECIFIED
-              description: |-
-                Owner enumerates the ownership of a ERC20 contract.
-
-                 - OWNER_UNSPECIFIED: OWNER_UNSPECIFIED defines an invalid/undefined owner.
-                 - OWNER_MODULE: OWNER_MODULE - erc20 is owned by the erc20 module account.
-                 - OWNER_EXTERNAL: OWNER_EXTERNAL - erc20 is owned by an external account.
-          description: >-
-            TokenPair defines an instance that records a pairing consisting of a
-            native
-             Cosmos Coin and an ERC20 token address.
-        title: token_pairs is a slice of registered token pairs for the erc20 module
-      pagination:
-        description: pagination defines the pagination in the response.
-        type: object
-        properties:
-          next_key:
-            type: string
-            format: byte
-            description: |-
-              next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently. It will be empty if
-              there are no more results.
-          total:
-            type: string
-            format: uint64
-            title: >-
-              total is total number of results available if
-              PageRequest.count_total
-
-              was set, its value is undefined otherwise
-    description: |-
-      QueryTokenPairsResponse is the response type for the Query/TokenPairs RPC
-      method.
-  evmos.erc20.v1.TokenPair:
-    type: object
-    properties:
-      erc20_address:
-        type: string
-        title: erc20_address is the hex address of ERC20 contract token
-      denom:
-        type: string
-        title: denom defines the cosmos base denomination to be mapped to
-      enabled:
-        type: boolean
-        title: enabled defines the token mapping enable status
-      contract_owner:
-        title: >-
-          contract_owner is the an ENUM specifying the type of ERC20 owner (0
-          invalid, 1 ModuleAccount, 2 external address)
-        type: string
-        enum:
-          - OWNER_UNSPECIFIED
-          - OWNER_MODULE
-          - OWNER_EXTERNAL
-        default: OWNER_UNSPECIFIED
-        description: |-
-          Owner enumerates the ownership of a ERC20 contract.
-
-           - OWNER_UNSPECIFIED: OWNER_UNSPECIFIED defines an invalid/undefined owner.
-           - OWNER_MODULE: OWNER_MODULE - erc20 is owned by the erc20 module account.
-           - OWNER_EXTERNAL: OWNER_EXTERNAL - erc20 is owned by an external account.
-    description: >-
-      TokenPair defines an instance that records a pairing consisting of a
-      native
-       Cosmos Coin and an ERC20 token address.
-  evmos.incentives.v1.GasMeter:
-    type: object
-    properties:
-      contract:
-        type: string
-        title: contract is the hex address of the incentivized smart contract
-      participant:
-        type: string
-        title: participant address that interacts with the incentive
-      cumulative_gas:
-        type: string
-        format: uint64
-        title: cumulative_gas spent during the epoch
-    title: GasMeter tracks the cumulative gas spent per participant in one epoch
-  evmos.incentives.v1.Incentive:
-    type: object
-    properties:
-      contract:
-        type: string
-        title: contract address of the smart contract to be incentivized
-      allocations:
-        type: array
-        items:
-          type: object
-          properties:
-            denom:
-              type: string
-            amount:
-              type: string
-          description: |-
-            DecCoin defines a token with a denomination and a decimal amount.
-
-            NOTE: The amount field is an Dec which implements the custom method
-            signatures required by gogoproto.
-        title: >-
-          allocations is a slice of denoms and percentages of rewards to be
-          allocated
-      epochs:
-        type: integer
-        format: int64
-        title: epochs defines the number of remaining epochs for the incentive
-      start_time:
-        type: string
-        format: date-time
-        title: start_time of the incentive distribution
-      total_gas:
-        type: string
-        format: uint64
-        title: >-
-          total_gas is the cumulative gas spent by all gas meters of the
-          incentive during the epoch
-    title: |-
-      Incentive defines an instance that organizes distribution conditions for a
-      given smart contract
-  evmos.incentives.v1.MsgUpdateParamsResponse:
-    type: object
-    description: |-
-      MsgUpdateParamsResponse defines the response structure for executing a
-      MsgUpdateParams message.
-  evmos.incentives.v1.Params:
-    type: object
-    properties:
-      enable_incentives:
-        type: boolean
-        title: enable_incentives is the parameter to enable incentives
-      allocation_limit:
-        type: string
-        title: >-
-          allocation_limit is the maximum percentage an incentive can allocate
-          per denomination
-      incentives_epoch_identifier:
-        type: string
-        title: incentives_epoch_identifier for the epochs module hooks
-      reward_scaler:
-        type: string
-        title: reward_scaler is the scaling factor for capping rewards
-    title: Params defines the incentives module params
-  evmos.incentives.v1.QueryAllocationMeterResponse:
-    type: object
-    properties:
-      allocation_meter:
-        title: allocation_meter defines the allocation of the queried denom
-        type: object
-        properties:
-          denom:
-            type: string
-          amount:
-            type: string
-        description: |-
-          DecCoin defines a token with a denomination and a decimal amount.
-
-          NOTE: The amount field is an Dec which implements the custom method
-          signatures required by gogoproto.
-    description: |-
-      QueryAllocationMeterResponse is the response type for the
-      Query/AllocationMeter RPC method.
-  evmos.incentives.v1.QueryAllocationMetersResponse:
-    type: object
-    properties:
-      allocation_meters:
-        type: array
-        items:
-          type: object
-          properties:
-            denom:
-              type: string
-            amount:
-              type: string
-          description: |-
-            DecCoin defines a token with a denomination and a decimal amount.
-
-            NOTE: The amount field is an Dec which implements the custom method
-            signatures required by gogoproto.
-        title: allocation_meters is a slice of all allocations
-      pagination:
-        description: pagination defines the pagination in the response.
-        type: object
-        properties:
-          next_key:
-            type: string
-            format: byte
-            description: |-
-              next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently. It will be empty if
-              there are no more results.
-          total:
-            type: string
-            format: uint64
-            title: >-
-              total is total number of results available if
-              PageRequest.count_total
-
-              was set, its value is undefined otherwise
-    description: |-
-      QueryAllocationMetersResponse is the response type for the
-      Query/AllocationMeters RPC method.
-  evmos.incentives.v1.QueryGasMeterResponse:
-    type: object
-    properties:
-      gas_meter:
-        type: string
-        format: uint64
-        title: >-
-          gas_meter is a gas meter for one participant on an incentivized smart
-          contract
-    description: |-
-      QueryGasMeterResponse is the response type for the Query/Incentive RPC
-      method.
-  evmos.incentives.v1.QueryGasMetersResponse:
-    type: object
-    properties:
-      gas_meters:
-        type: array
-        items:
-          type: object
-          properties:
-            contract:
-              type: string
-              title: contract is the hex address of the incentivized smart contract
-            participant:
-              type: string
-              title: participant address that interacts with the incentive
-            cumulative_gas:
-              type: string
-              format: uint64
-              title: cumulative_gas spent during the epoch
-          title: >-
-            GasMeter tracks the cumulative gas spent per participant in one
-            epoch
-        title: >-
-          gas_meters is a slice of the gas meters for an incentivized smart
-          contract
-      pagination:
-        description: pagination defines the pagination in the response.
-        type: object
-        properties:
-          next_key:
-            type: string
-            format: byte
-            description: |-
-              next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently. It will be empty if
-              there are no more results.
-          total:
-            type: string
-            format: uint64
-            title: >-
-              total is total number of results available if
-              PageRequest.count_total
-
-              was set, its value is undefined otherwise
-    description: |-
-      QueryGasMetersResponse is the response type for the Query/Incentives RPC
-      method.
-  evmos.incentives.v1.QueryIncentiveResponse:
-    type: object
-    properties:
-      incentive:
-        title: incentive is the returned incentive for the queried contract
-        type: object
-        properties:
-          contract:
-            type: string
-            title: contract address of the smart contract to be incentivized
-          allocations:
-            type: array
-            items:
-              type: object
-              properties:
-                denom:
-                  type: string
-                amount:
-                  type: string
-              description: >-
-                DecCoin defines a token with a denomination and a decimal
-                amount.
-
-
-                NOTE: The amount field is an Dec which implements the custom
-                method
-
-                signatures required by gogoproto.
-            title: >-
-              allocations is a slice of denoms and percentages of rewards to be
-              allocated
-          epochs:
-            type: integer
-            format: int64
-            title: epochs defines the number of remaining epochs for the incentive
-          start_time:
-            type: string
-            format: date-time
-            title: start_time of the incentive distribution
-          total_gas:
-            type: string
-            format: uint64
-            title: >-
-              total_gas is the cumulative gas spent by all gas meters of the
-              incentive during the epoch
-    description: |-
-      QueryIncentiveResponse is the response type for the Query/Incentive RPC
-      method.
-  evmos.incentives.v1.QueryIncentivesResponse:
-    type: object
-    properties:
-      incentives:
-        type: array
-        items:
-          type: object
-          properties:
-            contract:
-              type: string
-              title: contract address of the smart contract to be incentivized
-            allocations:
-              type: array
-              items:
-                type: object
-                properties:
-                  denom:
-                    type: string
-                  amount:
-                    type: string
-                description: >-
-                  DecCoin defines a token with a denomination and a decimal
-                  amount.
-
-
-                  NOTE: The amount field is an Dec which implements the custom
-                  method
-
-                  signatures required by gogoproto.
-              title: >-
-                allocations is a slice of denoms and percentages of rewards to
-                be allocated
-            epochs:
-              type: integer
-              format: int64
-              title: epochs defines the number of remaining epochs for the incentive
-            start_time:
-              type: string
-              format: date-time
-              title: start_time of the incentive distribution
-            total_gas:
-              type: string
-              format: uint64
-              title: >-
-                total_gas is the cumulative gas spent by all gas meters of the
-                incentive during the epoch
-          title: >-
-            Incentive defines an instance that organizes distribution conditions
-            for a
-
-            given smart contract
-        title: incentives is a slice of all incentives
-      pagination:
-        description: pagination defines the pagination in the response.
-        type: object
-        properties:
-          next_key:
-            type: string
-            format: byte
-            description: |-
-              next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently. It will be empty if
-              there are no more results.
-          total:
-            type: string
-            format: uint64
-            title: >-
-              total is total number of results available if
-              PageRequest.count_total
-
-              was set, its value is undefined otherwise
-    description: |-
-      QueryIncentivesResponse is the response type for the Query/Incentives RPC
-      method.
-  evmos.incentives.v1.QueryParamsResponse:
-    type: object
-    properties:
-      params:
-        title: params are the incentives module parameters
-        type: object
-        properties:
-          enable_incentives:
-            type: boolean
-            title: enable_incentives is the parameter to enable incentives
-          allocation_limit:
-            type: string
-            title: >-
-              allocation_limit is the maximum percentage an incentive can
-              allocate per denomination
-          incentives_epoch_identifier:
-            type: string
-            title: incentives_epoch_identifier for the epochs module hooks
-          reward_scaler:
-            type: string
-            title: reward_scaler is the scaling factor for capping rewards
-    description: |-
-      QueryParamsResponse is the response type for the Query/Params RPC
-      method.
-  evmos.inflation.v1.ExponentialCalculation:
-    type: object
-    properties:
-      a:
-        type: string
-        title: a defines the initial value
-      r:
-        type: string
-        title: r defines the reduction factor
-      c:
-        type: string
-        title: c defines the parameter for long term inflation
-      bonding_target:
-        type: string
-        title: bonding_target
-      max_variance:
-        type: string
-        title: max_variance
-    title: >-
-      ExponentialCalculation holds factors to calculate exponential inflation on
-
-      each period. Calculation reference:
-
-      periodProvision = exponentialDecay       *  bondingIncentive
-
-      f(x)            = (a * (1 - r) ^ x + c)  *  (1 + max_variance -
-      bondedRatio *
-
-      (max_variance / bonding_target))
-  evmos.inflation.v1.InflationDistribution:
-    type: object
-    properties:
-      staking_rewards:
-        type: string
-        title: >-
-          staking_rewards defines the proportion of the minted minted_denom that
-          is
-
-          to be allocated as staking rewards
-      usage_incentives:
-        type: string
-        title: >-
-          usage_incentives defines the proportion of the minted minted_denom
-          that is
-
-          to be allocated to the incentives module address
-      community_pool:
-        type: string
-        title: >-
-          community_pool defines the proportion of the minted minted_denom that
-          is to
-
-          be allocated to the community pool
-    title: >-
-      InflationDistribution defines the distribution in which inflation is
-
-      allocated through minting on each epoch (staking, incentives, community).
-      It
-
-      excludes the team vesting distribution, as this is minted once at genesis.
-
-      The initial InflationDistribution can be calculated from the Evmos Token
-
-      Model like this:
-
-      mintDistribution1 = distribution1 / (1 - teamVestingDistribution)
-
-      0.5333333         = 40%           / (1 - 25%)
-  evmos.inflation.v1.MsgUpdateParamsResponse:
-    type: object
-    description: |-
-      MsgUpdateParamsResponse defines the response structure for executing a
-      MsgUpdateParams message.
-  evmos.inflation.v1.Params:
-    type: object
-    properties:
-      mint_denom:
-        type: string
-        title: mint_denom specifies the type of coin to mint
-      exponential_calculation:
-        title: >-
-          exponential_calculation takes in the variables to calculate
-          exponential inflation
-        type: object
-        properties:
-          a:
-            type: string
-            title: a defines the initial value
-          r:
-            type: string
-            title: r defines the reduction factor
-          c:
-            type: string
-            title: c defines the parameter for long term inflation
-          bonding_target:
-            type: string
-            title: bonding_target
-          max_variance:
-            type: string
-            title: max_variance
-      inflation_distribution:
-        title: inflation_distribution of the minted denom
-        type: object
-        properties:
-          staking_rewards:
-            type: string
-            title: >-
-              staking_rewards defines the proportion of the minted minted_denom
-              that is
-
-              to be allocated as staking rewards
-          usage_incentives:
-            type: string
-            title: >-
-              usage_incentives defines the proportion of the minted minted_denom
-              that is
-
-              to be allocated to the incentives module address
-          community_pool:
-            type: string
-            title: >-
-              community_pool defines the proportion of the minted minted_denom
-              that is to
-
-              be allocated to the community pool
-      enable_inflation:
-        type: boolean
-        title: >-
-          enable_inflation is the parameter that enables inflation and halts
-          increasing the skipped_epochs
-    description: Params holds parameters for the inflation module.
-  evmos.inflation.v1.QueryCirculatingSupplyResponse:
-    type: object
-    properties:
-      circulating_supply:
-        title: circulating_supply is the total amount of coins in circulation
-        type: object
-        properties:
-          denom:
-            type: string
-          amount:
-            type: string
-        description: |-
-          DecCoin defines a token with a denomination and a decimal amount.
-
-          NOTE: The amount field is an Dec which implements the custom method
-          signatures required by gogoproto.
-    description: |-
-      QueryCirculatingSupplyResponse is the response type for the
-      Query/CirculatingSupply RPC method.
-  evmos.inflation.v1.QueryEpochMintProvisionResponse:
-    type: object
-    properties:
-      epoch_mint_provision:
-        description: epoch_mint_provision is the current minting per epoch provision value.
-        type: object
-        properties:
-          denom:
-            type: string
-          amount:
-            type: string
-    description: |-
-      QueryEpochMintProvisionResponse is the response type for the
-      Query/EpochMintProvision RPC method.
-  evmos.inflation.v1.QueryInflationRateResponse:
-    type: object
-    properties:
-      inflation_rate:
-        type: string
-        title: inflation_rate by which the total supply increases within one period
-    description: >-
-      QueryInflationRateResponse is the response type for the
-      Query/InflationRate
-
-      RPC method.
-  evmos.inflation.v1.QueryParamsResponse:
-    type: object
-    properties:
-      params:
-        description: params defines the parameters of the module.
-        type: object
-        properties:
-          mint_denom:
-            type: string
-            title: mint_denom specifies the type of coin to mint
-          exponential_calculation:
-            title: >-
-              exponential_calculation takes in the variables to calculate
-              exponential inflation
-            type: object
-            properties:
-              a:
-                type: string
-                title: a defines the initial value
-              r:
-                type: string
-                title: r defines the reduction factor
-              c:
-                type: string
-                title: c defines the parameter for long term inflation
-              bonding_target:
-                type: string
-                title: bonding_target
-              max_variance:
-                type: string
-                title: max_variance
-          inflation_distribution:
-            title: inflation_distribution of the minted denom
-            type: object
-            properties:
-              staking_rewards:
-                type: string
-                title: >-
-                  staking_rewards defines the proportion of the minted
-                  minted_denom that is
-
-                  to be allocated as staking rewards
-              usage_incentives:
-                type: string
-                title: >-
-                  usage_incentives defines the proportion of the minted
-                  minted_denom that is
-
-                  to be allocated to the incentives module address
-              community_pool:
-                type: string
-                title: >-
-                  community_pool defines the proportion of the minted
-                  minted_denom that is to
-
-                  be allocated to the community pool
-          enable_inflation:
-            type: boolean
-            title: >-
-              enable_inflation is the parameter that enables inflation and halts
-              increasing the skipped_epochs
-    description: QueryParamsResponse is the response type for the Query/Params RPC method.
-  evmos.inflation.v1.QueryPeriodResponse:
-    type: object
-    properties:
-      period:
-        type: string
-        format: uint64
-        description: period is the current minting per epoch provision value.
-    description: QueryPeriodResponse is the response type for the Query/Period RPC method.
-  evmos.inflation.v1.QuerySkippedEpochsResponse:
-    type: object
-    properties:
-      skipped_epochs:
-        type: string
-        format: uint64
-        description: >-
-          skipped_epochs is the number of epochs that the inflation module has
-          been disabled.
-    description: >-
-      QuerySkippedEpochsResponse is the response type for the
-      Query/SkippedEpochs
-
-      RPC method.
-  evmos.recovery.v1.MsgUpdateParamsResponse:
-    type: object
-    description: |-
-      MsgUpdateParamsResponse defines the response structure for executing a
-      MsgUpdateParams message.
-  evmos.recovery.v1.Params:
-    type: object
-    properties:
-      enable_recovery:
-        type: boolean
-        title: enable_recovery IBC middleware
-      packet_timeout_duration:
-        type: string
-        title: >-
-          packet_timeout_duration is the duration added to timeout timestamp for
-          balances recovered via IBC packets
-    title: Params holds parameters for the recovery module
-  evmos.recovery.v1.QueryParamsResponse:
-    type: object
-    properties:
-      params:
-        description: params defines the parameters of the module.
-        type: object
-        properties:
-          enable_recovery:
-            type: boolean
-            title: enable_recovery IBC middleware
-          packet_timeout_duration:
-            type: string
-            title: >-
-              packet_timeout_duration is the duration added to timeout timestamp
-              for balances recovered via IBC packets
-        title: Params holds parameters for the recovery module
-    description: QueryParamsResponse is the response type for the Query/Params RPC method.
   ibc.applications.atomic_swap.v1.MakeSwapMsg:
     type: object
     properties:
@@ -73241,6 +71591,40 @@ definitions:
       PacketId is an identifer for a unique Packet
       Source chains refer to packets by source port/channel
       Destination chains refer to packets by destination port/channel
+  ibc.applications.interchain_accounts.host.v1.Params:
+    type: object
+    properties:
+      host_enabled:
+        type: boolean
+        description: host_enabled enables or disables the host submodule.
+      allow_messages:
+        type: array
+        items:
+          type: string
+        description: >-
+          allow_messages defines a list of sdk message typeURLs allowed to be
+          executed on a host chain.
+    description: |-
+      Params defines the set of on-chain interchain accounts parameters.
+      The following parameters may be used to disable the host submodule.
+  ibc.applications.interchain_accounts.host.v1.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params defines the parameters of the module.
+        type: object
+        properties:
+          host_enabled:
+            type: boolean
+            description: host_enabled enables or disables the host submodule.
+          allow_messages:
+            type: array
+            items:
+              type: string
+            description: >-
+              allow_messages defines a list of sdk message typeURLs allowed to
+              be executed on a host chain.
+    description: QueryParamsResponse is the response type for the Query/Params RPC method.
   ibc.applications.interchain_swap.v1.InterchainLiquidityPool:
     type: object
     properties:
@@ -73970,6 +72354,166 @@ definitions:
       - LEFT
       - RIGHT
     default: LEFT
+  ibc.applications.transfer.v1.DenomTrace:
+    type: object
+    properties:
+      path:
+        type: string
+        description: >-
+          path defines the chain of port/channel identifiers used for tracing
+          the
+
+          source of the fungible token.
+      base_denom:
+        type: string
+        description: base denomination of the relayed fungible token.
+    description: >-
+      DenomTrace contains the base denomination for ICS20 fungible tokens and
+      the
+
+      source tracing information path.
+  ibc.applications.transfer.v1.MsgTransferResponse:
+    type: object
+    properties:
+      sequence:
+        type: string
+        format: uint64
+        title: sequence number of the transfer packet sent
+    description: MsgTransferResponse defines the Msg/Transfer response type.
+  ibc.applications.transfer.v1.Params:
+    type: object
+    properties:
+      send_enabled:
+        type: boolean
+        description: >-
+          send_enabled enables or disables all cross-chain token transfers from
+          this
+
+          chain.
+      receive_enabled:
+        type: boolean
+        description: >-
+          receive_enabled enables or disables all cross-chain token transfers to
+          this
+
+          chain.
+    description: >-
+      Params defines the set of IBC transfer parameters.
+
+      NOTE: To prevent a single token from being transferred, set the
+
+      TransfersEnabled parameter to true and then set the bank module's
+      SendEnabled
+
+      parameter for the denomination to false.
+  ibc.applications.transfer.v1.QueryDenomHashResponse:
+    type: object
+    properties:
+      hash:
+        type: string
+        description: hash (in hex format) of the denomination trace information.
+    description: |-
+      QueryDenomHashResponse is the response type for the Query/DenomHash RPC
+      method.
+  ibc.applications.transfer.v1.QueryDenomTraceResponse:
+    type: object
+    properties:
+      denom_trace:
+        description: denom_trace returns the requested denomination trace information.
+        type: object
+        properties:
+          path:
+            type: string
+            description: >-
+              path defines the chain of port/channel identifiers used for
+              tracing the
+
+              source of the fungible token.
+          base_denom:
+            type: string
+            description: base denomination of the relayed fungible token.
+    description: |-
+      QueryDenomTraceResponse is the response type for the Query/DenomTrace RPC
+      method.
+  ibc.applications.transfer.v1.QueryDenomTracesResponse:
+    type: object
+    properties:
+      denom_traces:
+        type: array
+        items:
+          type: object
+          properties:
+            path:
+              type: string
+              description: >-
+                path defines the chain of port/channel identifiers used for
+                tracing the
+
+                source of the fungible token.
+            base_denom:
+              type: string
+              description: base denomination of the relayed fungible token.
+          description: >-
+            DenomTrace contains the base denomination for ICS20 fungible tokens
+            and the
+
+            source tracing information path.
+        description: denom_traces returns all denominations trace information.
+      pagination:
+        description: pagination defines the pagination in the response.
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+    description: >-
+      QueryConnectionsResponse is the response type for the Query/DenomTraces
+      RPC
+
+      method.
+  ibc.applications.transfer.v1.QueryEscrowAddressResponse:
+    type: object
+    properties:
+      escrow_address:
+        type: string
+        title: the escrow account address
+    description: >-
+      QueryEscrowAddressResponse is the response type of the EscrowAddress RPC
+      method.
+  ibc.applications.transfer.v1.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params defines the parameters of the module.
+        type: object
+        properties:
+          send_enabled:
+            type: boolean
+            description: >-
+              send_enabled enables or disables all cross-chain token transfers
+              from this
+
+              chain.
+          receive_enabled:
+            type: boolean
+            description: >-
+              receive_enabled enables or disables all cross-chain token
+              transfers to this
+
+              chain.
+    description: QueryParamsResponse is the response type for the Query/Params RPC method.
   ibc.core.channel.v1.Channel:
     type: object
     properties:

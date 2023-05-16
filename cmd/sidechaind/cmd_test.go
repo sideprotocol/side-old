@@ -20,7 +20,7 @@ func TestInitCmd(t *testing.T) {
 		"init",           // Test the init cmd
 		"sidechain-test", // Moniker
 		fmt.Sprintf("--%s=%s", cli.FlagOverwrite, "true"), // Overwrite genesis.json, in case it already exists
-		fmt.Sprintf("--%s=%s", flags.FlagChainID, "sidechain_7070-1"),
+		fmt.Sprintf("--%s=%s", flags.FlagChainID, "sidehub-1818-1"),
 	})
 
 	err := svrcmd.Execute(rootCmd, "sidechaind", app.DefaultNodeHome)

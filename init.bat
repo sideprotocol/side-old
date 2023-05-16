@@ -9,7 +9,7 @@ rem 3. add path C:\msys64\mingw64\bin
 rem             C:\msys64\usr\bin
 
 set KEY="dev0"
-set CHAINID="sidechain_7070-1"
+set CHAINID="sidehub-1818-1"
 set MONIKER="localtestnet"
 set KEYRING="test"
 set KEYALGO="eth_secp256k1"
