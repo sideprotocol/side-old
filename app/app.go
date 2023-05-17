@@ -150,6 +150,10 @@ import (
 	devearnmodulekeeper "sidechain/x/devearn/keeper"
 	devearnmoduletypes "sidechain/x/devearn/types"
 
+	"sidechain/x/oracle"
+	oraclekeeper "sidechain/x/oracle/keeper"
+	oracletypes "sidechain/x/oracle/types"
+
 	transferkeeper "github.com/cosmos/ibc-go/v6/modules/apps/transfer/keeper"
 
 	"github.com/cosmos/ibc-go/v6/modules/apps/transfer"
@@ -214,6 +218,7 @@ var (
 		feemarket.AppModuleBasic{},
 		mint.AppModuleBasic{},
 		erc20.AppModuleBasic{},
+		oracle.AppModuleBasic{},
 		devearnmodule.AppModuleBasic{},
 		epochs.AppModuleBasic{},
 		ibcfee.AppModuleBasic{},
@@ -236,6 +241,7 @@ var (
 		evmtypes.ModuleName:           {authtypes.Minter, authtypes.Burner}, // used for secure addition and subtraction of balance using module account
 		minttypes.ModuleName:          {authtypes.Minter},
 		erc20types.ModuleName:         {authtypes.Minter, authtypes.Burner},
+		oracletypes.ModuleName:        nil,
 		ibcfeetypes.ModuleName:        nil,
 		devearnmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 	}
@@ -304,8 +310,9 @@ type Sidechain struct {
 	FeeMarketKeeper feemarketkeeper.Keeper
 
 	// Sidechain keepers
-	MintKeeper  mintkeeper.Keeper
-	Erc20Keeper erc20keeper.Keeper
+	MintKeeper   mintkeeper.Keeper
+	Erc20Keeper  erc20keeper.Keeper
+	OracleKeeper oraclekeeper.Keeper
 
 	// the module manager
 	mm *module.Manager
@@ -363,6 +370,7 @@ func NewSidechain(
 		minttypes.StoreKey, evmtypes.StoreKey, feemarkettypes.StoreKey,
 		// sidechain keys
 		erc20types.StoreKey,
+		oracletypes.StoreKey,
 
 		//ibcswap
 		ibcatomicswaptypes.StoreKey,
@@ -499,6 +507,11 @@ func NewSidechain(
 	app.Erc20Keeper = erc20keeper.NewKeeper(
 		keys[erc20types.StoreKey], appCodec, authtypes.NewModuleAddress(govtypes.ModuleName),
 		app.AccountKeeper, app.BankKeeper, app.EvmKeeper, app.StakingKeeper,
+	)
+
+	app.OracleKeeper = oraclekeeper.NewKeeper(
+		appCodec, keys[oracletypes.StoreKey], app.GetSubspace(oracletypes.ModuleName),
+		app.AccountKeeper, app.BankKeeper, app.DistrKeeper, app.SlashingKeeper, &stakingKeeper, distrtypes.ModuleName,
 	)
 
 	app.DevearnKeeper = *devearnmodulekeeper.NewKeeper(
@@ -669,6 +682,7 @@ func NewSidechain(
 		// Sidechain app modules
 		mint.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper, nil),
 		erc20.NewAppModule(app.Erc20Keeper, app.AccountKeeper, app.GetSubspace(erc20types.ModuleName)),
+		oracle.NewAppModule(appCodec, app.OracleKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -701,6 +715,7 @@ func NewSidechain(
 		paramstypes.ModuleName,
 		minttypes.ModuleName,
 		erc20types.ModuleName,
+		oracletypes.ModuleName,
 		devearnmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 		ibcatomicswaptypes.ModuleName,
@@ -733,6 +748,7 @@ func NewSidechain(
 		// Sidechain modules
 		minttypes.ModuleName,
 		erc20types.ModuleName,
+		oracletypes.ModuleName,
 		devearnmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 		ibcatomicswaptypes.ModuleName,
@@ -771,6 +787,7 @@ func NewSidechain(
 		upgradetypes.ModuleName,
 		// Sidechain modules
 		erc20types.ModuleName,
+		oracletypes.ModuleName,
 		devearnmoduletypes.ModuleName,
 		epochstypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
@@ -1093,6 +1110,7 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(feemarkettypes.ModuleName)
 	// sidechain subspaces
 	paramsKeeper.Subspace(erc20types.ModuleName)
+	paramsKeeper.Subspace(oracletypes.ModuleName)
 
 	// ibcswap subspaces
 	paramsKeeper.Subspace(ibcatomicswaptypes.ModuleName)

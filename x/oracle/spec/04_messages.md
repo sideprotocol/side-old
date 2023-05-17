@@ -10,7 +10,7 @@ Validators may also elect to delegate voting rights to another key to prevent th
 
 > Delegate validators will likely require you to deposit some funds (in Terra or Luna) which they can use to pay fees, sent in a separate MsgSend. This agreement is made off-chain and not enforced by the Terra protocol.
 
-The `Operator` field contains the operator address of the validator (prefixed `kujiravaloper-`). The `Delegate` field is the account address (prefixed `terra-`) of the delegate account that will be submitting exchange rate related votes and prevotes on behalf of the `Operator`.
+The `Operator` field contains the operator address of the validator (prefixed `sidevaloper-`). The `Delegate` field is the account address (prefixed `terra-`) of the delegate account that will be submitting exchange rate related votes and prevotes on behalf of the `Operator`.
 
 ```go
 // MsgDelegateFeedConsent - struct for delegating oracle voting rights to another address.

@@ -5,9 +5,9 @@ The Oracle module forks Terra Classic's Oracle module with the following changes
 - Removal of Tobin Tax. Tobin Tax was used for the Market module in stableswaps.
 - Quote denom. On Terra Classic, all prices are quoted in LUNC. Our prices are quoted in USD
 
-The Oracle module provides the Kujira blockchain with an up-to-date and accurate price feed of exchange rates of native assets, so that Kujira Protocol builders can access live and accurate price feeds in their protocols.
+The Oracle module provides the Sidechain blockchain with an up-to-date and accurate price feed of exchange rates of native assets, so that Sidechain Protocol builders can access live and accurate price feeds in their protocols.
 
-As price information is extrinsic to the blockchain, the Kujira network relies on validators to periodically vote on the current exchange rates, with the protocol tallying up the results once per `VotePeriod` and updating the on-chain exchange rate as the weighted median of the ballot.
+As price information is extrinsic to the blockchain, the Sidechain network relies on validators to periodically vote on the current exchange rates, with the protocol tallying up the results once per `VotePeriod` and updating the on-chain exchange rate as the weighted median of the ballot.
 
 > Since the Oracle service is powered by validators, you may find it interesting to look at the [Staking](https://github.com/cosmos/cosmos-sdk/tree/master/x/staking/spec/README.md) module, which covers the logic for staking and validators.
 

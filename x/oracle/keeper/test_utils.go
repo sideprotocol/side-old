@@ -117,7 +117,7 @@ var (
 	OracleDecPrecision = 8
 
 	testdenom            = "testdenom"
-	AccountAddressPrefix = "kujira"
+	AccountAddressPrefix = "side"
 )
 
 // TestInput nolint

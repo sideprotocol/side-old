@@ -46,9 +46,9 @@ Delegate the permission to submit exchange rate votes for the oracle to an addre
 
 Delegation can keep your validator operator key offline and use a separate replaceable key online.
 
-$ sidechaind tx oracle set-feeder kujira1...
+$ sidechaind tx oracle set-feeder side1...
 
-where "kujira1..." is the address you want to delegate your voting rights to.
+where "side1..." is the address you want to delegate your voting rights to.
 `),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -101,7 +101,7 @@ $ sidechaind tx oracle aggregate-prevote 1234 0.1ATOM,1.001USDT
 where "ATOM,USDT" is the denominating currencies, and "0.1.0,1.001" is the exchange rates of USD from the voter's point of view.
 
 If voting from a voting delegate, set "validator" to the address of the validator to vote on behalf of:
-$ sidechaind tx oracle aggregate-prevote 1234 0.1ATOM,1.001USDT kujiravaloper1...
+$ sidechaind tx oracle aggregate-prevote 1234 0.1ATOM,1.001USDT sidevaloper1...
 `),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -164,7 +164,7 @@ where "ATOM,USDT" is the denominating currencies, and "0.1.0,1.001" is the excha
 "salt" should match the salt used to generate the SHA256 hex in the aggregated pre-vote. 
 
 If voting from a voting delegate, set "validator" to the address of the validator to vote on behalf of:
-$ sidechaind tx oracle aggregate-vote 1234 0.1ATOM,1.001USDT kujiravaloper1....
+$ sidechaind tx oracle aggregate-vote 1234 0.1ATOM,1.001USDT sidevaloper1....
 `),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)

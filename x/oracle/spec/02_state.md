@@ -46,7 +46,7 @@ You can get the active list of denoms (denominations with votes past `VoteThresh
 
 ## FeederDelegation
 
-An `sdk.AccAddress` (`kujira-` account) address of `operator`'s delegated price feeder.
+An `sdk.AccAddress` (`side-` account) address of `operator`'s delegated price feeder.
 
 - FeederDelegation: `0x04<valAddress_Bytes> -> amino(sdk.AccAddress)`
 

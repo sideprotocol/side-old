@@ -151,7 +151,7 @@ func GetCmdQueryFeederDelegation() *cobra.Command {
 		Long: strings.TrimSpace(`
 Query the account the validator's oracle voting right is delegated to.
 
-$ sidechaind query oracle feeder kujiravaloper...
+$ sidechaind query oracle feeder sidevaloper...
 `),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -191,7 +191,7 @@ func GetCmdQueryMissCounter() *cobra.Command {
 		Long: strings.TrimSpace(`
 Query the # of vote periods missed in this oracle slash window.
 
-$ sidechaind query oracle miss kujiravaloper...
+$ sidechaind query oracle miss sidevaloper...
 `),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -235,7 +235,7 @@ $ sidechaind query oracle aggregate-prevotes
 
 Or, can filter with voter address
 
-$ sidechaind query oracle aggregate-prevotes kujiravaloper...
+$ sidechaind query oracle aggregate-prevotes sidevaloper...
 `),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -291,7 +291,7 @@ $ sidechaind query oracle aggregate-votes
 
 Or, can filter with voter address
 
-$ sidechaind query oracle aggregate-votes kujiravaloper...
+$ sidechaind query oracle aggregate-votes sidevaloper...
 `),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
