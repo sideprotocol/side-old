@@ -46,11 +46,11 @@ func GetCmdQueryExchangeRates() *cobra.Command {
 Query the current exchange rate of USD with an asset. 
 You can find the current list of active denoms by running
 
-$ kujirad query oracle exchange-rates 
+$ sidechaind query oracle exchange-rates 
 
 Or, can filter with denom
 
-$ kujirad query oracle exchange-rates KUJI
+$ sidechaind query oracle exchange-rates KUJI
 `),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -94,7 +94,7 @@ func GetCmdQueryActives() *cobra.Command {
 		Long: strings.TrimSpace(`
 Query the active list of assets recognized by the types.
 
-$ kujirad query oracle actives
+$ sidechaind query oracle actives
 `),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -151,7 +151,7 @@ func GetCmdQueryFeederDelegation() *cobra.Command {
 		Long: strings.TrimSpace(`
 Query the account the validator's oracle voting right is delegated to.
 
-$ kujirad query oracle feeder kujiravaloper...
+$ sidechaind query oracle feeder kujiravaloper...
 `),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -191,7 +191,7 @@ func GetCmdQueryMissCounter() *cobra.Command {
 		Long: strings.TrimSpace(`
 Query the # of vote periods missed in this oracle slash window.
 
-$ kujirad query oracle miss kujiravaloper...
+$ sidechaind query oracle miss kujiravaloper...
 `),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -231,11 +231,11 @@ func GetCmdQueryAggregatePrevote() *cobra.Command {
 		Long: strings.TrimSpace(`
 Query outstanding oracle aggregate prevotes.
 
-$ kujirad query oracle aggregate-prevotes
+$ sidechaind query oracle aggregate-prevotes
 
 Or, can filter with voter address
 
-$ kujirad query oracle aggregate-prevotes kujiravaloper...
+$ sidechaind query oracle aggregate-prevotes kujiravaloper...
 `),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -287,11 +287,11 @@ func GetCmdQueryAggregateVote() *cobra.Command {
 		Long: strings.TrimSpace(`
 Query outstanding oracle aggregate vote.
 
-$ kujirad query oracle aggregate-votes 
+$ sidechaind query oracle aggregate-votes 
 
 Or, can filter with voter address
 
-$ kujirad query oracle aggregate-votes kujiravaloper...
+$ sidechaind query oracle aggregate-votes kujiravaloper...
 `),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)

@@ -46,7 +46,7 @@ Delegate the permission to submit exchange rate votes for the oracle to an addre
 
 Delegation can keep your validator operator key offline and use a separate replaceable key online.
 
-$ kujirad tx oracle set-feeder kujira1...
+$ sidechaind tx oracle set-feeder kujira1...
 
 where "kujira1..." is the address you want to delegate your voting rights to.
 `),
@@ -96,12 +96,12 @@ The purpose of aggregate prevote is to hide aggregate exchange rate vote with ha
 as hex string in SHA256("{salt}:{exchange_rate}{denom},...,{exchange_rate}{denom}:{voter}")
 
 # Aggregate Prevote
-$ kujirad tx oracle aggregate-prevote 1234 0.1ATOM,1.001USDT
+$ sidechaind tx oracle aggregate-prevote 1234 0.1ATOM,1.001USDT
 
 where "ATOM,USDT" is the denominating currencies, and "0.1.0,1.001" is the exchange rates of USD from the voter's point of view.
 
 If voting from a voting delegate, set "validator" to the address of the validator to vote on behalf of:
-$ kujirad tx oracle aggregate-prevote 1234 0.1ATOM,1.001USDT kujiravaloper1...
+$ sidechaind tx oracle aggregate-prevote 1234 0.1ATOM,1.001USDT kujiravaloper1...
 `),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -157,14 +157,14 @@ func GetCmdAggregateExchangeRateVote() *cobra.Command {
 		Long: strings.TrimSpace(`
 Submit a aggregate vote for the exchange_rates of Luna w.r.t the input denom. Companion to a prevote submitted in the previous vote period. 
 
-$ kujirad tx oracle aggregate-vote 1234 0.1ATOM,1.001USDT 
+$ sidechaind tx oracle aggregate-vote 1234 0.1ATOM,1.001USDT 
 
 where "ATOM,USDT" is the denominating currencies, and "0.1.0,1.001" is the exchange rates of USD from the voter's point of view.
 
 "salt" should match the salt used to generate the SHA256 hex in the aggregated pre-vote. 
 
 If voting from a voting delegate, set "validator" to the address of the validator to vote on behalf of:
-$ kujirad tx oracle aggregate-vote 1234 0.1ATOM,1.001USDT kujiravaloper1....
+$ sidechaind tx oracle aggregate-vote 1234 0.1ATOM,1.001USDT kujiravaloper1....
 `),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
