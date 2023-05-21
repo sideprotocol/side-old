@@ -3,21 +3,26 @@ package types
 import (
 	"errors"
 	"fmt"
+	"sidechain/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-	"sidechain/types"
 )
 
 // constants
 const (
-	ProposalTypeRegisterDevEarnInfo string = "RegisterDevEarnInfo"
-	ProposalTypeCancelDevEarnInfo   string = "CancelDevEarnInfo"
+	ProposalTypeRegisterDevEarnInfo      string = "RegisterDevEarnInfo"
+	ProposalTypeCancelDevEarnInfo        string = "CancelDevEarnInfo"
+	ProposalTypeAddAsssetToWhitelist     string = "AddAssetToWhitelist"
+	ProposalTypeRemoveAssetFromWhitelist string = "RemoveAssetFromWhitelist"
 )
 
 // Implements Proposal Interface
 var (
 	_ govv1beta1.Content = &RegisterDevEarnInfoProposal{}
 	_ govv1beta1.Content = &CancelDevEarnInfoProposal{}
+	_ govv1beta1.Content = &AddAssetToWhitelistProposal{}
+	_ govv1beta1.Content = &RemoveAssetFromWhitelistProposal{}
 )
 
 func init() {
@@ -25,6 +30,8 @@ func init() {
 	govv1beta1.RegisterProposalType(ProposalTypeCancelDevEarnInfo)
 	govv1beta1.ModuleCdc.Amino.RegisterConcrete(&RegisterDevEarnInfoProposal{}, "devearn/RegisterDevEarnInfoProposal", nil)
 	govv1beta1.ModuleCdc.Amino.RegisterConcrete(&CancelDevEarnInfoProposal{}, "devearn/CancelDevEarnInfoProposal", nil)
+	govv1beta1.ModuleCdc.Amino.RegisterConcrete(&CancelDevEarnInfoProposal{}, "devearn/AddAssetToWhitelistProposal", nil)
+	govv1beta1.ModuleCdc.Amino.RegisterConcrete(&CancelDevEarnInfoProposal{}, "devearn/RemoveAssetFromWhitelistProposal", nil)
 }
 
 // NewRegisterDevEarnInfoProposal returns new instance of RegisterIncentiveProposal
@@ -118,5 +125,61 @@ func (rip *CancelDevEarnInfoProposal) ValidateBasic() error {
 		return err
 	}
 
+	return govv1beta1.ValidateAbstract(rip)
+}
+
+// NewAddAssetToWhitelistProposal add asset to whitelist
+func NewAddAssetToWhitelistProposal(
+	title, description, denom string,
+) govv1beta1.Content {
+	return &AddAssetToWhitelistProposal{
+		Title:       title,
+		Description: description,
+		Denom:       denom,
+	}
+}
+
+// ProposalRoute returns router key for this proposal
+func (*AddAssetToWhitelistProposal) ProposalRoute() string { return RouterKey }
+
+// ProposalType returns proposal type for this proposal
+func (*AddAssetToWhitelistProposal) ProposalType() string {
+	return ProposalTypeAddAsssetToWhitelist
+}
+
+// ValidateBasic performs a stateless check of the proposal fields
+func (rip *AddAssetToWhitelistProposal) ValidateBasic() error {
+	// TODO:Validate Denom
+	if err := types.ValidateAddress(rip.Denom); err != nil {
+		return err
+	}
+	return govv1beta1.ValidateAbstract(rip)
+}
+
+// RemoveAssetFromWhitelistProposal returns new instance of RegisterIncentiveProposal
+func NewRemoveAssetFromWhitelistProposal(
+	title, description, denom string,
+) govv1beta1.Content {
+	return &RemoveAssetFromWhitelistProposal{
+		Title:       title,
+		Description: description,
+		Denom:       denom,
+	}
+}
+
+// ProposalRoute returns router key for this proposal
+func (*RemoveAssetFromWhitelistProposal) ProposalRoute() string { return RouterKey }
+
+// ProposalType returns proposal type for this proposal
+func (*RemoveAssetFromWhitelistProposal) ProposalType() string {
+	return ProposalTypeRemoveAssetFromWhitelist
+}
+
+// ValidateBasic performs a stateless check of the proposal fields
+func (rip *RemoveAssetFromWhitelistProposal) ValidateBasic() error {
+	// TODO:Validate Denom
+	if err := types.ValidateAddress(rip.Denom); err != nil {
+		return err
+	}
 	return govv1beta1.ValidateAbstract(rip)
 }
