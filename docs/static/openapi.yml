@@ -48630,6 +48630,12 @@ paths:
                     title: >-
                       dev_earn_percentage is parameter to define the
                       dev_earn_pool as a percentage of the inflation
+                  tvl_share:
+                    type: string
+                    format: uint64
+                    description: >-
+                      Tvl share is a parameter to define the tvl rewards as a
+                      percentage of the dev_earn rewards.
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -78833,6 +78839,12 @@ definitions:
         title: >-
           dev_earn_percentage is parameter to define the dev_earn_pool as a
           percentage of the inflation
+      tvl_share:
+        type: string
+        format: uint64
+        description: >-
+          Tvl share is a parameter to define the tvl rewards as a percentage of
+          the dev_earn rewards.
     description: Params defines the parameters for the module.
   sidechain.devearn.QueryDevEarnInfoResponse:
     type: object
@@ -78936,6 +78948,12 @@ definitions:
             title: >-
               dev_earn_percentage is parameter to define the dev_earn_pool as a
               percentage of the inflation
+          tvl_share:
+            type: string
+            format: uint64
+            description: >-
+              Tvl share is a parameter to define the tvl rewards as a percentage
+              of the dev_earn rewards.
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   sidechain.epochs.v1.EpochInfo:
     type: object

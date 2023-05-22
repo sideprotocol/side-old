@@ -2,8 +2,9 @@ package keeper_test
 
 import (
 	"fmt"
-	"github.com/ethereum/go-ethereum/common"
 	"sidechain/x/devearn/types"
+
+	"github.com/ethereum/go-ethereum/common"
 )
 
 func (suite *KeeperTestSuite) TestGetAllDevInfos() {
@@ -79,7 +80,7 @@ func (suite *KeeperTestSuite) TestGetDevInfo() {
 func (suite *KeeperTestSuite) TestDeleteDevEarnInfo() {
 	suite.deployContracts()
 	// Register Incentive
-	_, err := suite.app.DevearnKeeper.RegisterDevEarn(
+	_, err := suite.app.DevearnKeeper.RegisterDevEarnInfo(
 		suite.ctx,
 		contract,
 		epochs,

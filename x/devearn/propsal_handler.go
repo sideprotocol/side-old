@@ -1,14 +1,15 @@
 package devearn
 
 import (
+	"sidechain/x/devearn/keeper"
+	"sidechain/x/devearn/types"
+	"strconv"
+
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
 	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/ethereum/go-ethereum/common"
-	"sidechain/x/devearn/keeper"
-	"sidechain/x/devearn/types"
-	"strconv"
 )
 
 func NewDevEarnProposalHanodler(k *keeper.Keeper) govv1beta1.Handler {
@@ -28,7 +29,7 @@ func NewDevEarnProposalHanodler(k *keeper.Keeper) govv1beta1.Handler {
 }
 
 func handleRegisterDevEarnProposal(ctx sdk.Context, k *keeper.Keeper, p *types.RegisterDevEarnInfoProposal) error {
-	in, err := k.RegisterDevEarn(ctx, common.HexToAddress(p.Contract), p.Epochs, p.OwnerAddress)
+	in, err := k.RegisterDevEarnInfo(ctx, common.HexToAddress(p.Contract), p.Epochs, p.OwnerAddress)
 	if err != nil {
 		return err
 	}
@@ -46,7 +47,7 @@ func handleRegisterDevEarnProposal(ctx sdk.Context, k *keeper.Keeper, p *types.R
 }
 
 func handleCancelDevEarnProposal(ctx sdk.Context, k *keeper.Keeper, p *types.CancelDevEarnInfoProposal) error {
-	err := k.CancelDevEarn(ctx, common.HexToAddress(p.Contract))
+	err := k.CancelDevEarnInfo(ctx, common.HexToAddress(p.Contract))
 	if err != nil {
 		return err
 	}

@@ -15,6 +15,7 @@ var (
 	DefaultEnableDevEarn              bool    = true
 	DefaultRewardEpochIdentifier      string  = epochstypes.WeekEpochID
 	DefaultDevEarnInflationPercentage sdk.Dec = sdk.NewDecWithPrec(5, 2)
+	DefaultTvlShare                   uint64  = 1000 // 1000 is equivalent to 10%
 )
 
 var (
@@ -22,6 +23,7 @@ var (
 	ParamStoreKeyEnableDevEarn              = []byte("EnableDevEarn")
 	ParamStoreKeyRewardEpochIdentifier      = []byte("EarnEpochIdentifier")
 	ParamStoreKeyDevEarnInflationPercentage = []byte("EarnInflationPercentage")
+	ParamStoreKeyTvlShare                   = []byte("TvlSharePercentage")
 )
 
 // ParamKeyTable the param key table for launch module
@@ -34,11 +36,13 @@ func NewParams(
 	enableDevEarn bool,
 	rewardEpochIdentifier string,
 	devEarnInflationAPR sdk.Dec,
+	tvlShare uint64,
 ) Params {
 	return Params{
 		EnableDevEarn:         enableDevEarn,
 		RewardEpochIdentifier: rewardEpochIdentifier,
 		DevEarnInflation_APR:  devEarnInflationAPR,
+		TvlShare:              tvlShare,
 	}
 }
 
@@ -48,6 +52,7 @@ func DefaultParams() Params {
 		DefaultEnableDevEarn,
 		DefaultRewardEpochIdentifier,
 		DefaultDevEarnInflationPercentage,
+		DefaultTvlShare,
 	)
 }
 
@@ -57,6 +62,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(ParamStoreKeyEnableDevEarn, &p.EnableDevEarn, validateBool),
 		paramtypes.NewParamSetPair(ParamStoreKeyRewardEpochIdentifier, &p.RewardEpochIdentifier, epochstypes.ValidateEpochIdentifierInterface),
 		paramtypes.NewParamSetPair(ParamStoreKeyDevEarnInflationPercentage, &p.DevEarnInflation_APR, validatePercentage),
+		paramtypes.NewParamSetPair(ParamStoreKeyTvlShare, &p.TvlShare, validateUint64),
 	}
 }
 
@@ -69,6 +75,16 @@ func (p Params) String() string {
 // validateEnableDevEarn validates the EnableDevEarn param
 func validateBool(v interface{}) error {
 	_, ok := v.(bool)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+
+	return nil
+}
+
+// validate uint64
+func validateUint64(v interface{}) error {
+	_, ok := v.(uint64)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", v)
 	}

@@ -2,6 +2,11 @@ package keeper_test
 
 import (
 	"fmt"
+	"math/big"
+	"sidechain/testutil"
+	utiltx "sidechain/testutil/tx"
+	"sidechain/x/devearn/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/ethereum/go-ethereum/common"
@@ -9,10 +14,6 @@ import (
 	ethermint "github.com/evmos/ethermint/types"
 	evm "github.com/evmos/ethermint/x/evm/types"
 	vestingtypes "github.com/evmos/evmos/v11/x/vesting/types"
-	"math/big"
-	"sidechain/testutil"
-	utiltx "sidechain/testutil/tx"
-	"sidechain/x/devearn/types"
 )
 
 func (suite *KeeperTestSuite) TestEvmHooksStoreTxGasUsed() {
@@ -107,7 +108,7 @@ func (suite *KeeperTestSuite) TestEvmHooksStoreTxGasUsed() {
 			suite.Commit()
 
 			// Register devearn
-			_, err = suite.app.DevearnKeeper.RegisterDevEarn(
+			_, err = suite.app.DevearnKeeper.RegisterDevEarnInfo(
 				suite.ctx,
 				contractAddr,
 				epochs,

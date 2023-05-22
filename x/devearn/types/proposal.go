@@ -28,10 +28,12 @@ var (
 func init() {
 	govv1beta1.RegisterProposalType(ProposalTypeRegisterDevEarnInfo)
 	govv1beta1.RegisterProposalType(ProposalTypeCancelDevEarnInfo)
+	govv1beta1.RegisterProposalType(ProposalTypeAddAsssetToWhitelist)
+	govv1beta1.RegisterProposalType(ProposalTypeRemoveAssetFromWhitelist)
 	govv1beta1.ModuleCdc.Amino.RegisterConcrete(&RegisterDevEarnInfoProposal{}, "devearn/RegisterDevEarnInfoProposal", nil)
 	govv1beta1.ModuleCdc.Amino.RegisterConcrete(&CancelDevEarnInfoProposal{}, "devearn/CancelDevEarnInfoProposal", nil)
-	govv1beta1.ModuleCdc.Amino.RegisterConcrete(&CancelDevEarnInfoProposal{}, "devearn/AddAssetToWhitelistProposal", nil)
-	govv1beta1.ModuleCdc.Amino.RegisterConcrete(&CancelDevEarnInfoProposal{}, "devearn/RemoveAssetFromWhitelistProposal", nil)
+	govv1beta1.ModuleCdc.Amino.RegisterConcrete(&AddAssetToWhitelistProposal{}, "devearn/AddAssetToWhitelistProposal", nil)
+	govv1beta1.ModuleCdc.Amino.RegisterConcrete(&RemoveAssetFromWhitelistProposal{}, "devearn/RemoveAssetFromWhitelistProposal", nil)
 }
 
 // NewRegisterDevEarnInfoProposal returns new instance of RegisterIncentiveProposal

@@ -2,8 +2,9 @@ package keeper_test
 
 import (
 	"fmt"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"sidechain/x/devearn/types"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func (suite *KeeperTestSuite) TestDistributeIncentives() {
@@ -66,7 +67,7 @@ func (suite *KeeperTestSuite) TestDistributeIncentives() {
 			suite.Require().NoError(err)
 
 			// create incentive
-			_, err = suite.app.DevearnKeeper.RegisterDevEarn(
+			_, err = suite.app.DevearnKeeper.RegisterDevEarnInfo(
 				suite.ctx,
 				contract,
 				tc.epochs,

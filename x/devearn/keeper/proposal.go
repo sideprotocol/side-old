@@ -1,14 +1,15 @@
 package keeper
 
 import (
+	"sidechain/x/devearn/types"
+
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/ethereum/go-ethereum/common"
-	"sidechain/x/devearn/types"
 )
 
-func (k Keeper) RegisterDevEarn(
+func (k Keeper) RegisterDevEarnInfo(
 	ctx sdk.Context,
 	contract common.Address,
 	epochs uint32,
@@ -49,7 +50,7 @@ func (k Keeper) RegisterDevEarn(
 }
 
 // RegisterIncentive deletes the incentive for a contract
-func (k Keeper) CancelDevEarn(
+func (k Keeper) CancelDevEarnInfo(
 	ctx sdk.Context,
 	contract common.Address,
 ) error {

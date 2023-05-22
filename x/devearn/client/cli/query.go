@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/ethereum/go-ethereum/common"
 
@@ -28,6 +29,8 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 	}
 
 	cmd.AddCommand(CmdQueryParams(), CmdDevEarnInfos(), CmdDevEarnInfo())
+	// this line is used by starport scaffolding # 1
+
 	return cmd
 }
 
