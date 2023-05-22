@@ -38,3 +38,8 @@ var (
 func KeyPrefix(p string) []byte {
 	return []byte(p)
 }
+
+const (
+	AssetsKey      = "Assets/value/"
+	AssetsCountKey = "Assets/count/"
+)

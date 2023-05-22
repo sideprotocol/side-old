@@ -1,14 +1,20 @@
 syntax = "proto3";
+
 package sidechain.devearn;
 
 import "gogoproto/gogo.proto";
 import "sidechain/devearn/params.proto";
+import "sidechain/devearn/assets.proto";
 
 option go_package = "sidechain/x/devearn/types";
 
 // GenesisState defines the devearn module's genesis state.
 message GenesisState {
   Params params = 1 [(gogoproto.nullable) = false];
+  
   // DevEarnInfo is a slice of active incentives
   repeated DevEarnInfo devEarnInfos = 2 [(gogoproto.nullable) = false];
+  repeated Assets      assetsList   = 3 [(gogoproto.nullable) = false];
+           uint64      assetsCount  = 4;
 }
+

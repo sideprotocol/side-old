@@ -1,0 +1,10 @@
+syntax = "proto3";
+package sidechain.devearn;
+
+option go_package = "sidechain/x/devearn/types";
+
+message Assets {
+  uint64 id = 1;
+  string denom = 2; 
+  
+}
