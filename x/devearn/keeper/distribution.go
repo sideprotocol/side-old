@@ -2,8 +2,11 @@ package keeper
 
 import (
 	"math/big"
+	"sidechain/contracts"
 	"sidechain/x/devearn/types"
 	"strconv"
+
+	erc20types "sidechain/x/erc20/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -117,8 +120,7 @@ func (k Keeper) SendReward(
 	return rewards, count
 }
 
-// TvlReward function calculates TVL rewards using native token balance
-// TODO: Add support for erc20 tokens value estimation
+// TvlReward function calculates TVL rewards using assets in whitelist
 func (k Keeper) TvlReward(ctx sdk.Context, contractAddress string) (sdk.Dec, error) {
 	assets := k.GetAllAssets(ctx)
 	for i := 0; i < len(assets); i++ {
@@ -127,6 +129,19 @@ func (k Keeper) TvlReward(ctx sdk.Context, contractAddress string) (sdk.Dec, err
 		if err != nil {
 
 		}
+
+		// Get mapping to erc20 token from cosmos denom
+		tokenPair, tokenPairErr := k.erc20Keeper.TokenPair(
+			ctx, &erc20types.QueryTokenPairRequest{Token: assets[i].Denom})
+		if tokenPairErr != nil {
+
+		}
+		erc20 := contracts.ERC20MinterBurnerDecimalsContract.ABI
+
+		// Get balance from erc20 token
+		tokenBalance := k.erc20Keeper.BalanceOf(
+			ctx, erc20, tokenPair.GetTokenPair().GetERC20Contract(), contractAddress)
+
 	}
 	// traverse assets
 	// Query total supply of native token
@@ -153,4 +168,15 @@ func (k Keeper) TvlReward(ctx sdk.Context, contractAddress string) (sdk.Dec, err
 	tvlRatio := balD.Quo(totalSupply)
 
 	return tvlRatio, nil
+}
+
+func (k Keeper) TotalTvl(ctx sdk.Context) {
+	assets := k.GetAllAssets(ctx)
+	for i := 0; i < len(assets); i++ {
+		// Get exchange rate using oracle module
+		rate, err := k.oracleKeeper.GetExchangeRate(ctx, assets[i].Denom)
+		if err != nil {
+
+		}
+	}
 }
