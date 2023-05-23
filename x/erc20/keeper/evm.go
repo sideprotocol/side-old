@@ -151,6 +151,30 @@ func (k Keeper) BalanceOf(
 	return balance
 }
 
+// TotalSupply queries an total supply for a given ERC20 contract
+func (k Keeper) TotalSupply(
+	ctx sdk.Context,
+	abi abi.ABI,
+	contract common.Address,
+) *big.Int {
+	res, err := k.CallEVM(ctx, abi, types.ModuleAddress, contract, false, "totalSupply")
+	if err != nil {
+		return nil
+	}
+
+	unpacked, err := abi.Unpack("totalSupply", res.Ret)
+	if err != nil || len(unpacked) == 0 {
+		return nil
+	}
+
+	supply, ok := unpacked[0].(*big.Int)
+	if !ok {
+		return nil
+	}
+
+	return supply
+}
+
 // CallEVM performs a smart contract method call using given args
 func (k Keeper) CallEVM(
 	ctx sdk.Context,

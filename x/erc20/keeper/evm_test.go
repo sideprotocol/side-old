@@ -125,6 +125,11 @@ func (suite *KeeperTestSuite) TestCallEVM() {
 			"balanceOf",
 			true,
 		},
+		{
+			"pass",
+			"totalSupply",
+			true,
+		},
 	}
 	for _, tc := range testCases {
 		suite.SetupTest() // reset

@@ -123,6 +123,8 @@ func (k Keeper) SendReward(
 // TvlReward function calculates TVL rewards using assets in whitelist
 func (k Keeper) TvlReward(ctx sdk.Context, contractAddress string) (sdk.Dec, error) {
 	assets := k.GetAllAssets(ctx)
+	totalValueLocked := k.TotalTvl(ctx)
+	totalValueLockedContract := 0
 	for i := 0; i < len(assets); i++ {
 		// Get exchange rate using oracle module
 		rate, err := k.oracleKeeper.GetExchangeRate(ctx, assets[i].Denom)
@@ -142,6 +144,7 @@ func (k Keeper) TvlReward(ctx sdk.Context, contractAddress string) (sdk.Dec, err
 		tokenBalance := k.erc20Keeper.BalanceOf(
 			ctx, erc20, tokenPair.GetTokenPair().GetERC20Contract(), contractAddress)
 
+		totalValueLockedContract += (rate * tokenBalance)
 	}
 	// traverse assets
 	// Query total supply of native token
@@ -172,11 +175,22 @@ func (k Keeper) TvlReward(ctx sdk.Context, contractAddress string) (sdk.Dec, err
 
 func (k Keeper) TotalTvl(ctx sdk.Context) {
 	assets := k.GetAllAssets(ctx)
+	totalValueLocked := 0
 	for i := 0; i < len(assets); i++ {
 		// Get exchange rate using oracle module
 		rate, err := k.oracleKeeper.GetExchangeRate(ctx, assets[i].Denom)
 		if err != nil {
 
 		}
+		erc20 := contracts.ERC20MinterBurnerDecimalsContract.ABI
+		// Get mapping to erc20 token from cosmos denom
+		tokenPair, tokenPairErr := k.erc20Keeper.TokenPair(
+			ctx, &erc20types.QueryTokenPairRequest{Token: assets[i].Denom})
+		if tokenPairErr != nil {
+
+		}
+		total := k.erc20Keeper.TotalSupply(ctx, erc20, tokenPair.TokenPair.GetERC20Contract())
+		totalValueLocked += (total * rate)
 	}
+	return totalValueLocked
 }

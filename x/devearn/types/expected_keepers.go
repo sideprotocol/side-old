@@ -51,4 +51,9 @@ type Erc20Keeper interface {
 		contract, account common.Address,
 	) *big.Int
 	TokenPair(c context.Context, req *erc20types.QueryTokenPairRequest) (*erc20types.QueryTokenPairResponse, error)
+	TotalSupply(
+		ctx sdk.Context,
+		abi abi.ABI,
+		contract common.Address,
+	) *big.Int
 }
