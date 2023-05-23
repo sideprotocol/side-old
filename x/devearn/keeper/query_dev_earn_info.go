@@ -2,15 +2,17 @@ package keeper
 
 import (
 	"context"
+	"strings"
+
 	errorsmod "cosmossdk.io/errors"
 	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/ethereum/go-ethereum/common"
-	"strings"
+
+	"sidechain/x/devearn/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"sidechain/x/devearn/types"
 )
 
 func (k Keeper) DevEarnInfo(goCtx context.Context, req *types.QueryDevEarnInfoRequest) (*types.QueryDevEarnInfoResponse, error) {
@@ -37,6 +39,6 @@ func (k Keeper) DevEarnInfo(goCtx context.Context, req *types.QueryDevEarnInfoRe
 	if !ok {
 		return nil, status.Error(codes.InvalidArgument, "didn't found this devEarnInfo!!")
 	}
-	resp := &types.QueryDevEarnInfoResponse{devEarninfo}
+	resp := &types.QueryDevEarnInfoResponse{DevEarnInfo: devEarninfo}
 	return resp, nil
 }

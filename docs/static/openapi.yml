@@ -48411,9 +48411,6 @@ paths:
                 items:
                   type: object
                   properties:
-                    id:
-                      type: string
-                      format: uint64
                     denom:
                       type: string
               pagination:
@@ -48521,7 +48518,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /sidechain/devearn/assets/{id}:
+  /sidechain/devearn/assets/{denom}:
     get:
       summary: Queries a list of Assets items.
       operationId: SidechainDevearnAssets
@@ -48534,9 +48531,6 @@ paths:
               Assets:
                 type: object
                 properties:
-                  id:
-                    type: string
-                    format: uint64
                   denom:
                     type: string
         default:
@@ -48558,11 +48552,10 @@ paths:
                       type: string
                   additionalProperties: {}
       parameters:
-        - name: id
+        - name: denom
           in: path
           required: true
           type: string
-          format: uint64
       tags:
         - Query
   /sidechain/devearn/dev_earn_info:
@@ -78974,9 +78967,6 @@ definitions:
   sidechain.devearn.Assets:
     type: object
     properties:
-      id:
-        type: string
-        format: uint64
       denom:
         type: string
   sidechain.devearn.DevEarnInfo:
@@ -79039,9 +79029,6 @@ definitions:
         items:
           type: object
           properties:
-            id:
-              type: string
-              format: uint64
             denom:
               type: string
       pagination:
@@ -79167,9 +79154,6 @@ definitions:
       Assets:
         type: object
         properties:
-          id:
-            type: string
-            format: uint64
           denom:
             type: string
   sidechain.devearn.QueryParamsResponse:

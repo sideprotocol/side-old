@@ -19,7 +19,7 @@ func TestGenesis(t *testing.T) {
 				Denom: "aside",
 			},
 			{
-				Denom: "aside",
+				Denom: "bside",
 			},
 		},
 		// this line is used by starport scaffolding # genesis/test/state

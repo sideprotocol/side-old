@@ -54,7 +54,7 @@ func CmdDevEarnInfo() *cobra.Command {
 			queryClient := types.NewQueryClient(clientCtx)
 
 			params := &types.QueryDevEarnInfoRequest{
-				args[0],
+				Contract: args[0],
 			}
 
 			res, err := queryClient.DevEarnInfo(cmd.Context(), params)
@@ -89,7 +89,7 @@ func CmdDevEarnInfos() *cobra.Command {
 			}
 
 			params := &types.QueryDevEarnInfosRequest{
-				pageReq,
+				Pagination: pageReq,
 			}
 
 			res, err := queryClient.DevEarnInfos(cmd.Context(), params)
