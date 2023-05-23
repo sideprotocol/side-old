@@ -3,37 +3,66 @@ package keeper_test
 import (
 	gocontext "context"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/suite"
+	"github.com/tendermint/tendermint/crypto/tmhash"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+	tmversion "github.com/tendermint/tendermint/proto/tendermint/version"
+	"github.com/tendermint/tendermint/version"
 
+	"sidechain/app"
 	"sidechain/x/mint/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 type MintTestSuite struct {
 	suite.Suite
 
-	app         *simapp.SimApp
+	app         *app.Sidechain
 	ctx         sdk.Context
 	queryClient types.QueryClient
+	consAddress sdk.ConsAddress
 }
 
 func (suite *MintTestSuite) SetupTest() {
-	app := simapp.Setup(suite.T(), false)
-	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
+	checkTx := false
 
-	queryHelper := baseapp.NewQueryServerTestHelper(ctx, app.InterfaceRegistry())
-	types.RegisterQueryServer(queryHelper, app.MintKeeper)
-	queryClient := types.NewQueryClient(queryHelper)
+	// init app
+	suite.app = app.Setup(checkTx, nil)
 
-	suite.app = app
-	suite.ctx = ctx
+	// setup context
+	suite.ctx = suite.app.BaseApp.NewContext(checkTx, tmproto.Header{
+		Height:          1,
+		ChainID:         "sidechain_7071-1",
+		Time:            time.Now().UTC(),
+		ProposerAddress: suite.consAddress.Bytes(),
 
-	suite.queryClient = queryClient
+		Version: tmversion.Consensus{
+			Block: version.BlockProtocol,
+		},
+		LastBlockId: tmproto.BlockID{
+			Hash: tmhash.Sum([]byte("block_id")),
+			PartSetHeader: tmproto.PartSetHeader{
+				Total: 11,
+				Hash:  tmhash.Sum([]byte("partset_header")),
+			},
+		},
+		AppHash:            tmhash.Sum([]byte("app")),
+		DataHash:           tmhash.Sum([]byte("data")),
+		EvidenceHash:       tmhash.Sum([]byte("evidence")),
+		ValidatorsHash:     tmhash.Sum([]byte("validators")),
+		NextValidatorsHash: tmhash.Sum([]byte("next_validators")),
+		ConsensusHash:      tmhash.Sum([]byte("consensus")),
+		LastResultsHash:    tmhash.Sum([]byte("last_result")),
+	})
+
+	// setup query helpers
+	queryHelper := baseapp.NewQueryServerTestHelper(suite.ctx, suite.app.InterfaceRegistry())
+	types.RegisterQueryServer(queryHelper, suite.app.MintKeeper)
+	suite.queryClient = types.NewQueryClient(queryHelper)
 }
 
 func (suite *MintTestSuite) TestGRPCParams() {
