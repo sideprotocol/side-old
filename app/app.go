@@ -523,6 +523,8 @@ func NewSidechain(
 		app.BankKeeper,
 		app.AccountKeeper,
 		app.EvmKeeper,
+		app.OracleKeeper,
+		app.Erc20Keeper,
 	)
 	devearnModule := devearnmodule.NewAppModule(appCodec, app.DevearnKeeper, app.AccountKeeper, app.BankKeeper, app.EvmKeeper)
 

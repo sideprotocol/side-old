@@ -22,6 +22,8 @@ type (
 		bankKeeper    types.BankKeeper
 		accountKeeper types.AccountKeeper
 		evmKeeper     types.EvmKeeper
+		oracleKeeper  types.OracleKeeper
+		erc20Keeper   types.Erc20Keeper
 	}
 )
 
@@ -34,6 +36,8 @@ func NewKeeper(
 	bankKeeper types.BankKeeper,
 	accountKeeper types.AccountKeeper,
 	evmKeeper types.EvmKeeper,
+	oracleKeeper types.OracleKeeper,
+	erc20Keeper types.Erc20Keeper,
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -49,6 +53,8 @@ func NewKeeper(
 		bankKeeper:    bankKeeper,
 		accountKeeper: accountKeeper,
 		evmKeeper:     evmKeeper,
+		oracleKeeper:  oracleKeeper,
+		erc20Keeper:   erc20Keeper,
 	}
 }
 

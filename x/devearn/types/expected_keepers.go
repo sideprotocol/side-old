@@ -1,9 +1,15 @@
 package types
 
 import (
+	context "context"
+	"math/big"
+
+	erc20types "sidechain/x/erc20/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/evmos/ethermint/x/evm/statedb"
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
@@ -32,4 +38,17 @@ type BankKeeper interface {
 type EvmKeeper interface {
 	GetParams(ctx sdk.Context) evmtypes.Params
 	GetAccountWithoutBalance(ctx sdk.Context, addr common.Address) *statedb.Account
+}
+
+type OracleKeeper interface {
+	GetExchangeRate(ctx sdk.Context, denom string) (sdk.Dec, error)
+}
+
+type Erc20Keeper interface {
+	BalanceOf(
+		ctx sdk.Context,
+		abi abi.ABI,
+		contract, account common.Address,
+	) *big.Int
+	TokenPair(c context.Context, req *erc20types.QueryTokenPairRequest) (*erc20types.QueryTokenPairResponse, error)
 }
