@@ -14,8 +14,6 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 		k.SetAssets(ctx, elem)
 	}
 
-	// Set assets count
-	k.SetAssetsCount(ctx, genState.AssetsCount)
 	// this line is used by starport scaffolding # genesis/module/init
 	k.SetParams(ctx, genState.Params)
 }
@@ -26,7 +24,6 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis.Params = k.GetParams(ctx)
 	genesis.DevEarnInfos = k.GetAllDevEarnInfos(ctx)
 	genesis.AssetsList = k.GetAllAssets(ctx)
-	genesis.AssetsCount = k.GetAssetsCount(ctx)
 	// this line is used by starport scaffolding # genesis/module/export
 
 	return genesis

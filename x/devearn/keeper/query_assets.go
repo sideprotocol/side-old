@@ -3,13 +3,14 @@ package keeper
 import (
 	"context"
 
+	"sidechain/x/devearn/types"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"sidechain/x/devearn/types"
 )
 
 func (k Keeper) AssetsAll(goCtx context.Context, req *types.QueryAllAssetsRequest) (*types.QueryAllAssetsResponse, error) {
@@ -46,10 +47,10 @@ func (k Keeper) Assets(goCtx context.Context, req *types.QueryGetAssetsRequest) 
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	assets, found := k.GetAssets(ctx, req.Id)
+	found := k.IsAssetRegistered(ctx, req.Denom)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
 
-	return &types.QueryGetAssetsResponse{Assets: assets}, nil
+	return &types.QueryGetAssetsResponse{Assets: types.Assets{Denom: req.Denom}}, nil
 }

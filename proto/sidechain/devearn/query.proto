@@ -33,7 +33,7 @@ service Query {
   
   // Queries a list of Assets items.
   rpc Assets    (QueryGetAssetsRequest) returns (QueryGetAssetsResponse) {
-    option (google.api.http).get = "/sidechain/devearn/assets/{id}";
+    option (google.api.http).get = "/sidechain/devearn/assets/{denom}";
   
   }
   rpc AssetsAll (QueryAllAssetsRequest) returns (QueryAllAssetsResponse) {
@@ -75,7 +75,7 @@ message QueryDevEarnInfoResponse {
 }
 
 message QueryGetAssetsRequest {
-  uint64 id = 1;
+  string denom = 1;
 }
 
 message QueryGetAssetsResponse {

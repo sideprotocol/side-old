@@ -14,7 +14,7 @@ message GenesisState {
   
   // DevEarnInfo is a slice of active incentives
   repeated DevEarnInfo devEarnInfos = 2 [(gogoproto.nullable) = false];
+  // Assets is a list of whitelisted assets for tvl calculation
   repeated Assets      assetsList   = 3 [(gogoproto.nullable) = false];
-           uint64      assetsCount  = 4;
 }
 

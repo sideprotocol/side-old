@@ -3,10 +3,11 @@ package devearn_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	keepertest "sidechain/testutil/keeper"
 	"sidechain/x/devearn"
 	"sidechain/x/devearn/types"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestGenesis(t *testing.T) {
@@ -15,13 +16,12 @@ func TestGenesis(t *testing.T) {
 
 		AssetsList: []types.Assets{
 			{
-				Id: 0,
+				Denom: "aside",
 			},
 			{
-				Id: 1,
+				Denom: "aside",
 			},
 		},
-		AssetsCount: 2,
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -31,6 +31,5 @@ func TestGenesis(t *testing.T) {
 	require.NotNil(t, got)
 
 	require.ElementsMatch(t, genesisState.AssetsList, got.AssetsList)
-	require.Equal(t, genesisState.AssetsCount, got.AssetsCount)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

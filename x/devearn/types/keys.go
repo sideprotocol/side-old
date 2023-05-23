@@ -40,6 +40,5 @@ func KeyPrefix(p string) []byte {
 }
 
 const (
-	AssetsKey      = "Assets/value/"
-	AssetsCountKey = "Assets/count/"
+	AssetsKey = "Assets/value/"
 )

@@ -74,3 +74,56 @@ func (k Keeper) CancelDevEarnInfo(
 	k.DeleteDevEarnInfo(ctx, devEarnInfo)
 	return nil
 }
+
+// Add asset to whitelist storage
+func (k Keeper) AddAssetToWhitelist(
+	ctx sdk.Context,
+	denom string,
+) (*types.Assets, error) {
+	// Check if the Incentives are globally enabled
+	params := k.GetParams(ctx)
+	if !params.EnableDevEarn {
+		return nil, errorsmod.Wrap(
+			types.ErrInternalDevEarn,
+			"dev earn are currently disabled by governance",
+		)
+	}
+
+	// Check if the asset is already registered
+	if k.IsAssetRegistered(ctx, denom) {
+		return nil, errorsmod.Wrapf(
+			types.ErrInternalDevEarn,
+			"asset already registered: %s", denom,
+		)
+	}
+
+	assets := types.Assets{Denom: denom}
+	k.SetAssets(ctx, assets)
+
+	return &assets, nil
+}
+
+// Remove asset from whitelist
+func (k Keeper) RemoveAssetFromWhitelist(
+	ctx sdk.Context,
+	denom string,
+) error {
+	// Check if the Incentives are globally enabled
+	params := k.GetParams(ctx)
+	if !params.EnableDevEarn {
+		return errorsmod.Wrap(
+			types.ErrInternalDevEarn,
+			"incentives are currently disabled by governance",
+		)
+	}
+
+	if !k.IsAssetRegistered(ctx, denom) {
+		return errorsmod.Wrapf(
+			types.ErrInternalDevEarn,
+			"asset is not in whitelist: %s", denom,
+		)
+	}
+
+	k.RemoveAssets(ctx, denom)
+	return nil
+}

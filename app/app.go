@@ -475,7 +475,7 @@ func NewSidechain(
 		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper)).
 		AddRoute(erc20types.RouterKey, erc20.NewErc20ProposalHandler(&app.Erc20Keeper)).
 		AddRoute(ibcinterchainswaptypes.RouterKey, ibcinterchainswap.NewMarketFeeUpdateProposalHandler(app.InterchainSwapKeeper)).
-		AddRoute(devearnmoduletypes.RouterKey, devearnmodule.NewDevEarnProposalHanodler(&app.DevearnKeeper))
+		AddRoute(devearnmoduletypes.RouterKey, devearnmodule.NewDevEarnProposalHandler(&app.DevearnKeeper))
 
 	govConfig := govtypes.DefaultConfig()
 	/*

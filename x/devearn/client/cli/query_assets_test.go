@@ -25,7 +25,7 @@ func networkWithAssetsObjects(t *testing.T, n int) (*network.Network, []types.As
 
 	for i := 0; i < n; i++ {
 		assets := types.Assets{
-			Id: uint64(i),
+			Denom: string(i),
 		}
 		nullify.Fill(&assets)
 		state.AssetsList = append(state.AssetsList, assets)
@@ -33,7 +33,7 @@ func networkWithAssetsObjects(t *testing.T, n int) (*network.Network, []types.As
 	buf, err := cfg.Codec.MarshalJSON(&state)
 	require.NoError(t, err)
 	cfg.GenesisState[types.ModuleName] = buf
-	return network.New(t, cfg), state.AssetsList
+	return network.New(t, t.TempDir(), cfg), state.AssetsList
 }
 
 func TestShowAssets(t *testing.T) {
@@ -52,7 +52,7 @@ func TestShowAssets(t *testing.T) {
 	}{
 		{
 			desc: "found",
-			id:   fmt.Sprintf("%d", objs[0].Id),
+			id:   fmt.Sprintf("%d", objs[0].Denom),
 			args: common,
 			obj:  objs[0],
 		},

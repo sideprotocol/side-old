@@ -2,12 +2,12 @@ package cli
 
 import (
 	"context"
-	"strconv"
+
+	"sidechain/x/devearn/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
-	"sidechain/x/devearn/types"
 )
 
 func CmdListAssets() *cobra.Command {
@@ -45,7 +45,7 @@ func CmdListAssets() *cobra.Command {
 
 func CmdShowAssets() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-assets [id]",
+		Use:   "show-assets [denom]",
 		Short: "shows a assets",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -53,13 +53,13 @@ func CmdShowAssets() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			id, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return err
-			}
+			// id, err := strconv.ParseUint(args[0], 10, 64)
+			// if err != nil {
+			// 	return err
+			// }
 
 			params := &types.QueryGetAssetsRequest{
-				Id: id,
+				Denom: args[0],
 			}
 
 			res, err := queryClient.Assets(context.Background(), params)

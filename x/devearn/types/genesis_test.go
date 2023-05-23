@@ -3,8 +3,9 @@ package types_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	"sidechain/x/devearn/types"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestGenesisState_Validate(t *testing.T) {
@@ -24,13 +25,12 @@ func TestGenesisState_Validate(t *testing.T) {
 
 				AssetsList: []types.Assets{
 					{
-						Id: 0,
+						Denom: "aside",
 					},
 					{
-						Id: 1,
+						Denom: "aside",
 					},
 				},
-				AssetsCount: 2,
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -40,10 +40,10 @@ func TestGenesisState_Validate(t *testing.T) {
 			genState: &types.GenesisState{
 				AssetsList: []types.Assets{
 					{
-						Id: 0,
+						Denom: "aside",
 					},
 					{
-						Id: 0,
+						Denom: "aside",
 					},
 				},
 			},
@@ -54,10 +54,9 @@ func TestGenesisState_Validate(t *testing.T) {
 			genState: &types.GenesisState{
 				AssetsList: []types.Assets{
 					{
-						Id: 1,
+						Denom: "aside",
 					},
 				},
-				AssetsCount: 0,
 			},
 			valid: false,
 		},
