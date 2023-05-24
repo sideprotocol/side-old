@@ -8,24 +8,24 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
+	"sidechain/app"
 	keep "sidechain/x/mint/keeper"
 	"sidechain/x/mint/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 type MintKeeperTestSuite struct {
 	suite.Suite
 
-	app              *simapp.SimApp
+	app              *app.Sidechain
 	ctx              sdk.Context
 	legacyQuerierCdc *codec.AminoCodec
 }
 
 func (suite *MintKeeperTestSuite) SetupTest() {
-	app := simapp.Setup(suite.T(), true)
+	app := app.Setup(false, nil)
 	ctx := app.BaseApp.NewContext(true, tmproto.Header{})
 
 	app.MintKeeper.SetParams(ctx, types.DefaultParams())

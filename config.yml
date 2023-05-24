@@ -4,20 +4,26 @@ build:
   proto:
     path: proto
     third_party_paths:
-    - third_party/proto
-    - proto_vendor
+      - third_party/proto
+      - proto_vendor
 accounts:
-- name: alice
-  coins:
-  - 990000000000000000000000aside
-- name: bob
-  mnemonic: actress letter whip youth flip sort announce chief traffic side destroy seek parade warrior awake scan panther nominee harsh spawn differ enroll glue become
-  coins:
-  - 10000000000000000000000aside
+  - name: alice
+    coins:
+      - 100000000000000000000000aside
+      - 100000000000000000000000usdt
+      - 100000000000000000000000usdc
+      - 100000000000000000000000eth
+  - name: bob
+    mnemonic: actress letter whip youth flip sort announce chief traffic side destroy seek parade warrior awake scan panther nominee harsh spawn differ enroll glue become
+    coins:
+      - 10000000000000000000000aside
+      - 10000000000000000000000usdt
+      - 10000000000000000000000usdc
+      - 10000000000000000000000eth
 faucet:
   name: bob
   coins:
-  - 10aside
+    - 10aside
   host: 0.0.0.0:4500
 genesis:
   app_state:
@@ -30,26 +36,26 @@ genesis:
     gov:
       deposit_params:
         min_deposit:
-        - amount: "10000000"
-          denom: aside
+          - amount: "10000000"
+            denom: aside
     mint:
       params:
         mint_denom: aside
     staking:
       params:
         bond_denom: aside
-  chain_id: sidechain_7070-1
+  chain_id: sidehub_1818-1
   consensus_params:
     block:
       max_gas: "100000000"
 validators:
-- name: alice
-  bonded: 10000000000000000000000aside
-  app:
-    evm-rpc:
-      address: 0.0.0.0:8545
-      ws-address: 0.0.0.0:8546
-  home: $HOME/.sidechaind
+  - name: alice
+    bonded: 10000000000000000000000aside
+    app:
+      evm-rpc:
+        address: 0.0.0.0:8545
+        ws-address: 0.0.0.0:8546
+    home: $HOME/.sidechaind
 client:
   openapi:
     path: "docs/static/openapi.yml"

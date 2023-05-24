@@ -28,6 +28,7 @@ import (
 	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/ethereum/go-ethereum/crypto"
 	tmcrypto "github.com/tendermint/tendermint/crypto"
+	tmsecp256k1 "github.com/tendermint/tendermint/crypto/secp256k1"
 )
 
 const (
@@ -160,11 +161,33 @@ var (
 // The function will return an empty address if the public key is invalid.
 func (pubKey PubKey) Address() tmcrypto.Address {
 	pubk, err := crypto.DecompressPubkey(pubKey.Key)
+
 	if err != nil {
-		return nil
+		// If the public key is invalid, it will still generate an address
+		hash := crypto.Keccak256(pubKey.Key[1:])     // Remove prefix byte
+		return tmcrypto.Address(hash[len(hash)-20:]) // Take the last 20 bytes
+		//return nil
 	}
 
 	return tmcrypto.Address(crypto.PubkeyToAddress(*pubk).Bytes())
+}
+
+// ConvertPubKey takes a Tendermint secp256k1 public key and converts it into
+// an Evmos ethsecp256k1 public key.
+func ConvertPubKey(pubKey tmcrypto.PubKey) (*PubKey, error) {
+	tmPubKey, ok := pubKey.(tmsecp256k1.PubKey)
+	if !ok {
+		return nil, fmt.Errorf("invalid pubkey type")
+	}
+
+	ethPubKey, err := crypto.DecompressPubkey(tmPubKey[:])
+	if err != nil {
+		return nil, err
+	}
+
+	return &PubKey{
+		Key: crypto.CompressPubkey(ethPubKey),
+	}, nil
 }
 
 // Bytes returns the raw bytes of the ECDSA public key.

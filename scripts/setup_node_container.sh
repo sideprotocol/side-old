@@ -3,7 +3,7 @@ set -e
 
 # Default configuration variables
 BINARY="sidechaind --home /root/.sidechaind"
-DEFAULT_CHAIN_ID="sidechain_7070-1"
+DEFAULT_CHAIN_ID="sidehub-1818-1"
 DEFAULT_DENOM="aside"
 
 # Parse command-line options
