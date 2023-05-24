@@ -19,7 +19,7 @@ func DefaultGenesis() *GenesisState {
 // Validate performs basic genesis state validation returning an error upon any
 // failure.
 func (gs GenesisState) Validate() error {
-	// Check for duplicated ID in assets
+	// Check for duplicated denom in assets
 	assetsIdMap := make(map[string]bool)
 	for _, elem := range gs.AssetsList {
 		if _, ok := assetsIdMap[elem.Denom]; ok {
@@ -28,6 +28,5 @@ func (gs GenesisState) Validate() error {
 		assetsIdMap[elem.Denom] = true
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
-
 	return gs.Params.Validate()
 }

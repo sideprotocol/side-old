@@ -22,13 +22,14 @@ func TestGenesisState_Validate(t *testing.T) {
 		{
 			desc: "valid genesis state",
 			genState: &types.GenesisState{
+				Params: types.DefaultParams(),
 
 				AssetsList: []types.Assets{
 					{
 						Denom: "aside",
 					},
 					{
-						Denom: "aside",
+						Denom: "bside",
 					},
 				},
 				// this line is used by starport scaffolding # types/genesis/validField
@@ -38,21 +39,11 @@ func TestGenesisState_Validate(t *testing.T) {
 		{
 			desc: "duplicated assets",
 			genState: &types.GenesisState{
+				Params: types.DefaultParams(),
 				AssetsList: []types.Assets{
 					{
 						Denom: "aside",
 					},
-					{
-						Denom: "aside",
-					},
-				},
-			},
-			valid: false,
-		},
-		{
-			desc: "invalid assets count",
-			genState: &types.GenesisState{
-				AssetsList: []types.Assets{
 					{
 						Denom: "aside",
 					},
