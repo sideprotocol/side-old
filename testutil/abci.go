@@ -1,6 +1,10 @@
 package testutil
 
 import (
+	"sidechain/app"
+	"sidechain/testutil/tx"
+	"time"
+
 	errorsmod "cosmossdk.io/errors"
 	sdkmath "cosmossdk.io/math"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -9,9 +13,6 @@ import (
 	"github.com/evmos/ethermint/encoding"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmtypes "github.com/tendermint/tendermint/types"
-	"sidechain/app"
-	"sidechain/testutil/tx"
-	"time"
 )
 
 // Commit commits a block at a given time. Reminder: At the end of each

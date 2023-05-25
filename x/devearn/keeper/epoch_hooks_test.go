@@ -33,16 +33,20 @@ func (suite *KeeperTestSuite) TestEpochIdentifierAfterEpochEnd() {
 		suite.Run(fmt.Sprintf("Case %s", tc.name), func() {
 			suite.SetupTest()
 			suite.deployContracts()
-			_, err := suite.app.DevearnKeeper.RegisterDevEarnInfo(
+			// Deploy Contract
+			_, err := suite.DeployContract("COIN TOKEN", "COIN", erc20Decimals)
+			suite.Require().NoError(err)
+			suite.Commit()
+			_, err = suite.app.DevearnKeeper.RegisterDevEarnInfo(
 				suite.ctx,
 				contract,
 				tc.epochs,
-				suite.priv.PubKey().Address().String(),
+				ownerPriv1.PubKey().Address().String(),
 			)
 			err = suite.app.BankKeeper.MintCoins(
 				suite.ctx,
 				types.ModuleName,
-				sdk.Coins{sdk.NewInt64Coin(tc.denom, 10000)},
+				sdk.Coins{sdk.NewCoin(tc.denom, sdk.NewInt(10000))},
 			)
 
 			suite.Require().NoError(err)

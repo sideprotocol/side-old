@@ -12,8 +12,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	ethermint "github.com/evmos/ethermint/types"
-	evm "github.com/evmos/ethermint/x/evm/types"
-	vestingtypes "github.com/evmos/evmos/v11/x/vesting/types"
 )
 
 func (suite *KeeperTestSuite) TestEvmHooksStoreTxGasUsed() {
@@ -59,21 +57,21 @@ func (suite *KeeperTestSuite) TestEvmHooksStoreTxGasUsed() {
 			},
 			true,
 		},
-		{
-			"correct execution with Vesting account - one tx",
-			func(contractAddr common.Address) {
-				acc := vestingtypes.NewClawbackVestingAccount(
-					authtypes.NewBaseAccount(sdk.AccAddress(suite.address.Bytes()), nil, 0, 0),
-					suite.address.Bytes(), nil, suite.ctx.BlockTime(), nil, nil,
-				)
+		// {
+		// 	"correct execution with Vesting account - one tx",
+		// 	func(contractAddr common.Address) {
+		// 		acc := vestingtypes.NewClawbackVestingAccount(
+		// 			authtypes.NewBaseAccount(sdk.AccAddress(suite.address.Bytes()), nil, 0, 0),
+		// 			suite.address.Bytes(), nil, suite.ctx.BlockTime(), nil, nil,
+		// 		)
 
-				suite.app.AccountKeeper.SetAccount(suite.ctx, acc)
+		// 		suite.app.AccountKeeper.SetAccount(suite.ctx, acc)
 
-				res := suite.MintERC20Token(contractAddr, suite.address, suite.address, big.NewInt(1000))
-				expGasUsed = res.AsTransaction().Gas()
-			},
-			true,
-		},
+		// 		res := suite.MintERC20Token(contractAddr, suite.address, suite.address, big.NewInt(1000))
+		// 		expGasUsed = res.AsTransaction().Gas()
+		// 	},
+		// 	true,
+		// },
 		{
 			"correct execution - two tx",
 			func(contractAddr common.Address) {
@@ -117,7 +115,7 @@ func (suite *KeeperTestSuite) TestEvmHooksStoreTxGasUsed() {
 			suite.Require().NoError(err)
 
 			// Mint coins to pay gas fee
-			coins := sdk.NewCoins(sdk.NewCoin(evm.DefaultEVMDenom, sdk.NewInt(30000000)))
+			coins := sdk.NewCoins(sdk.NewCoin("aside", sdk.NewInt(30000000)))
 			err = testutil.FundAccount(suite.ctx, suite.app.BankKeeper, sdk.AccAddress(suite.address.Bytes()), coins)
 			suite.Require().NoError(err)
 

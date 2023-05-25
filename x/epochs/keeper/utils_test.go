@@ -24,7 +24,7 @@ import (
 	"sidechain/x/epochs/types"
 )
 
-var denomMint = evm.DefaultEVMDenom
+var denomMint = "aside"
 
 type KeeperTestSuite struct {
 	suite.Suite

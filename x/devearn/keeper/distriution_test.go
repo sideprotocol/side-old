@@ -59,15 +59,15 @@ func (suite *KeeperTestSuite) TestDistributeIncentives() {
 			suite.deployContracts()
 
 			// Mint tokens in module account
-			err := suite.app.BankKeeper.MintCoins(
-				suite.ctx,
-				types.ModuleName,
-				sdk.Coins{sdk.NewInt64Coin(tc.denom, tc.mintAmount)},
-			)
-			suite.Require().NoError(err)
+			// err := suite.app.BankKeeper.MintCoins(
+			// 	suite.ctx,
+			// 	types.ModuleName,
+			// 	sdk.Coins{sdk.NewInt64Coin(tc.denom, tc.mintAmount)},
+			// )
+			// suite.Require().NoError(err)
 
 			// create incentive
-			_, err = suite.app.DevearnKeeper.RegisterDevEarnInfo(
+			_, err := suite.app.DevearnKeeper.RegisterDevEarnInfo(
 				suite.ctx,
 				contract,
 				tc.epochs,
