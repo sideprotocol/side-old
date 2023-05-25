@@ -16,6 +16,8 @@ message Params {
   string reward_epoch_identifier = 2 ;
   // dev_earn_percentage is parameter to define the dev_earn_pool as a percentage of the inflation
   string dev_earn_inflation_APR = 3 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+  // Tvl share is a parameter to define the tvl rewards as a percentage of the dev_earn rewards.
+  uint64 tvl_share = 4;
 }
 
 
@@ -58,5 +60,27 @@ message CancelDevEarnInfoProposal {
   string description = 2;
   // contract address of the incentivized smart contract
   string contract = 3;
+}
+
+// AddAssetToWhitelistProposal is a gov Content type to add asset to whitelist
+message AddAssetToWhitelistProposal {
+  option (gogoproto.equal) = false;
+  // title of the proposal
+  string title = 1;
+  // description of the proposal
+  string description = 2;
+  // denom to be registered
+  string denom = 3;
+}
+
+// RemoveAssetFromWhitelistProposal is a gov Content type to remove asset from whitelist
+message RemoveAssetFromWhitelistProposal {
+  option (gogoproto.equal) = false;
+  // title of the proposal
+  string title = 1;
+  // description of the proposal
+  string description = 2;
+  // denom to be removed
+  string denom = 3;
 }
 

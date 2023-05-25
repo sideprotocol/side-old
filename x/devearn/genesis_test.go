@@ -3,16 +3,25 @@ package devearn_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	keepertest "sidechain/testutil/keeper"
 	"sidechain/x/devearn"
 	"sidechain/x/devearn/types"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
 		Params: types.DefaultParams(),
 
+		AssetsList: []types.Assets{
+			{
+				Denom: "aside",
+			},
+			{
+				Denom: "bside",
+			},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -21,5 +30,6 @@ func TestGenesis(t *testing.T) {
 	got := devearn.ExportGenesis(ctx, *k)
 	require.NotNil(t, got)
 
+	require.ElementsMatch(t, genesisState.AssetsList, got.AssetsList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

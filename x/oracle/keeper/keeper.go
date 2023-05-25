@@ -59,7 +59,7 @@ func NewKeeper(cdc codec.BinaryCodec, storeKey storetypes.StoreKey,
 		SlashingKeeper: slashingkeeper,
 		StakingKeeper:  stakingKeeper,
 		distrName:      distrName,
-		rewardDenom:    "ukuji",
+		rewardDenom:    "aside",
 	}
 }
 

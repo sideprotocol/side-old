@@ -2,9 +2,10 @@ package keeper_test
 
 import (
 	"fmt"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	utiltx "sidechain/testutil/tx"
 	"sidechain/x/devearn/types"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func (suite KeeperTestSuite) TestRegisterIncentive() { //nolint:govet // we can copy locks here because it is a test
@@ -59,7 +60,7 @@ func (suite KeeperTestSuite) TestRegisterIncentive() { //nolint:govet // we can 
 
 			tc.malleate()
 
-			in, err := suite.app.DevearnKeeper.RegisterDevEarn(
+			in, err := suite.app.DevearnKeeper.RegisterDevEarnInfo(
 				suite.ctx,
 				contract,
 				epochs,
@@ -109,7 +110,7 @@ func (suite KeeperTestSuite) TestCancelIncentive() { //nolint:govet // we can co
 		{
 			"ok",
 			func() {
-				_, err := suite.app.DevearnKeeper.RegisterDevEarn(
+				_, err := suite.app.DevearnKeeper.RegisterDevEarnInfo(
 					suite.ctx,
 					contract,
 					epochs,
@@ -128,7 +129,7 @@ func (suite KeeperTestSuite) TestCancelIncentive() { //nolint:govet // we can co
 
 			tc.malleate()
 
-			err := suite.app.DevearnKeeper.CancelDevEarn(suite.ctx, contract)
+			err := suite.app.DevearnKeeper.CancelDevEarnInfo(suite.ctx, contract)
 			suite.Commit()
 
 			_, ok := suite.app.DevearnKeeper.GetDevEarnInfo(suite.ctx, contract)

@@ -6,6 +6,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "sidechain/devearn/params.proto";
+import "sidechain/devearn/assets.proto";
 
 option go_package = "sidechain/x/devearn/types";
 
@@ -29,6 +30,16 @@ service Query {
     option (google.api.http).get = "/sidechain/devearn/dev_earn_info";
   
   }
+  
+  // Queries a list of Assets items.
+  rpc Assets    (QueryGetAssetsRequest) returns (QueryGetAssetsResponse) {
+    option (google.api.http).get = "/sidechain/devearn/assets/{denom}";
+  
+  }
+  rpc AssetsAll (QueryAllAssetsRequest) returns (QueryAllAssetsResponse) {
+    option (google.api.http).get = "/sidechain/devearn/assets";
+  
+  }
 }
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
@@ -41,16 +52,18 @@ message QueryParamsResponse {
 }
 
 message QueryDevEarnInfosRequest {
+  
   // pagination defines an optional pagination for the request.
   cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
 message QueryDevEarnInfosResponse {
+  
   // dev_earn_infos is a slice of dev earn infos
   repeated DevEarnInfo dev_earn_infos = 1 [(gogoproto.nullable) = false];
+  
   // pagination defines the pagination in the response.
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
-
 }
 
 message QueryDevEarnInfoRequest {
@@ -59,5 +72,22 @@ message QueryDevEarnInfoRequest {
 
 message QueryDevEarnInfoResponse {
   DevEarnInfo dev_earn_info = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetAssetsRequest {
+  string denom = 1;
+}
+
+message QueryGetAssetsResponse {
+  Assets Assets = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllAssetsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllAssetsResponse {
+  repeated Assets                                 Assets     = 1 [(gogoproto.nullable) = false];
+           cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

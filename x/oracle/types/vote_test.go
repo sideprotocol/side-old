@@ -9,11 +9,11 @@ import (
 )
 
 func TestParseExchangeRateTuples(t *testing.T) {
-	valid := "123.0ukuji,123.123demo"
+	valid := "123.0aside,123.123demo"
 	_, err := types.ParseExchangeRateTuples(valid)
 	require.NoError(t, err)
 
-	duplicatedDenom := "100.0ukuji,123.123demo,121233.123demo"
+	duplicatedDenom := "100.0aside,123.123demo,121233.123demo"
 	_, err = types.ParseExchangeRateTuples(duplicatedDenom)
 	require.Error(t, err)
 
@@ -21,11 +21,11 @@ func TestParseExchangeRateTuples(t *testing.T) {
 	_, err = types.ParseExchangeRateTuples(invalidCoins)
 	require.Error(t, err)
 
-	invalidCoinsWithValid := "123.0ukuji,123.1"
+	invalidCoinsWithValid := "123.0aside,123.1"
 	_, err = types.ParseExchangeRateTuples(invalidCoinsWithValid)
 	require.Error(t, err)
 
-	abstainCoinsWithValid := "0.0ukuji,123.1demo"
+	abstainCoinsWithValid := "0.0aside,123.1demo"
 	_, err = types.ParseExchangeRateTuples(abstainCoinsWithValid)
 	require.NoError(t, err)
 }

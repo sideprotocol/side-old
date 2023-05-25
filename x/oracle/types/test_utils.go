@@ -1,4 +1,4 @@
-//nolint
+// nolint
 package types
 
 import (
@@ -14,9 +14,9 @@ import (
 	tmprotocrypto "github.com/tendermint/tendermint/proto/tendermint/crypto"
 )
 
-//nolint
+// nolint
 const (
-	TestDenomA = "ukuji"
+	TestDenomA = "aside"
 	TestDenomB = "denomB"
 	TestDenomC = "denomC"
 	TestDenomD = "denomD"

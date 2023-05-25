@@ -6,11 +6,11 @@ package v3types
 import (
 	fmt "fmt"
 	_ "github.com/cosmos/gogoproto/gogoproto"
-	"sidechain/x/erc20/types"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
 	math_bits "math/bits"
+	"sidechain/x/erc20/types"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.

@@ -1,9 +1,13 @@
 package keeper
 
 import (
+	"testing"
+
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	"testing"
+
+	"sidechain/x/devearn/keeper"
+	"sidechain/x/devearn/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -15,8 +19,6 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmdb "github.com/tendermint/tm-db"
-	"sidechain/x/devearn/keeper"
-	"sidechain/x/devearn/types"
 )
 
 func DevearnKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
@@ -44,6 +46,8 @@ func DevearnKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		memStoreKey,
 		paramsSubspace,
 		authtypes.NewModuleAddress(govtypes.ModuleName),
+		nil,
+		nil,
 		nil,
 		nil,
 		nil,

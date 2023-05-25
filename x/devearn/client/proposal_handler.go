@@ -7,6 +7,8 @@ import (
 )
 
 var (
-	RegisterDevEarnProposalHandler = govclient.NewProposalHandler(cli.NewRegisterDevEarnProposalCmd)
-	CancelDevEarnProposalHandler   = govclient.NewProposalHandler(cli.NewCancelDevEarnProposalCmd)
+	RegisterDevEarnProposalHandler  = govclient.NewProposalHandler(cli.NewRegisterDevEarnProposalCmd)
+	CancelDevEarnProposalHandler    = govclient.NewProposalHandler(cli.NewCancelDevEarnProposalCmd)
+	AddAssetToWhitelistHandler      = govclient.NewProposalHandler(cli.NewAddAssetToWhitelistProposalCmd)
+	RemoveAssetFromWhitelistHandler = govclient.NewProposalHandler(cli.NewRemoveAssetFromWhitelistProposalCmd)
 )

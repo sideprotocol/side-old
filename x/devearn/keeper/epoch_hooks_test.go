@@ -33,7 +33,7 @@ func (suite *KeeperTestSuite) TestEpochIdentifierAfterEpochEnd() {
 		suite.Run(fmt.Sprintf("Case %s", tc.name), func() {
 			suite.SetupTest()
 			suite.deployContracts()
-			_, err := suite.app.DevearnKeeper.RegisterDevEarn(
+			_, err := suite.app.DevearnKeeper.RegisterDevEarnInfo(
 				suite.ctx,
 				contract,
 				tc.epochs,
