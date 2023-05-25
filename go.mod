@@ -19,6 +19,7 @@ require (
 	github.com/evmos/evmos/v11 v11.0.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.3
+	github.com/google/gofuzz v1.1.1-0.20200604201612-c04b05f3adfa
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.2
