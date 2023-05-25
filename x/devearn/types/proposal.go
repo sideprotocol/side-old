@@ -151,10 +151,6 @@ func (*AddAssetToWhitelistProposal) ProposalType() string {
 
 // ValidateBasic performs a stateless check of the proposal fields
 func (rip *AddAssetToWhitelistProposal) ValidateBasic() error {
-	// TODO:Validate Denom
-	if err := types.ValidateAddress(rip.Denom); err != nil {
-		return err
-	}
 	return govv1beta1.ValidateAbstract(rip)
 }
 
@@ -179,9 +175,5 @@ func (*RemoveAssetFromWhitelistProposal) ProposalType() string {
 
 // ValidateBasic performs a stateless check of the proposal fields
 func (rip *RemoveAssetFromWhitelistProposal) ValidateBasic() error {
-	// TODO:Validate Denom
-	if err := types.ValidateAddress(rip.Denom); err != nil {
-		return err
-	}
 	return govv1beta1.ValidateAbstract(rip)
 }

@@ -91,10 +91,9 @@ func (k Keeper) SendReward(
 		}
 
 		// split total reward using tvl_param in parameters
-		// TODO: divide by 10000 to account correct split
 		rewardTvlSplit := sdk.NewDecFromInt(totalReward.Amount).Mul(sdk.NewDecFromBigInt(new(big.Int).SetUint64(split)))
 		rewardGasSplit := sdk.NewDecFromInt(totalReward.Amount).Sub(rewardTvlSplit)
-		reward := gasRatio.Mul(rewardGasSplit).Add(tvlRatio.Mul(rewardTvlSplit))
+		reward := gasRatio.Mul(rewardGasSplit.QuoInt(sdk.NewInt(10000))).Add(tvlRatio.Mul(rewardTvlSplit.QuoInt(sdk.NewInt(10000))))
 
 		if !reward.IsPositive() {
 			continue
@@ -127,21 +126,22 @@ func (k Keeper) TvlReward(ctx sdk.Context, contractAddress string) (sdk.Dec, err
 	assets := k.GetAllAssets(ctx)
 	totalValueLocked, tvlErr := k.TotalTvl(ctx)
 	if tvlErr != nil {
-
+		return sdk.NewDec(0), tvlErr
 	}
 	totalValueLockedContract := sdk.NewDec(0)
+	// What should happen if one of the values is not loaded ? return 0 or cancel the process
 	for i := 0; i < len(assets); i++ {
 		// Get exchange rate using oracle module
 		rate, err := k.oracleKeeper.GetExchangeRate(ctx, assets[i].Denom)
 		if err != nil {
-
+			return sdk.NewDec(0), err
 		}
 
 		// Get mapping to erc20 token from cosmos denom
 		tokenPair, tokenPairErr := k.erc20Keeper.TokenPair(
 			ctx, &erc20types.QueryTokenPairRequest{Token: assets[i].Denom})
 		if tokenPairErr != nil {
-
+			return sdk.NewDec(0), tokenPairErr
 		}
 		erc20 := contracts.ERC20MinterBurnerDecimalsContract.ABI
 
@@ -151,29 +151,6 @@ func (k Keeper) TvlReward(ctx sdk.Context, contractAddress string) (sdk.Dec, err
 
 		totalValueLockedContract.Add(sdk.NewDecFromBigInt(tokenBalance).Mul(rate))
 	}
-	// traverse assets
-	// Query total supply of native token
-	// totalDenomSupply, _, err := k.bankKeeper.GetPaginatedTotalSupply(ctx, &query.PageRequest{
-	// 	Key:        nil,
-	// 	Offset:     0,
-	// 	Limit:      100,
-	// 	CountTotal: false,
-	// 	Reverse:    false,
-	// })
-	// if err != nil {
-	// 	ctx.Logger().Error("get total supply err happen, err :", err)
-	// 	return sdk.NewDec(0), err
-	// }
-	// denom, err := sdk.GetBaseDenom()
-	// if err != nil {
-	// 	ctx.Logger().Error("get base denom err happen, err :", err)
-	// 	return sdk.NewDec(0), err
-	// }
-
-	// totalSupply := sdk.NewDecFromBigInt(new(big.Int).SetUint64(totalDenomSupply.AmountOf(denom).Uint64()))
-	// bal := k.bankKeeper.GetBalance(ctx, sdk.AccAddress(contractAddress), denom)
-	// balD := sdk.NewDecFromBigInt(new(big.Int).SetUint64(bal.Amount.Uint64()))
-	// tvlRatio := balD.Quo(totalSupply)
 
 	tvlRatio := totalValueLockedContract.Quo(totalValueLocked)
 
@@ -183,6 +160,7 @@ func (k Keeper) TvlReward(ctx sdk.Context, contractAddress string) (sdk.Dec, err
 func (k Keeper) TotalTvl(ctx sdk.Context) (sdk.Dec, error) {
 	assets := k.GetAllAssets(ctx)
 	totalValueLocked := sdk.NewDec(0)
+	// What should happen if one of the values is not loaded ? return 0 or cancel the process
 	for i := 0; i < len(assets); i++ {
 		// Get exchange rate using oracle module
 		rate, err := k.oracleKeeper.GetExchangeRate(ctx, assets[i].Denom)

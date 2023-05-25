@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"sidechain/x/devearn/types"
+	erc20types "sidechain/x/erc20/types"
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -95,6 +96,13 @@ func (k Keeper) AddAssetToWhitelist(
 			types.ErrInternalDevEarn,
 			"asset already registered: %s", denom,
 		)
+	}
+
+	// Check if asset is registered in erc20 module
+	_, tokenPairErr := k.erc20Keeper.TokenPair(
+		ctx, &erc20types.QueryTokenPairRequest{Token: denom})
+	if tokenPairErr != nil {
+		return nil, tokenPairErr
 	}
 
 	assets := types.Assets{Denom: denom}

@@ -196,10 +196,6 @@ func NewAddAssetToWhitelistProposalCmd() *cobra.Command {
 				return err
 			}
 
-			// TODO:Validate denom here
-			if !common.IsHexAddress(args[0]) {
-				return fmt.Errorf("invalid contract address: %s", args[0])
-			}
 			denom := args[0]
 			from := clientCtx.GetFromAddress()
 
@@ -266,10 +262,6 @@ func NewRemoveAssetFromWhitelistProposalCmd() *cobra.Command {
 				return err
 			}
 
-			// TODO:Validate denom here
-			if !common.IsHexAddress(args[0]) {
-				return fmt.Errorf("invalid contract address: %s", args[0])
-			}
 			denom := args[0]
 			from := clientCtx.GetFromAddress()
 
