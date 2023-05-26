@@ -1,11 +1,10 @@
 package keeper
 
 import (
-	"sidechain/x/devearn/types"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
+	"sidechain/x/devearn/types"
 	epochstypes "sidechain/x/epochs/types"
 )
 
@@ -37,11 +36,13 @@ func (k Keeper) AfterEpochEnd(ctx sdk.Context, epochIdentifier string, _ int64) 
 		ctx.Logger().Error("get total supply err happen, err :", err)
 		return
 	}
-	denom, err := sdk.GetBaseDenom()
-	if err != nil {
-		ctx.Logger().Error("get base denom err happen, err :", err)
-		return
-	}
+	// TODO: Check how base denom works/registers
+	// denom, err := sdk.GetBaseDenom()
+	// if err != nil {
+	// 	ctx.Logger().Error("get base denom err happen, err :", err)
+	// 	return
+	// }
+	denom := "aside"
 
 	totalSupply := totalDenomSupply.AmountOf(denom)
 	periodProvision := sdk.NewDecFromBigInt(totalSupply.BigInt()).Mul(params.DevEarnInflation_APR)

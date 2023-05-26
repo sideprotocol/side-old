@@ -75,10 +75,12 @@ func (k Keeper) SendReward(
 		return sdk.Coins{}, 0
 	}
 	moduleAddr := k.accountKeeper.GetModuleAddress(types.ModuleName)
-	denom, err := sdk.GetBaseDenom()
-	if err != nil {
-		logger.Debug("could not get the denom of smallest unit registered", "error", err.Error())
-	}
+	// TODO: Check base denom
+	denom := "aside"
+	// denom, err := sdk.GetBaseDenom()
+	// if err != nil {
+	// 	logger.Debug("could not get the denom of smallest unit registered", "error", err.Error())
+	// }
 	totalReward := k.bankKeeper.GetBalance(ctx, moduleAddr, denom)
 	// Get fees, tvl split
 	split := k.GetParams(ctx).TvlShare
@@ -92,12 +94,14 @@ func (k Keeper) SendReward(
 
 		// split total reward using tvl_param in parameters
 		rewardTvlSplit := sdk.NewDecFromInt(totalReward.Amount).Mul(sdk.NewDecFromBigInt(new(big.Int).SetUint64(split)))
+		rewardTvlSplit = rewardTvlSplit.QuoInt(sdk.NewInt(10000))
 		rewardGasSplit := sdk.NewDecFromInt(totalReward.Amount).Sub(rewardTvlSplit)
-		reward := gasRatio.Mul(rewardGasSplit.QuoInt(sdk.NewInt(10000))).Add(tvlRatio.Mul(rewardTvlSplit.QuoInt(sdk.NewInt(10000))))
+		reward := gasRatio.Mul(rewardGasSplit).Add(tvlRatio.Mul(rewardTvlSplit))
 
 		if !reward.IsPositive() {
 			continue
 		}
+
 		coin := sdk.Coin{Denom: denom, Amount: reward.TruncateInt()}
 		coins := sdk.Coins{}
 		coins = coins.Add(coin)
@@ -152,6 +156,9 @@ func (k Keeper) TvlReward(ctx sdk.Context, contractAddress string) (sdk.Dec, err
 		totalValueLockedContract.Add(sdk.NewDecFromBigInt(tokenBalance).Mul(rate))
 	}
 
+	if totalValueLocked.IsZero() {
+		return sdk.NewDec(0), nil
+	}
 	tvlRatio := totalValueLockedContract.Quo(totalValueLocked)
 
 	return tvlRatio, nil

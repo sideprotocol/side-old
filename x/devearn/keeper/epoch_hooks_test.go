@@ -18,7 +18,7 @@ func (suite *KeeperTestSuite) TestEpochIdentifierAfterEpochEnd() {
 	}{
 		{
 			"correct epoch identifier",
-			epochstypes.DayEpochID,
+			epochstypes.WeekEpochID,
 			epochs,
 			denomMint,
 		},
@@ -43,11 +43,11 @@ func (suite *KeeperTestSuite) TestEpochIdentifierAfterEpochEnd() {
 				tc.epochs,
 				ownerPriv1.PubKey().Address().String(),
 			)
-			err = suite.app.BankKeeper.MintCoins(
-				suite.ctx,
-				types.ModuleName,
-				sdk.Coins{sdk.NewCoin(tc.denom, sdk.NewInt(10000))},
-			)
+			// err = suite.app.BankKeeper.MintCoins(
+			// 	suite.ctx,
+			// 	types.ModuleName,
+			// 	sdk.Coins{sdk.NewCoin(tc.denom, sdk.NewInt(10000))},
+			// )
 
 			suite.Require().NoError(err)
 			regIn, found := suite.app.DevearnKeeper.GetDevEarnInfo(suite.ctx, contract)
@@ -55,16 +55,29 @@ func (suite *KeeperTestSuite) TestEpochIdentifierAfterEpochEnd() {
 			suite.Require().Zero(regIn.GasMeter)
 			suite.app.DevearnKeeper.SetDevEarnInfo(suite.ctx, types.NewDevEarn(contract, 1000, tc.epochs, ownerPriv1.PubKey().Address().String()))
 			suite.Commit()
+			// Check used gas
+			regIn, found = suite.app.DevearnKeeper.GetDevEarnInfo(suite.ctx, contract)
+			suite.Require().Equal(uint32(10), regIn.Epochs)
+			suite.Require().True(found)
+			suite.Require().Equal(uint64(1000), regIn.GasMeter)
+
 			params := suite.app.DevearnKeeper.GetParams(suite.ctx)
 			params.EnableDevEarn = true
 			err = suite.app.DevearnKeeper.SetParams(suite.ctx, params)
 			suite.Require().NoError(err)
+			suite.Require().Equal("week", params.RewardEpochIdentifier)
 
 			futureCtx := suite.ctx.WithBlockTime(time.Now().Add(time.Hour))
 			newHeight := suite.app.LastBlockHeight() + 1
 
 			suite.app.EpochsKeeper.BeforeEpochStart(futureCtx, tc.epochIdentifier, newHeight)
 			suite.app.EpochsKeeper.AfterEpochEnd(futureCtx, tc.epochIdentifier, newHeight)
+
+			// Epoch hook call is working
+			params = suite.app.DevearnKeeper.GetParams(suite.ctx)
+			suite.Require().Equal(uint64(1000), params.TvlShare)
+			regIn, found = suite.app.DevearnKeeper.GetDevEarnInfo(suite.ctx, contract)
+			suite.Require().Equal(uint32(9), regIn.Epochs)
 
 			balance := suite.app.BankKeeper.GetBalance(suite.ctx, sdk.AccAddress(ownerPriv1.PubKey().Address()), tc.denom)
 			if tc.epochIdentifier == params.RewardEpochIdentifier {
