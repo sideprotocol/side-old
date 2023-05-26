@@ -2,12 +2,14 @@ package keeper_test
 
 import (
 	"fmt"
+	"math/big"
 	"sidechain/x/devearn/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func (suite *KeeperTestSuite) TestDistributeIncentives() {
+// Distribute incentives on basis of gas used only
+func (suite *KeeperTestSuite) TestDistributeIncentivesGas() {
 	const (
 		mintAmount   int64  = 100
 		gasUsed      uint64 = 500
@@ -58,16 +60,16 @@ func (suite *KeeperTestSuite) TestDistributeIncentives() {
 			suite.SetupTest() // reset
 			suite.deployContracts()
 
-			// Mint tokens in module account
-			// err := suite.app.BankKeeper.MintCoins(
-			// 	suite.ctx,
-			// 	types.ModuleName,
-			// 	sdk.Coins{sdk.NewInt64Coin(tc.denom, tc.mintAmount)},
-			// )
-			// suite.Require().NoError(err)
+			//Mint tokens in module account
+			err := suite.app.BankKeeper.MintCoins(
+				suite.ctx,
+				types.ModuleName,
+				sdk.Coins{sdk.NewInt64Coin(tc.denom, tc.mintAmount)},
+			)
+			suite.Require().NoError(err)
 
 			// create incentive
-			_, err := suite.app.DevearnKeeper.RegisterDevEarnInfo(
+			_, err = suite.app.DevearnKeeper.RegisterDevEarnInfo(
 				suite.ctx,
 				contract,
 				tc.epochs,
@@ -91,12 +93,14 @@ func (suite *KeeperTestSuite) TestDistributeIncentives() {
 
 			if tc.expPass {
 				suite.Require().NoError(err, tc.name)
-
+				params := suite.app.DevearnKeeper.GetParams(suite.ctx)
 				// distributes the rewards to all participants
 				sdkParticipant := sdk.AccAddress(ownerPriv1.PubKey().Address().Bytes())
 				balance := suite.app.BankKeeper.GetBalance(suite.ctx, sdkParticipant, tc.denom)
 				gasRatio := sdk.NewDec(int64(gasUsed)).QuoInt64(int64(totalGasUsed))
-				coinAllocated := sdk.NewDec(tc.mintAmount)
+				tvlAllocation := sdk.NewDec(tc.mintAmount).Mul(sdk.NewDecFromBigInt(new(big.Int).SetUint64(params.TvlShare)))
+				tvlAllocation = tvlAllocation.Quo(sdk.NewDec(10000))
+				coinAllocated := sdk.NewDec(tc.mintAmount).Sub(tvlAllocation)
 				expBalance := coinAllocated.Mul(gasRatio)
 				suite.Require().Equal(expBalance.TruncateInt(), balance.Amount, tc.name)
 
@@ -116,4 +120,14 @@ func (suite *KeeperTestSuite) TestDistributeIncentives() {
 			}
 		})
 	}
+}
+
+// TODO: Account TVL also, this case includes gas used only
+// Distribute incentives on basis of gas used and TVL
+// Register erc20 to erc20module
+// Get denom from registered pair
+// Use denom in oracle
+// Add denom in asset whitelist
+// TVL should account all of these
+func (suite *KeeperTestSuite) TestDistributeIncentivesTVLandGas() {
 }

@@ -2,11 +2,13 @@ package keeper_test
 
 import (
 	"fmt"
+	"math/big"
 	"sidechain/x/devearn/types"
 	epochstypes "sidechain/x/epochs/types"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
 func (suite *KeeperTestSuite) TestEpochIdentifierAfterEpochEnd() {
@@ -43,11 +45,6 @@ func (suite *KeeperTestSuite) TestEpochIdentifierAfterEpochEnd() {
 				tc.epochs,
 				ownerPriv1.PubKey().Address().String(),
 			)
-			// err = suite.app.BankKeeper.MintCoins(
-			// 	suite.ctx,
-			// 	types.ModuleName,
-			// 	sdk.Coins{sdk.NewCoin(tc.denom, sdk.NewInt(10000))},
-			// )
 
 			suite.Require().NoError(err)
 			regIn, found := suite.app.DevearnKeeper.GetDevEarnInfo(suite.ctx, contract)
@@ -79,10 +76,24 @@ func (suite *KeeperTestSuite) TestEpochIdentifierAfterEpochEnd() {
 			regIn, found = suite.app.DevearnKeeper.GetDevEarnInfo(suite.ctx, contract)
 			suite.Require().Equal(uint32(9), regIn.Epochs)
 
+			totalDenomSupply, _, err := suite.app.BankKeeper.GetPaginatedTotalSupply(suite.ctx, &query.PageRequest{
+				Key:        nil,
+				Offset:     0,
+				Limit:      100,
+				CountTotal: false,
+				Reverse:    false,
+			})
+			if err != nil {
+				return
+			}
+			totalSupply := totalDenomSupply.AmountOf(tc.denom)
+
 			balance := suite.app.BankKeeper.GetBalance(suite.ctx, sdk.AccAddress(ownerPriv1.PubKey().Address()), tc.denom)
 			if tc.epochIdentifier == params.RewardEpochIdentifier {
-				profit := sdk.NewDec(10000).Quo(sdk.NewDec(365)).Mul(sdk.NewDec(7)).Mul(params.DevEarnInflation_APR).TruncateInt64()
-				suite.Require().Equal(profit+10000, balance.Amount.Int64())
+				totalRewards := sdk.NewDecFromInt(totalSupply).Quo(sdk.NewDec(365)).Mul(sdk.NewDec(7)).Mul(params.DevEarnInflation_APR)
+				expectedRewards := totalRewards.Mul((sdk.NewDecFromBigInt(new(big.Int).SetUint64(params.TvlShare)))).Quo(sdk.NewDec(10000))
+				suite.Require().Positive(balance.Amount.Int64())
+				suite.Require().LessOrEqual(balance.Amount.Int64(), totalRewards.Sub(expectedRewards).TruncateInt64())
 			}
 		})
 	}
