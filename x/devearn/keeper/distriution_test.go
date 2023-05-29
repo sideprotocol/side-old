@@ -3,10 +3,10 @@ package keeper_test
 import (
 	"fmt"
 	"math/big"
-	"sidechain/contracts"
 	"sidechain/x/devearn/types"
 
 	erc20types "sidechain/x/erc20/types"
+	oracletypes "sidechain/x/oracle/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -224,10 +224,8 @@ func (suite *KeeperTestSuite) TestDistributeIncentivesTVLandGas() {
 			suite.app.DevearnKeeper.SetDevEarnInfo(suite.ctx, types.NewDevEarn(contract2, gasUsed, tc.epochs, ownerPriv2.PubKey().Address().String()))
 
 			// Mint tokens to contracts
-			// Mint tokens and send to receiver
-			erc20Abi := contracts.ERC20MinterBurnerDecimalsContract.ABI
-			_, err = suite.app.Erc20Keeper.CallEVM(suite.ctx, erc20Abi, erc20types.ModuleAddress, contract, true, "mint", contract2, 100000)
-			_, err = suite.app.Erc20Keeper.CallEVM(suite.ctx, erc20Abi, erc20types.ModuleAddress, contract2, true, "mint", contract, 100000)
+			suite.MintERC20Token(contract, suite.address, contract2, big.NewInt(100))
+			suite.MintERC20Token(contract2, suite.address, contract, big.NewInt(100))
 
 			// Register erc20 token
 			// contract reg
@@ -236,6 +234,7 @@ func (suite *KeeperTestSuite) TestDistributeIncentivesTVLandGas() {
 			suite.app.Erc20Keeper.SetTokenPair(suite.ctx, expPair)
 			suite.app.Erc20Keeper.SetDenomMap(suite.ctx, expPair.Denom, id)
 			suite.app.Erc20Keeper.SetERC20Map(suite.ctx, expPair.GetERC20Contract(), id)
+
 			// contract2 reg
 			expPair = erc20types.NewTokenPair(contract2, "coin2", true, erc20types.OWNER_MODULE)
 			id = expPair.GetID()
@@ -243,7 +242,14 @@ func (suite *KeeperTestSuite) TestDistributeIncentivesTVLandGas() {
 			suite.app.Erc20Keeper.SetDenomMap(suite.ctx, expPair.Denom, id)
 			suite.app.Erc20Keeper.SetERC20Map(suite.ctx, expPair.GetERC20Contract(), id)
 
-			// Add denom to oracle
+			val, err := suite.app.Erc20Keeper.TokenPair(suite.ctx, &erc20types.QueryTokenPairRequest{Token: "coin"})
+			suite.Require().Equal(contract.String(), val.TokenPair.Erc20Address)
+
+			exchangeRateCoin := sdk.NewDecWithPrec(100, int64(8)).MulInt64(oracletypes.MicroUnit)
+			exchangeRateCoin2 := sdk.NewDecWithPrec(200, int64(8)).MulInt64(oracletypes.MicroUnit)
+			suite.app.OracleKeeper.SetExchangeRate(suite.ctx, "coin", exchangeRateCoin)
+			suite.app.OracleKeeper.SetExchangeRate(suite.ctx, "coin2", exchangeRateCoin2)
+
 			// Add assets in devearn
 			suite.app.DevearnKeeper.AddAssetToWhitelist(suite.ctx, "coin")
 			suite.app.DevearnKeeper.AddAssetToWhitelist(suite.ctx, "coin2")
@@ -258,10 +264,15 @@ func (suite *KeeperTestSuite) TestDistributeIncentivesTVLandGas() {
 				sdkParticipant := sdk.AccAddress(ownerPriv1.PubKey().Address().Bytes())
 				balance := suite.app.BankKeeper.GetBalance(suite.ctx, sdkParticipant, tc.denom)
 				gasRatio := sdk.NewDec(int64(gasUsed)).QuoInt64(int64(totalGasUsed))
+
+				// exchange rate * total supply
+				totalTvl := exchangeRateCoin.Mul(sdk.NewDec(100)).Add(exchangeRateCoin2.Mul(sdk.NewDec(100)))
+				tvlRatio := (exchangeRateCoin2.Mul(sdk.NewDec(100))).Quo(totalTvl)
+
 				tvlAllocation := sdk.NewDec(tc.mintAmount).Mul(sdk.NewDecFromBigInt(new(big.Int).SetUint64(params.TvlShare)))
 				tvlAllocation = tvlAllocation.Quo(sdk.NewDec(10000))
 				gasAllocation := sdk.NewDec(tc.mintAmount).Sub(tvlAllocation)
-				expBalance := gasAllocation.Mul(gasRatio)
+				expBalance := gasAllocation.Mul(gasRatio).Add(tvlAllocation.Mul(tvlRatio))
 				suite.Require().Equal(expBalance.TruncateInt(), balance.Amount, tc.name)
 
 				// updates the remaining epochs of each incentive and sets the cumulative

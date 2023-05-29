@@ -153,7 +153,7 @@ func (k Keeper) TvlReward(ctx sdk.Context, contractAddress string) (sdk.Dec, err
 		tokenBalance := k.erc20Keeper.BalanceOf(
 			ctx, erc20, tokenPair.GetTokenPair().GetERC20Contract(), common.HexToAddress(contractAddress))
 
-		totalValueLockedContract.Add(sdk.NewDecFromBigInt(tokenBalance).Mul(rate))
+		totalValueLockedContract = totalValueLockedContract.Add(sdk.NewDecFromBigInt(tokenBalance).Mul(rate))
 	}
 
 	if totalValueLocked.IsZero() {
@@ -182,7 +182,7 @@ func (k Keeper) TotalTvl(ctx sdk.Context) (sdk.Dec, error) {
 			return sdk.NewDec(0), tokenPairErr
 		}
 		total := k.erc20Keeper.TotalSupply(ctx, erc20, tokenPair.TokenPair.GetERC20Contract())
-		totalValueLocked.Add(sdk.NewDecFromBigInt(total).Mul(rate))
+		totalValueLocked = totalValueLocked.Add(sdk.NewDecFromBigInt(total).Mul(rate))
 	}
 	return totalValueLocked, nil
 }
