@@ -96,7 +96,7 @@ func (k Keeper) SendReward(
 		rewardTvlSplit := sdk.NewDecFromInt(totalReward.Amount).Mul(sdk.NewDecFromBigInt(new(big.Int).SetUint64(split)))
 		rewardTvlSplit = rewardTvlSplit.QuoInt(sdk.NewInt(10000))
 		rewardGasSplit := sdk.NewDecFromInt(totalReward.Amount).Sub(rewardTvlSplit)
-		reward := gasRatio.Mul(rewardGasSplit).Add(tvlRatio.Mul(rewardTvlSplit))
+		reward := (gasRatio.Mul(rewardGasSplit)).Add(tvlRatio.Mul(rewardTvlSplit))
 
 		if !reward.IsPositive() {
 			continue

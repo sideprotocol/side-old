@@ -38,6 +38,28 @@ func (suite *KeeperTestSuite) TestGetAllAssets() {
 				expRes = []types.Assets{in, in2}
 			},
 		},
+		{
+			"6 pairs registered",
+			func() {
+				in := types.Assets{Denom: "aside"}
+				in2 := types.Assets{Denom: "bside"}
+				in3 := types.Assets{Denom: "IBC/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"}
+				in4 := types.Assets{Denom: "IBC/C4CFF46FD6DE35CA4CF4CE031E643C8FASD9BA4B99AE59E9B0ED98FE3A2319F9"}
+				in5 := types.Assets{Denom: "IBC/C4CFF46FD6DE35DFGCF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"}
+				in6 := types.Assets{Denom: "IBC/C4CFF46FD6DE3GHJ4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"}
+
+				suite.app.DevearnKeeper.SetAssets(suite.ctx, in)
+				suite.app.DevearnKeeper.SetAssets(suite.ctx, in2)
+				suite.app.DevearnKeeper.SetAssets(suite.ctx, in3)
+				suite.app.DevearnKeeper.SetAssets(suite.ctx, in4)
+				suite.app.DevearnKeeper.SetAssets(suite.ctx, in5)
+				suite.app.DevearnKeeper.SetAssets(suite.ctx, in6)
+
+				suite.Commit()
+
+				expRes = []types.Assets{in, in2, in3, in4, in5, in6}
+			},
+		},
 	}
 	for _, tc := range testCases {
 		suite.Run(fmt.Sprintf("Case %s", tc.name), func() {

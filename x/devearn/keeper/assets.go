@@ -47,23 +47,7 @@ func (k Keeper) GetAllAssets(ctx sdk.Context) (list []types.Assets) {
 
 // GetAssetsBytes returns the byte representation of the denom
 func GetAssetBytes(denom string) []byte {
-	// byteLength := 20 // The desired fixed size in bytes
-
-	// // Convert string to bytes
-	// bytes := []byte(denom)
-
-	// // Create a fixed-size byte slice
-	// fixedSizeBytes := make([]byte, byteLength)
-
-	// // Copy the string bytes to the fixed-size byte slice
-	// copy(fixedSizeBytes, bytes)
-	// bz := make([]byte, 8)
-	// bz = append(bz, )
-	// binary.BigEndian.PutUint64(bz, id)
-	// return bz
-	// TODO: Check if we need fixed byte length
 	return []byte(denom)
-	//return fixedSizeBytes
 }
 
 // GetAssetsFromBytes returns denom in string format from a byte array
