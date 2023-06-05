@@ -19,7 +19,7 @@ func (k Keeper) IsAssetRegistered(
 	ctx sdk.Context,
 	denom string,
 ) bool {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefixDevEarn)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AssetsKey))
 	return store.Has(GetAssetBytes(denom))
 }
 
@@ -47,10 +47,6 @@ func (k Keeper) GetAllAssets(ctx sdk.Context) (list []types.Assets) {
 
 // GetAssetsBytes returns the byte representation of the denom
 func GetAssetBytes(denom string) []byte {
-	// bz := make([]byte, 8)
-	// binary.BigEndian.PutUint64(bz, id)
-	// return bz
-	// TODO: Check if we need fixed byte length
 	return []byte(denom)
 }
 

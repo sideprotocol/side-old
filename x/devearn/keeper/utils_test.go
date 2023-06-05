@@ -9,7 +9,6 @@ import (
 	"sidechain/contracts"
 	"sidechain/testutil"
 	utiltx "sidechain/testutil/tx"
-	"sidechain/utils"
 	"sidechain/x/devearn/types"
 	epochstypes "sidechain/x/epochs/types"
 	"time"
@@ -129,7 +128,7 @@ func (suite *KeeperTestSuite) DoSetupTest(t require.TestingT) {
 		suite.ctx,
 		suite.app.BankKeeper,
 		suite.priv.PubKey().Address().Bytes(),
-		sdk.NewCoins(sdk.NewCoin(utils.BaseDenom, amt)),
+		sdk.NewCoins(sdk.NewCoin("aside", amt)),
 	)
 	suite.Require().NoError(err)
 
@@ -184,18 +183,80 @@ func (suite *KeeperTestSuite) MintFeeCollector(coins sdk.Coins) {
 }
 
 // DeployContract deploys the ERC20MinterBurnerDecimalsContract.
+// func (suite *KeeperTestSuite) DeployContract(name, symbol string, decimals uint8) (common.Address, error) {
+// 	suite.Commit()
+// 	//s.Require().NotEmpty(contracts.ERC20MinterBurnerDecimalsContract)
+// 	addr, err := testutil.DeployContract(
+// 		suite.ctx,
+// 		suite.app,
+// 		suite.priv,
+// 		suite.queryClientEvm,
+// 		contracts.ERC20MinterBurnerDecimalsContract,
+// 		name, symbol, decimals,
+// 	)
+// 	s.Error(err)
+// 	//s.Require().NotEmpty(addr)
+// 	acc := s.app.EvmKeeper.GetAccountWithoutBalance(s.ctx, addr)
+
+// 	s.Require().True(acc.IsContract())
+// 	suite.Commit()
+// 	return addr, err
+// }
+
+// DeployContract deploys the ERC20MinterBurnerDecimalsContract.
 func (suite *KeeperTestSuite) DeployContract(name, symbol string, decimals uint8) (common.Address, error) {
-	suite.Commit()
-	addr, err := testutil.DeployContract(
-		suite.ctx,
-		suite.app,
-		suite.priv,
-		suite.queryClientEvm,
-		contracts.ERC20MinterBurnerDecimalsContract,
-		name, symbol, decimals,
+	ctx := sdk.WrapSDKContext(suite.ctx)
+	chainID := suite.app.EvmKeeper.ChainID()
+
+	ctorArgs, err := contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("", name, symbol, decimals)
+	if err != nil {
+		return common.Address{}, err
+	}
+
+	data := append(contracts.ERC20MinterBurnerDecimalsContract.Bin, ctorArgs...)
+	args, err := json.Marshal(&evm.TransactionArgs{
+		From: &suite.address,
+		Data: (*hexutil.Bytes)(&data),
+	})
+	if err != nil {
+		return common.Address{}, err
+	}
+
+	res, err := suite.queryClientEvm.EstimateGas(ctx, &evm.EthCallRequest{
+		Args:   args,
+		GasCap: uint64(config.DefaultGasCap),
+	})
+	if err != nil {
+		return common.Address{}, err
+	}
+
+	nonce := suite.app.EvmKeeper.GetNonce(suite.ctx, suite.address)
+
+	erc20DeployTx := evm.NewTxContract(
+		chainID,
+		nonce,
+		nil,     // amount
+		res.Gas, // gasLimit
+		nil,     // gasPrice
+		suite.app.FeeMarketKeeper.GetBaseFee(suite.ctx),
+		big.NewInt(1),
+		data,                   // input
+		&ethtypes.AccessList{}, // accesses
 	)
-	suite.Commit()
-	return addr, err
+
+	erc20DeployTx.From = suite.address.Hex()
+	err = erc20DeployTx.Sign(ethtypes.LatestSignerForChainID(chainID), suite.signer)
+	if err != nil {
+		return common.Address{}, err
+	}
+
+	rsp, err := suite.app.EvmKeeper.EthereumTx(ctx, erc20DeployTx)
+	if err != nil {
+		return common.Address{}, err
+	}
+
+	suite.Require().Empty(rsp.VmError)
+	return crypto.CreateAddress(suite.address, nonce), nil
 }
 
 // MintERC20Token mints ERC20MinterBurnerDecimalsContract tokens..

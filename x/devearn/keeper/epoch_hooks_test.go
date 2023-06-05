@@ -2,11 +2,13 @@ package keeper_test
 
 import (
 	"fmt"
+	"math/big"
 	"sidechain/x/devearn/types"
 	epochstypes "sidechain/x/epochs/types"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
 func (suite *KeeperTestSuite) TestEpochIdentifierAfterEpochEnd() {
@@ -18,7 +20,7 @@ func (suite *KeeperTestSuite) TestEpochIdentifierAfterEpochEnd() {
 	}{
 		{
 			"correct epoch identifier",
-			epochstypes.DayEpochID,
+			epochstypes.WeekEpochID,
 			epochs,
 			denomMint,
 		},
@@ -33,16 +35,15 @@ func (suite *KeeperTestSuite) TestEpochIdentifierAfterEpochEnd() {
 		suite.Run(fmt.Sprintf("Case %s", tc.name), func() {
 			suite.SetupTest()
 			suite.deployContracts()
-			_, err := suite.app.DevearnKeeper.RegisterDevEarnInfo(
+			// Deploy Contract
+			_, err := suite.DeployContract("COIN TOKEN", "COIN", erc20Decimals)
+			suite.Require().NoError(err)
+			suite.Commit()
+			_, err = suite.app.DevearnKeeper.RegisterDevEarnInfo(
 				suite.ctx,
 				contract,
 				tc.epochs,
-				suite.priv.PubKey().Address().String(),
-			)
-			err = suite.app.BankKeeper.MintCoins(
-				suite.ctx,
-				types.ModuleName,
-				sdk.Coins{sdk.NewInt64Coin(tc.denom, 10000)},
+				ownerPriv1.PubKey().Address().String(),
 			)
 
 			suite.Require().NoError(err)
@@ -51,10 +52,17 @@ func (suite *KeeperTestSuite) TestEpochIdentifierAfterEpochEnd() {
 			suite.Require().Zero(regIn.GasMeter)
 			suite.app.DevearnKeeper.SetDevEarnInfo(suite.ctx, types.NewDevEarn(contract, 1000, tc.epochs, ownerPriv1.PubKey().Address().String()))
 			suite.Commit()
+			// Check used gas
+			regIn, found = suite.app.DevearnKeeper.GetDevEarnInfo(suite.ctx, contract)
+			suite.Require().Equal(uint32(10), regIn.Epochs)
+			suite.Require().True(found)
+			suite.Require().Equal(uint64(1000), regIn.GasMeter)
+
 			params := suite.app.DevearnKeeper.GetParams(suite.ctx)
 			params.EnableDevEarn = true
 			err = suite.app.DevearnKeeper.SetParams(suite.ctx, params)
 			suite.Require().NoError(err)
+			suite.Require().Equal("week", params.RewardEpochIdentifier)
 
 			futureCtx := suite.ctx.WithBlockTime(time.Now().Add(time.Hour))
 			newHeight := suite.app.LastBlockHeight() + 1
@@ -62,10 +70,30 @@ func (suite *KeeperTestSuite) TestEpochIdentifierAfterEpochEnd() {
 			suite.app.EpochsKeeper.BeforeEpochStart(futureCtx, tc.epochIdentifier, newHeight)
 			suite.app.EpochsKeeper.AfterEpochEnd(futureCtx, tc.epochIdentifier, newHeight)
 
+			// Epoch hook call is working
+			params = suite.app.DevearnKeeper.GetParams(suite.ctx)
+			suite.Require().Equal(uint64(1000), params.TvlShare)
+			regIn, found = suite.app.DevearnKeeper.GetDevEarnInfo(suite.ctx, contract)
+			suite.Require().Equal(uint32(9), regIn.Epochs)
+
+			totalDenomSupply, _, err := suite.app.BankKeeper.GetPaginatedTotalSupply(suite.ctx, &query.PageRequest{
+				Key:        nil,
+				Offset:     0,
+				Limit:      100,
+				CountTotal: false,
+				Reverse:    false,
+			})
+			if err != nil {
+				return
+			}
+			totalSupply := totalDenomSupply.AmountOf(tc.denom)
+
 			balance := suite.app.BankKeeper.GetBalance(suite.ctx, sdk.AccAddress(ownerPriv1.PubKey().Address()), tc.denom)
 			if tc.epochIdentifier == params.RewardEpochIdentifier {
-				profit := sdk.NewDec(10000).Quo(sdk.NewDec(365)).Mul(sdk.NewDec(7)).Mul(params.DevEarnInflation_APR).TruncateInt64()
-				suite.Require().Equal(profit+10000, balance.Amount.Int64())
+				totalRewards := sdk.NewDecFromInt(totalSupply).Quo(sdk.NewDec(365)).Mul(sdk.NewDec(7)).Mul(params.DevEarnInflation_APR)
+				expectedRewards := totalRewards.Mul((sdk.NewDecFromBigInt(new(big.Int).SetUint64(params.TvlShare)))).Quo(sdk.NewDec(10000))
+				suite.Require().Positive(balance.Amount.Int64())
+				suite.Require().LessOrEqual(balance.Amount.Int64(), totalRewards.Sub(expectedRewards).TruncateInt64())
 			}
 		})
 	}
