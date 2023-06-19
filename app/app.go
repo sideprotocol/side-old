@@ -92,13 +92,13 @@ import (
 	ibcfeekeeper "github.com/cosmos/ibc-go/v6/modules/apps/29-fee/keeper"
 	ibcfeetypes "github.com/cosmos/ibc-go/v6/modules/apps/29-fee/types"
 
-	ibcatomicswap "github.com/ibcswap/ibcswap/v6/modules/apps/100-atomic-swap"
-	atomicswapkeeper "github.com/ibcswap/ibcswap/v6/modules/apps/100-atomic-swap/keeper"
-	ibcatomicswaptypes "github.com/ibcswap/ibcswap/v6/modules/apps/100-atomic-swap/types"
+	ibcatomicswap "github.com/sideprotocol/ibcswap/v6/modules/apps/100-atomic-swap"
+	atomicswapkeeper "github.com/sideprotocol/ibcswap/v6/modules/apps/100-atomic-swap/keeper"
+	ibcatomicswaptypes "github.com/sideprotocol/ibcswap/v6/modules/apps/100-atomic-swap/types"
 
-	ibcinterchainswap "github.com/ibcswap/ibcswap/v6/modules/apps/101-interchain-swap"
-	interchainswapkeeper "github.com/ibcswap/ibcswap/v6/modules/apps/101-interchain-swap/keeper"
-	ibcinterchainswaptypes "github.com/ibcswap/ibcswap/v6/modules/apps/101-interchain-swap/types"
+	ibcinterchainswap "github.com/sideprotocol/ibcswap/v6/modules/apps/101-interchain-swap"
+	interchainswapkeeper "github.com/sideprotocol/ibcswap/v6/modules/apps/101-interchain-swap/keeper"
+	ibcinterchainswaptypes "github.com/sideprotocol/ibcswap/v6/modules/apps/101-interchain-swap/types"
 
 	ibc "github.com/cosmos/ibc-go/v6/modules/core"
 	ibcclient "github.com/cosmos/ibc-go/v6/modules/core/02-client"
