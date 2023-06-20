@@ -10,23 +10,23 @@ accounts:
   - name: alice
     coins:
       - 100000000000000000000000bside
-      - 100000000000000000000000usdt
-      - 100000000000000000000000usdc
-      - 100000000000000000000000eth
+      - 100000000000000000000000busdt
+      - 100000000000000000000000busdc
+      - 100000000000000000000000beth
   - name: bob
     mnemonic: actress letter whip youth flip sort announce chief traffic side destroy seek parade warrior awake scan panther nominee harsh spawn differ enroll glue become
     coins:
       - 10000000000000000000000bside
-      - 100000000000000000000000usdt
-      - 100000000000000000000000usdc
-      - 100000000000000000000000eth
+      - 100000000000000000000000busdt
+      - 100000000000000000000000busdc
+      - 100000000000000000000000beth
   - name: david
     mnemonic: model talent wild salmon planet sure hill extra select curve royal super split swing liberty february country sibling label donkey pink butter picnic body
     coins:
       - 1000000000000000000bside
-      - 100000000000000000000000usdt
-      - 100000000000000000000000usdc
-      - 100000000000000000000000eth
+      - 100000000000000000000000busdt
+      - 100000000000000000000000busdc
+      - 100000000000000000000000beth
 faucet:
   name: bob
   coins:
