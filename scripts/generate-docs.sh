@@ -2,6 +2,9 @@
 
 set -eo pipefail
 
+# Delete original document
+rm -rf ../docs/static/openapi.yml
+
 # Run ignite generate openapi command
 ignite generate openapi -y
 
