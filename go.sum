@@ -940,8 +940,8 @@ github.com/sergi/go-diff v1.0.0/go.mod h1:0CfEIISq7TuYL3j771MWULgwwjU+GofnZX9QAm
 github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible h1:Bn1aCHHRnjv4Bl16T8rcaFjYSrGrIZvpiGO6P3Q4GpU=
 github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible/go.mod h1:5b4v6he4MtMOwMlS0TUMTu2PcXUg8+E1lC7eC3UO/RA=
 github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
-github.com/sideprotocol/ibcswap/v6 v6.0.0-20230620090630-1be7ddde10bf h1:Y5ZgmonLi97BnELnoUI0CzLErhn1N78drpD9DM2h7DE=
-github.com/sideprotocol/ibcswap/v6 v6.0.0-20230620090630-1be7ddde10bf/go.mod h1:L29NuHU/v+vVbWzcDYph/1cZDLuw+I0TzIh+YBvVo1c=
+github.com/sideprotocol/ibcswap/v6 v6.0.0-20230622150308-c6d2efa61ef1 h1:iZqM0aaak65erVR3Fr2Qrvu0X1njFprreDfh7PFe8xk=
+github.com/sideprotocol/ibcswap/v6 v6.0.0-20230622150308-c6d2efa61ef1/go.mod h1:L29NuHU/v+vVbWzcDYph/1cZDLuw+I0TzIh+YBvVo1c=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=
 github.com/sirupsen/logrus v1.6.0/go.mod h1:7uNnSEd1DgxDLC74fIahvMZmmYsHGZGEOFrfsX/uA88=
