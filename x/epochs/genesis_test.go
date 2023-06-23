@@ -8,10 +8,10 @@ import (
 	"github.com/stretchr/testify/require"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"sidechain/x/epochs"
-	"sidechain/x/epochs/types"
+	"github.com/sideprotocol/sidechain/x/epochs"
+	"github.com/sideprotocol/sidechain/x/epochs/types"
 
-	simapp "sidechain/app"
+	simapp "github.com/sideprotocol/sidechain/app"
 )
 
 func TestEpochsExportGenesis(t *testing.T) {

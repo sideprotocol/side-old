@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"sidechain/x/mint/simulation"
-	"sidechain/x/mint/types"
+	"github.com/sideprotocol/sidechain/x/mint/simulation"
+	"github.com/sideprotocol/sidechain/x/mint/types"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"

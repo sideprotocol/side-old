@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"sidechain/x/epochs"
-	"sidechain/x/epochs/types"
+	"github.com/sideprotocol/sidechain/x/epochs"
+	"github.com/sideprotocol/sidechain/x/epochs/types"
 )
 
 func (suite *KeeperTestSuite) TestEpochInfoChangesBeginBlockerAndInitGenesis() {

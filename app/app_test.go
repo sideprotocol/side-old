@@ -19,7 +19,7 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
 
-	"sidechain/types"
+	"github.com/sideprotocol/sidechain/types"
 
 	"github.com/evmos/ethermint/encoding"
 )

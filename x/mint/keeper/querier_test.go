@@ -8,9 +8,9 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"sidechain/app"
-	keep "sidechain/x/mint/keeper"
-	"sidechain/x/mint/types"
+	"github.com/sideprotocol/sidechain/app"
+	keep "github.com/sideprotocol/sidechain/x/mint/keeper"
+	"github.com/sideprotocol/sidechain/x/mint/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"

@@ -5,8 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"sidechain/x/oracle/keeper"
-	"sidechain/x/oracle/types"
+	"github.com/sideprotocol/sidechain/x/oracle/keeper"
+	"github.com/sideprotocol/sidechain/x/oracle/types"
 )
 
 // InitGenesis initialize default parameters

@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"sidechain/x/epochs/types"
+	"github.com/sideprotocol/sidechain/x/epochs/types"
 )
 
 var _ types.QueryServer = Keeper{}

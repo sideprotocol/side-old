@@ -3,7 +3,7 @@ package client
 import (
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 
-	"sidechain/x/devearn/client/cli"
+	"github.com/sideprotocol/sidechain/x/devearn/client/cli"
 )
 
 var (

@@ -2,7 +2,7 @@ package types
 
 import (
 	"fmt"
-	epochstypes "sidechain/x/epochs/types"
+	epochstypes "github.com/sideprotocol/sidechain/x/epochs/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 

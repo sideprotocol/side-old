@@ -2,7 +2,7 @@ package keeper_test
 
 import (
 	"fmt"
-	"sidechain/x/devearn/types"
+	"github.com/sideprotocol/sidechain/x/devearn/types"
 
 	"github.com/ethereum/go-ethereum/common"
 )

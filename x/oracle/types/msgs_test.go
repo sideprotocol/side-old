@@ -4,7 +4,7 @@ import (
 	"math/rand"
 	"testing"
 
-	"sidechain/x/oracle/types"
+	"github.com/sideprotocol/sidechain/x/oracle/types"
 
 	"github.com/stretchr/testify/require"
 

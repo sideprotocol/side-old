@@ -6,8 +6,8 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
-	"sidechain/x/devearn/keeper"
-	"sidechain/x/devearn/types"
+	"github.com/sideprotocol/sidechain/x/devearn/keeper"
+	"github.com/sideprotocol/sidechain/x/devearn/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"

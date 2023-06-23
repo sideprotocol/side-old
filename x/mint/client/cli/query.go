@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"sidechain/x/mint/types"
+	"github.com/sideprotocol/sidechain/x/mint/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"

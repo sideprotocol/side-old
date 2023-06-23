@@ -12,9 +12,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	"sidechain/x/oracle"
-	"sidechain/x/oracle/keeper"
-	"sidechain/x/oracle/types"
+	"github.com/sideprotocol/sidechain/x/oracle"
+	"github.com/sideprotocol/sidechain/x/oracle/keeper"
+	"github.com/sideprotocol/sidechain/x/oracle/types"
 )
 
 func TestOracleThreshold(t *testing.T) {

@@ -19,9 +19,9 @@ import (
 
 	ibcgotesting "github.com/cosmos/ibc-go/v6/testing"
 
-	sidechainapp "sidechain/app"
+	sidechainapp "github.com/sideprotocol/sidechain/app"
 
-	sidechain "sidechain/types"
+	sidechain "github.com/sideprotocol/sidechain/types"
 
 	ethermint "github.com/evmos/ethermint/types"
 )

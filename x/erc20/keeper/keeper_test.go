@@ -44,12 +44,12 @@ import (
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
 	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
 
-	"sidechain/app"
-	"sidechain/contracts"
-	ibctesting "sidechain/ibc/testing"
-	"sidechain/x/erc20/types"
+	"github.com/sideprotocol/sidechain/app"
+	"github.com/sideprotocol/sidechain/contracts"
+	ibctesting "github.com/sideprotocol/sidechain/ibc/testing"
+	"github.com/sideprotocol/sidechain/x/erc20/types"
 
-	teststypes "sidechain/types/tests"
+	teststypes "github.com/sideprotocol/sidechain/types/tests"
 
 	transfertypes "github.com/cosmos/ibc-go/v6/modules/apps/transfer/types"
 	clienttypes "github.com/cosmos/ibc-go/v6/modules/core/02-client/types"

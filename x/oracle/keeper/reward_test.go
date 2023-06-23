@@ -9,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 
-	"sidechain/x/oracle/types"
+	"github.com/sideprotocol/sidechain/x/oracle/types"
 )
 
 // Test a reward giving mechanism

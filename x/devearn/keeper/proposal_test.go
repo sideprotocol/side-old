@@ -2,8 +2,8 @@ package keeper_test
 
 import (
 	"fmt"
-	utiltx "sidechain/testutil/tx"
-	"sidechain/x/devearn/types"
+	utiltx "github.com/sideprotocol/sidechain/testutil/tx"
+	"github.com/sideprotocol/sidechain/x/devearn/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

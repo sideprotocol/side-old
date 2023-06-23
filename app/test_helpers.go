@@ -24,9 +24,9 @@ import (
 	"github.com/evmos/ethermint/encoding"
 	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
 
-	"sidechain/cmd/config"
+	"github.com/sideprotocol/sidechain/cmd/config"
 
-	"sidechain/types"
+	"github.com/sideprotocol/sidechain/types"
 )
 
 func init() {

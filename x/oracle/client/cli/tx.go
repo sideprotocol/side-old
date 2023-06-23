@@ -6,7 +6,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"sidechain/x/oracle/types"
+	"github.com/sideprotocol/sidechain/x/oracle/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"

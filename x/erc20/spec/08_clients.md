@@ -6,7 +6,7 @@ order: 8
 
 ## CLI
 
-Find below a list of  `sidechaind` commands added with the  `x/erc20` module. You can obtain the full list by using the `sidechaind -h` command. A CLI command can look like this:
+Find below a list of  `sidechaind` commands added with the `x/erc20` module. You can obtain the full list by using the `sidechaind -h` command. A CLI command can look like this:
 
 ```bash
 sidechaind query erc20 params
@@ -45,24 +45,24 @@ Where METADATA_FILE contains (example):
 {
   "metadata": [
     {
-			"description": "The native staking and governance token of the Osmosis chain",
-			"denom_units": [
-				{
-						"denom": "ibc/<HASH>",
-						"exponent": 0,
-						"aliases": ["ibcuosmo"]
-				},
-				{
-						"denom": "OSMO",
-						"exponent": 6
-				}
-			],
-			"base": "ibc/<HASH>",
-			"display": "OSMO",
-			"name": "Osmo",
-			"symbol": "OSMO"
-		}
-	]
+      "description": "The native staking and governance token of the Osmosis chain",
+      "denom_units": [
+        {
+          "denom": "ibc/<HASH>",
+          "exponent": 0,
+          "aliases": ["ibcuosmo"]
+        },
+        {
+          "denom": "OSMO",
+          "exponent": 6
+        }
+      ],
+      "base": "ibc/<HASH>",
+      "display": "OSMO",
+      "name": "Osmo",
+      "symbol": "OSMO"
+    }
+  ]
 }
 ```
 
@@ -94,20 +94,20 @@ sidechaind tx gov submit-legacy-proposal param-change PROPOSAL_FILE [flags]
 
 ### Queries
 
-| Verb   | Method                            | Description                    |
-| ------ | --------------------------------- | ------------------------------ |
-| `gRPC` | `sidechain.erc20.v1.Query/Params`     | Get erc20 params               |
-| `gRPC` | `sidechain.erc20.v1.Query/TokenPair`  | Get registered token pair      |
-| `gRPC` | `sidechain.erc20.v1.Query/TokenPairs` | Get all registered token pairs |
-| `GET`  | `/sidechain/erc20/v1/params`          | Get erc20 params               |
-| `GET`  | `/sidechain/erc20/v1/token_pair`      | Get registered token pair      |
-| `GET`  | `/sidechain/erc20/v1/token_pairs`     | Get all registered token pairs |
+| Verb   | Method                                                    | Description                    |
+| ------ | --------------------------------------------------------- | ------------------------------ |
+| `gRPC` | `sidechain.erc20.v1.Query/Params`                         | Get erc20 params               |
+| `gRPC` | `sidechain.erc20.v1.Query/TokenPair`                      | Get registered token pair      |
+| `gRPC` | `sidechain.erc20.v1.Query/TokenPairs`                     | Get all registered token pairs |
+| `GET`  | `/github.com/sideprotocol/sidechain/erc20/v1/params`      | Get erc20 params               |
+| `GET`  | `/github.com/sideprotocol/sidechain/erc20/v1/token_pair`  | Get registered token pair      |
+| `GET`  | `/github.com/sideprotocol/sidechain/erc20/v1/token_pairs` | Get all registered token pairs |
 
 ### Transactions
 
-| Verb   | Method                             | Description                    |
-| ------ | ---------------------------------- | ------------------------------ |
-| `gRPC` | `sidechain.erc20.v1.Msg/ConvertCoin`   | Convert a Cosmos Coin to ERC20 |
-| `gRPC` | `sidechain.erc20.v1.Msg/ConvertERC20`  | Convert a ERC20 to Cosmos Coin |
-| `GET`  | `/sidechain/erc20/v1/tx/convert_coin`  | Convert a Cosmos Coin to ERC20 |
-| `GET`  | `/sidechain/erc20/v1/tx/convert_erc20` | Convert a ERC20 to Cosmos Coin |
+| Verb   | Method                                                         | Description                    |
+| ------ | -------------------------------------------------------------- | ------------------------------ |
+| `gRPC` | `sidechain.erc20.v1.Msg/ConvertCoin`                           | Convert a Cosmos Coin to ERC20 |
+| `gRPC` | `sidechain.erc20.v1.Msg/ConvertERC20`                          | Convert a ERC20 to Cosmos Coin |
+| `GET`  | `/github.com/sideprotocol/sidechain/erc20/v1/tx/convert_coin`  | Convert a Cosmos Coin to ERC20 |
+| `GET`  | `/github.com/sideprotocol/sidechain/erc20/v1/tx/convert_erc20` | Convert a ERC20 to Cosmos Coin |

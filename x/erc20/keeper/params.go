@@ -17,7 +17,7 @@
 package keeper
 
 import (
-	"sidechain/x/erc20/types"
+	"github.com/sideprotocol/sidechain/x/erc20/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

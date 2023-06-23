@@ -10,7 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"sidechain/x/epochs/types"
+	"github.com/sideprotocol/sidechain/x/epochs/types"
 )
 
 // BeginBlocker of epochs module

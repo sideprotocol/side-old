@@ -3,7 +3,7 @@ package cli
 import (
 	"context"
 
-	"sidechain/x/devearn/types"
+	"github.com/sideprotocol/sidechain/x/devearn/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"

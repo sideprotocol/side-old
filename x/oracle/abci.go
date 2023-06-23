@@ -3,8 +3,8 @@ package oracle
 import (
 	"time"
 
-	"sidechain/x/oracle/keeper"
-	"sidechain/x/oracle/types"
+	"github.com/sideprotocol/sidechain/x/oracle/keeper"
+	"github.com/sideprotocol/sidechain/x/oracle/types"
 
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"

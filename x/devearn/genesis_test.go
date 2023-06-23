@@ -3,9 +3,9 @@ package devearn_test
 import (
 	"testing"
 
-	keepertest "sidechain/testutil/keeper"
-	"sidechain/x/devearn"
-	"sidechain/x/devearn/types"
+	keepertest "github.com/sideprotocol/sidechain/testutil/keeper"
+	"github.com/sideprotocol/sidechain/x/devearn"
+	"github.com/sideprotocol/sidechain/x/devearn/types"
 
 	"github.com/stretchr/testify/require"
 )

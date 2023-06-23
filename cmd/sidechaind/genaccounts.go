@@ -23,7 +23,7 @@ import (
 	ethermint "github.com/evmos/ethermint/types"
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
 
-	sidechainkr "sidechain/crypto/keyring"
+	sidechainkr "github.com/sideprotocol/sidechain/crypto/keyring"
 
 	vestingcli "github.com/evmos/evmos/v11/x/vesting/client/cli"
 	vestingtypes "github.com/evmos/evmos/v11/x/vesting/types"

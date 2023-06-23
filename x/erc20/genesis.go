@@ -22,8 +22,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 
-	"sidechain/x/erc20/keeper"
-	"sidechain/x/erc20/types"
+	"github.com/sideprotocol/sidechain/x/erc20/keeper"
+	"github.com/sideprotocol/sidechain/x/erc20/types"
 )
 
 // InitGenesis import module genesis

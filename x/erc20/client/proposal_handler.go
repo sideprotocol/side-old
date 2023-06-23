@@ -19,7 +19,7 @@ package client
 import (
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 
-	"sidechain/x/erc20/client/cli"
+	"github.com/sideprotocol/sidechain/x/erc20/client/cli"
 )
 
 var (

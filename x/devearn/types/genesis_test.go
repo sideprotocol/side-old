@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"sidechain/x/devearn/types"
+	"github.com/sideprotocol/sidechain/x/devearn/types"
 
 	"github.com/stretchr/testify/require"
 )

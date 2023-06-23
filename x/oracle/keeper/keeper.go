@@ -14,7 +14,7 @@ import (
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	"sidechain/x/oracle/types"
+	"github.com/sideprotocol/sidechain/x/oracle/types"
 )
 
 // Keeper of the oracle store

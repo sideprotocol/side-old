@@ -8,8 +8,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"sidechain/x/epochs/keeper"
-	"sidechain/x/epochs/types"
+	"github.com/sideprotocol/sidechain/x/epochs/keeper"
+	"github.com/sideprotocol/sidechain/x/epochs/types"
 )
 
 // InitGenesis initializes the epochs module's state from a provided genesis

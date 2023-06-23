@@ -20,8 +20,8 @@ import (
 
 	evm "github.com/evmos/ethermint/x/evm/types"
 
-	"sidechain/app"
-	"sidechain/x/epochs/types"
+	"github.com/sideprotocol/sidechain/app"
+	"github.com/sideprotocol/sidechain/x/epochs/types"
 )
 
 var denomMint = "aside"

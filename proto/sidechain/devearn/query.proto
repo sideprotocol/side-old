@@ -5,39 +5,39 @@ package sidechain.devearn;
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
-import "sidechain/devearn/params.proto";
-import "sidechain/devearn/assets.proto";
+import "github.com/sideprotocol/sidechain/devearn/params.proto";
+import "github.com/sideprotocol/sidechain/devearn/assets.proto";
 
-option go_package = "sidechain/x/devearn/types";
+option go_package = "github.com/sideprotocol/sidechain/x/devearn/types";
 
 // Query defines the gRPC querier service.
 service Query {
   
   // Parameters queries the parameters of the module.
   rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/sidechain/devearn/params";
+    option (google.api.http).get = "/github.com/sideprotocol/sidechain/devearn/params";
   
   }
   
   // Queries a list of DevEarnInfos items.
   rpc DevEarnInfos (QueryDevEarnInfosRequest) returns (QueryDevEarnInfosResponse) {
-    option (google.api.http).get = "/sidechain/devearn/dev_earn_infos";
+    option (google.api.http).get = "/github.com/sideprotocol/sidechain/devearn/dev_earn_infos";
   
   }
   
   // Queries a list of DevEarnInfo items.
   rpc DevEarnInfo (QueryDevEarnInfoRequest) returns (QueryDevEarnInfoResponse) {
-    option (google.api.http).get = "/sidechain/devearn/dev_earn_info";
+    option (google.api.http).get = "/github.com/sideprotocol/sidechain/devearn/dev_earn_info";
   
   }
   
   // Queries a list of Assets items.
   rpc Assets    (QueryGetAssetsRequest) returns (QueryGetAssetsResponse) {
-    option (google.api.http).get = "/sidechain/devearn/assets/{denom}";
+    option (google.api.http).get = "/github.com/sideprotocol/sidechain/devearn/assets/{denom}";
   
   }
   rpc AssetsAll (QueryAllAssetsRequest) returns (QueryAllAssetsResponse) {
-    option (google.api.http).get = "/sidechain/devearn/assets";
+    option (google.api.http).get = "/github.com/sideprotocol/sidechain/devearn/assets";
   
   }
 }

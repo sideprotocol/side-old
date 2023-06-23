@@ -17,8 +17,8 @@
 package v3
 
 import (
-	v3types "sidechain/x/erc20/migrations/v3/types"
-	"sidechain/x/erc20/types"
+	v3types "github.com/sideprotocol/sidechain/x/erc20/migrations/v3/types"
+	"github.com/sideprotocol/sidechain/x/erc20/types"
 
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"

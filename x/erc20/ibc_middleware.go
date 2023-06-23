@@ -25,8 +25,8 @@ import (
 	porttypes "github.com/cosmos/ibc-go/v6/modules/core/05-port/types"
 	"github.com/cosmos/ibc-go/v6/modules/core/exported"
 
-	"sidechain/ibc"
-	"sidechain/x/erc20/keeper"
+	"github.com/sideprotocol/sidechain/ibc"
+	"github.com/sideprotocol/sidechain/x/erc20/keeper"
 
 	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
 )

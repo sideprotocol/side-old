@@ -11,8 +11,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 
-	"sidechain/app"
-	"sidechain/utils"
+	"github.com/sideprotocol/sidechain/app"
+	"github.com/sideprotocol/sidechain/utils"
 )
 
 var (

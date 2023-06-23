@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
-	sidetypes "sidechain/types"
+	sidetypes "github.com/sideprotocol/sidechain/types"
 	"time"
 )
 

@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"sidechain/x/devearn/types"
+	"github.com/sideprotocol/sidechain/x/devearn/types"
 )
 
 var _ types.QueryServer = Keeper{}

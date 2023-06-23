@@ -18,9 +18,9 @@ import (
 	"github.com/evmos/ethermint/crypto/ethsecp256k1"
 	ethermint "github.com/evmos/ethermint/types"
 
-	"sidechain/app"
-	"sidechain/testutil"
-	"sidechain/x/erc20/types"
+	"github.com/sideprotocol/sidechain/app"
+	"github.com/sideprotocol/sidechain/testutil"
+	"github.com/sideprotocol/sidechain/x/erc20/types"
 )
 
 var _ = Describe("Performing EVM transactions", Ordered, func() {

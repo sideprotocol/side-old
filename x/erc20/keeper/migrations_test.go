@@ -1,10 +1,10 @@
 package keeper_test
 
 import (
-	"sidechain/app"
-	erc20keeper "sidechain/x/erc20/keeper"
-	v3types "sidechain/x/erc20/migrations/v3/types"
-	"sidechain/x/erc20/types"
+	"github.com/sideprotocol/sidechain/app"
+	erc20keeper "github.com/sideprotocol/sidechain/x/erc20/keeper"
+	v3types "github.com/sideprotocol/sidechain/x/erc20/migrations/v3/types"
+	"github.com/sideprotocol/sidechain/x/erc20/types"
 
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	"github.com/cosmos/cosmos-sdk/testutil"

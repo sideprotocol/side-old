@@ -15,8 +15,8 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 
-	"sidechain/app"
-	"sidechain/testutil/tx"
+	"github.com/sideprotocol/sidechain/app"
+	"github.com/sideprotocol/sidechain/testutil/tx"
 
 	evm "github.com/evmos/ethermint/x/evm/types"
 )

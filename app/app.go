@@ -127,32 +127,32 @@ import (
 	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
 
 	// unnamed import of statik for swagger UI support
-	//_ "sidechain/client/docs/statik"
+	//_ "github.com/sideprotocol/sidechain/client/docs/statik"
 
-	"sidechain/app/ante"
+	"github.com/sideprotocol/sidechain/app/ante"
 
-	"sidechain/x/epochs"
-	epochskeeper "sidechain/x/epochs/keeper"
-	epochstypes "sidechain/x/epochs/types"
-	"sidechain/x/mint"
-	mintkeeper "sidechain/x/mint/keeper"
-	minttypes "sidechain/x/mint/types"
+	"github.com/sideprotocol/sidechain/x/epochs"
+	epochskeeper "github.com/sideprotocol/sidechain/x/epochs/keeper"
+	epochstypes "github.com/sideprotocol/sidechain/x/epochs/types"
+	"github.com/sideprotocol/sidechain/x/mint"
+	mintkeeper "github.com/sideprotocol/sidechain/x/mint/keeper"
+	minttypes "github.com/sideprotocol/sidechain/x/mint/types"
 
-	erc20client "sidechain/x/erc20/client"
-	erc20keeper "sidechain/x/erc20/keeper"
-	erc20types "sidechain/x/erc20/types"
+	erc20client "github.com/sideprotocol/sidechain/x/erc20/client"
+	erc20keeper "github.com/sideprotocol/sidechain/x/erc20/keeper"
+	erc20types "github.com/sideprotocol/sidechain/x/erc20/types"
 
-	"sidechain/x/erc20"
+	"github.com/sideprotocol/sidechain/x/erc20"
 
 	// NOTE: override ICS20 keeper to support IBC transfers of ERC20 tokens
-	devearnmodule "sidechain/x/devearn"
-	devearnclient "sidechain/x/devearn/client"
-	devearnmodulekeeper "sidechain/x/devearn/keeper"
-	devearnmoduletypes "sidechain/x/devearn/types"
+	devearnmodule "github.com/sideprotocol/sidechain/x/devearn"
+	devearnclient "github.com/sideprotocol/sidechain/x/devearn/client"
+	devearnmodulekeeper "github.com/sideprotocol/sidechain/x/devearn/keeper"
+	devearnmoduletypes "github.com/sideprotocol/sidechain/x/devearn/types"
 
-	"sidechain/x/oracle"
-	oraclekeeper "sidechain/x/oracle/keeper"
-	oracletypes "sidechain/x/oracle/types"
+	"github.com/sideprotocol/sidechain/x/oracle"
+	oraclekeeper "github.com/sideprotocol/sidechain/x/oracle/keeper"
+	oracletypes "github.com/sideprotocol/sidechain/x/oracle/types"
 
 	transferkeeper "github.com/cosmos/ibc-go/v6/modules/apps/transfer/keeper"
 

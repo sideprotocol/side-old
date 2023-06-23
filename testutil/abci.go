@@ -1,8 +1,8 @@
 package testutil
 
 import (
-	"sidechain/app"
-	"sidechain/testutil/tx"
+	"github.com/sideprotocol/sidechain/app"
+	"github.com/sideprotocol/sidechain/testutil/tx"
 	"time"
 
 	errorsmod "cosmossdk.io/errors"

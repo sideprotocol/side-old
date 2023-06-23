@@ -12,7 +12,7 @@ import (
 
 const (
 	// Amino names
-	updateParamsName = "sidechain/devearn/MsgUpdateParams"
+	updateParamsName = "github.com/sideprotocol/sidechain/devearn/MsgUpdateParams"
 )
 
 var (

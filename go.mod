@@ -1,4 +1,4 @@
-module sidechain
+module github.com/sideprotocol/sidechain
 
 go 1.19
 

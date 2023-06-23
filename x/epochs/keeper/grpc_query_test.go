@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"sidechain/x/epochs/types"
+	"github.com/sideprotocol/sidechain/x/epochs/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"

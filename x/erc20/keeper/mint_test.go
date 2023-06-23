@@ -7,7 +7,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/evmos/ethermint/tests"
 
-	"sidechain/x/erc20/types"
+	"github.com/sideprotocol/sidechain/x/erc20/types"
 )
 
 func (suite *KeeperTestSuite) TestMintingEnabled() {

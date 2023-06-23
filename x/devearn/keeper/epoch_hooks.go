@@ -4,8 +4,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
-	"sidechain/x/devearn/types"
-	epochstypes "sidechain/x/epochs/types"
+	"github.com/sideprotocol/sidechain/x/devearn/types"
+	epochstypes "github.com/sideprotocol/sidechain/x/epochs/types"
 )
 
 // BeforeEpochStart performs a no-op

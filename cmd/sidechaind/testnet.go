@@ -44,11 +44,11 @@ import (
 	ethermint "github.com/evmos/ethermint/types"
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
 
-	sidechainkr "sidechain/crypto/keyring"
+	sidechainkr "github.com/sideprotocol/sidechain/crypto/keyring"
 
-	cmdcfg "sidechain/cmd/config"
+	cmdcfg "github.com/sideprotocol/sidechain/cmd/config"
 
-	"sidechain/testutil/network"
+	"github.com/sideprotocol/sidechain/testutil/network"
 )
 
 var (

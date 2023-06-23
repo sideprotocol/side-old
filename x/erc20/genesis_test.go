@@ -16,9 +16,9 @@ import (
 	"github.com/evmos/ethermint/tests"
 	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
 
-	"sidechain/app"
-	"sidechain/x/erc20"
-	"sidechain/x/erc20/types"
+	"github.com/sideprotocol/sidechain/app"
+	"github.com/sideprotocol/sidechain/x/erc20"
+	"github.com/sideprotocol/sidechain/x/erc20/types"
 )
 
 type GenesisTestSuite struct {

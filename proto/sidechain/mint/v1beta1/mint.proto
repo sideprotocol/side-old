@@ -1,7 +1,7 @@
 syntax = "proto3";
 package sidechain.mint.v1beta1;
 
-option go_package = "sidechain/x/mint/types";
+option go_package = "github.com/sideprotocol/sidechain/x/mint/types";
 
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";

@@ -10,8 +10,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"sidechain/x/oracle"
-	"sidechain/x/oracle/types"
+	"github.com/sideprotocol/sidechain/x/oracle"
+	"github.com/sideprotocol/sidechain/x/oracle/types"
 )
 
 func TestFuzz_Tally(t *testing.T) {

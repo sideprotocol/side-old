@@ -2,9 +2,9 @@ package keeper_test
 
 import (
 	"fmt"
+	"github.com/sideprotocol/sidechain/x/devearn/types"
+	epochstypes "github.com/sideprotocol/sidechain/x/epochs/types"
 	"math/big"
-	"sidechain/x/devearn/types"
-	epochstypes "sidechain/x/epochs/types"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"

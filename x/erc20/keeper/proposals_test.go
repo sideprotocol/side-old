@@ -15,9 +15,9 @@ import (
 	"github.com/evmos/ethermint/tests"
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
 
-	"sidechain/x/erc20/keeper"
-	"sidechain/x/erc20/types"
-	minttypes "sidechain/x/mint/types"
+	"github.com/sideprotocol/sidechain/x/erc20/keeper"
+	"github.com/sideprotocol/sidechain/x/erc20/types"
+	minttypes "github.com/sideprotocol/sidechain/x/mint/types"
 )
 
 const (

@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"sidechain/x/mint/simulation"
+	"github.com/sideprotocol/sidechain/x/mint/simulation"
 )
 
 func TestParamChangest(t *testing.T) {

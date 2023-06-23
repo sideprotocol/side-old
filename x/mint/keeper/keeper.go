@@ -4,7 +4,7 @@ import (
 	"cosmossdk.io/math"
 	"github.com/tendermint/tendermint/libs/log"
 
-	"sidechain/x/mint/types"
+	"github.com/sideprotocol/sidechain/x/mint/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"

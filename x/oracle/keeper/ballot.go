@@ -3,7 +3,7 @@ package keeper
 import (
 	"sort"
 
-	"sidechain/x/oracle/types"
+	"github.com/sideprotocol/sidechain/x/oracle/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

@@ -3,7 +3,7 @@ package types
 import (
 	"errors"
 	"fmt"
-	"sidechain/types"
+	"github.com/sideprotocol/sidechain/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"

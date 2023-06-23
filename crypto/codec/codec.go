@@ -19,7 +19,7 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
-	"sidechain/crypto/ethsecp256k1"
+	"github.com/sideprotocol/sidechain/crypto/ethsecp256k1"
 )
 
 // RegisterInterfaces register the Evmos key concrete types.

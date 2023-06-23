@@ -10,9 +10,9 @@ import (
 	evm "github.com/evmos/ethermint/x/evm/types"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	sidechainapp "github.com/sideprotocol/sidechain/app"
+	"github.com/sideprotocol/sidechain/x/devearn/types"
 	"github.com/stretchr/testify/suite"
-	sidechainapp "sidechain/app"
-	"sidechain/x/devearn/types"
 	"testing"
 )
 

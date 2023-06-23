@@ -32,8 +32,8 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
-	"sidechain/app"
-	"sidechain/utils"
+	"github.com/sideprotocol/sidechain/app"
+	"github.com/sideprotocol/sidechain/utils"
 )
 
 // PrepareEthTx creates an ethereum tx and signs it with the provided messages and private key.

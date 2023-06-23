@@ -14,8 +14,8 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"sidechain/x/oracle/keeper"
-	"sidechain/x/oracle/types"
+	"github.com/sideprotocol/sidechain/x/oracle/keeper"
+	"github.com/sideprotocol/sidechain/x/oracle/types"
 )
 
 // Simulation operation weights constants

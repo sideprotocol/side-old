@@ -19,10 +19,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
-	"sidechain/x/oracle/client/cli"
-	"sidechain/x/oracle/keeper"
-	"sidechain/x/oracle/simulation"
-	"sidechain/x/oracle/types"
+	"github.com/sideprotocol/sidechain/x/oracle/client/cli"
+	"github.com/sideprotocol/sidechain/x/oracle/keeper"
+	"github.com/sideprotocol/sidechain/x/oracle/simulation"
+	"github.com/sideprotocol/sidechain/x/oracle/types"
 )
 
 var (

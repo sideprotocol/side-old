@@ -2,11 +2,11 @@ package keeper_test
 
 import (
 	"fmt"
+	"github.com/sideprotocol/sidechain/x/devearn/types"
 	"math/big"
-	"sidechain/x/devearn/types"
 
-	erc20types "sidechain/x/erc20/types"
-	oracletypes "sidechain/x/oracle/types"
+	erc20types "github.com/sideprotocol/sidechain/x/erc20/types"
+	oracletypes "github.com/sideprotocol/sidechain/x/oracle/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

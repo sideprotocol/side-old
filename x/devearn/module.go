@@ -16,9 +16,9 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"sidechain/x/devearn/client/cli"
-	"sidechain/x/devearn/keeper"
-	"sidechain/x/devearn/types"
+	"github.com/sideprotocol/sidechain/x/devearn/client/cli"
+	"github.com/sideprotocol/sidechain/x/devearn/keeper"
+	"github.com/sideprotocol/sidechain/x/devearn/types"
 )
 
 var (

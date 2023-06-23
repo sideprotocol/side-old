@@ -3,7 +3,7 @@ package keeper_test
 import (
 	"reflect"
 
-	"sidechain/x/erc20/types"
+	"github.com/sideprotocol/sidechain/x/erc20/types"
 )
 
 func (suite *KeeperTestSuite) TestParams() {

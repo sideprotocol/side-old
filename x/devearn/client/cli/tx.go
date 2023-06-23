@@ -13,7 +13,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"sidechain/x/devearn/types"
+	"github.com/sideprotocol/sidechain/x/devearn/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 )

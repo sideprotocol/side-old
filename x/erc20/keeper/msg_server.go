@@ -28,8 +28,8 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/ethereum/go-ethereum/common"
 
-	"sidechain/contracts"
-	"sidechain/x/erc20/types"
+	"github.com/sideprotocol/sidechain/contracts"
+	"github.com/sideprotocol/sidechain/x/erc20/types"
 )
 
 var _ types.MsgServer = &Keeper{}

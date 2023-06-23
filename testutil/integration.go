@@ -17,7 +17,7 @@ import (
 	"github.com/evmos/ethermint/crypto/ethsecp256k1"
 	"github.com/evmos/ethermint/encoding"
 
-	"sidechain/app"
+	"github.com/sideprotocol/sidechain/app"
 )
 
 // SubmitProposal delivers a submit proposal tx for a given gov content.

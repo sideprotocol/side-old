@@ -3,9 +3,9 @@ package keeper_test
 import (
 	"testing"
 
+	testkeeper "github.com/sideprotocol/sidechain/testutil/keeper"
+	"github.com/sideprotocol/sidechain/x/devearn/types"
 	"github.com/stretchr/testify/require"
-	testkeeper "sidechain/testutil/keeper"
-	"sidechain/x/devearn/types"
 )
 
 func TestGetParams(t *testing.T) {

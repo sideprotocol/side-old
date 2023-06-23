@@ -2,10 +2,10 @@ syntax = "proto3";
 package sidechain.oracle;
 
 import "gogoproto/gogo.proto";
-import "sidechain/oracle/oracle.proto";
+import "github.com/sideprotocol/sidechain/oracle/oracle.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
-option go_package = "sidechain/x/oracle/types";
+option go_package = "github.com/sideprotocol/sidechain/x/oracle/types";
 
 // GenesisState defines the oracle module's genesis state.
 message GenesisState {

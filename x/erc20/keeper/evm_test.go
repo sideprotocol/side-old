@@ -11,9 +11,9 @@ import (
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
 	"github.com/stretchr/testify/mock"
 
-	"sidechain/contracts"
-	"sidechain/x/erc20/keeper"
-	"sidechain/x/erc20/types"
+	"github.com/sideprotocol/sidechain/contracts"
+	"github.com/sideprotocol/sidechain/x/erc20/keeper"
+	"github.com/sideprotocol/sidechain/x/erc20/types"
 )
 
 func (suite *KeeperTestSuite) TestQueryERC20() {

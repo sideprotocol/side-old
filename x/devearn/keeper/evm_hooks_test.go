@@ -2,10 +2,10 @@ package keeper_test
 
 import (
 	"fmt"
+	"github.com/sideprotocol/sidechain/testutil"
+	utiltx "github.com/sideprotocol/sidechain/testutil/tx"
+	"github.com/sideprotocol/sidechain/x/devearn/types"
 	"math/big"
-	"sidechain/testutil"
-	utiltx "sidechain/testutil/tx"
-	"sidechain/x/devearn/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"

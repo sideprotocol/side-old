@@ -3,7 +3,7 @@ package keeper
 import (
 	"context"
 
-	"sidechain/x/mint/types"
+	"github.com/sideprotocol/sidechain/x/mint/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

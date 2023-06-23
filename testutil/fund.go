@@ -1,7 +1,7 @@
 package testutil
 
 import (
-	minttypes "sidechain/x/mint/types"
+	minttypes "github.com/sideprotocol/sidechain/x/mint/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"

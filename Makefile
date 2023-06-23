@@ -311,7 +311,7 @@ docs:
 .PHONY: docs
 
 godocs:
-	@echo "--> Wait a few seconds and visit http://localhost:6060/pkg/github.com/sideprotocol/sidechain/types"
+	@echo "--> Wait a few seconds and visit http://localhost:6060/pkg/github.com/sideprotocol/github.com/sideprotocol/sidechain/types"
 	godoc -http=:6060
 
 # Start docs site at localhost:8080
@@ -534,7 +534,7 @@ localnet-build:
 
 # Start a 4-node testnet locally
 localnet-start: localnet-stop localnet-build
-	@if ! [ -f build/node0/$(SIDECHAIN_BINARY)/config/genesis.json ]; then docker run --rm -v $(CURDIR)/build:/sidechain:Z sidechain/node "./sidechaind testnet init-files --v 4 -o /sidechain --keyring-backend=test --starting-ip-address 192.167.10.2"; fi
+	@if ! [ -f build/node0/$(SIDECHAIN_BINARY)/config/genesis.json ]; then docker run --rm -v $(CURDIR)/build:/sidechain:Z github.com/sideprotocol/sidechain/node "./sidechaind testnet init-files --v 4 -o /sidechain --keyring-backend=test --starting-ip-address 192.167.10.2"; fi
 	docker-compose up -d
 
 # Stop testnet
@@ -550,15 +550,15 @@ localnet-clean:
 localnet-unsafe-reset:
 	docker-compose down
 ifeq ($(OS),Windows_NT)
-	@docker run --rm -v $(CURDIR)\build\node0\sidechaind:/sidechain\Z sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
-	@docker run --rm -v $(CURDIR)\build\node1\sidechaind:/sidechain\Z sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
-	@docker run --rm -v $(CURDIR)\build\node2\sidechaind:/sidechain\Z sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
-	@docker run --rm -v $(CURDIR)\build\node3\sidechaind:/sidechain\Z sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)\build\node0\sidechaind:/sidechain\Z github.com/sideprotocol/sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)\build\node1\sidechaind:/sidechain\Z github.com/sideprotocol/sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)\build\node2\sidechaind:/sidechain\Z github.com/sideprotocol/sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)\build\node3\sidechaind:/sidechain\Z github.com/sideprotocol/sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
 else
-	@docker run --rm -v $(CURDIR)/build/node0/sidechaind:/sidechain:Z sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
-	@docker run --rm -v $(CURDIR)/build/node1/sidechaind:/sidechain:Z sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
-	@docker run --rm -v $(CURDIR)/build/node2/sidechaind:/sidechain:Z sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
-	@docker run --rm -v $(CURDIR)/build/node3/sidechaind:/sidechain:Z sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)/build/node0/sidechaind:/sidechain:Z github.com/sideprotocol/sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)/build/node1/sidechaind:/sidechain:Z github.com/sideprotocol/sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)/build/node2/sidechaind:/sidechain:Z github.com/sideprotocol/sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)/build/node3/sidechaind:/sidechain:Z github.com/sideprotocol/sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
 endif
 
 # Clean testnet

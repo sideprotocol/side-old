@@ -7,9 +7,9 @@ import (
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"sidechain/app"
+	"github.com/sideprotocol/sidechain/app"
 
-	cmdcfg "sidechain/cmd/config"
+	cmdcfg "github.com/sideprotocol/sidechain/cmd/config"
 )
 
 func main() {

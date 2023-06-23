@@ -4,7 +4,7 @@ import (
 	context "context"
 	"math/big"
 
-	erc20types "sidechain/x/erc20/types"
+	erc20types "github.com/sideprotocol/sidechain/x/erc20/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"

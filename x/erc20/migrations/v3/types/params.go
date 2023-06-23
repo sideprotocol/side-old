@@ -19,7 +19,7 @@ package v3types
 import (
 	"fmt"
 
-	"sidechain/x/erc20/types"
+	"github.com/sideprotocol/sidechain/x/erc20/types"
 
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )

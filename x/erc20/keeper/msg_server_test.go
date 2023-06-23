@@ -12,8 +12,8 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 
-	"sidechain/x/erc20/keeper"
-	"sidechain/x/erc20/types"
+	"github.com/sideprotocol/sidechain/x/erc20/keeper"
+	"github.com/sideprotocol/sidechain/x/erc20/types"
 
 	"github.com/evmos/ethermint/x/evm/statedb"
 	evmtypes "github.com/evmos/ethermint/x/evm/types"

@@ -16,7 +16,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 
 	ethaccounts "github.com/ethereum/go-ethereum/accounts"
-	cryptocodec "sidechain/crypto/codec"
+	cryptocodec "github.com/sideprotocol/sidechain/crypto/codec"
 )
 
 var TestCodec amino.Codec

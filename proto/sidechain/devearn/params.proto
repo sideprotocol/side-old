@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "sidechain/x/devearn/types";
+option go_package = "github.com/sideprotocol/sidechain/x/devearn/types";
 
 // Params defines the parameters for the module.
 message Params {

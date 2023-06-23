@@ -10,10 +10,10 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"sidechain/x/mint/client/cli"
-	"sidechain/x/mint/keeper"
-	"sidechain/x/mint/simulation"
-	"sidechain/x/mint/types"
+	"github.com/sideprotocol/sidechain/x/mint/client/cli"
+	"github.com/sideprotocol/sidechain/x/mint/keeper"
+	"github.com/sideprotocol/sidechain/x/mint/simulation"
+	"github.com/sideprotocol/sidechain/x/mint/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"

@@ -10,7 +10,7 @@ import (
 	io "io"
 	math "math"
 	math_bits "math/bits"
-	"sidechain/x/erc20/types"
+	"github.com/sideprotocol/sidechain/x/erc20/types"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.

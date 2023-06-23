@@ -27,8 +27,8 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
 
-	"sidechain/contracts"
-	"sidechain/x/erc20/types"
+	"github.com/sideprotocol/sidechain/contracts"
+	"github.com/sideprotocol/sidechain/x/erc20/types"
 )
 
 var _ evmtypes.EvmHooks = Hooks{}

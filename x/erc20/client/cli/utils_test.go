@@ -3,7 +3,7 @@ package cli
 import (
 	"testing"
 
-	"sidechain/x/erc20/types"
+	"github.com/sideprotocol/sidechain/x/erc20/types"
 
 	"github.com/stretchr/testify/require"
 )

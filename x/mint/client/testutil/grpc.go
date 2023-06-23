@@ -9,7 +9,7 @@ import (
 
 	"github.com/gogo/protobuf/proto"
 
-	minttypes "sidechain/x/mint/types"
+	minttypes "github.com/sideprotocol/sidechain/x/mint/types"
 )
 
 func (s *IntegrationTestSuite) TestQueryGRPC() {
@@ -24,7 +24,7 @@ func (s *IntegrationTestSuite) TestQueryGRPC() {
 	}{
 		{
 			"gRPC request params",
-			fmt.Sprintf("%s/sidechain/mint/v1beta1/params", baseURL),
+			fmt.Sprintf("%s/github.com/sideprotocol/sidechain/mint/v1beta1/params", baseURL),
 			map[string]string{},
 			&minttypes.QueryParamsResponse{},
 			&minttypes.QueryParamsResponse{
@@ -34,7 +34,7 @@ func (s *IntegrationTestSuite) TestQueryGRPC() {
 		},
 		{
 			"gRPC request inflation",
-			fmt.Sprintf("%s/sidechain/mint/v1beta1/inflation", baseURL),
+			fmt.Sprintf("%s/github.com/sideprotocol/sidechain/mint/v1beta1/inflation", baseURL),
 			map[string]string{},
 			&minttypes.QueryInflationResponse{},
 			&minttypes.QueryInflationResponse{
@@ -43,7 +43,7 @@ func (s *IntegrationTestSuite) TestQueryGRPC() {
 		},
 		{
 			"gRPC request annual provisions",
-			fmt.Sprintf("%s/sidechain/mint/v1beta1/annual_provisions", baseURL),
+			fmt.Sprintf("%s/github.com/sideprotocol/sidechain/mint/v1beta1/annual_provisions", baseURL),
 			map[string]string{
 				grpctypes.GRPCBlockHeightHeader: "1",
 			},

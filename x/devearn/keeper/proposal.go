@@ -1,8 +1,8 @@
 package keeper
 
 import (
-	"sidechain/x/devearn/types"
-	erc20types "sidechain/x/erc20/types"
+	"github.com/sideprotocol/sidechain/x/devearn/types"
+	erc20types "github.com/sideprotocol/sidechain/x/erc20/types"
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"

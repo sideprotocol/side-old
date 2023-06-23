@@ -43,11 +43,11 @@ import (
 	servercfg "github.com/evmos/ethermint/server/config"
 	srvflags "github.com/evmos/ethermint/server/flags"
 
-	"sidechain/app"
+	"github.com/sideprotocol/sidechain/app"
 
-	sidechainkr "sidechain/crypto/keyring"
+	sidechainkr "github.com/sideprotocol/sidechain/crypto/keyring"
 
-	cmdcfg "sidechain/cmd/config"
+	cmdcfg "github.com/sideprotocol/sidechain/cmd/config"
 )
 
 const (

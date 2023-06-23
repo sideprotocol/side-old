@@ -1,20 +1,20 @@
 package v3_test
 
 import (
-	"sidechain/app"
+	"github.com/sideprotocol/sidechain/app"
 	"testing"
 
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/evmos/ethermint/encoding"
 
-	v3types "sidechain/x/erc20/migrations/v3/types"
+	v3types "github.com/sideprotocol/sidechain/x/erc20/migrations/v3/types"
 
-	"sidechain/x/erc20/types"
+	"github.com/sideprotocol/sidechain/x/erc20/types"
 
 	"github.com/stretchr/testify/require"
 
-	v3 "sidechain/x/erc20/migrations/v3"
+	v3 "github.com/sideprotocol/sidechain/x/erc20/migrations/v3"
 
 	"github.com/cosmos/cosmos-sdk/testutil"
 	sdk "github.com/cosmos/cosmos-sdk/types"

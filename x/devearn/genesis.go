@@ -1,8 +1,8 @@
 package devearn
 
 import (
-	"sidechain/x/devearn/keeper"
-	"sidechain/x/devearn/types"
+	"github.com/sideprotocol/sidechain/x/devearn/keeper"
+	"github.com/sideprotocol/sidechain/x/devearn/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

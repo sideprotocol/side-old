@@ -3,7 +3,7 @@ package keeper_test
 import (
 	"time"
 
-	"sidechain/x/epochs/types"
+	"github.com/sideprotocol/sidechain/x/epochs/types"
 )
 
 func (suite *KeeperTestSuite) TestEpochLifeCycle() {

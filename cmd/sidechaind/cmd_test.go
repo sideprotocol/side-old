@@ -9,9 +9,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 	"github.com/stretchr/testify/require"
 
-	sidechaind "sidechain/cmd/sidechaind"
+	sidechaind "github.com/sideprotocol/sidechain/cmd/sidechaind"
 
-	"sidechain/app"
+	"github.com/sideprotocol/sidechain/app"
 )
 
 func TestInitCmd(t *testing.T) {
