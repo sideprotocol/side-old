@@ -1,24 +1,30 @@
-#!/bin/bash
 
 KEYS[0]="dev0"
 KEYS[1]="dev1"
 KEYS[2]="dev2"
-CHAINID="sidehub-1818-1"
+CHAINID="sidechain_1818-1"
 MONIKER="localtestnet"
+BINARY="sidechaind"
+DENOMS=("aside" "susdt" "susdc" "sdai" "seth")
+INITIAL_SUPPLY="100000000000000000000000000"
+BLOCK_GAS=10000000
+MAX_GAS=10000000000
+
 # Remember to change to other types of keyring like 'file' in-case exposing to outside world,
 # otherwise your balance will be wiped quickly
 # The keyring test does not require private key to steal tokens from you
 KEYRING="test"
 KEYALGO="eth_secp256k1"
 LOGLEVEL="info"
-# Set dedicated home directory for the sidechaind instance
-HOMEDIR="$HOME/.sidechaind"
+# Set dedicated home directory for the $BINARY instance
+HOMEDIR="$HOME/.$BINARY"
 # to trace evm
 #TRACE="--trace"
 TRACE=""
 
 # Path variables
 CONFIG=$HOMEDIR/config/config.toml
+APP_TOML=$HOMEDIR/config/app.toml
 GENESIS=$HOMEDIR/config/genesis.json
 TMP_GENESIS=$HOMEDIR/config/tmp_genesis.json
 
@@ -43,101 +49,76 @@ else
 	overwrite="Y"
 fi
 
+
 # Setup local node if overwrite is set to Yes, otherwise skip setup
 if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	# Remove the previous folder
 	rm -rf "$HOMEDIR"
 
 	# Set client config
-	sidechaind config keyring-backend $KEYRING --home "$HOMEDIR"
-	sidechaind config chain-id $CHAINID --home "$HOMEDIR"
+	$BINARY config keyring-backend $KEYRING --home "$HOMEDIR"
+	$BINARY config chain-id $CHAINID --home "$HOMEDIR"
 
 	# If keys exist they should be deleted
 	for KEY in "${KEYS[@]}"; do
-		sidechaind keys add $KEY --keyring-backend $KEYRING --algo $KEYALGO --home "$HOMEDIR"
+		$BINARY keys add "$KEY" --keyring-backend $KEYRING --algo $KEYALGO --home "$HOMEDIR"
 	done
 
-	# Set moniker and chain-id for Sidechain (Moniker can be anything, chain-id must be an integer)
-	sidechaind init $MONIKER -o --chain-id $CHAINID --home "$HOMEDIR"
+	# Set moniker and chain-id for Cascadia (Moniker can be anything, chain-id must be an integer)
+	$BINARY init $MONIKER -o --chain-id $CHAINID --home "$HOMEDIR"
 
-	# Change parameter token denominations to aside
-	jq '.app_state["staking"]["params"]["bond_denom"]="aside"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	jq '.app_state["crisis"]["constant_fee"]["denom"]="aside"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	jq '.app_state["gov"]["deposit_params"]["min_deposit"][0]["denom"]="aside"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	jq '.app_state["evm"]["params"]["evm_denom"]="aside"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	jq '.app_state["inflation"]["params"]["mint_denom"]="aside"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-
+	jq --arg denom "${DENOMS[0]}" '.app_state["staking"]["params"]["bond_denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	jq --arg denom "${DENOMS[0]}" '.app_state["crisis"]["constant_fee"]["denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	jq --arg denom "${DENOMS[0]}" '.app_state["gov"]["deposit_params"]["min_deposit"][0]["denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	jq --arg gas "$BLOCK_GAS" '.app_state["feemarket"]["block_gas"]=$gas' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 	# Set gas limit in genesis
-	jq '.consensus_params["block"]["max_gas"]="10000000"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	jq --arg max_gas "$MAX_GAS" '.consensus_params["block"]["max_gas"]=$max_gas' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	# set custom pruning settings
+	sed -i.bak 's/pruning = "default"/pruning = "custom"/g' "$APP_TOML"
+	sed -i.bak 's/pruning-keep-recent = "0"/pruning-keep-recent = "2"/g' "$APP_TOML"
+	sed -i.bak 's/pruning-interval = "0"/pruning-interval = "10"/g' "$APP_TOML"
 
-	# Set claims start time
-	current_date=$(date -u +"%Y-%m-%dT%TZ")
-	jq -r --arg current_date "$current_date" '.app_state["claims"]["params"]["airdrop_start_time"]=$current_date' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-
-	# Set claims records for validator account
-	amount_to_claim=10000
-	claims_key=${KEYS[0]}
-	node_address=$(sidechaind keys show $claims_key --keyring-backend $KEYRING --home "$HOMEDIR" | grep "address" | cut -c12-)
-	jq -r --arg node_address "$node_address" --arg amount_to_claim "$amount_to_claim" '.app_state["claims"]["claims_records"]=[{"initial_claimable_amount":$amount_to_claim, "actions_completed":[false, false, false, false],"address":$node_address}]' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-
-	# Set claims decay
-	jq '.app_state["claims"]["params"]["duration_of_decay"]="1000000s"' >"$TMP_GENESIS" "$GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	jq '.app_state["claims"]["params"]["duration_until_decay"]="100000s"' >"$TMP_GENESIS" "$GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-
-	# Claim module account:
-	# 0xA61808Fe40fEb8B3433778BBC2ecECCAA47c8c47 || sidechain15cvq3ljql6utxseh0zau9m8ve2j8erz89m5wkz
-	jq -r --arg amount_to_claim "$amount_to_claim" '.app_state["bank"]["balances"] += [{"address":"side15cvq3ljql6utxseh0zau9m8ve2j8erz89m5wkz","coins":[{"denom":"aside", "amount":$amount_to_claim}]}]' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-
-	if [[ $1 == "pending" ]]; then
-		if [[ "$OSTYPE" == "darwin"* ]]; then
-			sed -i '' 's/timeout_propose = "3s"/timeout_propose = "30s"/g' "$CONFIG"
-			sed -i '' 's/timeout_propose_delta = "500ms"/timeout_propose_delta = "5s"/g' "$CONFIG"
-			sed -i '' 's/timeout_prevote = "1s"/timeout_prevote = "10s"/g' "$CONFIG"
-			sed -i '' 's/timeout_prevote_delta = "500ms"/timeout_prevote_delta = "5s"/g' "$CONFIG"
-			sed -i '' 's/timeout_precommit = "1s"/timeout_precommit = "10s"/g' "$CONFIG"
-			sed -i '' 's/timeout_precommit_delta = "500ms"/timeout_precommit_delta = "5s"/g' "$CONFIG"
-			sed -i '' 's/timeout_commit = "5s"/timeout_commit = "150s"/g' "$CONFIG"
-			sed -i '' 's/timeout_broadcast_tx_commit = "10s"/timeout_broadcast_tx_commit = "150s"/g' "$CONFIG"
-		else
-			sed -i 's/timeout_propose = "3s"/timeout_propose = "30s"/g' "$CONFIG"
-			sed -i 's/timeout_propose_delta = "500ms"/timeout_propose_delta = "5s"/g' "$CONFIG"
-			sed -i 's/timeout_prevote = "1s"/timeout_prevote = "10s"/g' "$CONFIG"
-			sed -i 's/timeout_prevote_delta = "500ms"/timeout_prevote_delta = "5s"/g' "$CONFIG"
-			sed -i 's/timeout_precommit = "1s"/timeout_precommit = "10s"/g' "$CONFIG"
-			sed -i 's/timeout_precommit_delta = "500ms"/timeout_precommit_delta = "5s"/g' "$CONFIG"
-			sed -i 's/timeout_commit = "5s"/timeout_commit = "150s"/g' "$CONFIG"
-			sed -i 's/timeout_broadcast_tx_commit = "10s"/timeout_broadcast_tx_commit = "150s"/g' "$CONFIG"
-		fi
-	fi
+	sed -i.bak 's/127.0.0.1:26657/0.0.0.0:26657/g' "$CONFIG"
+	sed -i.bak 's/cors_allowed_origins\s*=\s*\[\]/cors_allowed_origins = ["*",]/g' "$CONFIG"
 
 	# Allocate genesis accounts (cosmos formatted addresses)
 	for KEY in "${KEYS[@]}"; do
-		sidechaind add-genesis-account $KEY 100000000000000000000000000aside --keyring-backend $KEYRING --home "$HOMEDIR"
+	    BALANCES=""
+	    for DENOM in "${DENOMS[@]}"; do
+	        BALANCES+=",${INITIAL_SUPPLY}$DENOM"
+	    done
+	    $BINARY add-genesis-account "$KEY" ${BALANCES:1} --keyring-backend $KEYRING --home "$HOMEDIR"
 	done
 
-	# bc is required to add these big numbers
-	total_supply=$(echo "${#KEYS[@]} * 100000000000000000000000000 + $amount_to_claim" | bc)
-	jq -r --arg total_supply "$total_supply" '.app_state["bank"]["supply"][0]["amount"]=$total_supply' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-
+	# Adjust total supply
+	for DENOM in "${DENOMS[@]}"; do
+	    total_supply=$(echo "${#KEYS[@]} * $INITIAL_SUPPLY" | bc)
+	    if ! jq -e --arg denom "$DENOM" '.app_state["bank"]["supply"] | any(.denom == $denom)' "$GENESIS" >/dev/null; then
+	        jq -r --arg total_supply "$total_supply" --arg denom "$DENOM" '.app_state["bank"]["supply"] += [{"denom": $denom, "amount": $total_supply}]' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	    fi
+	done
+	
 	# Sign genesis transaction
-	sidechaind gentx ${KEYS[0]} 1000000000000000000000aside --keyring-backend $KEYRING --chain-id $CHAINID --home "$HOMEDIR"
+	$BINARY gentx "${KEYS[0]}" ${INITIAL_SUPPLY}${DENOMS[0]} --keyring-backend $KEYRING --chain-id $CHAINID --home "$HOMEDIR"
+
 	## In case you want to create multiple validators at genesis
-	## 1. Back to `sidechaind keys add` step, init more keys
-	## 2. Back to `sidechaind add-genesis-account` step, add balance for those
-	## 3. Clone this ~/.sidechaind home directory into some others, let's say `~/.clonedSidechaind`
+	## 1. Back to `$BINARY keys add` step, init more keys
+	## 2. Back to `$BINARY add-genesis-account` step, add balance for those
+	## 3. Clone this ~/.$BINARY home directory into some others, let's say `~/.clonedCascadiad`
 	## 4. Run `gentx` in each of those folders
-	## 5. Copy the `gentx-*` folders under `~/.clonedSidechaind/config/gentx/` folders into the original `~/.sidechaind/config/gentx`
+	## 5. Copy the `gentx-*` folders under `~/.clonedCascadiad/config/gentx/` folders into the original `~/.$BINARY/config/gentx`
 
 	# Collect genesis tx
-	sidechaind collect-gentxs --home "$HOMEDIR"
+	$BINARY collect-gentxs --home "$HOMEDIR"
 
 	# Run this to ensure everything worked and that the genesis file is setup correctly
-	sidechaind validate-genesis --home "$HOMEDIR"
+	$BINARY validate-genesis --home "$HOMEDIR"
 
 	if [[ $1 == "pending" ]]; then
 		echo "pending mode is on, please wait for the first block committed."
 	fi
 fi
 
+
 # Start the node (remove the --pruning=nothing flag if historical queries are not needed)
-sidechaind start --pruning=nothing "$TRACE" --log_level $LOGLEVEL --minimum-gas-prices=0.0001aside --json-rpc.api eth,txpool,personal,net,debug,web3 --api.enable --home "$HOMEDIR"
+$BINARY start --metrics "$TRACE" --log_level info --minimum-gas-prices=0.0001${DENOMS[0]} --json-rpc.api eth,txpool,personal,net,debug,web3 --api.enable --home "$HOMEDIR" --rpc.laddr "tcp://0.0.0.0:26657" --json-rpc.address 0.0.0.0:8545 --json-rpc.ws-address 0.0.0.0:8546
