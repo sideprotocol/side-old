@@ -19,5 +19,5 @@ for dir in $proto_dirs; do
 done
 
 # move proto files to the right places
-cp -r github.com/sideprotocol/sidechain/* ./
+cp -r github.com/sideprotocol/github.com/sideprotocol/github.com/sideprotocol/sidechain/* ./
 rm -rf github.com

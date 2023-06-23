@@ -1,62 +1,18 @@
 version: "3"
-
 services:
-  node0:
-    container_name: sidechainnode0
-    image: "github.com/sideprotocol/sidechain/node"
-    ports:
-      - "26656-26657:26656-26657"
+  node:
+    image: sidechain/node
+    tty: true
+    stdin_open: true
     volumes:
-      - ./build/node0/sidechaind:/sidechain:Z
-    command:
-      - /sidechaind start --home /sidechain
-    networks:
-      localnet:
-        ipv4_address: 192.167.10.2
-
-  node1:
-    container_name: sidechainnode1
-    image: "github.com/sideprotocol/sidechain/node"
+      - ./data:/root/.sidechaind
     ports:
-      - "26659-26660:26656-26657"
-    volumes:
-      - ./build/node1/sidechaind:/sidechain:Z
+      - 26657:26657
+      - 8545:8545
+      - 1317:1317
+      - 8546:8546
     command:
-      - /sidechaind start --home /sidechain
-    networks:
-      localnet:
-        ipv4_address: 192.167.10.3
-
-  node2:
-    container_name: sidechainnode2
-    image: "github.com/sideprotocol/sidechain/node"
-    ports:
-      - "26661-26662:26656-26657"
-    volumes:
-      - ./build/node2/sidechaind:/sidechain:Z
-    command:
-      - /sidechaind start --home /sidechain
-    networks:
-      localnet:
-        ipv4_address: 192.167.10.4
-
-  node3:
-    container_name: sidechainnode3
-    image: "github.com/sideprotocol/sidechain/node"
-    ports:
-      - "26663-26664:26656-26657"
-    volumes:
-      - ./build/node3/sidechaind:/sidechain:Z
-    command:
-      - /sidechaind start --home /sidechain
-    networks:
-      localnet:
-        ipv4_address: 192.167.10.5
-
-networks:
-  localnet:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 192.167.10.0/16
+      - start
+      - --rpc.laddr=tcp://0.0.0.0:26657
+      - --json-rpc.address=0.0.0.0:8545
+      - --json-rpc.ws-address=0.0.0.0:8546
