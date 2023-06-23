@@ -1013,9 +1013,9 @@ func (app *Sidechain) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.API
 	apiSvr.Router.HandleFunc("/openapi", openapiconsole.Handler(Name, "/static/openapi.yml"))
 
 	// register swagger API from root so that other applications can override easily
-	// if apiConfig.Swagger {
-	RegisterSwaggerAPI(clientCtx, apiSvr.Router)
-	// }
+	if apiConfig.Swagger {
+		RegisterSwaggerAPI(clientCtx, apiSvr.Router)
+	}
 }
 
 func (app *Sidechain) RegisterTxService(clientCtx client.Context) {
