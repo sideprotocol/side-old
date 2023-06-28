@@ -5,8 +5,8 @@ package sidechain.devearn;
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
-import "github.com/sideprotocol/sidechain/devearn/params.proto";
-import "github.com/sideprotocol/sidechain/devearn/assets.proto";
+import "sidechain/devearn/params.proto";
+import "sidechain/devearn/assets.proto";
 
 option go_package = "github.com/sideprotocol/sidechain/x/devearn/types";
 

@@ -29,7 +29,7 @@ require (
 	github.com/onsi/gomega v1.24.2
 	github.com/pkg/errors v0.9.1
 	github.com/rakyll/statik v0.1.7
-	github.com/sideprotocol/ibcswap/v6 v6.0.0-20230622150308-c6d2efa61ef1
+	github.com/sideprotocol/ibcswap/v6 v6.0.0-20230628124056-fa3b0e1396a1
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1

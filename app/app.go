@@ -616,12 +616,10 @@ func NewSidechain(
 	transferStack = erc20.NewIBCMiddleware(app.Erc20Keeper, transferStack)
 
 	// atomic stack
-	var atomicStack porttypes.IBCModule
-	atomicStack = ibcatomicswap.NewIBCModule(app.AtomicSwapKeeper)
+	atomicStack := ibcatomicswap.NewIBCModule(app.AtomicSwapKeeper)
 
 	// interchain stack
-	var interchainStack porttypes.IBCModule
-	interchainStack = ibcinterchainswap.NewIBCModule(app.InterchainSwapKeeper)
+	interchainStack := ibcinterchainswap.NewIBCModule(app.InterchainSwapKeeper)
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()

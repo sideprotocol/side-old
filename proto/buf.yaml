@@ -1,5 +1,6 @@
 version: v1
-name: buf.build/github.com/sideprotocol/sidechain
+name: buf.build/github.com/sideprotocol/sidechain/
+
 deps:
   - buf.build/cosmos/cosmos-sdk
   - buf.build/cosmos/cosmos-proto

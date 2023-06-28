@@ -3,9 +3,9 @@ package sidechain.devearn;
 
 import "cosmos/msg/v1/msg.proto";
 import "cosmos_proto/cosmos.proto";
-import "github.com/sideprotocol/sidechain/devearn/genesis.proto";
+import "sidechain/devearn/genesis.proto";
 import "gogoproto/gogo.proto";
-import "github.com/sideprotocol/sidechain/devearn/params.proto";
+import "sidechain/devearn/params.proto";
 option go_package = "github.com/sideprotocol/sidechain/x/devearn/types";
 
 // Msg defines the Msg service.

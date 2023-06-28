@@ -2,7 +2,7 @@ syntax = "proto3";
 package sidechain.mint.v1beta1;
 
 import "gogoproto/gogo.proto";
-import "github.com/sideprotocol/sidechain/mint/v1beta1/mint.proto";
+import "sidechain/mint/v1beta1/mint.proto";
 
 option go_package = "github.com/sideprotocol/sidechain/x/mint/types";
 
