@@ -9,55 +9,55 @@ build:
 accounts:
   - name: alice
     coins:
-      - 100000000000000000000000bside
-      - 100000000000000000000000busdt
-      - 100000000000000000000000busdc
-      - 100000000000000000000000beth
+      - 100000000000000000000000aalice
+      - 100000000000000000000000ausdt
+      - 100000000000000000000000adai
+      - 100000000000000000000000aevmos
   - name: bob
     mnemonic: actress letter whip youth flip sort announce chief traffic side destroy seek parade warrior awake scan panther nominee harsh spawn differ enroll glue become
     coins:
-      - 10000000000000000000000bside
-      - 100000000000000000000000busdt
-      - 100000000000000000000000busdc
-      - 100000000000000000000000beth
+      - 100000000000000000000000aalice
+      - 100000000000000000000000ausdt
+      - 100000000000000000000000adai
+      - 100000000000000000000000aevmos
   - name: david
     mnemonic: model talent wild salmon planet sure hill extra select curve royal super split swing liberty february country sibling label donkey pink butter picnic body
     coins:
-      - 1000000000000000000bside
-      - 100000000000000000000000busdt
-      - 100000000000000000000000busdc
-      - 100000000000000000000000beth
+      - 100000000000000000000000aalice
+      - 100000000000000000000000ausdt
+      - 100000000000000000000000adai
+      - 100000000000000000000000aevmos
 faucet:
   name: bob
   coins:
-    - 10bside
+    - 10aalice
   host: 0.0.0.0:4500
 genesis:
   app_state:
     crisis:
       constant_fee:
-        denom: bside
+        denom: aalice
     evm:
       params:
-        evm_denom: bside
+        evm_denom: aalice
     gov:
       deposit_params:
         min_deposit:
           - amount: "10000000"
-            denom: bside
+            denom: aalice
     mint:
       params:
-        mint_denom: bside
+        mint_denom: aalice
     staking:
       params:
-        bond_denom: bside
+        bond_denom: aalice
   chain_id: alice_1819-1
   consensus_params:
     block:
       max_gas: "100000000"
 validators:
   - name: alice
-    bonded: 10000000000000000000000bside
+    bonded: 10000000000000000000000aalice
     app:
       evm-rpc:
         address: 0.0.0.0:8545
