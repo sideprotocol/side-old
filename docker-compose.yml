@@ -1,16 +1,35 @@
 version: "3"
 services:
-  node:
+  node1:
     image: sidechain/node
     tty: true
     stdin_open: true
     volumes:
-      - ./data:/root/.sidechaind
+      - ./data1:/root/.sidechaind
     ports:
       - 26657:26657
       - 8545:8545
       - 1317:1317
       - 8546:8546
+      - 4500:4500
+    command:
+      - start
+      - --rpc.laddr=tcp://0.0.0.0:26657
+      - --json-rpc.address=0.0.0.0:8545
+      - --json-rpc.ws-address=0.0.0.0:8546
+
+  node2:
+    image: sidechain/node
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./data2:/root/.sidechaind
+    ports:
+      - 26658:26657
+      - 8547:8545
+      - 1318:1317
+      - 8548:8546
+      - 4501:4500
     command:
       - start
       - --rpc.laddr=tcp://0.0.0.0:26657

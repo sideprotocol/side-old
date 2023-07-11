@@ -142,8 +142,6 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	if [[ $1 == "pending" ]]; then
 		echo "pending mode is on, please wait for the first block committed."
 	fi
-
-	make update-swagger-docs
 fi
 
 

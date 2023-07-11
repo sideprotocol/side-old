@@ -157,8 +157,8 @@ import (
 	transferkeeper "github.com/cosmos/ibc-go/v6/modules/apps/transfer/keeper"
 
 	"github.com/cosmos/ibc-go/v6/modules/apps/transfer"
-	"github.com/ignite/cli/docs"
-	"github.com/ignite/cli/ignite/pkg/openapiconsole"
+
+	"github.com/sideprotocol/sidechain/docs"
 )
 
 func init() {
@@ -993,9 +993,31 @@ func (app *Sidechain) GetSubspace(moduleName string) paramstypes.Subspace {
 
 // RegisterAPIRoutes registers all application module routes with the provided
 // API server.
+// func (app *Sidechain) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
+// 	clientCtx := apiSvr.ClientCtx
+
+// 	// Register new tx routes from grpc-gateway.
+// 	authtx.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
+// 	// Register new tendermint queries routes from grpc-gateway.
+// 	tmservice.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
+// 	// Register node gRPC service for grpc-gateway.
+// 	node.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
+
+// 	// Register legacy and grpc-gateway routes for all modules.
+// 	ModuleBasics.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
+
+// 	// register app's OpenAPI routes.
+// 	apiSvr.Router.Handle("/static/openapi.yml", http.FileServer(http.FS(docs.Docs)))
+// 	apiSvr.Router.HandleFunc("/openapi", openapiconsole.Handler(Name, "/static/openapi.yml"))
+
+// 	// register swagger API from root so that other applications can override easily
+// 	//if apiConfig.Swagger {
+// 	RegisterSwaggerAPI(clientCtx, apiSvr.Router)
+// 	//}
+// }
+
 func (app *Sidechain) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
 	clientCtx := apiSvr.ClientCtx
-
 	// Register new tx routes from grpc-gateway.
 	authtx.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 	// Register new tendermint queries routes from grpc-gateway.
@@ -1003,17 +1025,11 @@ func (app *Sidechain) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.API
 	// Register node gRPC service for grpc-gateway.
 	node.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 
-	// Register legacy and grpc-gateway routes for all modules.
+	// Register grpc-gateway routes for all modules.
 	ModuleBasics.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 
 	// register app's OpenAPI routes.
-	apiSvr.Router.Handle("/static/openapi.yml", http.FileServer(http.FS(docs.Docs)))
-	apiSvr.Router.HandleFunc("/openapi", openapiconsole.Handler(Name, "/static/openapi.yml"))
-
-	// register swagger API from root so that other applications can override easily
-	if apiConfig.Swagger {
-		RegisterSwaggerAPI(clientCtx, apiSvr.Router)
-	}
+	docs.RegisterOpenAPIService(Name, apiSvr.Router)
 }
 
 func (app *Sidechain) RegisterTxService(clientCtx client.Context) {
