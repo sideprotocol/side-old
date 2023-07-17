@@ -51,7 +51,21 @@ Through this route mechanism, SideHub aims to play a crucial role in enhancing t
 
 ### General Design
 
-The routing module will be built on the Cosmos SDK, integrating with the ibcswap module's keeper to access and manage liquidity pools. The module will include several state variables, including SwapProgress, to track and manage the status of swap transactions.
+The Router module will receive data from the Inter-Blockchain Communication (IBC) module. If a direct pool for the asset pair requested by the user doesn't exist, the module will find an alternate path through an intermediary token.
+
+For instance, if a user wishes to swap TokenX for TokenY, but no direct pool exists, the module will suggest an alternate path such as TokenX -> TokenZ -> TokenY. The final result is subject to a slippage check.
+
+To enable this, we'll have a Middleware module that constructs a graph representing token connections. This graph will be represented as a map data structure where each key-value pair signifies a token and its directly connected tokens respectively.
+
+Upon receiving a token pair, the system will first determine if a direct swap is possible. If not, the module will use the constructed graph to find possible paths. To avoid computational overhead, we only consider paths that involve a single intermediary token. While it's technically feasible to find the complete path using Dijkstra's algorithm, it could lead to multiple nested IBC calls which add unnecessary overhead. Hence, we limit the design to a single intermediary token.
+
+The intersection of two array lists from the graph representing the connections of the two tokens gives us all possible paths. The list is then sorted based on the path with the lowest fees, and the swap is attempted over the two pools.
+
+The system will first estimate how much of the intermediary token can be obtained from TokenX. It then triggers an IBC swap with a special memo (swapID). In the AcknowledgeStep, if a nested IBC swap is received, the result is returned through the OnReceive function to the counter party chain.
+
+This operation will be executed as a goroutine. To prevent an infinite loop scenario in case the acknowledgement isn't received, we'll introduce a time limit, after which the routine will be forcibly closed. If the function enters an infinite loop, the OnReceive function will not return a value, triggering a timeout for the initial IBC call group. In the IBC swap module, when such a situation occurs, we will also forcibly timeout the nested IBC call.
+
+To implement this, we need to update Ibc-swap module.
 
 ![Flow](./route.png)
 
