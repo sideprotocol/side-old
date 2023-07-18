@@ -56,3 +56,5 @@ validators:
 client:
   openapi:
     path: "docs/static/openapi.yml"
+prefix:
+  address: "side"
