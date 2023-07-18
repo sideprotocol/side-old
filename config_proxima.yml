@@ -10,16 +10,13 @@ accounts:
   - name: alice
     coins:
       - 100000000000000000000000aside
-      - 100000000000000000000000aetc
       - 100000000000000000000000ausdc
-      - 100000000000000000000000aeth
+
   - name: bob
     mnemonic: actress letter whip youth flip sort announce chief traffic side destroy seek parade warrior awake scan panther nominee harsh spawn differ enroll glue become
     coins:
       - 100000000000000000000000aside
-      - 100000000000000000000000aetc
       - 100000000000000000000000ausdc
-      - 100000000000000000000000aeth
 faucet:
   name: bob
   coins:
@@ -44,7 +41,7 @@ genesis:
     staking:
       params:
         bond_denom: aside
-  chain_id: sidehub_1818-1
+  chain_id: proxima_1818-1
   consensus_params:
     block:
       max_gas: "100000000"
@@ -59,3 +56,5 @@ validators:
 client:
   openapi:
     path: "docs/static/openapi.yml"
+prefix:
+  address: "side"

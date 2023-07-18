@@ -10,6 +10,7 @@ import (
 	"github.com/sideprotocol/sidechain/app"
 
 	cmdcfg "github.com/sideprotocol/sidechain/cmd/config"
+	
 )
 
 func main() {
@@ -32,7 +33,10 @@ func main() {
 func setupConfig() {
 	// set the address prefixes
 	config := sdk.GetConfig()
+
 	cmdcfg.SetBech32Prefixes(config)
+	
+	
 	// TODO fix
 	// if err := cmdcfg.EnableObservability(); err != nil {
 	// 	panic(err)
