@@ -9,55 +9,45 @@ build:
 accounts:
   - name: alice
     coins:
-      - 100000000000000000000000aalice
-      - 100000000000000000000000ausdt
-      - 100000000000000000000000adai
-      - 100000000000000000000000aevmos
+      - 100000000000000000000000aside
+      - 100000000000000000000000ausdc
+
   - name: bob
     mnemonic: actress letter whip youth flip sort announce chief traffic side destroy seek parade warrior awake scan panther nominee harsh spawn differ enroll glue become
     coins:
-      - 100000000000000000000000aalice
-      - 100000000000000000000000ausdt
-      - 100000000000000000000000adai
-      - 100000000000000000000000aevmos
-  - name: david
-    mnemonic: model talent wild salmon planet sure hill extra select curve royal super split swing liberty february country sibling label donkey pink butter picnic body
-    coins:
-      - 100000000000000000000000aalice
-      - 100000000000000000000000ausdt
-      - 100000000000000000000000adai
-      - 100000000000000000000000aevmos
+      - 100000000000000000000000aside
+      - 100000000000000000000000ausdc
 faucet:
   name: bob
   coins:
-    - 10aalice
+    - 10aside
   host: 0.0.0.0:4500
 genesis:
   app_state:
     crisis:
       constant_fee:
-        denom: aalice
+        denom: aside
     evm:
       params:
-        evm_denom: aalice
+        evm_denom: aside
     gov:
       deposit_params:
         min_deposit:
           - amount: "10000000"
-            denom: aalice
+            denom: aside
     mint:
       params:
-        mint_denom: aalice
+        mint_denom: aside
     staking:
       params:
-        bond_denom: aalice
-  chain_id: alice_1819-1
+        bond_denom: aside
+  chain_id: proxima_1818-1
   consensus_params:
     block:
       max_gas: "100000000"
 validators:
   - name: alice
-    bonded: 10000000000000000000000aalice
+    bonded: 10000000000000000000000aside
     app:
       evm-rpc:
         address: 0.0.0.0:8545
