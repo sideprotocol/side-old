@@ -9,14 +9,14 @@ build:
 accounts:
   - name: alice
     coins:
-      - 100000000000000000000000aside
-      - 100000000000000000000000ausdc
+      - 10000000000000000000000000000000aside
+      - 10000000000000000000000000000000ausdc
 
   - name: bob
     mnemonic: actress letter whip youth flip sort announce chief traffic side destroy seek parade warrior awake scan panther nominee harsh spawn differ enroll glue become
     coins:
-      - 100000000000000000000000aside
-      - 100000000000000000000000ausdc
+      - 10000000000000000000000000000000aside
+      - 10000000000000000000000000000000ausdc
 faucet:
   name: bob
   coins:

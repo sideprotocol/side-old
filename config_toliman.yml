@@ -9,18 +9,18 @@ build:
 accounts:
   - name: alice
     coins:
-      - 100000000000000000000000atoli
-      - 100000000000000000000000aeth
+      - 10000000000000000000000000000000atoli
+      - 10000000000000000000000000000000aeth
   - name: bob
     mnemonic: actress letter whip youth flip sort announce chief traffic side destroy seek parade warrior awake scan panther nominee harsh spawn differ enroll glue become
     coins:
-      - 100000000000000000000000atoli
-      - 100000000000000000000000aeth
+      - 10000000000000000000000000000000atoli
+      - 10000000000000000000000000000000aeth
   - name: david
     mnemonic: model talent wild salmon planet sure hill extra select curve royal super split swing liberty february country sibling label donkey pink butter picnic body
     coins:
-      - 100000000000000000000000atoli
-      - 100000000000000000000000aeth
+      - 10000000000000000000000000000000atoli
+      - 10000000000000000000000000000000aeth
 faucet:
   name: bob
   coins:
