@@ -11,7 +11,7 @@ modified: 2023-05-23
 
 ## Synopsis
 
-This standard document specifies sidehub route module.
+In this system, asynchronous acknowledgements play a crucial role in facilitating atomic multi-hop packet flows. Only after the completion of the forward/multi-hop sequence, whether it results in success or failure, is the acknowledgement recorded on the chain where the user initiated the packet flow. This asynchronous approach implies that an IBC application user needs to only monitor the chain where the initial transfer was dispatched for tracking the response of the entire transaction process. This setup effectively simplifies user interaction and reduces monitoring complexity, thus enhancing user experience in a technically advanced and professionally designed system.
 
 ## Motivation
 
@@ -29,11 +29,20 @@ Through this route mechanism, SideHub aims to play a crucial role in enhancing t
 
 ### Definitions
 
-`SwapProgress`: Represents the status of a user's swap transaction in the DeFi ecosystem. This status could be 'pending', 'completed', 'failed', etc. It provides transparency and helps users understand the state of their transactions within a DeFi application.
-
-`Nested IBC Call`: A concept where an Inter-Blockchain Communication (IBC) protocol call is made within the context of another IBC call. This is especially useful in DeFi applications where operations might involve multiple chains. For instance, a user could want to swap a token on chain A for a token on chain C, but the swap might need to go through chain B first.
-
-`Broker Token`: This concept represents an intermediate token used for bridging transactions between multiple tokens or chains. For example, if you want to trade token $A for token $B, but there isn't a direct market, a broker token $C could be used to facilitate this trade ($A->$C, then $C->$B). This is especially prevalent in DeFi applications where liquidity might not be directly available between two tokens, and an intermediary (broker) token is used instead.
+```
+        channel-0 channel-1         channel-2 channel-3
+┌───────┐       ibc        ┌───────┐        ibc       ┌───────┐
+│Chain A│◄────────────────►│SideHub│◄────────────────►│Chain B│
+└───────┘                  └───────┘                  └───────┘
+     1. transfer 2. recv_packet     3. forward
+         ─────────────────► packet  ─────────────────►
+                            forward   4. timeout
+                            middleware◄───────────────
+                                    5. forward retry
+                                    ─────────────────►
+         7. ack ERR                 6. timeout
+         ◄─────────────────         ◄─────────────────
+```
 
 ### Desired Properties
 
@@ -55,243 +64,251 @@ The Router module will receive data from the Inter-Blockchain Communication (IBC
 
 For instance, if a user wishes to swap TokenX for TokenY, but no direct pool exists, the module will suggest an alternate path such as TokenX -> TokenZ -> TokenY. The final result is subject to a slippage check.
 
-To enable this, we'll have a Middleware module that constructs a graph representing token connections. This graph will be represented as a map data structure where each key-value pair signifies a token and its directly connected tokens respectively.
+The Sidehub, in this context, acts as a middleware layer for broadcasting IBCSwap messages received from other chains.
+This will be implemented similarly with this [`packet-forward-middleware`](https://github.com/strangelove-ventures/packet-forward-middleware) module provided by `Strangelove Ventures`.
 
-Upon receiving a token pair, the system will first determine if a direct swap is possible. If not, the module will use the constructed graph to find possible paths. To avoid computational overhead, we only consider paths that involve a single intermediary token. While it's technically feasible to find the complete path using Dijkstra's algorithm, it could lead to multiple nested IBC calls which add unnecessary overhead. Hence, we limit the design to a single intermediary token.
+This module is designed for `Transfer` ibc call for ics-20 tokens. so need to customize this to support `atomicswap` and `interchainswap`
 
-The intersection of two array lists from the graph representing the connections of the two tokens gives us all possible paths. The list is then sorted based on the path with the lowest fees, and the swap is attempted over the two pools.
+They implemented Transfer middleware but we will implement `atomicswap`, `interchainswap` broad casting function
 
-The system will first estimate how much of the intermediary token can be obtained from TokenX. It then triggers an IBC swap with a special memo (swapID). In the AcknowledgeStep, if a nested IBC swap is received, the result is returned through the OnReceive function to the counter party chain.
+Upon successful integration of this middleware, it becomes feasible to establish connections from any source chain to a target chain linked to the SideHub. This interconnected chain architecture further facilitates the relay of various Inter-Blockchain Communication (IBC) packets through this path. Operations under the protocols ics100 and ics101, which include MakeOrder, TakeOrder, CancelOrder, MakePool,TakePool, CancelPool, MakeMultiAssetDeposit, TakeMultiAssetDeposit,SingleAssetDeposit, and MultiAssetWithdraw, can effectively be implemented with two paths (source chain -> side hub -> destination chain).
 
-This operation will be executed as a goroutine. To prevent an infinite loop scenario in case the acknowledgement isn't received, we'll introduce a time limit, after which the routine will be forcibly closed. If the function enters an infinite loop, the OnReceive function will not return a value, triggering a timeout for the initial IBC call group. In the IBC swap module, when such a situation occurs, we will also forcibly timeout the nested IBC call.
+The primary challenge arises in identifying viable paths for token pair swaps, a process that will be implemented off-chain. An in-depth understanding of all available token pairs is crucial for this task. This requirement calls for the registration and off-chain storage of all created pools.
 
-To implement this, we need to update Ibc-swap module.
+When a user selects a token pair for a swap, the system must sift through the token pairs array to identify potential paths. An optimal path is then determined from this array, with the optimization rule centered around satisfying the final result slippage as much as possible.
 
-![Flow](./route.png)
+As this process operates entirely off-chain, paths can be pre-calculated based on the token pair and stored off-chain. This path pre-calculation significantly enhances system performance and ensures seamless user experience by avoiding real-time computation.
 
-### Algorithms
+For further ease of use, the frontend will access these pre-calculated paths, presenting them to users for selection. To avoid potential timeouts and maintain system responsiveness, the current implementation will limit the path to 2-3 steps.
 
-The routing module will utilize several algorithms to manage the token swap process:
+Off-chain database storing the token pairs and paths must be updated regularly as chain states and token pair availability can change over time. This comprehensive, performance-optimized approach effectively combines on-chain operations and off-chain computations, offering a streamlined user experience while efficiently handling complex operations.
 
-- Transaction Routing Algorithm: This algorithm will manage the routing of transactions between different chains and liquidity pools.
+### Data Structure
 
-- Transaction Status Update Algorithm: This algorithm will update the SwapProgress status of transactions based on their progress.
+this packet will be saved as a map data structure in genesis status.
+so we will save all packets based on relayer address as a map data struture so can trace multi-hop process.
 
-- Failed Transaction Handling Algorithm: This algorithm will manage failed transactions, including retrying them if possible and necessary.
+```typescript
+interface InFlightPacket {
+  originalSenderAddress: string;
+  refundChannelId: string;
+  refundPortId: string;
+  packetSrcChannelId: string;
+  packetSrcPortId: string;
+  packetTimeoutTimestamp: number;
+  packetTimeoutHeight: string;
+  packetData: Uint8Array;
+  refundSequence: number;
+  retriesRemaining: number;
+  timeout: number;
+  nonrefundable: boolean;
+}
 
-#### Transaction Routing Algorithm
+interface GenesisState {
+  params: Params; // Params is assumed to be another defined interface
 
-This part will be implement in offchain side. Based on pool information, we can suggest most effect swap pool to users.
-first of all, algorithm has to find a pool which can get maximum amount of token which exist in side hub and also is possible to exchange source chain token.
-Maybe there are various path and pools, but final target is to get maximum amount target token.
+  // The map is represented as an object in TypeScript
+  // The keys are strings and the values are InFlightPacket interfaces
+  inFlightPackets: { [key: string]: InFlightPacket };
+}
 
-There are module which can estimate swap amount, so it's possible but it's require massive loops so we will treat this in offchain.
+interface IBCMiddleware {
+  app: IBCModule; // Assuming IBCModule is defined elsewhere
+  keeper: Keeper; // Assuming Keeper is defined elsewhere
 
-chain only provide all possible pools.
-
-#### Transaction Status Update Algorithm
-
-#### Data packets
-
-Only one packet data type is required: `IBCSwapDataPacket`, which specifies the message type and data(protobuf marshalled). It is a wrapper for interchain swap messages.
-
-```ts
-// IBCSwapDataPacket is used to wrap message for relayer.
-interface SideSwapDataPacket {
-    data: []byte, // Bytes
+  retriesOnTimeout: number;
+  forwardTimeout: number; // Assuming this is in milliseconds
+  refundTimeout: number; // Assuming this is in milliseconds
 }
 ```
 
-### Sub-protocols
+### Channel lifecycle management
 
-Interchain Swap implements the following sub-protocols:
+```typescript
 
-```protobuf
-  rpc SideSwap(MsgSideSwapRequest) returns (MsgSideSwapResponse);
-```
+class NewIBCMiddleware {
+   app: IBCModule;
+   keeper: Keeper;
+   retriesOnTimeout: number;
+   forwardTimeout: number;
+   refundTimeout: number;
 
-#### Interfaces for sub-protocols
+   function new(
+    app: IBCModule,
+    keeper: Keeper,
+    retriesOnTimeout: number,
+    forwardTimeout: number,
+    refundTimeout: number,
+  ): IBCMiddleware {
+    return {
+        app: app,
+        keeper: keeper,
+        retriesOnTimeout: retriesOnTimeout,
+        forwardTimeout: forwardTimeout,
+        refundTimeout: refundTimeout,
+    };
+ }
 
-```ts
-enum SwapProgress {
-  pending
-  success
-  fail
-}
-enum MessageType {
-  SideSwap,
-}
+  OnChanOpenInit(
 
-interface Coin {
-  denom: string;
-  amount: int64;
-  decimal: int32;
-}
+  order: ChannelOrder,
+  connectionHops: [Identifier],
+  portIdentifier: Identifier,
+  channelIdentifier: Identifier,
+  counterpartyPortIdentifier: Identifier,
+  counterpartyChannelIdentifier: Identifier,
+  version: string) => (version: string, err: Error) {
 
-interface MsgSwapWithRouterRequest {
-  sourcePort: string;
-  sourceChannel: string;
-  sender: string;
-  recipientInRoute: string;
-  recipientInTarget: string;
-  tokenIn: Coin;
-  outDenom: string;
-  sequence: number;
-  slippage: int32;
-  path: string[];
-}
+      return this.app.OnChanOpenInit(ctx, order, connectionHops, portID, channelID, chanCap, counterparty, version)
+  }
 
-interface RouteRegistry {
-  path:string[]
-  status: SwapProgress
-}
-```
-
-### Control Flow And Life Scope
-
-These are methods that output a state change on the sidehub, which will be subsequently synced to the destination chain.
-
-this part can be added to ics 101. in this case, other chains only need to integrate ics101 to use router, don't need to integrate this module directly
-
-```ts
-
-function SwapWithRouter(msg MsgSwapWithRouterRequest) {
-    abortTransactionUnless(msg.sender != null)
-    abortTransactionUnless(msg.tokenIn != null && msg.tokenIn.amount > 0)
-    abortTransactionUnless(msg.tokenOut != null && msg.tokenOut.amount > 0)
-    abortTransactionUnless(msg.slippage > 0)
-    abortTransactionUnless(msg.recipientInRouter != null)
-     abortTransactionUnless(msg.recipientInTarget != null)
-
-
-    // swap source chain token to side chain token.
-
-    const pool = store.interchainswapKeeper.findPoolById(msg.path[0])
-    abortTransactionUnless(pool != null)
-    abortTransactionUnless(pool.status == PoolStatus.POOL_STATUS_READY)
-
-    // lock swap-in token to the swap module
-    const escrowAddr = escrowAddress(pool.counterpartyPort, pool.counterpartyChannel)
-    bank.sendCoins(msg.sender, escrowAddr, msg.tokenIn.denom)
-
-    const amm = new InterchainMarketMaker(pool, params.getPoolFeeRate())
-    const outToken = amm.leftSwap(msg.tokenIn, msg.tokenOut)
-    // TODO add slippage check here.
-
-    // update local pool state,
-    const assetIn = pool.findAssetByDenom(msg.tokenIn.denom)
-    assetIn.balance.amount += msg.tokenIn.amount
-    const assetOut = pool.findAssetByDenom(msg.tokenOut.denom)
-    assetOut.balance.amount -= outToken.amount
-    store.savePool(pool)
-
-    // contructs the IBC data packet
-    const packet = {
-        type: MessageType.SideSwap,
-        data: protobuf.encode(msg), // encode the request message to protobuf bytes.
+   OnChanOpenTry(
+        ctx: sdk.Context,
+        order: channeltypes.Order,
+        connectionHops: string[],
+        portID: string, channelID: string,
+        chanCap: capabilitytypes.Capability,
+        counterparty: channeltypes.Counterparty,
+        counterpartyVersion: string
+    ): [string, Error] {
+        return this.app.OnChanOpenTry(ctx, order, connectionHops, portID, channelID, chanCap, counterparty, counterpartyVersion);
     }
 
-    sendSideIBCSwapDataPacket(packet, msg.sourcePort, msg.sourceChannel, msg.timeoutHeight, msg.timeoutTimestamp)
-}
-```
-
-```ts
-
-function swap(poolId:string, tokenIn:Coin) MsgSwapResponse {
-
-    abortTransactionUnless(msg.sender != null)
-    abortTransactionUnless(msg.tokenIn != null && msg.tokenIn.amount > 0)
-    abortTransactionUnless(msg.tokenOut != null && msg.tokenOut.amount > 0)
-    abortTransactionUnless(msg.slippage > 0)
-    abortTransactionUnless(msg.recipient != null)
-
-    const pool = store.interchainswapKeeper.findPoolById(generatePoolId(path[0]))
-    abortTransactionUnless(firstPool != null)
-    // fetch fee rate from the params module, maintained by goverance
-    const feeRate = pool.FeeRate
-    const amm = new interchainswapTypes.InterchainMarketMaker(pool, feeRate)
-
-    const outToken = amm.leftSwap(msg.tokenIn)
-    return outToken
-}
-
-function onReceivedSwapWithRouter(msg: MsgSwapWithRouterRequest) MsgSwapResponse {
-
-    abortTransactionUnless(msg.sender != null)
-    abortTransactionUnless(msg.tokenIn != null && msg.tokenIn.amount > 0)
-    abortTransactionUnless(msg.tokenOut != null && msg.tokenOut.amount > 0)
-    abortTransactionUnless(msg.slippage > 0)
-    abortTransactionUnless(msg.recipient != null)
-
-    const sideToken = swap(path[0],msg.TokenIn)
-    abortTransactionUnless(sideToken.amount != 0)
-    abortTransactionUnless(bank.includeDenom(sideToken.denom))
-
-    const targetToken = swap(path[1],sideToken)
-    abortTransactionUnless(sideToken.amount >= sideToken.amount*(10000-msg.slippage)/10000)
-
-    //store.interchainswapKeeper.onReceived()
-    const swapID = getID(msg.sender, msg.sequence)
-    const swapMsg: MsgSwapRequest =   {
-        sender: msg.sender,
-        swapId: swapID,
-        swapType: SwapType.LeftSwap,
-        tokenIn: sideToken,
-        tokenOut: msg.denomOut,
-        slippage: msg.slippage; // max tolerated slippage
-        recipient: msg.recipient,
+    OnChanOpenAck(
+        ctx: sdk.Context,
+        portID: string,
+        channelID: string,
+        counterpartyChannelID: string,
+        counterpartyVersion: string,
+    ): Error {
+        return this.app.OnChanOpenAck(ctx, portID, channelID, counterpartyChannelID, counterpartyVersion);
     }
-    // build interchainswap
-    store.interchainswapKeeper.leftSwap(swapMsg)
-    store.setSwapProgress(swapID, {path: msg.Path, status: SwapProgress.pending})
 
-    return { tokens: outToken }
-}
+    OnChanOpenConfirm(ctx: sdk.Context, portID: string, channelID: string): Error {
+        return this.app.OnChanOpenConfirm(ctx, portID, channelID);
+    }
 
-function ListenInterchainSwapAcknowledgement(ack channeltypes.Acknowledgement, packet    channeltypes.Packet) {
-    var ack channeltypes.Acknowledgement
-    if (!ack.success()) {
-        const swapPacket = protobuf.decode(packet.data)
-        switch swapPacket.type {
-        case SWAP:
-            var msg: MsgSwapRequest = protobuf.decode(swapPacket.data)
-            store.setSwapProgress(msg.SwapID, SwapProgress.fail)
-            refundBrokerToken(msg.sender, msg.swapID,msg.tokenIn,recipient)
-            break;
+    OnChanCloseInit(ctx: sdk.Context, portID: string, channelID: string): Error {
+        return this.app.OnChanCloseInit(ctx, portID, channelID);
+    }
+
+    OnChanCloseConfirm(ctx: sdk.Context, portID: string, channelID: string): Error {
+        return this.app.OnChanCloseConfirm(ctx, portID, channelID);
+    }
+
+   onRecvPacket(
+    ctx: Context,
+    packet: Channel.Packet,
+    relayer: string
+    ): Acknowledgement| null {
+
+        // ...
+        let metadata = m.forward;
+
+        // The function getBoolFromAny() must be defined or imported
+        let processed = getBoolFromAny(new ProcessedKey());
+        let nonrefundable = getBoolFromAny(new NonrefundableKey());
+        let disableDenomComposition = getBoolFromAny(new DisableDenomCompositionKey());
+
+        if (metadata.validate() !== null) {
+            return new Channel.ErrorAcknowledgement(metadata.validate().message);
         }
-    } else {
-        const swapPacket = protobuf.decode(packet.data)
-        switch swapPacket.type {
-        case SWAP:
-            var msg: MsgSwapRequest = protobuf.decode(swapPacket.data)
-            store.setSwapProgress(msg.SwapID, SwapProgress.success)
-            break;
+
+        if (!processed) {
+            let ack = this.app.onRecvPacket(ctx, packet, relayer);
+            if (ack === null || !ack.success()) {
+                return ack;
+            }
         }
+
+        // The function getDenomForThisChain() must be defined or imported
+        let denomOnThisChain = !disableDenomComposition ?
+        getDenomForThisChain(packet.destinationPort, packet.destinationChannel, packet.sourcePort, packet.sourceChannel, data.denom) :
+        data.denom;
+
+        // ...
+
+        // Some lines are omitted here
+
+        if( metadata.Validate()) {
+	        return channeltypes.NewErrorAcknowledgement(err)
+        }
+
+	// if this packet has been handled by another middleware in the stack there may be no need to call into the
+	// underlying app, otherwise the transfer module's OnRecvPacket callback could be invoked more than once
+	// which would mint/burn vouchers more than once
+        if (!processed) {
+	        ack := im.app.OnRecvPacket(ctx, packet, relayer)
+	        if ack == nil || !ack.Success() {
+	        	return ack
+	        }
+        }
+
+	// if this packet's token denom is already the base denom for some native token on this chain,
+	// we do not need to do any further composition of the denom before forwarding the packet
+        let  denomOnThisChain = data.Denom
+	if !disableDenomComposition {
+		denomOnThisChain = getDenomForThisChain(
+			packet.DestinationPort, packet.DestinationChannel,
+			packet.SourcePort, packet.SourceChannel,
+			data.Denom,
+		)
+	}
+
+
+        abortTransactionUnless(data.Amount !== 0)
+
+
+	const token = {denom: denomOnThisChain, amount:amountInt}
+        abortTransactionUnless(metadata.Timeout)
+        abortTransactionUnless(metadata.Timeout)
+
+        const timeout = metadata.Timeout
+
+	const retries =  this.app.retriesOnTimeout
+
+
+	err = this.app.keeper.ForwardTransferPacket(nil, packet, data.Sender, data.Receiver, metadata, token, retries, timeout, []metrics.Label{}, nonrefundable)
+	if err != nil {
+		return channeltypes.NewErrorAcknowledgement(err)
+	}
+
+	// returning nil ack will prevent WriteAcknowledgement from occurring for forwarded packet.
+	// This is intentional so that the acknowledgement will be written later based on the ack/timeout of the forwarded packet.
+        return ;
+   }
+
+    onAcknowledgementPacket(
+        packet: Channel.Packet,
+        acknowledgement: Buffer,
+        relayer: string
+    ): Promise<Error | null> {
+    let data: FungibleTokenPacketData;
+    try {
+        data = FungibleTokenPacketData.deserializeBinary(packet.getData_asU8());
+    } catch (err) {
+        this.keeper.logger(ctx).error('packetForwardMiddleware error parsing packet data from ack packet', {
+            sequence: packet.sequence,
+            srcChannel: packet.sourceChannel,
+            srcPort: packet.sourcePort,
+            dstChannel: packet.destinationChannel,
+            dstPort: packet.destinationPort,
+            error: err.message
+        });
+        return this.app.onAcknowledgementPacket(ctx, packet, acknowledgement, relayer);
     }
-    return nil
+
+    // ...
+
+    // More lines to be converted here
+
+                return null;
+        }
 }
 
-function ListenInterchainSwapTimeOut(ack,packet channeltypes.Packet) {
-    const swapPacket = protobuf.decode(packet.data)
-    switch swapPacket.type {
-      case SWAP:
-          var msg: MsgSwapRequest = protobuf.decode(swapPacket.data)
-          store.setSwapProgress(msg.SwapID, SwapProgress.failed)
-          refundBrokerToken(msg.sender, msg.swapID,msg.tokenIn,recipient)
-          break;
-      }
-    return nil
-}
 
-function refundBrokerToken(sender:string,swapID: string,refundToken Coin, recipient) {
-    const route = store.getRouteRegistry(sender, swapID)
-    const pool = store.interchainswapKeeper.getLiquidityPool(route.path[0])
-    const escrowAddr = escrowAddress(pool.counterpartyPort, pool.counterpartyChannel)
-            bank.send(escrowAddr, recipient, msg.TokenIn)
-    bank.send(escrowAddr, recipient, msg.TokenIn)
-}
+
+
+
+
 ```
-
-## Risks
-
-- if nested ibc call might be failed, user can't get target token. instead of that, user will get broker token.

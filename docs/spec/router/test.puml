@@ -1,0 +1,40 @@
+@startuml
+
+skinparam defaultFontColor #000000
+skinparam defaultFontName Arial
+skinparam shadowing false
+
+start
+
+partition "Receive Token Pair" {
+  :**Receive token pair (TokenX, TokenY)** from IBC module;
+}
+
+if (Does a direct pool for TokenX and TokenY exist?) then (Yes)
+  :<back:#B1E289>**Execute direct swap**;
+else (No)
+  partition "Graph Construction and Path Find" {
+    :<back:#F5DA81>**Middleware creates a graph**\nrepresenting token connections;
+    :<back:#F5DA81>**Find possible paths** via a\nsingle intermediary token (TokenZ);
+    :<back:#F5DA81>**Sort paths** based on the path\nwith the lowest fees;
+    :<back:#F5DA81>**Estimate how much of TokenZ**\ncan be obtained from TokenX;
+    :<back:#F5DA81>**Trigger an IBC swap** with a\nspecial memo (swapID);
+  }
+endif
+
+if (Is acknowledgement received in time limit?) then (Yes)
+  partition "Successful Swap" {
+    :<back:#B1E289>**Result is returned** through OnReceive\nfunction to the counter party chain;
+  }
+else (No)
+  partition "Timeout Handling" {
+    :<back:#F78181>**Goroutine is forcibly closed**;
+    :<back:#F78181>**Nested IBC call is also forcibly timed out**;
+  }
+endif
+
+:Output the final result of the token swap;
+
+stop
+
+@enduml
