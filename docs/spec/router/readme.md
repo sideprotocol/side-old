@@ -6,7 +6,7 @@ category: SIDEHUB/X
 kind: routing
 author: Marian <marian@side.one>
 created: 2022-05-23
-modified: 2023-05-23
+modified: 2023-07-24
 ---
 
 ## Synopsis
@@ -247,46 +247,45 @@ class NewIBCMiddleware {
 	// if this packet's token denom is already the base denom for some native token on this chain,
 	// we do not need to do any further composition of the denom before forwarding the packet
         let  denomOnThisChain = data.Denom
-	if !disableDenomComposition {
-		denomOnThisChain = getDenomForThisChain(
-			packet.DestinationPort, packet.DestinationChannel,
-			packet.SourcePort, packet.SourceChannel,
-			data.Denom,
-		)
-	}
+	      if !disableDenomComposition {
+	      	denomOnThisChain = getDenomForThisChain(
+	      		packet.DestinationPort, packet.DestinationChannel,
+	      		packet.SourcePort, packet.SourceChannel,
+	      		data.Denom,
+	      	)
+	      }
 
 
         abortTransactionUnless(data.Amount !== 0)
 
-
-	const token = {denom: denomOnThisChain, amount:amountInt}
-        abortTransactionUnless(metadata.Timeout)
+	      const token = {denom: denomOnThisChain, amount:amountInt}
         abortTransactionUnless(metadata.Timeout)
 
         const timeout = metadata.Timeout
+	      const retries =  this.app.retriesOnTimeout
 
-	const retries =  this.app.retriesOnTimeout
 
+	      const err = this.app.keeper.ForwardTransferPacket(nil, packet, data.Sender, data.Receiver, metadata, token, retries, timeout, []metrics.Label{}, nonrefundable)
 
-	err = this.app.keeper.ForwardTransferPacket(nil, packet, data.Sender, data.Receiver, metadata, token, retries, timeout, []metrics.Label{}, nonrefundable)
-	if err != nil {
-		return channeltypes.NewErrorAcknowledgement(err)
-	}
+        if err != null {
+		      return channeltypes.NewErrorAcknowledgement(err)
+	      }
 
-	// returning nil ack will prevent WriteAcknowledgement from occurring for forwarded packet.
-	// This is intentional so that the acknowledgement will be written later based on the ack/timeout of the forwarded packet.
+	      // returning nil ack will prevent WriteAcknowledgement from occurring for forwarded packet.
+	      // This is intentional so that the acknowledgement will be written later based on the ack/timeout of the forwarded packet.
         return ;
-   }
+    }
 
     onAcknowledgementPacket(
         packet: Channel.Packet,
         acknowledgement: Buffer,
         relayer: string
     ): Promise<Error | null> {
-    let data: FungibleTokenPacketData;
-    try {
-        data = FungibleTokenPacketData.deserializeBinary(packet.getData_asU8());
-    } catch (err) {
+
+      let data: FungibleTokenPacketData;
+      try {
+        data = protobuf.parse(packet.getData());
+      } catch (err) {
         this.keeper.logger(ctx).error('packetForwardMiddleware error parsing packet data from ack packet', {
             sequence: packet.sequence,
             srcChannel: packet.sourceChannel,
@@ -296,19 +295,80 @@ class NewIBCMiddleware {
             error: err.message
         });
         return this.app.onAcknowledgementPacket(ctx, packet, acknowledgement, relayer);
-    }
+      }
 
-    // ...
 
-    // More lines to be converted here
+      var ack channeltypes.Acknowledgement
+      const ack = channeltypes.SubModuleCdc.UnmarshalJSON(acknowledgement)
 
-                return null;
-        }
+
+	    inFlightPacket := im.keeper.GetAndClearInFlightPacket(ctx, packet.SourceChannel, packet.SourcePort, packet.Sequence)
+	    if inFlightPacket != nil {
+		  // this is a forwarded packet, so override handling to avoid refund from being processed.
+		  return this.keeper.WriteAcknowledgementForForwardedPacket(ctx, packet, data, inFlightPacket, ack)
+	  }
+
+	  return this.app.OnAcknowledgementPacket(ctx, packet, acknowledgement, relayer)
+  }
+
+
+  // OnTimeoutPacket implements the IBCModule interface.
+  function OnTimeoutPacket(packet channeltypes.Packet, relayer sdk.AccAddress)  {
+	  var data transfertypes.FungibleTokenPacketData
+    const data = protobuf.parse(packet.GetData())
+	  if (data == null) {
+	  	this.keeper.Logger().Error("packetForwardMiddleware error parsing packet data from timeout packet",
+	  		"sequence", packet.Sequence,
+	  		"src-channel", packet.SourceChannel, "src-port", packet.SourcePort,
+	  		"dst-channel", packet.DestinationChannel, "dst-port", packet.DestinationPort,
+	  		"error", err,
+	  	)
+	  	return this.app.OnTimeoutPacket(packet, relayer)
+	  }
+
+	  this.keeper.Logger().Debug("packetForwardMiddleware OnAcknowledgementPacket",
+	  	"sequence", packet.Sequence,
+	  	"src-channel", packet.SourceChannel, "src-port", packet.SourcePort,
+	  	"dst-channel", packet.DestinationChannel, "dst-port", packet.DestinationPort,
+	  	"amount", data.Amount, "denom", data.Denom,
+	  )
+
+	  const inFlightPacket = this.keeper.TimeoutShouldRetry(packet)
+    abortTransactionUnless(inFlightPacket !== undefined)
+	  return im.app.OnTimeoutPacket(ctx, packet, relayer)
+  }
+
+  // SendPacket implements the ICS4 Wrapper interface.
+  function SendPacket(
+  	chanCap capabilitytypes.Capability,
+  	sourcePort string, sourceChannel string,
+  	timeoutHeight clienttypes.Height,
+  	timeoutTimestamp uint64,
+  	data []byte,
+  ) {
+  	return this.keeper.SendPacket(chanCap, sourcePort, sourceChannel, timeoutHeight, timeoutTimestamp, data)
+  }
+
+  // WriteAcknowledgement implements the ICS4 Wrapper interface.
+  function WriteAcknowledgement(
+  	chanCap capabilitytypes.Capability,
+  	packet ibcexported.PacketI,
+  	ack ibcexported.Acknowledgement,
+  ) error {
+  	return this.keeper.WriteAcknowledgement(chanCap, packet, ack)
+  }
+
+  function GetAppVersion(
+  	portID,
+  	channelID string,
+  ) (string, bool) {
+  	return this.keeper.GetAppVersion(ctx, portID, channelID)
+  }
 }
-
-
-
-
-
-
 ```
+
+### Improvements
+
+- Timeout Adjustment: The timeout settings are crucial for efficient packet handling. It's important to ensure that the timeout duration is sufficient to complete all hop-ibc calls, preventing premature termination of processes.
+
+- Path Calculation Prior to Packet Transmission: Before initiating packet transfers, especially with swaps, it's essential to first determine the optimal path. This means calculating the complete path in advance to ensure efficient routing and improved performance."
