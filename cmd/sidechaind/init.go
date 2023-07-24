@@ -89,6 +89,7 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 			config.StateSync.TrustPeriod = 112 * time.Hour
 
 			config.SetRoot(clientCtx.HomeDir)
+			
 
 			chainID, _ := cmd.Flags().GetString(flags.FlagChainID)
 			if chainID == "" {

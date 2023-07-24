@@ -9,48 +9,49 @@ build:
 accounts:
   - name: alice
     coins:
-      - 100000000000000000000000aside
-      - 100000000000000000000000aetc
-      - 100000000000000000000000ausdc
-      - 100000000000000000000000aeth
+      - 10000000000000000000000000000000atoli
+      - 10000000000000000000000000000000aeth
   - name: bob
     mnemonic: actress letter whip youth flip sort announce chief traffic side destroy seek parade warrior awake scan panther nominee harsh spawn differ enroll glue become
     coins:
-      - 100000000000000000000000aside
-      - 100000000000000000000000aetc
-      - 100000000000000000000000ausdc
-      - 100000000000000000000000aeth
+      - 10000000000000000000000000000000atoli
+      - 10000000000000000000000000000000aeth
+  - name: david
+    mnemonic: model talent wild salmon planet sure hill extra select curve royal super split swing liberty february country sibling label donkey pink butter picnic body
+    coins:
+      - 10000000000000000000000000000000atoli
+      - 10000000000000000000000000000000aeth
 faucet:
   name: bob
   coins:
-    - 10aside
+    - 10atoli
   host: 0.0.0.0:4500
 genesis:
   app_state:
     crisis:
       constant_fee:
-        denom: aside
+        denom: atoli
     evm:
       params:
-        evm_denom: aside
+        evm_denom: atoli
     gov:
       deposit_params:
         min_deposit:
           - amount: "10000000"
-            denom: aside
+            denom: atoli
     mint:
       params:
-        mint_denom: aside
+        mint_denom: atoli
     staking:
       params:
-        bond_denom: aside
-  chain_id: sidehub_1818-1
+        bond_denom: atoli
+  chain_id: toliman_1819-1
   consensus_params:
     block:
       max_gas: "100000000"
 validators:
   - name: alice
-    bonded: 10000000000000000000000aside
+    bonded: 10000000000000000000000atoli
     app:
       evm-rpc:
         address: 0.0.0.0:8545
