@@ -17,10 +17,16 @@ accounts:
       - 10000000000000000000000000000000atoli
       - 10000000000000000000000000000000aeth
   - name: david
-    mnemonic: model talent wild salmon planet sure hill extra select curve royal super split swing liberty february country sibling label donkey pink butter picnic body
     coins:
       - 10000000000000000000000000000000atoli
       - 10000000000000000000000000000000aeth
+
+  - name: faucet
+    address: toli1je8jw030lyw0mkyf8rd452gsstvrls4m3rk77j
+    coins:
+      - 100000000000000000000000000000000000atoli
+      - 100000000000000000000000000000000000aeth
+    
 faucet:
   name: bob
   coins:
