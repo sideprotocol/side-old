@@ -1,8 +1,0 @@
-syntax = "proto3";
-package sidechain.devearn;
-
-option go_package = "github.com/sideprotocol/sidechain/x/devearn/types";
-
-message Assets {
-  string denom = 2;
-}
