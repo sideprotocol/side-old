@@ -15,6 +15,10 @@ RUN mkdir /app/config
 RUN mkdir -p /app/cosmovisor/genesis/bin
 RUN mkdir -p /app/cosmovisor/upgrades
 
+# Copy the library into the container
+COPY development/deployment/libwasmvm.x86_64.so /usr/local/lib/
+RUN ldconfig
+
 COPY development/build/sidechaind  /app/cosmovisor/genesis/bin/sidechaind
 COPY development/testnet/node0 ./
 COPY cosmovisor/cosmovisor /app/cosmovisor/
@@ -27,4 +31,4 @@ EXPOSE 8545
 EXPOSE 4500
 EXPOSE 9090
 EXPOSE 1317
-CMD ./cosmovisor/cosmovisor start --json-rpc.api eth,txpool,personal,net,debug,web3 --api.enable --rpc.laddr "tcp://0.0.0.0:26657" --json-rpc.address 0.0.0.0:8545 --json-rpc.ws-address 0.0.0.0:8546 --home /app
+CMD ./cosmovisor/cosmovisor start --api.enable --home /app

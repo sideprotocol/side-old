@@ -15,6 +15,10 @@ RUN mkdir /app/config
 RUN mkdir -p /app/cosmovisor/genesis/bin
 RUN mkdir -p /app/cosmovisor/upgrades
 
+# Copy the library into the container
+COPY development/deployment/libwasmvm.x86_64.so /usr/local/lib/
+RUN ldconfig
+
 COPY development/build/sidechaind /app/cosmovisor/genesis/bin/sidechaind
 COPY development/testnet/node4 ./
 COPY cosmovisor/cosmovisor /app/cosmovisor/
