@@ -1,0 +1,30 @@
+######################################
+## Dockerfile for local development ##
+######################################
+FROM ubuntu:22.04
+
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get dist-upgrade -y
+WORKDIR /app
+
+ENV HOME=/app
+ENV DAEMON_HOME=/app
+ENV DAEMON_NAME=sidechaind
+
+RUN mkdir /app/config
+RUN mkdir -p /app/cosmovisor/genesis/bin
+RUN mkdir -p /app/cosmovisor/upgrades
+
+COPY development/build/sidechaind  /app/cosmovisor/genesis/bin/sidechaind
+COPY development/testnet/node0 ./
+COPY cosmovisor/cosmovisor /app/cosmovisor/
+
+RUN chmod +x /app/cosmovisor/genesis/bin/sidechaind
+RUN chown -R nobody:nogroup /app
+USER nobody
+EXPOSE 26656
+EXPOSE 8545
+EXPOSE 4500
+EXPOSE 9090
+EXPOSE 1317
+CMD ./cosmovisor/cosmovisor start --json-rpc.api eth,txpool,personal,net,debug,web3 --api.enable --rpc.laddr "tcp://0.0.0.0:26657" --json-rpc.address 0.0.0.0:8545 --json-rpc.ws-address 0.0.0.0:8546 --home /app

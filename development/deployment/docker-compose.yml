@@ -1,0 +1,44 @@
+##########################################
+## Docker compose for local development ##
+##########################################
+version: "3.5"
+
+services:
+  node0:
+    build:
+      context: ../..
+      dockerfile: development/deployment/Dockerfile-node0
+    container_name: side_testnet_node0
+    ports:
+      - "26657:26657"
+      - "8545:8545"
+      - "1317:1317"
+      - "4500:4500"
+
+  node1:
+    build:
+      context: ../..
+      dockerfile: development/deployment/Dockerfile-node1
+    container_name: side_testnet_node1
+
+  node2:
+    build:
+      context: ../..
+      dockerfile: development/deployment/Dockerfile-node2
+    container_name: side_testnet_node2
+
+  node3:
+    build:
+      context: ../..
+      dockerfile: development/deployment/Dockerfile-node3
+    container_name: side_testnet_node3
+
+  node4:
+    build:
+      context: ../..
+      dockerfile: development/deployment/Dockerfile-node4
+    container_name: side_testnet_node4
+
+networks:
+  default:
+    name: side-network
