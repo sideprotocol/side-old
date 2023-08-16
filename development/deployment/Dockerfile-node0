@@ -26,9 +26,7 @@ COPY cosmovisor/cosmovisor /app/cosmovisor/
 RUN chmod +x /app/cosmovisor/genesis/bin/sidechaind
 RUN chown -R nobody:nogroup /app
 USER nobody
-EXPOSE 26656
-EXPOSE 8545
+EXPOSE 26657
 EXPOSE 4500
-EXPOSE 9090
 EXPOSE 1317
-CMD ./cosmovisor/cosmovisor start --api.enable --home /app
+CMD ./cosmovisor/cosmovisor start --api.enable --api.swagger --rpc.laddr "tcp://0.0.0.0:26657" --api.address "tcp://0.0.0.0:1317"  --home /app
