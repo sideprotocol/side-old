@@ -49,7 +49,7 @@ genesis:
 validators:
   - name: alice
     bonded: 10000000000000000000000aside
-    home: $HOME/.sidechaind
+    home: $HOME/.sidechain
 client:
   openapi:
     path: "docs/static/openapi.yml"
