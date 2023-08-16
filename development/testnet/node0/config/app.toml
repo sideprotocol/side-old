@@ -8,7 +8,7 @@
 # The minimum gas prices a validator is willing to accept for processing a
 # transaction. A transaction's fees must meet the minimum of any denomination
 # specified in this config (e.g. 0.25token1;0.0001token2).
-minimum-gas-prices = "0aside"
+minimum-gas-prices = "0stake"
 
 # default: the last 362880 states are kept, pruning at 10 block intervals
 # nothing: all historic states will be saved, nothing will be deleted (i.e. archiving node)
@@ -59,13 +59,16 @@ inter-block-cache = true
 # ["message.sender", "message.recipient"]
 index-events = []
 
-# IavlCacheSize set the size of the iavl tree cache. 
-# Default cache size is 50mb.
+# IavlCacheSize set the size of the iavl tree cache (in number of nodes).
 iavl-cache-size = 781250
 
-# IavlDisableFastNode enables or disables the fast node feature of IAVL. 
+# IAVLDisableFastNode enables or disables the fast node feature of IAVL. 
 # Default is false.
 iavl-disable-fastnode = false
+
+# IAVLLazyLoading enable/disable the lazy loading of iavl store.
+# Default is false.
+iavl-lazy-loading = false
 
 # AppDBBackend defines the database backend type to use for the application and snapshots DBs.
 # An empty string indicates that a fallback will be used.
@@ -114,13 +117,13 @@ global-labels = [
 [api]
 
 # Enable defines if the API server should be enabled.
-enable = false
+enable = true
 
 # Swagger defines if swagger documentation should automatically be registered.
 swagger = false
 
 # Address defines the API server to listen on.
-address = "tcp://0.0.0.0:1317"
+address = "tcp://localhost:1317"
 
 # MaxOpenConnections defines the number of maximum open connections.
 max-open-connections = 1000
@@ -131,7 +134,7 @@ rpc-read-timeout = 10
 # RPCWriteTimeout defines the Tendermint RPC write timeout (in seconds).
 rpc-write-timeout = 0
 
-# RPCMaxBodyBytes defines the Tendermint maximum response body (in bytes).
+# RPCMaxBodyBytes defines the Tendermint maximum request body (in bytes).
 rpc-max-body-bytes = 1000000
 
 # EnableUnsafeCORS defines if CORS should be enabled (unsafe - use it at your own risk).
@@ -183,7 +186,7 @@ denom-to-suggest = "uatom"
 enable = true
 
 # Address defines the gRPC server address to bind to.
-address = "0.0.0.0:9090"
+address = "localhost:9090"
 
 # MaxRecvMsgSize defines the max message size in bytes the server can receive.
 # The default value is 10MB.
@@ -204,7 +207,7 @@ max-send-msg-size = "2147483647"
 enable = true
 
 # Address defines the gRPC-web server address to bind to.
-address = "0.0.0.0:9091"
+address = "localhost:9091"
 
 # EnableUnsafeCORS defines if CORS should be enabled (unsafe - use it at your own risk).
 enable-unsafe-cors = false
@@ -219,7 +222,7 @@ enable-unsafe-cors = false
 
 # snapshot-interval specifies the block interval at which local state sync snapshots are
 # taken (0 to disable).
-snapshot-interval = 5000
+snapshot-interval = 0
 
 # snapshot-keep-recent specifies the number of recent snapshots to keep and serve (0 to keep all).
 snapshot-keep-recent = 2
@@ -248,88 +251,14 @@ stop-node-on-error = "true"
 fsync = "false"
 
 ###############################################################################
-###                             EVM Configuration                           ###
+###                         Mempool                                         ###
 ###############################################################################
 
-[evm]
-
-# Tracer defines the 'vm.Tracer' type that the EVM will use when the node is run in
-# debug mode. To enable tracing use the '--evm.tracer' flag when starting your node.
-# Valid types are: json|struct|access_list|markdown
-tracer = ""
-
-# MaxTxGasWanted defines the gas wanted for each eth tx returned in ante handler in check tx mode.
-max-tx-gas-wanted = 0
-
-###############################################################################
-###                           JSON RPC Configuration                        ###
-###############################################################################
-
-[json-rpc]
-
-# Enable defines if the gRPC server should be enabled.
-enable = true
-
-# Address defines the EVM RPC HTTP server address to bind to.
-address = "127.0.0.1:8545"
-
-# Address defines the EVM WebSocket server address to bind to.
-ws-address = "127.0.0.1:8546"
-
-# API defines a list of JSON-RPC namespaces that should be enabled
-# Example: "eth,txpool,personal,net,debug,web3"
-api = "eth,net,web3"
-
-# GasCap sets a cap on gas that can be used in eth_call/estimateGas (0=infinite). Default: 25,000,000.
-gas-cap = 25000000
-
-# EVMTimeout is the global timeout for eth_call. Default: 5s.
-evm-timeout = "5s"
-
-# TxFeeCap is the global tx-fee cap for send transaction. Default: 1eth.
-txfee-cap = 1
-
-# FilterCap sets the global cap for total number of filters that can be created
-filter-cap = 200
-
-# FeeHistoryCap sets the global cap for total number of blocks that can be fetched
-feehistory-cap = 100
-
-# LogsCap defines the max number of results can be returned from single 'eth_getLogs' query.
-logs-cap = 10000
-
-# BlockRangeCap defines the max block range allowed for 'eth_getLogs' query.
-block-range-cap = 10000
-
-# HTTPTimeout is the read/write timeout of http json-rpc server.
-http-timeout = "30s"
-
-# HTTPIdleTimeout is the idle timeout of http json-rpc server.
-http-idle-timeout = "2m0s"
-
-# AllowUnprotectedTxs restricts unprotected (non EIP155 signed) transactions to be submitted via
-# the node's RPC when the global parameter is disabled.
-allow-unprotected-txs = false
-
-# MaxOpenConnections sets the maximum number of simultaneous connections
-# for the server listener.
-max-open-connections = 0
-
-# EnableIndexer enables the custom transaction indexer for the EVM (ethereum transactions).
-enable-indexer = false
-
-# MetricsAddress defines the EVM Metrics server address to bind to. Pass --metrics in CLI to enable
-# Prometheus metrics path: /debug/metrics/prometheus
-metrics-address = "127.0.0.1:6065"
-
-###############################################################################
-###                             TLS Configuration                           ###
-###############################################################################
-
-[tls]
-
-# Certificate path defines the cert.pem file path for the TLS configuration.
-certificate-path = ""
-
-# Key path defines the key.pem file path for the TLS configuration.
-key-path = ""
+[mempool]
+# Setting max-txs to 0 will allow for a unbounded amount of transactions in the mempool.
+# Setting max_txs to negative 1 (-1) will disable transactions from being inserted into the mempool.
+# Setting max_txs to a positive number (> 0) will limit the number of transactions in the mempool, by the specified amount.
+#
+# Note, this configuration only applies to SDK built-in app-side mempool
+# implementations.
+max-txs = "5000"
