@@ -29,4 +29,4 @@ USER nobody
 EXPOSE 26657
 EXPOSE 9091
 EXPOSE 1317
-CMD ./cosmovisor/cosmovisor start --api.enable --api.swagger --rpc.laddr "tcp://0.0.0.0:26657" --rpc.grpc_laddr "tcp://0.0.0.0:9091" --api.address "tcp://0.0.0.0:1317"  --home /app
+CMD ./cosmovisor/cosmovisor start --api.enable --grpc.enable --api.swagger --rpc.laddr "tcp://0.0.0.0:26657" --rpc.grpc_laddr "tcp://0.0.0.0:9091"  --api.address "tcp://0.0.0.0:1317"  --home /app

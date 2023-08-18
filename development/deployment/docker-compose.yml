@@ -11,6 +11,7 @@ services:
     container_name: side_testnet_node0
     ports:
       - "26657:26657"
+      - "9091:9091"
       - "1317:1317"
   node1:
     build:
