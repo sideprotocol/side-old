@@ -9,46 +9,46 @@ build:
 accounts:
   - name: alice
     coins:
-      - 10000000000000000000000000000000aside
-      - 10000000000000000000000000000000ausdc
+      - 10000000000000000000000000000000uside
+      - 10000000000000000000000000000000uusdc
 
   - name: bob
     mnemonic: actress letter whip youth flip sort announce chief traffic side destroy seek parade warrior awake scan panther nominee harsh spawn differ enroll glue become
     coins:
-      - 10000000000000000000000000000000aside
-      - 10000000000000000000000000000000ausdc
+      - 10000000000000000000000000000000uside
+      - 10000000000000000000000000000000uusdc
 
 faucet:
   name: bob
   coins:
-    - 10aside
+    - 10uside
   host: 0.0.0.0:4500
 genesis:
   app_state:
     crisis:
       constant_fee:
-        denom: aside
+        denom: uside
     evm:
       params:
-        evm_denom: aside
+        evm_denom: uside
     gov:
       deposit_params:
         min_deposit:
           - amount: "10000000"
-            denom: aside
+            denom: uside
     mint:
       params:
-        mint_denom: aside
+        mint_denom: uside
     staking:
       params:
-        bond_denom: aside
+        bond_denom: uside
   chain_id: side_1818-1
   consensus_params:
     block:
       max_gas: "100000000"
 validators:
   - name: alice
-    bonded: 10000000000000000000000aside
+    bonded: 10000000000000000000000uside
     home: $HOME/.sidechain
 client:
   openapi:
