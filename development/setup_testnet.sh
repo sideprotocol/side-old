@@ -1,15 +1,19 @@
 #!/bin/bash
 # Remove original setup
 rm -rf testnet
+##chain-id: side-testnet-1/side-devnet-1 
 
-DEFAULTDENOM="aside"
+DEFAULT_DENOM="aside"
+ALT_DENOM="ausdc"
+
+CHAIN_ID="side_1818-1"
 TESTNET_PATH=${PWD}/testnet
 cd build/
 
 # Initialize nodes
 for i in {0..4}
 do
-    ./sidechaind init "node$i" --home ${TESTNET_PATH}/node$i --chain-id side_1818-1
+    ./sidechaind init "node$i" --home ${TESTNET_PATH}/node$i --chain-id $CHAIN_ID
 done
 
 # Add keys for each node
@@ -26,8 +30,18 @@ do
         echo "Error fetching address for wm-node$i"
         exit 1
     fi
-    ./sidechaind add-genesis-account "$ADDRESS" 100000000000000000000000aside,100000000000000000000000usdc --home ${TESTNET_PATH}/node0/
+    ./sidechaind add-genesis-account "$ADDRESS" 100000000000000000000000$DEFAULT_DENOM,100000000000000000000000$ALT_DENOM --home ${TESTNET_PATH}/node0/
 done
+
+# Restore the faucet key from the mnemonic
+
+echo "y" | ./sidechaind keys delete faucet --home ${TESTNET_PATH}/node0/
+./sidechaind keys add faucet --recover --home ${TESTNET_PATH}/node0/ <<< "actress letter whip youth flip sort announce chief traffic side destroy seek parade warrior awake scan panther nominee harsh spawn differ enroll glue become"
+
+# Add the faucet address to the genesis file with an initial balance
+FAUCET_ADDRESS=$(./sidechaind keys show faucet --home ${TESTNET_PATH}/node0/ | grep address | awk 'BEGIN { FS=": " } { print $2 }')
+./sidechaind add-genesis-account "$FAUCET_ADDRESS" 100000000000000000000000$DEFAULT_DENOM,100000000000000000000000$ALT_DENOM --home ${TESTNET_PATH}/node0/
+
 
 # Copy genesis.json to all nodes
 for i in {1..4}
@@ -40,12 +54,13 @@ mkdir -p ${TESTNET_PATH}/gentx/
 # Generate gentx for each node
 for i in {0..4}
 do
-    ./sidechaind gentx "wm-node$i" 7000000000000aside --chain-id side_1818-1 --home ${TESTNET_PATH}/node$i/ --ip "side_testnet_node$i" --output-document ${TESTNET_PATH}/gentx/node$i.json
+    ./sidechaind gentx "wm-node$i" 7000000000000$DEFAULT_DENOM --chain-id $CHAIN_ID --home ${TESTNET_PATH}/node$i/ --ip "side_testnet_node$i" --output-document ${TESTNET_PATH}/gentx/node$i.json
     if [ $? -ne 0 ]; then
         echo "Error generating gentx for wm-node$i"
         exit 1
     fi
 done
+
 
 # Collect gentxs
 ./sidechaind collect-gentxs --gentx-dir ${TESTNET_PATH}/gentx/ --home ${TESTNET_PATH}/node0
@@ -98,3 +113,4 @@ cp ${TESTNET_PATH}/node0/config/genesis.json ${TESTNET_PATH}/node1/config/
 cp ${TESTNET_PATH}/node0/config/genesis.json ${TESTNET_PATH}/node2/config/
 cp ${TESTNET_PATH}/node0/config/genesis.json ${TESTNET_PATH}/node3/config/
 cp ${TESTNET_PATH}/node0/config/genesis.json ${TESTNET_PATH}/node4/config/
+
