@@ -82,3 +82,6 @@ dependency-graph.png
 
 # OpenZeppelin contracts
 contracts/@openzeppelin/*
+
+# Ignore deploy script
+development/setup_testnet.sh
