@@ -11,31 +11,8 @@ services:
     container_name: side_testnet_node0
     ports:
       - "26657:26657"
-      - "9091:9091"
+      - "9090:9090"
       - "1317:1317"
-  node1:
-    build:
-      context: ../..
-      dockerfile: development/deployment/Dockerfile-node1
-    container_name: side_testnet_node1
-
-  node2:
-    build:
-      context: ../..
-      dockerfile: development/deployment/Dockerfile-node2
-    container_name: side_testnet_node2
-
-  node3:
-    build:
-      context: ../..
-      dockerfile: development/deployment/Dockerfile-node3
-    container_name: side_testnet_node3
-
-  node4:
-    build:
-      context: ../..
-      dockerfile: development/deployment/Dockerfile-node4
-    container_name: side_testnet_node4
 
 networks:
   default:
