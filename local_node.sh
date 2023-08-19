@@ -1,10 +1,9 @@
+#!/bin/bash
 
-KEYS[0]="dev0"
-KEYS[1]="dev1"
-KEYS[2]="dev2"
-CHAINID="sidechain_1818-1"
-MONIKER="localtestnet"
-BINARY="side-devnet-1"
+KEYS=("dev0" "dev1" "dev2")
+CHAINID="side-testnet-1"
+MONIKER="freebird"
+BINARY="sidechaind"
 DENOMS=("uside" "uusdc")
 INITIAL_SUPPLY="100000000000000000000"
 BLOCK_GAS=10000000

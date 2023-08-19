@@ -85,3 +85,4 @@ contracts/@openzeppelin/*
 
 # Ignore deploy script
 development/setup_testnet.sh
+development/join_testnet.sh
