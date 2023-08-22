@@ -7,7 +7,7 @@ import (
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 
 	"sidechain/app"
-	"sidechain/cmd/sidechaind/cmd"
+	"sidechain/cmd/sided/cmd"
 )
 
 func main() {

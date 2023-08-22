@@ -6,8 +6,8 @@ TMVERSION := $(shell go list -m github.com/cometbft/cometbft  | sed 's:.* ::')
 COMMIT := $(shell git log -1 --format='%H')
 LEDGER_ENABLED ?= true
 BINDIR ?= $(GOPATH)/bin
-SIDECHAIN_BINARY = sidechaind
-SIDECHAIN_DIR = sidechain
+SIDECHAIN_BINARY = sided
+SIDECHAIN_DIR = side
 BUILDDIR ?= $(CURDIR)/build
 HTTPS_GIT := https://github.com/sideprotocol/sidechain.git
 DOCKER := $(shell which docker)
@@ -133,7 +133,7 @@ build-reproducible: go.sum
 	$(DOCKER) rm latest-build || true
 	$(DOCKER) run --volume=$(CURDIR):/sources:ro \
         --env TARGET_PLATFORMS='linux/amd64' \
-        --env APP=sidechaind \
+        --env APP=sided \
         --env VERSION=$(VERSION) \
         --env COMMIT=$(COMMIT) \
         --env CGO_ENABLED=1 \
@@ -153,7 +153,7 @@ build-docker:
 	$(DOCKER) create --name sidechain -t -i ${DOCKER_IMAGE}:latest sidechain
 	# move the binaries to the ./build directory
 	mkdir -p ./build/
-	$(DOCKER) cp sidechain:/usr/bin/sidechaind ./build/
+	$(DOCKER) cp sidechain:/usr/bin/sided ./build/
 
 push-docker: build-docker
 	$(DOCKER) push ${DOCKER_IMAGE}:${DOCKER_TAG}
@@ -338,7 +338,7 @@ ifeq (, $(TARGET_VERSION))
 	@make build-docker
 endif
 	mkdir -p ./build
-	rm -rf build/.sidechaind
+	rm -rf build/.sided
 	INITIAL_VERSION=$(INITIAL_VERSION) TARGET_VERSION=$(TARGET_VERSION) \
 	E2E_SKIP_CLEANUP=$(E2E_SKIP_CLEANUP) MOUNT_PATH=$(MOUNT_PATH) CHAIN_ID=$(CHAIN_ID) \
 	go test -v ./tests/e2e/...
@@ -502,7 +502,7 @@ localnet-build:
 
 # Start a 4-node testnet locally
 localnet-start: localnet-stop localnet-build
-	@if ! [ -f build/node0/$(SIDECHAIN_BINARY)/config/genesis.json ]; then docker run --rm -v $(CURDIR)/build:/sidechain:Z github.com/sideprotocol/sidechain/node "./sidechaind testnet init-files --v 4 -o /sidechain --keyring-backend=test --starting-ip-address 192.167.10.2"; fi
+	@if ! [ -f build/node0/$(SIDECHAIN_BINARY)/config/genesis.json ]; then docker run --rm -v $(CURDIR)/build:/sidechain:Z github.com/sideprotocol/sidechain/node "./sided testnet init-files --v 4 -o /sidechain --keyring-backend=test --starting-ip-address 192.167.10.2"; fi
 	docker-compose up -d
 
 # Stop testnet
@@ -518,15 +518,15 @@ localnet-clean:
 localnet-unsafe-reset:
 	docker-compose down
 ifeq ($(OS),Windows_NT)
-	@docker run --rm -v $(CURDIR)\build\node0\sidechaind:/sidechain\Z github.com/sideprotocol/sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
-	@docker run --rm -v $(CURDIR)\build\node1\sidechaind:/sidechain\Z github.com/sideprotocol/sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
-	@docker run --rm -v $(CURDIR)\build\node2\sidechaind:/sidechain\Z github.com/sideprotocol/sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
-	@docker run --rm -v $(CURDIR)\build\node3\sidechaind:/sidechain\Z github.com/sideprotocol/sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)\build\node0\sided:/sidechain\Z github.com/sideprotocol/sidechain/node "./sided tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)\build\node1\sided:/sidechain\Z github.com/sideprotocol/sidechain/node "./sided tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)\build\node2\sided:/sidechain\Z github.com/sideprotocol/sidechain/node "./sided tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)\build\node3\sided:/sidechain\Z github.com/sideprotocol/sidechain/node "./sided tendermint unsafe-reset-all --home=/sidechain"
 else
-	@docker run --rm -v $(CURDIR)/build/node0/sidechaind:/sidechain:Z github.com/sideprotocol/sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
-	@docker run --rm -v $(CURDIR)/build/node1/sidechaind:/sidechain:Z github.com/sideprotocol/sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
-	@docker run --rm -v $(CURDIR)/build/node2/sidechaind:/sidechain:Z github.com/sideprotocol/sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
-	@docker run --rm -v $(CURDIR)/build/node3/sidechaind:/sidechain:Z github.com/sideprotocol/sidechain/node "./sidechaind tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)/build/node0/sided:/sidechain:Z github.com/sideprotocol/sidechain/node "./sided tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)/build/node1/sided:/sidechain:Z github.com/sideprotocol/sidechain/node "./sided tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)/build/node2/sided:/sidechain:Z github.com/sideprotocol/sidechain/node "./sided tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)/build/node3/sided:/sidechain:Z github.com/sideprotocol/sidechain/node "./sided tendermint unsafe-reset-all --home=/sidechain"
 endif
 
 # Clean testnet

@@ -1,6 +1,6 @@
 version: 1
 build:
-  binary: sidechaind
+  binary: sided
   proto:
     path: proto
     third_party_paths:
@@ -49,7 +49,7 @@ genesis:
 validators:
   - name: alice
     bonded: 10000000000000000000000uside
-    home: $HOME/.sidechain
+    home: $HOME/.side
 client:
   openapi:
     path: "docs/static/openapi.yml"
