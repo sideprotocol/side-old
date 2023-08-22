@@ -1,0 +1,12 @@
+syntax = "proto3";
+package sidechain.dex;
+
+import "gogoproto/gogo.proto";
+import "sidechain/dex/params.proto";
+
+option go_package = "sidechain/x/dex/types";
+
+// GenesisState defines the dex module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}
