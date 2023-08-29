@@ -1,0 +1,25 @@
+syntax = "proto3";
+package side.gmm;
+
+import "gogoproto/gogo.proto"; 
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/sideprotocol/side/x/gmm/types";
+
+enum PoolType {
+  WEIGHT = 0;
+  STABLE = 1;
+}
+
+message PoolParams {
+  PoolType type  = 1;
+  string swapFee = 2 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable) = false
+  ];
+  string exitFee = 3 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable) = false
+  ];
+  bool useOracle = 4;
+}

@@ -1,0 +1,17 @@
+syntax = "proto3";
+package side.gmm;
+
+option go_package = "github.com/sideprotocol/side/x/gmm/types";
+import "side/gmm/pool_params.proto"; 
+import "side/gmm/pool_asset.proto"; 
+import "gogoproto/gogo.proto"; 
+import "cosmos/base/v1beta1/coin.proto";
+import "cosmos_proto/cosmos.proto";
+
+message Pool {
+  uint64 poolId = 1; 
+  string creator = 2; 
+  PoolParams poolParams = 3 [(gogoproto.nullable) = false]; 
+  repeated PoolAsset assets = 4 [(gogoproto.nullable) = false]; 
+}
+
