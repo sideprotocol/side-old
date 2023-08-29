@@ -22,5 +22,5 @@ const (
 	// UpgradeHeight = 130_0000
 
 	// UpgradeInfo defines the binaries that will be used for the upgrade
-	// UpgradeInfo = `'{"binaries":{"darwin/arm64":"https://github.com/SideProtocol/sidechain/v_8.0.0_Darwin_arm64.tar.gz"}}'`
+	// UpgradeInfo = `'{"binaries":{"darwin/arm64":"https://github.com/SideProtocol/github.com/sideprotocol/side/v_8.0.0_Darwin_arm64.tar.gz"}}'`
 )

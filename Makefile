@@ -279,7 +279,7 @@ vulncheck: $(BUILDDIR)/
 	$(BUILDDIR)/govulncheck ./...
 
 godocs:
-	@echo "--> Wait a few seconds and visit http://localhost:6060/pkg/github.com/sideprotocol/github.com/sideprotocol/sidechain/types"
+	@echo "--> Wait a few seconds and visit http://localhost:6060/pkg/github.com/sideprotocol/github.com/sideprotocol/github.com/sideprotocol/side/types"
 	godoc -http=:6060
 
 # Start docs site at localhost:8080
@@ -400,54 +400,31 @@ format:
 ###                                Protobuf                                 ###
 ###############################################################################
 
-# ------
-# NOTE: Link to the tendermintdev/sdk-proto-gen docker images:
-#       https://hub.docker.com/r/tendermintdev/sdk-proto-gen/tags
-#
-protoVer=v0.7
-protoImageName=tendermintdev/sdk-proto-gen:$(protoVer)
-protoImage=$(DOCKER) run --network host --rm -v $(CURDIR):/workspace --workdir /workspace $(protoImageName)
-# ------
-# NOTE: cosmos/proto-builder image is needed because clang-format is not installed
-#       on the tendermintdev/sdk-proto-gen docker image.
-#		Link to the cosmos/proto-builder docker images:
-#       https://github.com/cosmos/cosmos-sdk/pkgs/container/proto-builder
-#
-protoCosmosVer=0.11.2
-protoCosmosName=ghcr.io/cosmos/proto-builder:$(protoCosmosVer)
-protoCosmosImage=$(DOCKER) run --network host --rm -v $(CURDIR):/workspace --workdir /workspace $(protoCosmosName)
-# ------
-# NOTE: Link to the yoheimuta/protolint docker images:
-#       https://hub.docker.com/r/yoheimuta/protolint/tags
-#
-protolintVer=0.42.2
-protolintName=yoheimuta/protolint:$(protolintVer)
-protolintImage=$(DOCKER) run --network host --rm -v $(CURDIR):/workspace --workdir /workspace $(protolintName)
+check-proto-deps:
+ifeq (,$(shell which protoc-gen-gogofaster))
+	@go install github.com/cosmos/gogoproto/protoc-gen-gogofaster@latest
+endif
+.PHONY: check-proto-deps
 
 
-# ------
-# NOTE: If you are experiencing problems running these commands, try deleting
-#       the docker images and execute the desired command again.
-#
-proto-all: proto-format proto-lint proto-gen
-
-proto-gen:
+proto-gen: check-proto-deps
 	@echo "Generating Protobuf files"
-	$(protoImage) sh ./scripts/protocgen.sh
+	@go run github.com/bufbuild/buf/cmd/buf generate
+	@mv ./proto/tendermint/abci/types.pb.go ./abci/types/
+	@cp ./proto/tendermint/rpc/grpc/types.pb.go ./rpc/grpc
+.PHONY: proto-gen
 
-# TODO: Rethink API docs generation
-# proto-swagger-gen:
-# 	@echo "Generating Protobuf Swagger"
-# 	$(protoImage) sh ./scripts/protoc-swagger-gen.sh
-
-proto-format:
-	@echo "Formatting Protobuf files"
-	$(protoCosmosImage) find ./ -name *.proto -exec clang-format -i {} \;
-
-# NOTE: The linter configuration lives in .protolint.yaml
-proto-lint:
+# These targets are provided for convenience and are intended for local
+# execution only.
+proto-lint: check-proto-deps
 	@echo "Linting Protobuf files"
-	$(protolintImage) lint ./proto
+	@go run github.com/bufbuild/buf/cmd/buf lint
+.PHONY: proto-lint
+
+proto-format: check-proto-format-deps
+	@echo "Formatting Protobuf files"
+	@find . -name '*.proto' -path "./proto/*" -exec clang-format -i {} \;
+.PHONY: proto-format
 
 proto-check-breaking:
 	@echo "Checking Protobuf files for breaking changes"
@@ -502,7 +479,7 @@ localnet-build:
 
 # Start a 4-node testnet locally
 localnet-start: localnet-stop localnet-build
-	@if ! [ -f build/node0/$(SIDECHAIN_BINARY)/config/genesis.json ]; then docker run --rm -v $(CURDIR)/build:/sidechain:Z github.com/sideprotocol/sidechain/node "./sided testnet init-files --v 4 -o /sidechain --keyring-backend=test --starting-ip-address 192.167.10.2"; fi
+	@if ! [ -f build/node0/$(SIDECHAIN_BINARY)/config/genesis.json ]; then docker run --rm -v $(CURDIR)/build:/sidechain:Z github.com/sideprotocol/github.com/sideprotocol/side/node "./sided testnet init-files --v 4 -o /sidechain --keyring-backend=test --starting-ip-address 192.167.10.2"; fi
 	docker-compose up -d
 
 # Stop testnet
@@ -518,15 +495,15 @@ localnet-clean:
 localnet-unsafe-reset:
 	docker-compose down
 ifeq ($(OS),Windows_NT)
-	@docker run --rm -v $(CURDIR)\build\node0\sided:/sidechain\Z github.com/sideprotocol/sidechain/node "./sided tendermint unsafe-reset-all --home=/sidechain"
-	@docker run --rm -v $(CURDIR)\build\node1\sided:/sidechain\Z github.com/sideprotocol/sidechain/node "./sided tendermint unsafe-reset-all --home=/sidechain"
-	@docker run --rm -v $(CURDIR)\build\node2\sided:/sidechain\Z github.com/sideprotocol/sidechain/node "./sided tendermint unsafe-reset-all --home=/sidechain"
-	@docker run --rm -v $(CURDIR)\build\node3\sided:/sidechain\Z github.com/sideprotocol/sidechain/node "./sided tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)\build\node0\sided:/sidechain\Z github.com/sideprotocol/github.com/sideprotocol/side/node "./sided tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)\build\node1\sided:/sidechain\Z github.com/sideprotocol/github.com/sideprotocol/side/node "./sided tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)\build\node2\sided:/sidechain\Z github.com/sideprotocol/github.com/sideprotocol/side/node "./sided tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)\build\node3\sided:/sidechain\Z github.com/sideprotocol/github.com/sideprotocol/side/node "./sided tendermint unsafe-reset-all --home=/sidechain"
 else
-	@docker run --rm -v $(CURDIR)/build/node0/sided:/sidechain:Z github.com/sideprotocol/sidechain/node "./sided tendermint unsafe-reset-all --home=/sidechain"
-	@docker run --rm -v $(CURDIR)/build/node1/sided:/sidechain:Z github.com/sideprotocol/sidechain/node "./sided tendermint unsafe-reset-all --home=/sidechain"
-	@docker run --rm -v $(CURDIR)/build/node2/sided:/sidechain:Z github.com/sideprotocol/sidechain/node "./sided tendermint unsafe-reset-all --home=/sidechain"
-	@docker run --rm -v $(CURDIR)/build/node3/sided:/sidechain:Z github.com/sideprotocol/sidechain/node "./sided tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)/build/node0/sided:/sidechain:Z github.com/sideprotocol/github.com/sideprotocol/side/node "./sided tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)/build/node1/sided:/sidechain:Z github.com/sideprotocol/github.com/sideprotocol/side/node "./sided tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)/build/node2/sided:/sidechain:Z github.com/sideprotocol/github.com/sideprotocol/side/node "./sided tendermint unsafe-reset-all --home=/sidechain"
+	@docker run --rm -v $(CURDIR)/build/node3/sided:/sidechain:Z github.com/sideprotocol/github.com/sideprotocol/side/node "./sided tendermint unsafe-reset-all --home=/sidechain"
 endif
 
 # Clean testnet

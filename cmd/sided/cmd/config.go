@@ -3,7 +3,7 @@ package cmd
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"sidechain/app"
+	"github.com/sideprotocol/side/app"
 )
 
 func initSDKConfig() {

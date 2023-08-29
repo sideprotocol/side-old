@@ -1,6 +1,6 @@
-module sidechain
+module github.com/sideprotocol/side
 
-go 1.19
+go 1.20
 
 require (
 	cosmossdk.io/api v0.3.1

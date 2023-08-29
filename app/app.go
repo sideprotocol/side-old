@@ -119,8 +119,8 @@ import (
 
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
-	appparams "sidechain/app/params"
-	"sidechain/docs"
+	appparams "github.com/sideprotocol/side/app/params"
+	"github.com/sideprotocol/side/docs"
 
 	// wasmd module integrate
 	"github.com/CosmWasm/wasmd/x/wasm"

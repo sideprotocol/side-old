@@ -18,7 +18,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/stretchr/testify/require"
 
-	"sidechain/app"
+	"github.com/sideprotocol/side/app"
 )
 
 type (
