@@ -371,30 +371,18 @@ benchmark:
 ###                                Linting                                  ###
 ###############################################################################
 
-lint:
-	golangci-lint run --out-format=tab
-	solhint contracts/**/*.sol
+golangci_version=v1.52.2
 
-lint-contracts:
-	@cd contracts && \
-	npm i && \
-	npm run lint
+lint:
+	@echo "--> Running linter"
+	@go run --mod=mod github.com/golangci/golangci-lint/cmd/golangci-lint@$(golangci_version) run --timeout=15m
 
 lint-fix:
-	golangci-lint run --fix --out-format=tab --issues-exit-code=0
-
-lint-fix-contracts:
-	@cd contracts && \
-	npm i && \
-	npm run lint-fix
-	solhint --fix contracts/**/*.sol
+	@echo "--> Running linter"
+	@go run --mod=mod github.com/golangci/golangci-lint/cmd/golangci-lint@$(golangci_version) run --fix
 
 .PHONY: lint lint-fix
 
-format:
-	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "./client/docs/statik/statik.go" -not -name '*.pb.go' | xargs gofumpt -w -l
-
-.PHONY: format
 
 ###############################################################################
 ###                                Protobuf                                 ###

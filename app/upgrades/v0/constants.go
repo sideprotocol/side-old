@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 
-package v0_1_1
+package v011
 
 const (
 	// UpgradeName is the shared upgrade plan name for mainnet and testnet

@@ -1,0 +1,7 @@
+syntax = "proto3";
+package side.gmm;
+
+option go_package = "github.com/sideprotocol/side/x/gmm/types";
+
+// Msg defines the Msg service.
+service Msg {}
