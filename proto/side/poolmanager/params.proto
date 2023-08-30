@@ -1,0 +1,12 @@
+syntax = "proto3";
+package side.poolmanager;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/sideprotocol/side/x/poolmanager/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}

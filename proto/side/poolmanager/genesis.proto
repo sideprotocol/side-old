@@ -1,0 +1,12 @@
+syntax = "proto3";
+package side.poolmanager;
+
+import "gogoproto/gogo.proto";
+import "side/poolmanager/params.proto";
+
+option go_package = "github.com/sideprotocol/side/x/poolmanager/types";
+
+// GenesisState defines the poolmanager module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}

@@ -52214,6 +52214,82 @@ paths:
               params:
                 description: params holds all the parameters of this module.
                 type: object
+                properties:
+                  poolCreationFee:
+                    type: string
+                    format: uint64
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /sideprotocol/side/incentive/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: SideIncentiveParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /sideprotocol/side/poolmanager/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: SidePoolmanagerParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -82629,8 +82705,38 @@ definitions:
       the connection handshake.
   side.gmm.Params:
     type: object
+    properties:
+      poolCreationFee:
+        type: string
+        format: uint64
     description: Params defines the parameters for the module.
   side.gmm.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params holds all the parameters of this module.
+        type: object
+        properties:
+          poolCreationFee:
+            type: string
+            format: uint64
+    description: QueryParamsResponse is response type for the Query/Params RPC method.
+  side.incentive.Params:
+    type: object
+    description: Params defines the parameters for the module.
+  side.incentive.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params holds all the parameters of this module.
+        type: object
+    description: QueryParamsResponse is response type for the Query/Params RPC method.
+  side.poolmanager.MsgCreatePoolResponse:
+    type: object
+  side.poolmanager.Params:
+    type: object
+    description: Params defines the parameters for the module.
+  side.poolmanager.QueryParamsResponse:
     type: object
     properties:
       params:
