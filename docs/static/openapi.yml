@@ -82703,6 +82703,16 @@ definitions:
     description: |-
       Version defines the versioning scheme used to negotiate the IBC verison in
       the connection handshake.
+  side.gmm.MsgAddLiquidityResponse:
+    type: object
+    properties:
+      pool_id:
+        type: string
+  side.gmm.MsgCreatePoolResponse:
+    type: object
+    properties:
+      pool_id:
+        type: string
   side.gmm.Params:
     type: object
     properties:
@@ -82710,6 +82720,27 @@ definitions:
         type: string
         format: uint64
     description: Params defines the parameters for the module.
+  side.gmm.PoolParams:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - WEIGHT
+          - STABLE
+        default: WEIGHT
+      swapFee:
+        type: string
+      exitFee:
+        type: string
+      useOracle:
+        type: boolean
+  side.gmm.PoolType:
+    type: string
+    enum:
+      - WEIGHT
+      - STABLE
+    default: WEIGHT
   side.gmm.QueryParamsResponse:
     type: object
     properties:

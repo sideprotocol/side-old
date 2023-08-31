@@ -1,9 +1,36 @@
 syntax = "proto3";
+
 package side.gmm;
 
 option go_package = "github.com/sideprotocol/side/x/gmm/types";
-
+import "gogoproto/gogo.proto"; 
+import "cosmos/base/v1beta1/coin.proto"; 
+import "side/gmm/pool_params.proto";
+import "side/gmm/pool_asset.proto";
 // Msg defines the Msg service.
 service Msg {
+  rpc CreatePool   (MsgCreatePool  ) returns (MsgCreatePoolResponse  );
+  rpc AddLiquidity (MsgAddLiquidity) returns (MsgAddLiquidityResponse);
+  
+}
+message MsgAddLiquidity {
+  string creator = 1;
+  string pool_id = 2;
+  repeated cosmos.base.v1beta1.Coin liquidity = 3 [(gogoproto.nullable) = false]; 
+}
+
+message MsgAddLiquidityResponse {
+    string pool_id = 1;
     
 }
+
+message MsgCreatePool {
+  string creator = 1;
+  PoolParams params = 2;
+  repeated cosmos.base.v1beta1.Coin liquidity = 3 [(gogoproto.nullable) = false]; 
+}
+
+message MsgCreatePoolResponse {
+  string pool_id = 1;
+}
+
