@@ -130,7 +130,7 @@ import (
 
 const (
 	AccountAddressPrefix = "side"
-	Name                 = "sidechain"
+	Name                 = "side"
 )
 
 // this line is used by starport scaffolding # stargate/wasm/app/enabledProposals
