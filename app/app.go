@@ -121,12 +121,6 @@ import (
 	gmmmodulekeeper "github.com/sideprotocol/side/x/gmm/keeper"
 	gmmmoduletypes "github.com/sideprotocol/side/x/gmm/types"
 
-	incentivemodule "github.com/sideprotocol/side/x/incentive"
-	incentivemodulekeeper "github.com/sideprotocol/side/x/incentive/keeper"
-	incentivemoduletypes "github.com/sideprotocol/side/x/incentive/types"
-	poolmanagermodule "github.com/sideprotocol/side/x/poolmanager"
-	poolmanagermodulekeeper "github.com/sideprotocol/side/x/poolmanager/keeper"
-	poolmanagermoduletypes "github.com/sideprotocol/side/x/poolmanager/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "github.com/sideprotocol/side/app/params"
@@ -196,8 +190,6 @@ var (
 		wasm.AppModuleBasic{},
 
 		gmmmodule.AppModuleBasic{},
-		poolmanagermodule.AppModuleBasic{},
-		incentivemodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -284,9 +276,6 @@ type App struct {
 
 	GmmKeeper gmmmodulekeeper.Keeper
 
-	PoolmanagerKeeper poolmanagermodulekeeper.Keeper
-
-	IncentiveKeeper incentivemodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -334,8 +323,6 @@ func New(
 		feegrant.StoreKey, evidencetypes.StoreKey, ibctransfertypes.StoreKey, icahosttypes.StoreKey,
 		capabilitytypes.StoreKey, group.StoreKey, icacontrollertypes.StoreKey, consensusparamtypes.StoreKey, wasmTypes.StoreKey, ibcfeetypes.StoreKey,
 		gmmmoduletypes.StoreKey,
-		poolmanagermoduletypes.StoreKey,
-		incentivemoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -602,26 +589,10 @@ func New(
 		keys[gmmmoduletypes.StoreKey],
 		keys[gmmmoduletypes.MemStoreKey],
 		app.GetSubspace(gmmmoduletypes.ModuleName),
-
+		app.AccountKeeper,
 		app.BankKeeper,
 	)
 	gmmModule := gmmmodule.NewAppModule(appCodec, app.GmmKeeper, app.AccountKeeper, app.BankKeeper)
-
-	app.PoolmanagerKeeper = *poolmanagermodulekeeper.NewKeeper(
-		appCodec,
-		keys[poolmanagermoduletypes.StoreKey],
-		keys[poolmanagermoduletypes.MemStoreKey],
-		app.GetSubspace(poolmanagermoduletypes.ModuleName),
-	)
-	poolmanagerModule := poolmanagermodule.NewAppModule(appCodec, app.PoolmanagerKeeper, app.AccountKeeper, app.BankKeeper)
-
-	app.IncentiveKeeper = *incentivemodulekeeper.NewKeeper(
-		appCodec,
-		keys[incentivemoduletypes.StoreKey],
-		keys[incentivemoduletypes.MemStoreKey],
-		app.GetSubspace(incentivemoduletypes.ModuleName),
-	)
-	incentiveModule := incentivemodule.NewAppModule(appCodec, app.IncentiveKeeper, app.AccountKeeper, app.BankKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
@@ -690,8 +661,6 @@ func New(
 
 		icaModule,
 		gmmModule,
-		poolmanagerModule,
-		incentiveModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 
 		crisis.NewAppModule(app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)), // always be last to make sure that it checks for all invariants and not only part of them
@@ -727,8 +696,6 @@ func New(
 		ibcfeetypes.ModuleName,
 		wasmTypes.ModuleName,
 		gmmmoduletypes.ModuleName,
-		poolmanagermoduletypes.ModuleName,
-		incentivemoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -757,8 +724,6 @@ func New(
 		ibcfeetypes.ModuleName,
 		wasmTypes.ModuleName,
 		gmmmoduletypes.ModuleName,
-		poolmanagermoduletypes.ModuleName,
-		incentivemoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -792,8 +757,6 @@ func New(
 		consensusparamtypes.ModuleName,
 		wasmTypes.ModuleName,
 		gmmmoduletypes.ModuleName,
-		poolmanagermoduletypes.ModuleName,
-		incentivemoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	}
 	app.mm.SetOrderInitGenesis(genesisModuleOrder...)
@@ -1021,8 +984,6 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(gmmmoduletypes.ModuleName)
-	paramsKeeper.Subspace(poolmanagermoduletypes.ModuleName)
-	paramsKeeper.Subspace(incentivemoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper

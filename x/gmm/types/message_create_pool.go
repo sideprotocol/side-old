@@ -43,3 +43,36 @@ func (msg *MsgCreatePool) ValidateBasic() error {
 	}
 	return nil
 }
+
+func (msg *MsgCreatePool) GetPoolType() PoolType {
+	return msg.Params.Type
+}
+
+// The creator of the pool, who pays the PoolCreationFee, provides initial liquidity,
+// and gets the initial LP shares.
+func (msg *MsgCreatePool) PoolCreator() sdk.AccAddress {
+	return sdk.AccAddress(msg.Creator)
+}
+
+// A stateful validation function.
+func (msg *MsgCreatePool) Validate(ctx sdk.Context) error {
+	return msg.ValidateBasic()
+}
+
+// Initial Liquidity for the pool that the sender is required to send to the pool account
+func (msg *MsgCreatePool) InitialLiquidity() sdk.Coins {
+	liquidity := sdk.Coins{}
+	for _, asset := range msg.Liquidity {
+		liquidity.Add(asset.Token)
+	}
+	return liquidity
+}
+
+// Return denom list of liquidity
+func (msg *MsgCreatePool) GetAssetDenoms() []string {
+	denoms := []string{}
+	for _, asset := range msg.Liquidity {
+		denoms = append(denoms, asset.Token.Denom)
+	}
+	return denoms
+}

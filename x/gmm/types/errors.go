@@ -8,5 +8,7 @@ import (
 
 // x/gmm module sentinel errors
 var (
-	ErrSample = sdkerrors.Register(ModuleName, 1100, "sample error")
+	ErrSample             = sdkerrors.Register(ModuleName, 1100, "sample error")
+	ErrAlreadyCreatedPool = sdkerrors.Register(ModuleName, 1101, "already exist pool in the system")
+	ErrNotEnoughBalance   = sdkerrors.Register(ModuleName, 1102, "not enough balance")
 )

@@ -3,34 +3,54 @@ syntax = "proto3";
 package side.gmm;
 
 option go_package = "github.com/sideprotocol/side/x/gmm/types";
-import "gogoproto/gogo.proto"; 
-import "cosmos/base/v1beta1/coin.proto"; 
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
 import "side/gmm/pool_params.proto";
 import "side/gmm/pool_asset.proto";
+
 // Msg defines the Msg service.
 service Msg {
   rpc CreatePool   (MsgCreatePool  ) returns (MsgCreatePoolResponse  );
   rpc AddLiquidity (MsgAddLiquidity) returns (MsgAddLiquidityResponse);
-  
-}
-message MsgAddLiquidity {
-  string creator = 1;
-  string pool_id = 2;
-  repeated cosmos.base.v1beta1.Coin liquidity = 3 [(gogoproto.nullable) = false]; 
-}
-
-message MsgAddLiquidityResponse {
-    string pool_id = 1;
-    
+  rpc Withdraw     (MsgWithdraw    ) returns (MsgWithdrawResponse    );
+  rpc Swap         (MsgSwap        ) returns (MsgSwapResponse        );
 }
 
 message MsgCreatePool {
-  string creator = 1;
-  PoolParams params = 2;
-  repeated cosmos.base.v1beta1.Coin liquidity = 3 [(gogoproto.nullable) = false]; 
+           string                   creator   = 1;
+           PoolParams               params    = 2;
+  repeated PoolAsset liquidity = 3 [(gogoproto.nullable) = false];
 }
 
 message MsgCreatePoolResponse {
   string pool_id = 1;
+}
+
+message MsgAddLiquidity {
+  string                   creator   = 1;
+  string                   pool_id   = 2;
+  repeated cosmos.base.v1beta1.Coin liquidity = 3 [(gogoproto.nullable) = false];
+}
+
+message MsgAddLiquidityResponse {
+  string pool_id = 1;
+}
+
+message MsgWithdraw {
+  string creator = 1;
+}
+
+message MsgWithdrawResponse {
+  cosmos.base.v1beta1.Coin share  = 1 [(gogoproto.nullable) = false];
+}
+
+message MsgSwap {
+  string creator = 1;
+}
+
+message MsgSwapResponse {
+  string pool_id = 1;
+  cosmos.base.v1beta1.Coin tokenIn = 2 [(gogoproto.nullable) = false];
 }
 

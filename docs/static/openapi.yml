@@ -52241,78 +52241,6 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
-  /sideprotocol/side/incentive/params:
-    get:
-      summary: Parameters queries the parameters of the module.
-      operationId: SideIncentiveParams
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              params:
-                description: params holds all the parameters of this module.
-                type: object
-            description: >-
-              QueryParamsResponse is response type for the Query/Params RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
-  /sideprotocol/side/poolmanager/params:
-    get:
-      summary: Parameters queries the parameters of the module.
-      operationId: SidePoolmanagerParams
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              params:
-                description: params holds all the parameters of this module.
-                type: object
-            description: >-
-              QueryParamsResponse is response type for the Query/Params RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
 definitions:
   cosmos.auth.v1beta1.AddressBytesToStringResponse:
     type: object
@@ -82713,6 +82641,38 @@ definitions:
     properties:
       pool_id:
         type: string
+  side.gmm.MsgSwapResponse:
+    type: object
+    properties:
+      pool_id:
+        type: string
+      tokenIn:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+  side.gmm.MsgWithdrawResponse:
+    type: object
+    properties:
+      share:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
   side.gmm.Params:
     type: object
     properties:
@@ -82720,6 +82680,25 @@ definitions:
         type: string
         format: uint64
     description: Params defines the parameters for the module.
+  side.gmm.PoolAsset:
+    type: object
+    properties:
+      token:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+      weight:
+        type: string
+      decimal:
+        type: string
   side.gmm.PoolParams:
     type: object
     properties:
@@ -82751,26 +82730,4 @@ definitions:
           poolCreationFee:
             type: string
             format: uint64
-    description: QueryParamsResponse is response type for the Query/Params RPC method.
-  side.incentive.Params:
-    type: object
-    description: Params defines the parameters for the module.
-  side.incentive.QueryParamsResponse:
-    type: object
-    properties:
-      params:
-        description: params holds all the parameters of this module.
-        type: object
-    description: QueryParamsResponse is response type for the Query/Params RPC method.
-  side.poolmanager.MsgCreatePoolResponse:
-    type: object
-  side.poolmanager.Params:
-    type: object
-    description: Params defines the parameters for the module.
-  side.poolmanager.QueryParamsResponse:
-    type: object
-    properties:
-      params:
-        description: params holds all the parameters of this module.
-        type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.

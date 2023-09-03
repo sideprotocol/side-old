@@ -10,7 +10,7 @@ import "cosmos_proto/cosmos.proto";
 
 message Pool {
   option (cosmos_proto.implements_interface) = "PoolI";
-  uint64 poolId = 1; 
+  string poolId = 1; 
   string creator = 2; 
   PoolParams poolParams = 3 [(gogoproto.nullable) = false]; 
   repeated PoolAsset assets = 4 [(gogoproto.nullable) = false]; 

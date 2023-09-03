@@ -1,7 +1,0 @@
-syntax = "proto3";
-package side.incentive;
-
-option go_package = "github.com/sideprotocol/side/x/incentive/types";
-
-// Msg defines the Msg service.
-service Msg {}

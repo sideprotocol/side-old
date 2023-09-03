@@ -31,6 +31,14 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgCreatePool int = 100
 
+	opWeightMsgWithdraw = "op_weight_msg_withdraw"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgWithdraw int = 100
+
+	opWeightMsgSwap = "op_weight_msg_swap"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgSwap int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -81,6 +89,28 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		gmmsimulation.SimulateMsgCreatePool(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
+	var weightMsgWithdraw int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgWithdraw, &weightMsgWithdraw, nil,
+		func(_ *rand.Rand) {
+			weightMsgWithdraw = defaultWeightMsgWithdraw
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgWithdraw,
+		gmmsimulation.SimulateMsgWithdraw(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgSwap int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgSwap, &weightMsgSwap, nil,
+		func(_ *rand.Rand) {
+			weightMsgSwap = defaultWeightMsgSwap
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgSwap,
+		gmmsimulation.SimulateMsgSwap(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
@@ -103,6 +133,22 @@ func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.Wei
 			defaultWeightMsgCreatePool,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
 				gmmsimulation.SimulateMsgCreatePool(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgWithdraw,
+			defaultWeightMsgWithdraw,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				gmmsimulation.SimulateMsgWithdraw(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgSwap,
+			defaultWeightMsgSwap,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				gmmsimulation.SimulateMsgSwap(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),
