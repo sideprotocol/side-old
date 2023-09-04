@@ -1,6 +1,8 @@
 package types
 
 import (
+	"strings"
+
 	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -45,6 +47,18 @@ func (msg *MsgAddLiquidity) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if strings.TrimSpace(msg.PoolId) == "" {
+		return sdkerrors.Wrap(ErrInvalidPoolID, "pool id cannot be empty")
+	}
+	if len(msg.Liquidity) > 2 || len(msg.Liquidity) == 0 {
+		return sdkerrors.Wrap(ErrInvalidLiquidityInLength, "liquidity cannot be empty or cannot be more than 2")
+	}
+
+	for _, asset := range msg.Liquidity {
+		if asset.Amount.IsZero() {
+			return sdkerrors.Wrap(ErrInvalidLiquidityAmount, "liquidity amount cannot be zero")
+		}
 	}
 	return nil
 }

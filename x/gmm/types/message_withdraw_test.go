@@ -3,6 +3,7 @@ package types
 import (
 	"testing"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/sideprotocol/side/testutil/sample"
 	"github.com/stretchr/testify/require"
 )
@@ -20,9 +21,44 @@ func TestMsgWithdraw_ValidateBasic(t *testing.T) {
 			},
 			err: ErrInvalidAddress,
 		}, {
-			name: "valid address",
+			name: "invalid receiver address",
 			msg: MsgWithdraw{
-				Creator: sample.AccAddress(),
+				Creator:  sample.AccAddress(),
+				Receiver: "invalid_address",
+			},
+			err: ErrInvalidAddress,
+		}, {
+			name: "invalid poolID",
+			msg: MsgWithdraw{
+				Creator:  sample.AccAddress(),
+				Receiver: sample.AccAddress(),
+				PoolId:   "",
+			},
+			err: ErrInvalidPoolID,
+		},
+		{
+			name: "invalid share amount",
+			msg: MsgWithdraw{
+				Creator:  sample.AccAddress(),
+				Receiver: sample.AccAddress(),
+				PoolId:   "test1",
+				Share: sdk.NewCoin(
+					"test",
+					sdk.NewInt(0),
+				),
+			},
+			err: ErrInvalidTokenAmount,
+		},
+		{
+			name: "valid message",
+			msg: MsgWithdraw{
+				Creator:  sample.AccAddress(),
+				Receiver: sample.AccAddress(),
+				PoolId:   "test1",
+				Share: sdk.NewCoin(
+					"test",
+					sdk.NewInt(10),
+				),
 			},
 		},
 	}

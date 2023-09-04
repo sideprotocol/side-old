@@ -3,6 +3,7 @@ package types
 import (
 	"testing"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/sideprotocol/side/testutil/sample"
 	"github.com/stretchr/testify/require"
 )
@@ -20,9 +21,39 @@ func TestMsgSwap_ValidateBasic(t *testing.T) {
 			},
 			err: ErrInvalidAddress,
 		}, {
-			name: "valid address",
+			name: "invalid poolID",
 			msg: MsgSwap{
 				Creator: sample.AccAddress(),
+				PoolId:  "",
+			},
+			err: ErrInvalidPoolID,
+		},
+		{
+			name: "invalid tokenIn",
+			msg: MsgSwap{
+				Creator: sample.AccAddress(),
+				PoolId:  "test1",
+				TokenIn: sdk.NewCoin("test1", sdk.NewInt(0)),
+			},
+			err: ErrInvalidTokenAmount,
+		},
+		{
+			name: "invalid denomOut",
+			msg: MsgSwap{
+				Creator:  sample.AccAddress(),
+				PoolId:   "test1",
+				TokenIn:  sdk.NewCoin("test1", sdk.NewInt(100)),
+				DenomOut: "",
+			},
+			err: ErrEmptyDenom,
+		},
+		{
+			name: "invalid denomOut",
+			msg: MsgSwap{
+				Creator:  sample.AccAddress(),
+				PoolId:   "test1",
+				TokenIn:  sdk.NewCoin("test1", sdk.NewInt(100)),
+				DenomOut: "test2",
 			},
 		},
 	}

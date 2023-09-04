@@ -1,6 +1,8 @@
 package types
 
 import (
+	"strings"
+
 	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -48,5 +50,18 @@ func (msg *MsgSwap) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	if strings.TrimSpace(msg.PoolId) == "" {
+		return sdkerrors.Wrap(ErrInvalidPoolID, "pool id cannot be empty")
+	}
+
+	if msg.TokenIn.Amount.IsZero() {
+		return sdkerrors.Wrap(ErrInvalidTokenAmount, "tokenIn amount cannot be zero")
+	}
+
+	if strings.TrimSpace(msg.DenomOut) == "" {
+		return sdkerrors.Wrap(ErrEmptyDenom, "denom_out cannot be empty")
+	}
+
 	return nil
 }

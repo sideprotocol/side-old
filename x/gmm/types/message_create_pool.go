@@ -47,6 +47,17 @@ func (msg *MsgCreatePool) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	if msg.Params == nil {
+		return ErrInvalidPoolParams
+	}
+	if msg.Liquidity == nil {
+		return ErrEmptyLiquidity
+	}
+
+	if len(msg.Liquidity) != 2 {
+		return sdkerrors.Wrapf(ErrInvalidLiquidityInLength, "number of liquidity (%d)", len(msg.Liquidity))
+	}
+
 	return nil
 }
 
