@@ -3,8 +3,9 @@ package types
 import (
 	"crypto/sha256"
 
+	sdkmath "cosmossdk.io/math"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	types "github.com/cosmos/cosmos-sdk/types"
 )
 
 func (p *Pool) GetAssetDenoms() []string {
@@ -15,71 +16,71 @@ func (p *Pool) GetAssetDenoms() []string {
 	return denoms
 }
 
-func GetEscrowAddress(poolId string) sdk.AccAddress {
+func GetEscrowAddress(poolID string) sdk.AccAddress {
 	// a slash is used to create domain separation between port and channel identifiers to
 	// prevent address collisions between escrow addresses created for different channels
 
 	// ADR 028 AddressHash construction
 	preImage := []byte(Version)
 	preImage = append(preImage, 0)
-	preImage = append(preImage, poolId...)
+	preImage = append(preImage, poolID...)
 	hash := sha256.Sum256(preImage)
 	return hash[:20]
 }
 
 // EstimateShare estimate share amount when user deposit
-func (p *Pool) EstimateShare(coins types.Coins) (types.Coin, error) {
+func (p *Pool) EstimateShare(coins sdk.Coins) (sdk.Coin, error) {
 	switch p.PoolParams.Type {
 	case PoolType_WEIGHT:
 		return p.estimateShareInWeightPool(coins)
 	case PoolType_STABLE:
-		return p.estimateShareInWeightPool(coins)
+		return p.estimateShareInStablePool(coins)
 	}
-	return types.Coin{}, ErrInvalidPoolType
+	return sdk.Coin{}, ErrInvalidPoolType
 }
 
-func (p *Pool) EstimateSwap(amountIn types.Coin, denomOut string) (types.Coin, error) {
+func (p *Pool) EstimateSwap(amountIn sdk.Coin, denomOut string) (sdk.Coin, error) {
 	switch p.PoolParams.Type {
 	case PoolType_WEIGHT:
 		return p.estimateSwapInWeightPool(amountIn, denomOut)
 	case PoolType_STABLE:
 		return p.estimateSwapInStablePool(amountIn, denomOut)
 	}
-	return types.Coin{}, ErrInvalidPoolType
+	return sdk.Coin{}, ErrInvalidPoolType
 }
 
 // Withdraw tokens from pool
-func (p *Pool) EstimateWithdrawals(share types.Coin) ([]types.Coin, error) {
+func (p *Pool) EstimateWithdrawals(share sdk.Coin) ([]sdk.Coin, error) {
 	switch p.PoolParams.Type {
 	case PoolType_WEIGHT:
 		return p.estimateWithdrawalsFromWeightPool(share)
 	case PoolType_STABLE:
 		return p.estimateWithdrawalsFromStablePool(share)
 	}
-	return []types.Coin{}, ErrInvalidPoolType
+	return []sdk.Coin{}, ErrInvalidPoolType
 }
 
 // Helper functions
-func (p *Pool) TakeFees(amount types.Int) types.Dec {
-	amountDec := types.NewDecFromInt(amount)
-	feeRate := p.PoolParams.SwapFee.Quo(types.NewDec(10000))
+func (p *Pool) TakeFees(amount sdkmath.Int) sdk.Dec {
+	amountDec := sdk.NewDecFromInt(amount)
+	feeRate := p.PoolParams.SwapFee.Quo(sdk.NewDec(10000))
 	fees := amountDec.Mul(feeRate)
 	amountMinusFees := amountDec.Sub(fees)
 	return amountMinusFees
 }
 
 // IncreaseShare add xx amount share to total share amount in pool
-func (p *Pool) IncreaseShare(amt sdk.Int) {
+func (p *Pool) IncreaseShare(amt sdkmath.Int) {
 	p.TotalShares.Amount = p.TotalShares.Amount.Add(amt)
 }
 
 // DecreaseShare subtract xx amount share to total share amount in pool
-func (p *Pool) DecreaseShare(amt sdk.Int) {
+func (p *Pool) DecreaseShare(amt sdkmath.Int) {
 	p.TotalShares.Amount = p.TotalShares.Amount.Sub(amt)
 }
 
 // IncreaseLiquidity adds xx amount liquidity to assets in pool
-func (p *Pool) IncreaseLiquidity(coins []types.Coin) error {
+func (p *Pool) IncreaseLiquidity(coins []sdk.Coin) error {
 	for _, coin := range coins {
 		asset, exists := p.Assets[coin.Denom]
 		if !exists {
@@ -94,7 +95,7 @@ func (p *Pool) IncreaseLiquidity(coins []types.Coin) error {
 }
 
 // DecreaseLiquidity subtracts xx amount liquidity from assets in pool
-func (p *Pool) DecreaseLiquidity(coins []types.Coin) error {
+func (p *Pool) DecreaseLiquidity(coins []sdk.Coin) error {
 	for _, coin := range coins {
 		asset, exists := p.Assets[coin.Denom]
 		if !exists {

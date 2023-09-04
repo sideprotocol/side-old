@@ -1,17 +1,24 @@
 package types
 
 import (
+	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 const TypeMsgSwap = "swap"
 
 var _ sdk.Msg = &MsgSwap{}
 
-func NewMsgSwap(creator string) *MsgSwap {
+func NewMsgSwap(
+	creator, poolID string,
+	tokenIn sdk.Coin,
+	denomOut string,
+) *MsgSwap {
 	return &MsgSwap{
-		Creator: creator,
+		Creator:  creator,
+		PoolId:   poolID,
+		TokenIn:  tokenIn,
+		DenomOut: denomOut,
 	}
 }
 
@@ -39,7 +46,7 @@ func (msg *MsgSwap) GetSignBytes() []byte {
 func (msg *MsgSwap) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return sdkerrors.Wrapf(ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 	return nil
 }

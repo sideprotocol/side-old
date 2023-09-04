@@ -12,7 +12,6 @@ import (
 )
 
 func (k Keeper) initializePool(ctx sdk.Context, msg *types.MsgCreatePool) error {
-
 	poolCreator := sdk.MustAccAddressFromBech32(msg.Creator)
 	pool := msg.CreatePool()
 	totalShares := sdk.NewInt(0)
@@ -79,18 +78,15 @@ func (k Keeper) initializePool(ctx sdk.Context, msg *types.MsgCreatePool) error 
 // RemoveInterchainLiquidityPool removes a interchainLiquidityPool from the store
 func (k Keeper) RemoveInterchainLiquidityPool(
 	ctx sdk.Context,
-	poolId string,
-
+	poolID string,
 ) {
-
 	// Get current pool count
-	poolCount, found := k.GetCountByPoolId(ctx, poolId)
+	poolCount, found := k.GetCountByPoolID(ctx, poolID)
 	if !found {
 		return
 	}
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPoolsPrefix)
 	store.Delete(GetInterchainLiquidityPoolKey(poolCount))
-
 }
 
 func (k Keeper) GetPoolCount(ctx sdk.Context) uint64 {
@@ -132,17 +128,17 @@ func (k Keeper) GetAlPool(ctx sdk.Context) (list []types.Pool) {
 }
 
 // Sets the mapping between poolId and its count index
-func (k Keeper) SetPoolIdToCountMapping(ctx sdk.Context, poolId string, count uint64) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPoolIdToCountPrefix)
+func (k Keeper) SetPoolIDToCountMapping(ctx sdk.Context, poolID string, count uint64) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPoolIDToCountPrefix)
 	b := make([]byte, 8)
 	binary.BigEndian.PutUint64(b, count)
-	store.Set([]byte(poolId), b)
+	store.Set([]byte(poolID), b)
 }
 
 // Gets the count index of the poolId
-func (k Keeper) GetCountByPoolId(ctx sdk.Context, poolId string) (count uint64, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPoolIdToCountPrefix)
-	b := store.Get([]byte(poolId))
+func (k Keeper) GetCountByPoolID(ctx sdk.Context, poolID string) (count uint64, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPoolIDToCountPrefix)
+	b := store.Get([]byte(poolID))
 	if b == nil {
 		return 0, false
 	}
@@ -163,7 +159,7 @@ func (k Keeper) AppendPool(ctx sdk.Context, pool types.Pool) {
 	k.SetPoolCount(ctx, poolCount)
 
 	// Set the poolId to count mapping
-	k.SetPoolIdToCountMapping(ctx, pool.PoolId, poolCount)
+	k.SetPoolIDToCountMapping(ctx, pool.PoolId, poolCount)
 
 	// Marshal the pool and set in store
 	b := k.cdc.MustMarshal(&pool)
@@ -179,7 +175,7 @@ func (k Keeper) AppendPool(ctx sdk.Context, pool types.Pool) {
 func (k Keeper) SetPool(ctx sdk.Context, pool types.Pool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(string(types.KeyPoolsPrefix)))
 	// Get current pool count
-	poolCount, found := k.GetCountByPoolId(ctx, pool.PoolId)
+	poolCount, found := k.GetCountByPoolID(ctx, pool.PoolId)
 	if !found {
 		return
 	}
@@ -189,10 +185,10 @@ func (k Keeper) SetPool(ctx sdk.Context, pool types.Pool) {
 }
 
 // Modified GetInterchainLiquidityPool
-func (k Keeper) GetPool(ctx sdk.Context, poolId string) (val types.Pool, found bool) {
+func (k Keeper) GetPool(ctx sdk.Context, poolID string) (val types.Pool, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPoolsPrefix)
 
-	count, found := k.GetCountByPoolId(ctx, poolId)
+	count, found := k.GetCountByPoolID(ctx, poolID)
 	if !found {
 		return val, false
 	}

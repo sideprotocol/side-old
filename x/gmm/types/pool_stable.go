@@ -1,18 +1,21 @@
 package types
 
 import (
-	"github.com/cosmos/cosmos-sdk/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func (p *Pool) estimateShareInStablePool(coins types.Coins) ([]types.Coin, error) {
-	panic("did not implement still")
+func (p *Pool) estimateShareInStablePool(coins sdk.Coins) (sdk.Coin, error) {
+	_ = coins
+	return sdk.Coin{}, nil
 }
 
-func (p *Pool) estimateSwapInStablePool(amountIn types.Coin, denomOut string) (types.Coin, error) {
-	return types.Coin{}, nil
+func (p *Pool) estimateSwapInStablePool(amountIn sdk.Coin, denomOut string) (sdk.Coin, error) {
+	_ = amountIn
+	_ = denomOut
+	return sdk.Coin{}, nil
 }
 
-func (p *Pool) estimateWithdrawalsFromStablePool(share types.Coin) ([]types.Coin, error) {
-
-	return []types.Coin{}, nil
+func (p *Pool) estimateWithdrawalsFromStablePool(share sdk.Coin) ([]sdk.Coin, error) {
+	_ = share
+	return []sdk.Coin{}, nil
 }

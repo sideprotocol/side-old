@@ -34,7 +34,9 @@ func (k msgServer) AddLiquidity(goCtx context.Context, msg *types.MsgAddLiquidit
 		return nil, err
 	}
 	// Update pool status
-	pool.IncreaseLiquidity(msg.Liquidity)
+	if err := pool.IncreaseLiquidity(msg.Liquidity); err != nil {
+		return nil, err
+	}
 	pool.IncreaseShare(share.Amount)
 
 	// Save update information

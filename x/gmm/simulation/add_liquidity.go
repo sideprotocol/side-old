@@ -23,7 +23,9 @@ func SimulateMsgAddLiquidity(
 		}
 
 		// TODO: Handling the AddLiquidity simulation
-
+		_ = k
+		_ = bk
+		_ = ak
 		return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "AddLiquidity simulation not implemented"), nil, nil
 	}
 }

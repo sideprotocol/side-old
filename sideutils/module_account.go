@@ -10,7 +10,7 @@ import (
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 )
 
-// OsmoUtilsExtraAccountTypes is a map of extra account types that can be overridden.
+// SideUtilsExtraAccountTypes is a map of extra account types that can be overridden.
 // This is defined as a global variable so it can be modified in the chain's app.go and used here without
 // having to import the chain. Specifically, this is used for compatibility with Osmosis' Cosmos SDK fork
 var SideUtilsExtraAccountTypes map[reflect.Type]struct{}

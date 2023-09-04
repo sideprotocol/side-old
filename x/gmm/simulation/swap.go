@@ -23,7 +23,9 @@ func SimulateMsgSwap(
 		}
 
 		// TODO: Handling the Swap simulation
-
+		_ = k
+		_ = bk
+		_ = ak
 		return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "Swap simulation not implemented"), nil, nil
 	}
 }

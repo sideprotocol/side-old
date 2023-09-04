@@ -8,12 +8,12 @@ import (
 	"strings"
 )
 
-func GetPoolId(denoms []string) string {
-	//generate poolId
+func GetPoolID(denoms []string) string {
+	// Generate poolID
 	sort.Strings(denoms)
-	poolIdHash := sha256.New()
-	//salt := GenerateRandomString(chainID, 10)
-	poolIdHash.Write([]byte(strings.Join(denoms, "")))
-	poolId := "pool" + fmt.Sprintf("%v", hex.EncodeToString(poolIdHash.Sum(nil)))
-	return poolId
+	poolIDHash := sha256.New()
+
+	poolIDHash.Write([]byte(strings.Join(denoms, "")))
+	poolID := "pool" + fmt.Sprintf("%v", hex.EncodeToString(poolIDHash.Sum(nil)))
+	return poolID
 }

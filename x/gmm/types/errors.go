@@ -16,4 +16,5 @@ var (
 	ErrNotFoundAssetInPool = sdkerrors.Register(ModuleName, 1105, "did not find asset")
 	ErrNotFoundAPool       = sdkerrors.Register(ModuleName, 1106, "did not find pool")
 	ErrOverflowShareAmount = sdkerrors.Register(ModuleName, 1107, "share amount is over than pool total supply")
+	ErrInvalidAddress      = sdkerrors.Register(ModuleName, 1108, "invalid betch32 address")
 )

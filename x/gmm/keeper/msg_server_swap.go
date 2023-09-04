@@ -38,8 +38,12 @@ func (k msgServer) Swap(goCtx context.Context, msg *types.MsgSwap) (*types.MsgSw
 	}
 
 	// Update state.
-	pool.IncreaseLiquidity([]sdk.Coin{msg.TokenIn})
-	pool.DecreaseLiquidity([]sdk.Coin{out})
+	if err := pool.IncreaseLiquidity([]sdk.Coin{msg.TokenIn}); err != nil {
+		return nil, err
+	}
+	if err := pool.DecreaseLiquidity([]sdk.Coin{out}); err != nil {
+		return nil, err
+	}
 
 	// Save pool.
 	k.SetPool(ctx, pool)

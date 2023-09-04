@@ -30,7 +30,9 @@ func (k msgServer) Withdraw(goCtx context.Context, msg *types.MsgWithdraw) (*typ
 	}
 
 	// Update pool statues.
-	pool.DecreaseLiquidity(outs)
+	if err := pool.DecreaseLiquidity(outs); err != nil {
+		return nil, err
+	}
 	pool.DecreaseShare(msg.Share.Amount)
 
 	// Save pool

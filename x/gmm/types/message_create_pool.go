@@ -1,8 +1,8 @@
 package types
 
 import (
+	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 const TypeMsgCreatePool = "create_pool"
@@ -13,11 +13,10 @@ func NewMsgCreatePool(
 	creator string,
 	params PoolParams,
 	liquidity []PoolAsset,
-
 ) *MsgCreatePool {
 	return &MsgCreatePool{
-		Creator: creator,
-		Params: &params,
+		Creator:   creator,
+		Params:    &params,
 		Liquidity: liquidity,
 	}
 }
@@ -46,7 +45,7 @@ func (msg *MsgCreatePool) GetSignBytes() []byte {
 func (msg *MsgCreatePool) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return sdkerrors.Wrapf(ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 	return nil
 }
@@ -59,11 +58,6 @@ func (msg *MsgCreatePool) GetPoolType() PoolType {
 // and gets the initial LP shares.
 func (msg *MsgCreatePool) PoolCreator() sdk.AccAddress {
 	return sdk.AccAddress(msg.Creator)
-}
-
-// A stateful validation function.
-func (msg *MsgCreatePool) Validate(ctx sdk.Context) error {
-	return msg.ValidateBasic()
 }
 
 // Initial Liquidity for the pool that the sender is required to send to the pool account
@@ -97,10 +91,10 @@ func (msg *MsgCreatePool) CreatePool() Pool {
 	}
 
 	// Generate new PoolId
-	newPoolId := GetPoolId(denoms)
-	poolShareBaseDenom := GetPoolShareDenom(newPoolId)
+	newPoolID := GetPoolID(denoms)
+	poolShareBaseDenom := GetPoolShareDenom(newPoolID)
 	pool := Pool{
-		PoolId:      newPoolId,
+		PoolId:      newPoolID,
 		Creator:     msg.Creator,
 		PoolParams:  *msg.Params,
 		Assets:      assets,

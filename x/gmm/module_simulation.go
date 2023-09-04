@@ -23,23 +23,23 @@ var (
 )
 
 const (
-	opWeightMsgAddLiquidity = "op_weight_msg_add_liquidity"
+	opWeightMsgAddLiquidity = "op_weight_msg_add_liquidity" // #nosec
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgAddLiquidity int = 100
 
-	opWeightMsgCreatePool = "op_weight_msg_create_pool"
+	opWeightMsgCreatePool = "op_weight_msg_create_pool" // #nosec
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgCreatePool int = 100
 
-	opWeightMsgWithdraw = "op_weight_msg_withdraw"
+	opWeightMsgWithdraw = "op_weight_msg_withdraw" // #nosec
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgWithdraw int = 100
 
-	opWeightMsgSwap = "op_weight_msg_swap"
+	opWeightMsgSwap = "op_weight_msg_swap" // #nosec
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgSwap int = 100
 
-	opWeightMsgDeletePool = "op_weight_msg_delete_pool"
+	opWeightMsgDeletePool = "op_weight_msg_delete_pool" // #nosec
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgDeletePool int = 100
 

@@ -9,7 +9,6 @@ import (
 )
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
-	_ = cdc
 	cdc.RegisterConcrete(&MsgAddLiquidity{}, "gmm/AddLiquidity", nil)
 	cdc.RegisterConcrete(&MsgCreatePool{}, "gmm/CreatePool", nil)
 	cdc.RegisterConcrete(&MsgWithdraw{}, "gmm/Withdraw", nil)

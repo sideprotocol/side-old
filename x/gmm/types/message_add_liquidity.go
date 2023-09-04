@@ -1,17 +1,22 @@
 package types
 
 import (
+	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 const TypeMsgAddLiquidity = "add_liquidity"
 
 var _ sdk.Msg = &MsgAddLiquidity{}
 
-func NewMsgAddLiquidity(creator string) *MsgAddLiquidity {
+func NewMsgAddLiquidity(
+	creator, poolID string,
+	liquidity sdk.Coins,
+) *MsgAddLiquidity {
 	return &MsgAddLiquidity{
-		Creator: creator,
+		Creator:   creator,
+		PoolId:    poolID,
+		Liquidity: liquidity,
 	}
 }
 
@@ -39,7 +44,7 @@ func (msg *MsgAddLiquidity) GetSignBytes() []byte {
 func (msg *MsgAddLiquidity) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return sdkerrors.Wrapf(ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 	return nil
 }

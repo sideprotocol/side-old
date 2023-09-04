@@ -23,6 +23,9 @@ func SimulateMsgCreatePool(
 		}
 
 		// TODO: Handling the CreatePool simulation
+		_ = k
+		_ = bk
+		_ = ak
 
 		return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "CreatePool simulation not implemented"), nil, nil
 	}

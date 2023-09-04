@@ -7,26 +7,20 @@ import (
 	"github.com/sideprotocol/side/x/gmm/types"
 )
 
-func (k Keeper) LockTokens(ctx sdk.Context, poolId string, sender sdk.AccAddress, tokens sdk.Coins) error {
-	escrow := types.GetEscrowAddress(poolId)
+func (k Keeper) LockTokens(ctx sdk.Context, poolID string, sender sdk.AccAddress, tokens sdk.Coins) error {
+	escrow := types.GetEscrowAddress(poolID)
 	// escrow source tokens. It fails if balance insufficient
-	if err := k.bankKeeper.SendCoinsFromAccountToModule(
+	return k.bankKeeper.SendCoinsFromAccountToModule(
 		ctx, sender, escrow.String(), tokens,
-	); err != nil {
-		return err
-	}
-	return nil
+	)
 }
 
-func (k Keeper) UnLockTokens(ctx sdk.Context, poolId string, receiver sdk.AccAddress, tokens sdk.Coins) error {
-	escrow := types.GetEscrowAddress(poolId)
+func (k Keeper) UnLockTokens(ctx sdk.Context, poolID string, receiver sdk.AccAddress, tokens sdk.Coins) error {
+	escrow := types.GetEscrowAddress(poolID)
 	// escrow source tokens. It fails if balance insufficient
-	if err := k.bankKeeper.SendCoinsFromModuleToAccount(
+	return k.bankKeeper.SendCoinsFromModuleToAccount(
 		ctx, escrow.String(), receiver, tokens,
-	); err != nil {
-		return err
-	}
-	return nil
+	)
 }
 
 func (k Keeper) BurnTokens(ctx sdk.Context, sender sdk.AccAddress, tokens sdk.Coin) error {
