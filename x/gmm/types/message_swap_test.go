@@ -20,7 +20,8 @@ func TestMsgSwap_ValidateBasic(t *testing.T) {
 				Creator: "invalid_address",
 			},
 			err: ErrInvalidAddress,
-		}, {
+		},
+		{
 			name: "invalid poolID",
 			msg: MsgSwap{
 				Creator: sample.AccAddress(),

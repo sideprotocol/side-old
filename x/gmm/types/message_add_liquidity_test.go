@@ -20,7 +20,8 @@ func TestMsgAddLiquidity_ValidateBasic(t *testing.T) {
 				Creator: "invalid_address",
 			},
 			err: ErrInvalidAddress,
-		}, {
+		},
+		{
 			name: "invalid poolID",
 			msg: MsgAddLiquidity{
 				Creator: sample.AccAddress(),

@@ -20,14 +20,16 @@ func TestMsgWithdraw_ValidateBasic(t *testing.T) {
 				Creator: "invalid_address",
 			},
 			err: ErrInvalidAddress,
-		}, {
+		},
+		{
 			name: "invalid receiver address",
 			msg: MsgWithdraw{
 				Creator:  sample.AccAddress(),
 				Receiver: "invalid_address",
 			},
 			err: ErrInvalidAddress,
-		}, {
+		},
+		{
 			name: "invalid poolID",
 			msg: MsgWithdraw{
 				Creator:  sample.AccAddress(),
