@@ -76,3 +76,28 @@ func (msg *MsgCreatePool) GetAssetDenoms() []string {
 	}
 	return denoms
 }
+
+// Return denom list of liquidity
+func (msg *MsgCreatePool) CreatePool() Pool {
+	// Extract denom list from Liquidity
+	denoms := msg.GetAssetDenoms()
+
+	assets := make(map[string]PoolAsset)
+	totalShares := sdk.NewInt(0)
+	for _, liquidity := range msg.Liquidity {
+		assets[liquidity.Token.Denom] = liquidity
+		totalShares = totalShares.Add(liquidity.Token.Amount)
+	}
+
+	// Generate new PoolId
+	newPoolId := GetPoolId(denoms)
+	poolShareBaseDenom := GetPoolShareDenom(newPoolId)
+	pool := Pool{
+		PoolId:      newPoolId,
+		Creator:     msg.Creator,
+		PoolParams:  *msg.Params,
+		Assets:      assets,
+		TotalShares: sdk.NewCoin(poolShareBaseDenom, totalShares),
+	}
+	return pool
+}

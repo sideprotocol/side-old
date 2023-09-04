@@ -39,6 +39,10 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgSwap int = 100
 
+	opWeightMsgDeletePool = "op_weight_msg_delete_pool"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgDeletePool int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -111,6 +115,13 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		gmmsimulation.SimulateMsgSwap(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
+	var weightMsgDeletePool int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgDeletePool, &weightMsgDeletePool, nil,
+		func(_ *rand.Rand) {
+			weightMsgDeletePool = defaultWeightMsgDeletePool
+		},
+	)
+
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
@@ -152,6 +163,7 @@ func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.Wei
 				return nil
 			},
 		),
+
 		// this line is used by starport scaffolding # simapp/module/OpMsg
 	}
 }

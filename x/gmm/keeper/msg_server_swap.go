@@ -9,8 +9,39 @@ import (
 
 func (k msgServer) Swap(goCtx context.Context, msg *types.MsgSwap) (*types.MsgSwapResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	// TODO: Handling the message
-	_ = ctx
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
 
+	pool, found := k.GetPool(ctx, msg.PoolId)
+	if !found {
+		return nil, types.ErrNotFoundAssetInPool
+	}
+
+	out, err := pool.EstimateSwap(msg.TokenIn, msg.DenomOut)
+	if err != nil {
+		return nil, err
+	}
+
+	// Move asset from sender to module account
+	if err := k.LockTokens(ctx, msg.PoolId, sdk.MustAccAddressFromBech32(msg.Creator), sdk.NewCoins(
+		msg.TokenIn,
+	)); err != nil {
+		return nil, err
+	}
+
+	// Send wanted token from pool to user
+	if err := k.UnLockTokens(ctx, msg.PoolId, sdk.MustAccAddressFromBech32(msg.Creator), sdk.NewCoins(
+		out,
+	)); err != nil {
+		return nil, err
+	}
+
+	// Update state.
+	pool.IncreaseLiquidity([]sdk.Coin{msg.TokenIn})
+	pool.DecreaseLiquidity([]sdk.Coin{out})
+
+	// Save pool.
+	k.SetPool(ctx, pool)
 	return &types.MsgSwapResponse{}, nil
 }

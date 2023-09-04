@@ -15,12 +15,12 @@ service Msg {
   rpc AddLiquidity (MsgAddLiquidity) returns (MsgAddLiquidityResponse);
   rpc Withdraw     (MsgWithdraw    ) returns (MsgWithdrawResponse    );
   rpc Swap         (MsgSwap        ) returns (MsgSwapResponse        );
-}
 
+}
 message MsgCreatePool {
-           string                   creator   = 1;
-           PoolParams               params    = 2;
-  repeated PoolAsset liquidity = 3 [(gogoproto.nullable) = false];
+           string     creator   = 1;
+           PoolParams params    = 2;
+  repeated PoolAsset  liquidity = 3 [(gogoproto.nullable) = false];
 }
 
 message MsgCreatePoolResponse {
@@ -28,8 +28,8 @@ message MsgCreatePoolResponse {
 }
 
 message MsgAddLiquidity {
-  string                   creator   = 1;
-  string                   pool_id   = 2;
+           string                   creator   = 1;
+           string                   pool_id   = 2;
   repeated cosmos.base.v1beta1.Coin liquidity = 3 [(gogoproto.nullable) = false];
 }
 
@@ -39,18 +39,24 @@ message MsgAddLiquidityResponse {
 
 message MsgWithdraw {
   string creator = 1;
+  string receiver = 2;
+  string pool_id = 3;
+  cosmos.base.v1beta1.Coin share = 4 [(gogoproto.nullable) = false];
 }
 
 message MsgWithdrawResponse {
-  cosmos.base.v1beta1.Coin share  = 1 [(gogoproto.nullable) = false];
+  cosmos.base.v1beta1.Coin share = 1 [(gogoproto.nullable) = false];
 }
 
 message MsgSwap {
   string creator = 1;
+  string pool_id = 2;
+  cosmos.base.v1beta1.Coin tokenIn = 3 [(gogoproto.nullable) = false];
+  string denom_out = 4;
 }
 
 message MsgSwapResponse {
-  string pool_id = 1;
+  string                   pool_id = 1;
   cosmos.base.v1beta1.Coin tokenIn = 2 [(gogoproto.nullable) = false];
 }
 

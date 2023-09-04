@@ -1,12 +1,8 @@
 package keeper
 
 import (
-	"crypto/sha256"
 	"encoding/binary"
-	"encoding/hex"
 	"fmt"
-	"sort"
-	"strings"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -18,41 +14,24 @@ import (
 func (k Keeper) initializePool(ctx sdk.Context, msg *types.MsgCreatePool) error {
 
 	poolCreator := sdk.MustAccAddressFromBech32(msg.Creator)
+	pool := msg.CreatePool()
 	totalShares := sdk.NewInt(0)
-	// Check sender has enough liquidity or not.
+
+	poolShareBaseDenom := types.GetPoolShareDenom(pool.PoolId)
+	poolShareDisplayDenom := fmt.Sprintf("GAMM-%d", pool.PoolId)
+
+	assets := make(map[string]types.PoolAsset)
 	for _, liquidity := range msg.Liquidity {
-		balance := k.bankKeeper.GetBalance(ctx, poolCreator, liquidity.Token.Denom)
-		if balance.Amount.LT(liquidity.Token.Amount) {
-			return types.ErrNotEnoughBalance
-		}
-		totalShares = totalShares.Add(liquidity.Token.Amount)
-	}
-
-	// Extract denom list from Liquidity
-	denoms := msg.GetAssetDenoms()
-
-	// Generate new PoolId
-	newPoolId := getPoolId(denoms)
-
-	poolShareBaseDenom := types.GetPoolShareDenom(newPoolId)
-	poolShareDisplayDenom := fmt.Sprintf("GAMM-%d", newPoolId)
-
-	pool := types.Pool{
-		PoolId:      newPoolId,
-		Creator:     msg.Creator,
-		PoolParams:  *msg.Params,
-		Assets:      msg.Liquidity,
-		TotalShares: sdk.NewCoin(poolShareBaseDenom, totalShares),
+		assets[liquidity.Token.Denom] = liquidity
 	}
 
 	// Check pool already created or not
-	if _, found := k.GetPool(ctx, newPoolId); found {
+	if _, found := k.GetPool(ctx, pool.PoolId); found {
 		return types.ErrAlreadyCreatedPool
 	}
-	pool.PoolId = newPoolId
 
 	// Create Module Account
-	escrowAccount := types.GetEscrowAddress(newPoolId)
+	escrowAccount := types.GetEscrowAddress(pool.PoolId)
 	if err := utils.CreateModuleAccount(ctx, k.accountKeeper, escrowAccount); err != nil {
 		return err
 	}
@@ -79,12 +58,15 @@ func (k Keeper) initializePool(ctx sdk.Context, msg *types.MsgCreatePool) error 
 				Aliases:  nil,
 			},
 		},
-		Base:    newPoolId,
-		Display: newPoolId,
+		Base:    poolShareBaseDenom,
+		Display: poolShareDisplayDenom,
 	})
 
 	// Mint share to creator
-	err := k.MintPoolShareToAccount(ctx, pool, poolCreator, totalShares)
+	err := k.MintPoolShareToAccount(ctx, poolCreator, sdk.NewCoin(
+		poolShareBaseDenom,
+		totalShares,
+	))
 	if err != nil {
 		return err
 	}
@@ -92,16 +74,6 @@ func (k Keeper) initializePool(ctx sdk.Context, msg *types.MsgCreatePool) error 
 	// Save pool to chain
 	k.AppendPool(ctx, pool)
 	return nil
-}
-
-func getPoolId(denoms []string) string {
-	//generate poolId
-	sort.Strings(denoms)
-	poolIdHash := sha256.New()
-	//salt := GenerateRandomString(chainID, 10)
-	poolIdHash.Write([]byte(strings.Join(denoms, "")))
-	poolId := "pool" + fmt.Sprintf("%v", hex.EncodeToString(poolIdHash.Sum(nil)))
-	return poolId
 }
 
 // RemoveInterchainLiquidityPool removes a interchainLiquidityPool from the store
@@ -233,3 +205,4 @@ func (k Keeper) GetPool(ctx sdk.Context, poolId string) (val types.Pool, found b
 	k.cdc.MustUnmarshal(b, &val)
 	return val, true
 }
+
