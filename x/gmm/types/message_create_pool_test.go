@@ -2,8 +2,6 @@ package types
 
 import (
 	"testing"
-
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/sideprotocol/side/testutil/sample"
 	"github.com/stretchr/testify/require"
 )
@@ -19,7 +17,7 @@ func TestMsgCreatePool_ValidateBasic(t *testing.T) {
 			msg: MsgCreatePool{
 				Creator: "invalid_address",
 			},
-			err: sdkerrors.ErrInvalidAddress,
+			err: ErrInvalidAddress,
 		}, {
 			name: "valid address",
 			msg: MsgCreatePool{

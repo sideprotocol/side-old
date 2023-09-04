@@ -592,3 +592,35 @@ create-contracts-json:
 		mv $(TMP_JSON) $(COMPILED_DIR)/$${c}.json ;\
 	done
 	@rm -rf tmp
+
+
+# Implements test splitting and running. This is pulled directly from
+# the github action workflows for better local reproducibility.
+
+GO_TEST_FILES != find $(CURDIR) -name "*_test.go"
+
+# default to four splits by default
+NUM_SPLIT ?= 4
+
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S),Darwin)  # macOS
+    SPLIT_CMD = gsplit
+else
+    SPLIT_CMD = split
+endif
+
+$(BUILDDIR):
+	mkdir -p $@
+
+# The format statement filters out all packages that don't have tests.
+# Note we need to check for both in-package tests (.TestGoFiles) and
+# out-of-package tests (.XTestGoFiles).
+$(BUILDDIR)/packages.txt:$(GO_TEST_FILES) $(BUILDDIR)
+	go list -f "{{ if (or .TestGoFiles .XTestGoFiles) }}{{ .ImportPath }}{{ end }}" ./... | sort > $@
+
+split-test-packages:$(BUILDDIR)/packages.txt
+	$(SPLIT_CMD) -d -n l/$(NUM_SPLIT) $< $<.
+
+test-group-%:split-test-packages
+	cat $(BUILDDIR)/packages.txt.$* | xargs go test -mod=readonly -timeout=10m -race -coverprofile=$(BUILDDIR)/$*.profile.out
