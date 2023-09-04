@@ -18,7 +18,7 @@ func (k Keeper) initializePool(ctx sdk.Context, msg *types.MsgCreatePool) error 
 	totalShares := sdk.NewInt(0)
 
 	poolShareBaseDenom := types.GetPoolShareDenom(pool.PoolId)
-	poolShareDisplayDenom := fmt.Sprintf("GAMM-%d", pool.PoolId)
+	poolShareDisplayDenom := fmt.Sprintf("GAMM-%s", pool.PoolId)
 
 	assets := make(map[string]types.PoolAsset)
 	for _, liquidity := range msg.Liquidity {
@@ -43,7 +43,7 @@ func (k Keeper) initializePool(ctx sdk.Context, msg *types.MsgCreatePool) error 
 
 	// Register metadata to bank keeper
 	k.bankKeeper.SetDenomMetaData(ctx, banktypes.Metadata{
-		Description: fmt.Sprintf("The share token of the gamm pool %d", pool.GetPoolId()),
+		Description: fmt.Sprintf("The share token of the gamm pool %s", pool.GetPoolId()),
 		DenomUnits: []*banktypes.DenomUnit{
 			{
 				Denom:    poolShareBaseDenom,
@@ -205,4 +205,3 @@ func (k Keeper) GetPool(ctx sdk.Context, poolId string) (val types.Pool, found b
 	k.cdc.MustUnmarshal(b, &val)
 	return val, true
 }
-

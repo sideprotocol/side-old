@@ -9,9 +9,16 @@ const TypeMsgCreatePool = "create_pool"
 
 var _ sdk.Msg = &MsgCreatePool{}
 
-func NewMsgCreatePool(creator string) *MsgCreatePool {
+func NewMsgCreatePool(
+	creator string,
+	params PoolParams,
+	liquidity []PoolAsset,
+
+) *MsgCreatePool {
 	return &MsgCreatePool{
 		Creator: creator,
+		Params: &params,
+		Liquidity: liquidity,
 	}
 }
 

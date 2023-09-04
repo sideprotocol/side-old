@@ -174,6 +174,7 @@ require (
 	github.com/CosmWasm/wasmd v0.40.1
 	github.com/cosmos/cosmos-proto v1.0.0-beta.2
 	github.com/prometheus/client_golang v1.15.0
+	github.com/tendermint/tendermint v0.35.9
 	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4
 	google.golang.org/grpc v1.55.0
 	gopkg.in/yaml.v2 v2.4.0
