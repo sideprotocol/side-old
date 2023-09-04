@@ -15,12 +15,13 @@ func (suite *KeeperTestSuite) TestMsgMakePool() {
 	}{
 		{
 			"invalid sender",
+
 			false,
 		},
-		// {
-		// 	"channel does not exist",
-		// 	false,
-		// },
+		{
+			"invalid sender",
+			false,
+		},
 	}
 
 	for _, tc := range testCases {

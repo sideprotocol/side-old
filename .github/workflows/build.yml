@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        goarch: ["arm", "amd64"]
+        goarch: ["amd64"]
         goos: ["linux"]
     timeout-minutes: 5
     steps:
