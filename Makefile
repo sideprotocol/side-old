@@ -600,7 +600,7 @@ create-contracts-json:
 GO_TEST_FILES != find $(CURDIR) -name "*_test.go"
 
 # default to four splits by default
-NUM_SPLIT ?= 4
+NUM_SPLIT ?= 3
 
 UNAME_S := $(shell uname -s)
 
