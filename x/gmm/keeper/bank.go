@@ -10,16 +10,16 @@ import (
 func (k Keeper) LockTokens(ctx sdk.Context, poolID string, sender sdk.AccAddress, tokens sdk.Coins) error {
 	escrow := types.GetEscrowAddress(poolID)
 	// escrow source tokens. It fails if balance insufficient
-	return k.bankKeeper.SendCoinsFromAccountToModule(
-		ctx, sender, escrow.String(), tokens,
+	return k.bankKeeper.SendCoins(
+		ctx, sender, escrow, tokens,
 	)
 }
 
 func (k Keeper) UnLockTokens(ctx sdk.Context, poolID string, receiver sdk.AccAddress, tokens sdk.Coins) error {
 	escrow := types.GetEscrowAddress(poolID)
 	// escrow source tokens. It fails if balance insufficient
-	return k.bankKeeper.SendCoinsFromModuleToAccount(
-		ctx, escrow.String(), receiver, tokens,
+	return k.bankKeeper.SendCoins(
+		ctx, escrow, receiver, sdk.NewCoins(tokens...),
 	)
 }
 

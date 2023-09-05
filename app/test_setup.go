@@ -29,9 +29,8 @@ import (
 
 const (
 	Bech32Prefix = "side"
+	BondDenom    = "aside"
 )
-
-var Denoms = []string{"aside", "bside"}
 
 // Initiate a new ElysApp object - Common function used by the following 2 functions.
 func InitiateNewSideApp() *App {
@@ -90,7 +89,7 @@ func InitSideTestApp(initChain bool) *App {
 }
 
 // Initializes a new ElysApp without IBC functionality and returns genesis account (delegator)
-func InitElysTestAppWithGenAccount() (*App, sdk.AccAddress, sdk.ValAddress) {
+func InitSideTestAppWithGenAccount() (*App, sdk.AccAddress, sdk.ValAddress) {
 	app := InitiateNewSideApp()
 
 	genesisState, valSet, genAcount, valAddress := GenesisStateWithValSet(app)
@@ -132,8 +131,7 @@ func GenesisStateWithValSet(app *App) (GenesisState, *tmtypes.ValidatorSet, sdk.
 	balance := banktypes.Balance{
 		Address: acc.GetAddress().String(),
 		Coins: sdk.NewCoins(
-			sdk.NewCoin(Denoms[0], sdkmath.NewInt(100000000000000)),
-			sdk.NewCoin(Denoms[1], sdkmath.NewInt(100000000000000)),
+			sdk.NewCoin(BondDenom, sdkmath.NewInt(10000000000000000)),
 		),
 	}
 
@@ -162,8 +160,8 @@ func GenesisStateWithValSet(app *App) (GenesisState, *tmtypes.ValidatorSet, sdk.
 			Description:       stakingtypes.Description{},
 			UnbondingHeight:   int64(0),
 			UnbondingTime:     time.Unix(0, 0).UTC(),
-			Commission:        stakingtypes.NewCommission(sdk.NewDecWithPrec(5, 2), sdk.NewDecWithPrec(10, 2), sdk.NewDecWithPrec(10, 2)),
-			MinSelfDelegation: sdkmath.OneInt(),
+			Commission:        stakingtypes.NewCommission(sdk.ZeroDec(), sdk.ZeroDec(), sdk.ZeroDec()),
+			MinSelfDelegation: sdkmath.ZeroInt(),
 		}
 		validators = append(validators, validator)
 		delegations = append(delegations, stakingtypes.NewDelegation(genAccs[0].GetAddress(), val.Address.Bytes(), sdk.OneDec()))
@@ -171,7 +169,7 @@ func GenesisStateWithValSet(app *App) (GenesisState, *tmtypes.ValidatorSet, sdk.
 	}
 	// set validators and delegations
 	params := stakingtypes.DefaultParams()
-	params.BondDenom = Denoms[0]
+	params.BondDenom = BondDenom
 
 	stakingGenesis := stakingtypes.NewGenesisState(params, validators, delegations)
 	genesisState[stakingtypes.ModuleName] = app.AppCodec().MustMarshalJSON(stakingGenesis)
@@ -184,13 +182,13 @@ func GenesisStateWithValSet(app *App) (GenesisState, *tmtypes.ValidatorSet, sdk.
 
 	for range delegations {
 		// add delegated tokens to total supply
-		totalSupply = totalSupply.Add(sdk.NewCoin(Denoms[0], bondAmt))
+		totalSupply = totalSupply.Add(sdk.NewCoin(BondDenom, bondAmt))
 	}
 
 	// add bonded amount to bonded pool module account
 	balances = append(balances, banktypes.Balance{
 		Address: authtypes.NewModuleAddress(stakingtypes.BondedPoolName).String(),
-		Coins:   sdk.Coins{sdk.NewCoin(Denoms[0], bondAmt)},
+		Coins:   sdk.Coins{sdk.NewCoin(BondDenom, bondAmt)},
 	})
 
 	// update total supply

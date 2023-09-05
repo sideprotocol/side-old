@@ -68,14 +68,14 @@ func (msg *MsgCreatePool) GetPoolType() PoolType {
 // The creator of the pool, who pays the PoolCreationFee, provides initial liquidity,
 // and gets the initial LP shares.
 func (msg *MsgCreatePool) PoolCreator() sdk.AccAddress {
-	return sdk.AccAddress(msg.Creator)
+	return sdk.MustAccAddressFromBech32(msg.Creator)
 }
 
 // Initial Liquidity for the pool that the sender is required to send to the pool account
 func (msg *MsgCreatePool) InitialLiquidity() sdk.Coins {
-	liquidity := sdk.Coins{}
+	liquidity := sdk.NewCoins()
 	for _, asset := range msg.Liquidity {
-		liquidity.Add(asset.Token)
+		liquidity = liquidity.Add(asset.Token)
 	}
 	return liquidity
 }

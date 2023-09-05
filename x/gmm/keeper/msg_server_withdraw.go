@@ -24,8 +24,21 @@ func (k msgServer) Withdraw(goCtx context.Context, msg *types.MsgWithdraw) (*typ
 		return nil, err
 	}
 
+	// Check creator has enough share or not
+	bal := k.bankKeeper.GetBalance(ctx, sdk.MustAccAddressFromBech32(msg.Creator),
+		msg.Share.Denom,
+	)
+	if bal.IsLT(msg.Share) {
+		return nil, types.ErrInsufficientBalance
+	}
+
 	// Unlock asset from pool
 	if err = k.UnLockTokens(ctx, pool.PoolId, sdk.MustAccAddressFromBech32(msg.Receiver), outs); err != nil {
+		return nil, err
+	}
+
+	// Burn lp token
+	if err = k.BurnTokens(ctx, sdk.MustAccAddressFromBech32(msg.Creator), msg.Share); err != nil {
 		return nil, err
 	}
 

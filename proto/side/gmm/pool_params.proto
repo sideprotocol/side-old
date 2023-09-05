@@ -2,7 +2,6 @@ syntax = "proto3";
 package side.gmm;
 
 import "gogoproto/gogo.proto"; 
-import "cosmos_proto/cosmos.proto";
 
 option go_package = "github.com/sideprotocol/side/x/gmm/types";
 

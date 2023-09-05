@@ -24,4 +24,6 @@ var (
 	ErrInvalidLiquidityAmount   = sdkerrors.Register(ModuleName, 1114, "invalid liquidity amount")
 	ErrInvalidTokenAmount       = sdkerrors.Register(ModuleName, 1115, "invalid token amount")
 	ErrEmptyDenom               = sdkerrors.Register(ModuleName, 1116, "empty denom")
+	ErrInsufficientBalance      = sdkerrors.Register(ModuleName, 1117, "insufficient balance")
+	ErrPoolNotFound             = sdkerrors.Register(ModuleName, 1118, "not found pool")
 )

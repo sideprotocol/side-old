@@ -11,36 +11,47 @@ import (
 	"github.com/sideprotocol/side/x/gmm/types"
 )
 
-func (k Keeper) initializePool(ctx sdk.Context, msg *types.MsgCreatePool) error {
-	poolCreator := sdk.MustAccAddressFromBech32(msg.Creator)
+func (k Keeper) initializePool(ctx sdk.Context, msg *types.MsgCreatePool) (*string, error) {
+	poolCreator := msg.PoolCreator()
 	pool := msg.CreatePool()
 	totalShares := sdk.NewInt(0)
 
-	poolShareBaseDenom := types.GetPoolShareDenom(pool.PoolId)
+	poolShareBaseDenom := pool.PoolId //types.GetPoolShareDenom(pool.PoolId)
 	poolShareDisplayDenom := fmt.Sprintf("GAMM-%s", pool.PoolId)
 
 	assets := make(map[string]types.PoolAsset)
 	for _, liquidity := range msg.Liquidity {
 		assets[liquidity.Token.Denom] = liquidity
+		totalShares = totalShares.Add(liquidity.Token.Amount)
 	}
 
 	// Check pool already created or not
 	if _, found := k.GetPool(ctx, pool.PoolId); found {
-		return types.ErrAlreadyCreatedPool
+		return nil, types.ErrAlreadyCreatedPool
+	}
+
+	// Check balance.
+	for _, liquidity := range msg.Liquidity {
+		balance := k.bankKeeper.GetBalance(ctx, poolCreator, liquidity.Token.Denom)
+		if balance.Amount.LT(liquidity.Token.Amount) {
+			return nil, types.ErrInsufficientBalance
+		}
 	}
 
 	// Create Module Account
 	escrowAccount := types.GetEscrowAddress(pool.PoolId)
 	if err := utils.CreateModuleAccount(ctx, k.accountKeeper, escrowAccount); err != nil {
-		return err
+		return nil, err
 	}
 
 	// Move asset from creator to module account
-	if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, poolCreator, escrowAccount.String(), msg.InitialLiquidity()); err != nil {
-		return err
+
+	if err := k.LockTokens(ctx, pool.PoolId, msg.PoolCreator(), msg.InitialLiquidity()); err != nil {
+		return nil, err
 	}
 
 	// Register metadata to bank keeper
+
 	k.bankKeeper.SetDenomMetaData(ctx, banktypes.Metadata{
 		Description: fmt.Sprintf("The share token of the gamm pool %s", pool.GetPoolId()),
 		DenomUnits: []*banktypes.DenomUnit{
@@ -62,17 +73,16 @@ func (k Keeper) initializePool(ctx sdk.Context, msg *types.MsgCreatePool) error 
 	})
 
 	// Mint share to creator
-	err := k.MintPoolShareToAccount(ctx, poolCreator, sdk.NewCoin(
+	if err := k.MintPoolShareToAccount(ctx, poolCreator, sdk.NewCoin(
 		poolShareBaseDenom,
 		totalShares,
-	))
-	if err != nil {
-		return err
+	)); err != nil {
+		return nil, err
 	}
 
 	// Save pool to chain
 	k.AppendPool(ctx, pool)
-	return nil
+	return &pool.PoolId, nil
 }
 
 // RemoveInterchainLiquidityPool removes a interchainLiquidityPool from the store
@@ -110,7 +120,7 @@ func GetInterchainLiquidityPoolKey(count uint64) []byte {
 }
 
 // GetAllInterchainLiquidityPool returns all interchainLiquidityPool
-func (k Keeper) GetAlPool(ctx sdk.Context) (list []types.Pool) {
+func (k Keeper) GetAllPool(ctx sdk.Context) (list []types.Pool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(string(types.KeyPoolsPrefix)))
 
 	// Start from the latest pool and move to the oldest

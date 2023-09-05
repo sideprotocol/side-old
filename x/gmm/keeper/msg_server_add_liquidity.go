@@ -41,5 +41,13 @@ func (k msgServer) AddLiquidity(goCtx context.Context, msg *types.MsgAddLiquidit
 
 	// Save update information
 	k.SetPool(ctx, pool)
+
+	// Emit events
+	k.EmitEvent(
+		ctx, types.EventValueActionDeposit,
+		msg.PoolId,
+		msg.Creator,
+		types.GetEventAttrOfAsset(msg.Liquidity)...,
+	)
 	return &types.MsgAddLiquidityResponse{}, nil
 }

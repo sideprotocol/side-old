@@ -14,9 +14,22 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 	}
 
 	// Initialize pool
-	err := k.initializePool(ctx, msg)
+	pooID, err := k.initializePool(ctx, msg)
 	if err != nil {
 		return nil, err
 	}
-	return &types.MsgCreatePoolResponse{}, nil
+
+	// Emit events
+	k.EmitEvent(
+		ctx, types.EventValueActionCreatePool, *pooID,
+		msg.Creator,
+		sdk.Attribute{
+			Key:   types.AttributeKeyPoolCreator,
+			Value: msg.Creator,
+		},
+	)
+
+	return &types.MsgCreatePoolResponse{
+		PoolId: *pooID,
+	}, nil
 }
