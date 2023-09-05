@@ -16,7 +16,7 @@ func (k Keeper) initializePool(ctx sdk.Context, msg *types.MsgCreatePool) (*stri
 	pool := msg.CreatePool()
 	totalShares := sdk.NewInt(0)
 
-	poolShareBaseDenom := pool.PoolId //types.GetPoolShareDenom(pool.PoolId)
+	poolShareBaseDenom := pool.PoolId // types.GetPoolShareDenom(pool.PoolId)
 	poolShareDisplayDenom := fmt.Sprintf("GAMM-%s", pool.PoolId)
 
 	assets := make(map[string]types.PoolAsset)

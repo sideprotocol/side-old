@@ -27,7 +27,7 @@ func GetPoolID(denoms []string) string {
 }
 
 func GetEventAttrOfAsset(assets []sdk.Coin) []sdk.Attribute {
-	var attr []sdk.Attribute
+	attr := []sdk.Attribute{}
 	for index, asset := range assets {
 		attr = append(attr, sdk.NewAttribute(
 			fmt.Sprintf("%d", index),

@@ -38,13 +38,11 @@ type KeeperTestSuite struct {
 	queryClient types.QueryClient
 }
 
-var (
-	gmmModuleAddress string
-)
+var gmmModuleAddress string
 
 func (suite *KeeperTestSuite) SetupTest() {
-	//app := simapp.InitSideTestApp(initChain)
-	app := simapp.Setup(suite.T(), false)
+	// app := simapp.InitSideTestApp(initChain)
+	app := simapp.Setup(suite.T())
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{Time: time.Now()})
 
 	app.AccountKeeper.SetParams(ctx, authtypes.DefaultParams())
@@ -154,7 +152,7 @@ func (suite *KeeperTestSuite) SetupStableCoinPrices() {
 // }
 
 func (suite *KeeperTestSuite) setupSuiteWithBalances() {
-	//suite.app.StakingKeeper.InitGenesis(suite.ctx, getStakeGenesis())
+	// suite.app.StakingKeeper.InitGenesis(suite.ctx, getStakeGenesis())
 	suite.app.BankKeeper.InitGenesis(suite.ctx, getBankGenesis())
 }
 

@@ -19,12 +19,12 @@ func (suite *KeeperTestSuite) TestMsgCreatePool() {
 			SwapFee: sdkmath.LegacyDec(sdk.NewInt(100)),
 		},
 		[]types.PoolAsset{
-			types.PoolAsset{
+			{
 				Token:   sdk.NewCoin(simapp.DefaultBondDenom, sdkmath.NewInt(100)),
 				Weight:  sdk.NewInt(50),
 				Decimal: sdk.NewInt(6),
 			},
-			types.PoolAsset{
+			{
 				Token:   sdk.NewCoin(simapp.AltDenom, sdkmath.NewInt(100)),
 				Weight:  sdk.NewInt(50),
 				Decimal: sdk.NewInt(6),
@@ -68,19 +68,18 @@ func (suite *KeeperTestSuite) TestMsgCreatePoolFail() {
 						SwapFee: sdkmath.LegacyDec(sdk.NewInt(100)),
 					},
 					[]types.PoolAsset{
-						types.PoolAsset{
+						{
 							Token:   sdk.NewCoin("aside", sdkmath.NewInt(100)),
 							Weight:  sdk.NewInt(50),
 							Decimal: sdk.NewInt(6),
 						},
-						types.PoolAsset{
+						{
 							Token:   sdk.NewCoin("usdc", sdkmath.NewInt(100)),
 							Weight:  sdk.NewInt(50),
 							Decimal: sdk.NewInt(6),
 						},
 					},
 				)
-
 			},
 		},
 	}
@@ -112,12 +111,12 @@ func (suite *KeeperTestSuite) CreateNewPool() string {
 			SwapFee: sdkmath.LegacyDec(sdk.NewInt(100)),
 		},
 		[]types.PoolAsset{
-			types.PoolAsset{
+			{
 				Token:   sdk.NewCoin("aside", sdkmath.NewInt(100)),
 				Weight:  sdk.NewInt(50),
 				Decimal: sdk.NewInt(6),
 			},
-			types.PoolAsset{
+			{
 				Token:   sdk.NewCoin("usdc", sdkmath.NewInt(100)),
 				Weight:  sdk.NewInt(50),
 				Decimal: sdk.NewInt(6),

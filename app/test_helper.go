@@ -2,9 +2,8 @@ package app
 
 import (
 	"encoding/json"
-	"time"
-
 	"testing"
+	"time"
 
 	"github.com/cometbft/cometbft/crypto/secp256k1"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
@@ -32,7 +31,7 @@ const (
 )
 
 // Setup initializes a new App. A Nop logger is set in App.
-func Setup(t *testing.T, isCheckTx bool) *App {
+func Setup(t *testing.T) *App {
 	t.Helper()
 
 	privVal := mock.NewPV()
@@ -57,7 +56,6 @@ func Setup(t *testing.T, isCheckTx bool) *App {
 	app := SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, balance)
 
 	return app
-
 }
 
 func genesisStateWithValSet(t *testing.T,

@@ -14,7 +14,7 @@ func (k Keeper) EmitEvent(ctx sdk.Context,
 			Value: action,
 		},
 		{
-			Key:   types.AttributeKeyPoolId,
+			Key:   types.AttributeKeyPoolID,
 			Value: poolID,
 		},
 		{

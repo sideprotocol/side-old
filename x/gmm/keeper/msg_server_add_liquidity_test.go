@@ -69,7 +69,6 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidityFail() {
 						),
 					},
 				}
-
 			},
 		},
 	}

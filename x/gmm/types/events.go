@@ -10,8 +10,8 @@ const (
 
 const (
 	AttributeKeyAction              = "action"
-	AttributeKeyPoolId              = "pool_id"
-	AttributeKeyMultiDepositOrderId = "order_id"
+	AttributeKeyPoolID              = "pool_id"
+	AttributeKeyMultiDepositOrderID = "order_id"
 	AttributeKeyMultiDeposits       = "deposit"
 	AttributeKeyTokenIn             = "token_in"
 	AttributeKeyTokenOut            = "token_out"
