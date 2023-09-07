@@ -118,3 +118,14 @@ func (p *Pool) findAssetByDenom(denom string) (PoolAsset, error) {
 	}
 	return PoolAsset{}, ErrNotFoundAssetInPool
 }
+
+func (m *Pool) GetAssetList()[]PoolAsset {
+	assets := make([]PoolAsset, 0)
+	if m != nil {
+		for _, asset := range m.Assets {
+			assets = append(assets, asset)
+		}
+		return assets
+	}
+	return nil
+}
