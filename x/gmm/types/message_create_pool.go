@@ -2,6 +2,7 @@ package types
 
 import (
 	sdkerrors "cosmossdk.io/errors"
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -58,6 +59,9 @@ func (msg *MsgCreatePool) ValidateBasic() error {
 		return sdkerrors.Wrapf(ErrInvalidLiquidityInLength, "number of liquidity (%d)", len(msg.Liquidity))
 	}
 
+	if msg.Params.Amp.GT(sdkmath.NewInt(100)) {
+		return sdkerrors.Wrapf(ErrInvalidAmp, "amp (%d) is out of range", msg.Params.Amp)
+	}
 	return nil
 }
 

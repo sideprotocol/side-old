@@ -26,4 +26,6 @@ var (
 	ErrEmptyDenom               = sdkerrors.Register(ModuleName, 1116, "empty denom")
 	ErrInsufficientBalance      = sdkerrors.Register(ModuleName, 1117, "insufficient balance")
 	ErrPoolNotFound             = sdkerrors.Register(ModuleName, 1118, "not found pool")
+	ErrInvalidInvariantConverge = sdkerrors.Register(ModuleName, 1119, "Invalid invariant converge")
+	ErrInvalidAmp               = sdkerrors.Register(ModuleName, 1120, "amp has to be zero to 100")
 )
