@@ -13,7 +13,7 @@ func (p *Pool) estimateShareInStablePool(coins sdk.Coins) (sdk.Coin, error) {
 	sum := p.Sum()
 
 	// Calculate the weighted balance ratio without considering fees
-	balanceRatiosWithFee := make(map[string]sdkmath.LegacyDec, len(coins)) //new Array<BigNumber>(amountsIn.length);
+	balanceRatiosWithFee := make(map[string]sdkmath.LegacyDec, len(coins))
 	// The weighted sum of token balance ratios without fee
 	invariantRatioWithFees := sdkmath.LegacyZeroDec()
 
@@ -33,8 +33,8 @@ func (p *Pool) estimateShareInStablePool(coins sdk.Coins) (sdk.Coin, error) {
 
 	newBalances := sdk.NewCoins()
 	for _, amountIn := range coins {
-		amountInWithoutFee := sdkmath.ZeroInt()
 		asset := p.Assets[amountIn.Denom]
+		var amountInWithoutFee sdkmath.Int
 		// Check if the balance ratio is greater than the ideal ratio to charge fees or not
 		if balanceRatiosWithFee[asset.Token.Denom].GT(invariantRatioWithFees) {
 			nonTaxableAmount := asset.Token.Amount.Quo(sdkmath.Int(invariantRatioWithFees).Sub(sdkmath.Int(sdkmath.LegacyOneDec())))
@@ -71,9 +71,8 @@ func (p *Pool) estimateShareInStablePool(coins sdk.Coins) (sdk.Coin, error) {
 		share := p.TotalShares.Amount.Mul(sdkmath.Int(invariantRatio.Sub(sdkmath.LegacyOneDec())))
 		return sdk.NewCoin(p.PoolId, share), nil
 
-	} else {
-		return sdk.NewCoin(p.PoolId, sdkmath.NewInt(0)), nil
 	}
+	return sdk.NewCoin(p.PoolId, sdkmath.NewInt(0)), nil
 }
 
 func (p *Pool) estimateSwapInStablePool(tokenIn sdk.Coin, denomOut string) (sdk.Coin, error) {
@@ -95,6 +94,7 @@ func (p *Pool) estimateSwapInStablePool(tokenIn sdk.Coin, denomOut string) (sdk.
 
 	inv, err := calculateInvariantInStablePool(p.PoolParams.Amp, p.GetLiquidity())
 	if err != nil {
+		return sdk.Coin{}, err
 	}
 
 	assets := p.Assets
@@ -151,15 +151,12 @@ func (p *Pool) estimateWithdrawalsFromStablePool(share sdk.Coin) ([]sdk.Coin, er
   // n = number of tokens                                                                      //
   **********************************************************************************************/
 
-// Math variables (assuming these are constants or have been previously defined)
-var AMP_PRECISION = sdkmath.NewInt(1000)
+var AmpPrecision = sdkmath.NewInt(1000)
 
 func calculateInvariantInStablePool(
 	amp sdkmath.Int,
 	assets []sdk.Coin,
 ) (sdkmath.Int, error) {
-
-	// Initialize sum as zero
 	sum := sdkmath.NewInt(0)
 
 	// Number of tokens
@@ -173,20 +170,20 @@ func calculateInvariantInStablePool(
 		return sum, nil
 	}
 
-	preInv := sdkmath.NewInt(0)
 	inv := sum
 	ampTimeTotal := amp.Mul(numTokens)
 
+	// nolint:staticcheck
 	for i := 0; i < 255; i++ {
-		P_D := numTokens.Mul(assets[0].Amount)
+		PD := numTokens.Mul(assets[0].Amount)
 		for _, asset := range assets {
-			P_D = P_D.Mul(asset.Amount).Mul(numTokens).Quo(inv)
+			PD = PD.Mul(asset.Amount).Mul(numTokens).Quo(inv)
 		}
-		preInv = inv
 
-		inv1 := numTokens.Mul(inv).Mul(inv).Add((ampTimeTotal.Mul(sum).Mul(P_D)).Quo(AMP_PRECISION))
+		preInv := inv
+		inv1 := numTokens.Mul(inv).Mul(inv).Add((ampTimeTotal.Mul(sum).Mul(PD)).Quo(AmpPrecision))
 		inv2 := (numTokens.Add(sdk.OneInt()).Mul(inv)).Add(
-			ampTimeTotal.Sub(AMP_PRECISION).Mul(P_D).Quo(AMP_PRECISION),
+			ampTimeTotal.Sub(AmpPrecision).Mul(PD).Quo(AmpPrecision),
 		)
 		inv = inv1.Add(inv2)
 
@@ -209,15 +206,14 @@ func getTokenBalanceGivenInvariantAndAllOtherBalances(
 	assets map[string]PoolAsset,
 	tokenInDenom string,
 ) (sdkmath.Int, error) {
-	//assets := p.GetAssetList()
 	numTokens := sdkmath.NewInt(int64(len(assets)))
 	ampTimeTotal := amp.Mul(numTokens)
 	sum := sdkmath.NewInt(0)
 
-	P_D := numTokens.Mul(assets[tokenInDenom].Token.Amount)
+	PD := numTokens.Mul(assets[tokenInDenom].Token.Amount)
 
 	for _, asset := range assets {
-		P_D = P_D.Mul(asset.Token.Amount).Mul(numTokens).Quo(inv)
+		PD = PD.Mul(asset.Token.Amount).Mul(numTokens).Quo(inv)
 		sum = sum.Add(asset.Token.Amount)
 	}
 
@@ -225,15 +221,13 @@ func getTokenBalanceGivenInvariantAndAllOtherBalances(
 
 	inv2 := inv.Mul(inv)
 
-	c := inv2.Quo(ampTimeTotal.Mul(P_D)).Mul(AMP_PRECISION).Mul(assets[tokenInDenom].Token.Amount)
-	b := sum.Add(inv.Quo(ampTimeTotal).Mul(AMP_PRECISION))
-
-	preTokenBalance := sdkmath.NewInt(0)
+	c := inv2.Quo(ampTimeTotal.Mul(PD)).Mul(AmpPrecision).Mul(assets[tokenInDenom].Token.Amount)
+	b := sum.Add(inv.Quo(ampTimeTotal).Mul(AmpPrecision))
 
 	tokenBalance := (inv2.Add(c)).Quo(inv.Add(b))
 
 	for i := 0; i < 255; i++ {
-		preTokenBalance = tokenBalance
+		preTokenBalance := tokenBalance
 		tokenBalance = tokenBalance.Mul(tokenBalance).Add(c).Quo((tokenBalance.Mul(sdkmath.NewInt(2)).Add(b).Sub(inv)))
 
 		if tokenBalance.GT(preTokenBalance) {

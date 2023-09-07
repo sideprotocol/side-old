@@ -119,10 +119,10 @@ func (p *Pool) findAssetByDenom(denom string) (PoolAsset, error) {
 	return PoolAsset{}, ErrNotFoundAssetInPool
 }
 
-func (m *Pool) GetAssetList() []PoolAsset {
+func (p *Pool) GetAssetList() []PoolAsset {
 	assets := make([]PoolAsset, 0)
-	if m != nil {
-		for _, asset := range m.Assets {
+	if p != nil {
+		for _, asset := range p.Assets {
 			assets = append(assets, asset)
 		}
 		return assets
@@ -130,10 +130,10 @@ func (m *Pool) GetAssetList() []PoolAsset {
 	return nil
 }
 
-func (m *Pool) GetLiquidity() sdk.Coins {
+func (p *Pool) GetLiquidity() sdk.Coins {
 	assets := sdk.NewCoins()
-	if m != nil {
-		for _, asset := range m.Assets {
+	if p != nil {
+		for _, asset := range p.Assets {
 			assets = assets.Add(asset.Token)
 		}
 		return assets
@@ -141,10 +141,10 @@ func (m *Pool) GetLiquidity() sdk.Coins {
 	return nil
 }
 
-func (m *Pool) Sum() sdkmath.Int {
+func (p *Pool) Sum() sdkmath.Int {
 	sum := sdkmath.ZeroInt()
-	if m != nil {
-		for _, asset := range m.Assets {
+	if p != nil {
+		for _, asset := range p.Assets {
 			sum = sum.Add(asset.Token.Amount)
 		}
 		return sum
