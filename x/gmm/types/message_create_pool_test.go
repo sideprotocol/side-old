@@ -37,6 +37,7 @@ func TestMsgCreatePool_ValidateBasic(t *testing.T) {
 				Params: &PoolParams{
 					Type:    PoolType_WEIGHT,
 					SwapFee: sdkmath.LegacyNewDec(int64(0)),
+					Amp:     sdk.NewInt(0),
 				}, // Replace with a sample valid PoolParams
 			},
 			err: ErrEmptyLiquidity, // Replace with the actual error
@@ -48,6 +49,7 @@ func TestMsgCreatePool_ValidateBasic(t *testing.T) {
 				Params: &PoolParams{
 					Type:    PoolType_WEIGHT,
 					SwapFee: sdkmath.LegacyNewDec(int64(0)),
+					Amp:     sdk.NewInt(0),
 				}, // Replace with a sample valid PoolParams
 				Liquidity: []PoolAsset{
 					{
@@ -65,6 +67,7 @@ func TestMsgCreatePool_ValidateBasic(t *testing.T) {
 				Params: &PoolParams{
 					Type:    PoolType_WEIGHT,
 					SwapFee: sdkmath.LegacyNewDec(int64(0)),
+					Amp:     sdk.NewInt(0),
 				}, // Replace with a sample valid PoolParams
 				Liquidity: []PoolAsset{
 					{

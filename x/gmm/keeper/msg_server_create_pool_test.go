@@ -17,6 +17,7 @@ func (suite *KeeperTestSuite) TestMsgCreatePool() {
 		types.PoolParams{
 			Type:    types.PoolType_WEIGHT,
 			SwapFee: sdkmath.LegacyDec(sdk.NewInt(100)),
+			Amp:     sdk.NewInt(100),
 		},
 		[]types.PoolAsset{
 			{
@@ -66,6 +67,7 @@ func (suite *KeeperTestSuite) TestMsgCreatePoolFail() {
 					types.PoolParams{
 						Type:    types.PoolType_WEIGHT,
 						SwapFee: sdkmath.LegacyDec(sdk.NewInt(100)),
+						Amp:     sdk.NewInt(100),
 					},
 					[]types.PoolAsset{
 						{
@@ -109,6 +111,7 @@ func (suite *KeeperTestSuite) CreateNewPool() string {
 		types.PoolParams{
 			Type:    types.PoolType_WEIGHT,
 			SwapFee: sdkmath.LegacyDec(sdk.NewInt(100)),
+			Amp:     sdk.NewInt(100),
 		},
 		[]types.PoolAsset{
 			{
