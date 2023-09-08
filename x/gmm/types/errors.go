@@ -28,4 +28,6 @@ var (
 	ErrPoolNotFound             = sdkerrors.Register(ModuleName, 1118, "not found pool")
 	ErrInvalidInvariantConverge = sdkerrors.Register(ModuleName, 1119, "Invalid invariant converge")
 	ErrInvalidAmp               = sdkerrors.Register(ModuleName, 1120, "amp has to be zero to 100")
+	ErrNotMeetSlippage          = sdkerrors.Register(ModuleName, 1121, "not meet slippage")
+	ErrInvalidSlippage          = sdkerrors.Register(ModuleName, 1122, "invalid slippage")
 )

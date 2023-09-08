@@ -52,11 +52,16 @@ message MsgSwap {
   string sender = 1;
   string pool_id = 2;
   cosmos.base.v1beta1.Coin tokenIn = 3 [(gogoproto.nullable) = false];
-  string denom_out = 4;
+  cosmos.base.v1beta1.Coin tokenOut = 4 [(gogoproto.nullable) = false];
+  string slippage = 5 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ]; 
 }
 
 message MsgSwapResponse {
   string                   pool_id = 1;
   cosmos.base.v1beta1.Coin tokenIn = 2 [(gogoproto.nullable) = false];
+
 }
 

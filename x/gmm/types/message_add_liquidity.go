@@ -12,11 +12,11 @@ const TypeMsgAddLiquidity = "add_liquidity"
 var _ sdk.Msg = &MsgAddLiquidity{}
 
 func NewMsgAddLiquidity(
-	Sender, poolID string,
+	sender, poolID string,
 	liquidity sdk.Coins,
 ) *MsgAddLiquidity {
 	return &MsgAddLiquidity{
-		Sender:   Sender,
+		Sender:    sender,
 		PoolId:    poolID,
 		Liquidity: liquidity,
 	}

@@ -25,14 +25,14 @@ func TestMsgSwap_ValidateBasic(t *testing.T) {
 			name: "invalid poolID",
 			msg: MsgSwap{
 				Sender: sample.AccAddress(),
-				PoolId:  "",
+				PoolId: "",
 			},
 			err: ErrInvalidPoolID,
 		},
 		{
 			name: "invalid tokenIn",
 			msg: MsgSwap{
-				Sender: sample.AccAddress(),
+				Sender:  sample.AccAddress(),
 				PoolId:  "test1",
 				TokenIn: sdk.NewCoin("test1", sdk.NewInt(0)),
 			},
@@ -41,20 +41,20 @@ func TestMsgSwap_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid denomOut",
 			msg: MsgSwap{
-				Sender:  sample.AccAddress(),
+				Sender:   sample.AccAddress(),
 				PoolId:   "test1",
 				TokenIn:  sdk.NewCoin("test1", sdk.NewInt(100)),
-				DenomOut: "",
+				TokenOut: sdk.NewCoin("test2", sdk.NewInt(100)),
 			},
 			err: ErrEmptyDenom,
 		},
 		{
 			name: "invalid denomOut",
 			msg: MsgSwap{
-				Sender:  sample.AccAddress(),
+				Sender:   sample.AccAddress(),
 				PoolId:   "test1",
 				TokenIn:  sdk.NewCoin("test1", sdk.NewInt(100)),
-				DenomOut: "test2",
+				TokenOut: sdk.NewCoin("test2", sdk.NewInt(100)),
 			},
 		},
 	}

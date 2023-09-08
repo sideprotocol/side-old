@@ -24,7 +24,7 @@ func TestMsgWithdraw_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid receiver address",
 			msg: MsgWithdraw{
-				Sender:  sample.AccAddress(),
+				Sender:   sample.AccAddress(),
 				Receiver: "invalid_address",
 			},
 			err: ErrInvalidAddress,
@@ -32,7 +32,7 @@ func TestMsgWithdraw_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid poolID",
 			msg: MsgWithdraw{
-				Sender:  sample.AccAddress(),
+				Sender:   sample.AccAddress(),
 				Receiver: sample.AccAddress(),
 				PoolId:   "",
 			},
@@ -41,7 +41,7 @@ func TestMsgWithdraw_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid share amount",
 			msg: MsgWithdraw{
-				Sender:  sample.AccAddress(),
+				Sender:   sample.AccAddress(),
 				Receiver: sample.AccAddress(),
 				PoolId:   "test1",
 				Share: sdk.NewCoin(
@@ -54,7 +54,7 @@ func TestMsgWithdraw_ValidateBasic(t *testing.T) {
 		{
 			name: "valid message",
 			msg: MsgWithdraw{
-				Sender:  sample.AccAddress(),
+				Sender:   sample.AccAddress(),
 				Receiver: sample.AccAddress(),
 				PoolId:   "test1",
 				Share: sdk.NewCoin(

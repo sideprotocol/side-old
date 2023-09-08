@@ -26,7 +26,7 @@ func TestMsgCreatePool_ValidateBasic(t *testing.T) {
 			name: "valid address, invalid PoolParams",
 			msg: MsgCreatePool{
 				Sender: sample.AccAddress(),
-				Params:  nil,
+				Params: nil,
 			},
 			err: ErrInvalidPoolParams, // Replace with the actual error
 		},

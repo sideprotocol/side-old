@@ -12,10 +12,10 @@ func (suite *KeeperTestSuite) TestMsgSwap() {
 
 	// Add liquidity to the pool
 	msg := types.MsgSwap{
-		Sender:  types.Alice,
+		Sender:   types.Alice,
 		PoolId:   poolID,
 		TokenIn:  sdk.NewCoin(simapp.DefaultBondDenom, sdk.NewInt(100)),
-		DenomOut: simapp.AltDenom,
+		TokenOut: sdk.NewCoin(simapp.AltDenom, sdk.NewInt(100)),
 	}
 
 	ctx := sdk.WrapSDKContext(suite.ctx)
@@ -23,7 +23,7 @@ func (suite *KeeperTestSuite) TestMsgSwap() {
 		PoolId: poolID,
 	})
 
-	outAssetBeforeSwap := queryResBeforeSwap.Pool.Assets[msg.DenomOut]
+	outAssetBeforeSwap := queryResBeforeSwap.Pool.Assets[msg.TokenOut.Denom]
 
 	estimatedOut, err := queryResBeforeSwap.Pool.EstimateSwap(msg.TokenIn, simapp.AltDenom)
 	suite.Require().NoError(err)
@@ -35,7 +35,7 @@ func (suite *KeeperTestSuite) TestMsgSwap() {
 	queryResAfterSwap, err := suite.queryClient.Pool(ctx, &types.QueryPoolRequest{
 		PoolId: poolID,
 	})
-	outAssetAfterSwap := queryResAfterSwap.Pool.Assets[msg.DenomOut]
+	outAssetAfterSwap := queryResAfterSwap.Pool.Assets[msg.TokenOut.Denom]
 
 	out := outAssetBeforeSwap.Token.Sub(outAssetAfterSwap.Token)
 	suite.Require().Equal(out, estimatedOut)

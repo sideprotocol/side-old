@@ -5,6 +5,7 @@ import (
 
 	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkmath "cosmossdk.io/math"
 )
 
 const TypeMsgSwap = "swap"
@@ -12,15 +13,15 @@ const TypeMsgSwap = "swap"
 var _ sdk.Msg = &MsgSwap{}
 
 func NewMsgSwap(
-	Sender, poolID string,
+	sender, poolID string,
 	tokenIn sdk.Coin,
-	denomOut string,
+	tokenOut sdk.Coin,
 ) *MsgSwap {
 	return &MsgSwap{
-		Sender:  Sender,
+		Sender:   sender,
 		PoolId:   poolID,
 		TokenIn:  tokenIn,
-		DenomOut: denomOut,
+		TokenOut: tokenOut,
 	}
 }
 
@@ -59,9 +60,12 @@ func (msg *MsgSwap) ValidateBasic() error {
 		return sdkerrors.Wrap(ErrInvalidTokenAmount, "tokenIn amount cannot be zero")
 	}
 
-	if strings.TrimSpace(msg.DenomOut) == "" {
-		return sdkerrors.Wrap(ErrEmptyDenom, "denom_out cannot be empty")
+	if msg.TokenOut.Amount.IsZero() {
+		return sdkerrors.Wrap(ErrInvalidTokenAmount, "tokenOut amount cannot be zero")
 	}
 
+	if msg.Slippage.IsNegative() || msg.Slippage.GTE(sdkmath.NewInt(100)) {
+		return sdkerrors.Wrap(ErrInvalidSlippage, "slippage should be ranged from 0 to 100")
+	}
 	return nil
 }

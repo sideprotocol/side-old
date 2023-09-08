@@ -12,11 +12,11 @@ const TypeMsgWithdraw = "withdraw"
 var _ sdk.Msg = &MsgWithdraw{}
 
 func NewMsgWithdraw(
-	Sender, poolID, receiver string,
+	sender, poolID, receiver string,
 	share sdk.Coin,
 ) *MsgWithdraw {
 	return &MsgWithdraw{
-		Sender:  Sender,
+		Sender:   sender,
 		Receiver: receiver,
 		PoolId:   poolID,
 		Share:    share,

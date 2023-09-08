@@ -14,7 +14,7 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidity() {
 	// Add liquidity to the pool
 	msg := types.MsgAddLiquidity{
 		Sender: types.Carol,
-		PoolId:  poolID,
+		PoolId: poolID,
 		Liquidity: []sdk.Coin{
 			sdk.NewCoin(
 				simapp.DefaultBondDenom,
@@ -46,7 +46,7 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidityFail() {
 			func() {
 				msg = &types.MsgAddLiquidity{
 					Sender: sample.AccAddress(),
-					PoolId:  "",
+					PoolId: "",
 					Liquidity: []sdk.Coin{
 						sdk.NewCoin(
 							simapp.DefaultBondDenom,
@@ -61,7 +61,7 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidityFail() {
 			func() {
 				msg = &types.MsgAddLiquidity{
 					Sender: sample.AccAddress(),
-					PoolId:  poolID,
+					PoolId: poolID,
 					Liquidity: []sdk.Coin{
 						sdk.NewCoin(
 							simapp.DefaultBondDenom,

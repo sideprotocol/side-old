@@ -11,12 +11,12 @@ const TypeMsgCreatePool = "create_pool"
 var _ sdk.Msg = &MsgCreatePool{}
 
 func NewMsgCreatePool(
-	Sender string,
+	sender string,
 	params PoolParams,
 	liquidity []PoolAsset,
 ) *MsgCreatePool {
 	return &MsgCreatePool{
-		Sender:   Sender,
+		Sender:    sender,
 		Params:    &params,
 		Liquidity: liquidity,
 	}
@@ -110,7 +110,7 @@ func (msg *MsgCreatePool) CreatePool() Pool {
 	poolShareBaseDenom := GetPoolShareDenom(newPoolID)
 	pool := Pool{
 		PoolId:      newPoolID,
-		Sender:     msg.Sender,
+		Sender:      msg.Sender,
 		PoolParams:  *msg.Params,
 		Assets:      assets,
 		TotalShares: sdk.NewCoin(poolShareBaseDenom, totalShares),

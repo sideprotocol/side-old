@@ -15,7 +15,7 @@ var _ = strconv.Itoa(0)
 
 func CmdSwap() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "swap [pool_id] [tokenIn] [denomOut]",
+		Use:   "swap [pool_id] [tokenIn] [tokenOut]",
 		Short: "Broadcast message swap",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -27,11 +27,16 @@ func CmdSwap() *cobra.Command {
 			if err != nil {
 				return err
 			}
+
+			tokenOut, err := sdk.ParseCoinNormalized(args[2])
+			if err != nil {
+				return err
+			}
 			msg := types.NewMsgSwap(
 				clientCtx.GetFromAddress().String(),
 				args[0],
 				tokenIn,
-				args[1],
+				tokenOut,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
