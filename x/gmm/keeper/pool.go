@@ -16,8 +16,8 @@ func (k Keeper) initializePool(ctx sdk.Context, msg *types.MsgCreatePool) (*stri
 	pool := msg.CreatePool()
 	totalShares := sdk.NewInt(0)
 
-	poolShareBaseDenom := pool.PoolId // types.GetPoolShareDenom(pool.PoolId)
-	poolShareDisplayDenom := fmt.Sprintf("GAMM-%s", pool.PoolId)
+	poolShareBaseDenom := pool.PoolId
+	poolShareDisplayDenom := pool.PoolId
 
 	assets := make(map[string]types.PoolAsset)
 	for _, liquidity := range msg.Liquidity {
@@ -44,7 +44,7 @@ func (k Keeper) initializePool(ctx sdk.Context, msg *types.MsgCreatePool) (*stri
 		return nil, err
 	}
 
-	// Move asset from creator to module account
+	// Move asset from Sender to module account
 
 	if err := k.LockTokens(ctx, pool.PoolId, msg.PoolCreator(), msg.InitialLiquidity()); err != nil {
 		return nil, err
@@ -72,7 +72,7 @@ func (k Keeper) initializePool(ctx sdk.Context, msg *types.MsgCreatePool) (*stri
 		Display: poolShareDisplayDenom,
 	})
 
-	// Mint share to creator
+	// Mint share to Sender
 	if err := k.MintPoolShareToAccount(ctx, poolCreator, sdk.NewCoin(
 		poolShareBaseDenom,
 		totalShares,

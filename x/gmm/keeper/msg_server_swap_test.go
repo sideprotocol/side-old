@@ -12,7 +12,7 @@ func (suite *KeeperTestSuite) TestMsgSwap() {
 
 	// Add liquidity to the pool
 	msg := types.MsgSwap{
-		Creator:  types.Alice,
+		Sender:  types.Alice,
 		PoolId:   poolID,
 		TokenIn:  sdk.NewCoin(simapp.DefaultBondDenom, sdk.NewInt(100)),
 		DenomOut: simapp.AltDenom,

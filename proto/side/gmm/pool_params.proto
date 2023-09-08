@@ -21,6 +21,8 @@ message PoolParams {
     (gogoproto.nullable) = false
   ];
   bool useOracle = 4;
+
+  // Amplifier parameters for stable pool. 
   string amp = 5 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false

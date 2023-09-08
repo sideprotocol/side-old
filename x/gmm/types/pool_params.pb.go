@@ -54,7 +54,8 @@ type PoolParams struct {
 	SwapFee   github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,2,opt,name=swapFee,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"swapFee"`
 	ExitFee   github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,3,opt,name=exitFee,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"exitFee"`
 	UseOracle bool                                   `protobuf:"varint,4,opt,name=useOracle,proto3" json:"useOracle,omitempty"`
-	Amp       github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,5,opt,name=amp,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"amp"`
+	// Amplifier parameters for stable pool.
+	Amp github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,5,opt,name=amp,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"amp"`
 }
 
 func (m *PoolParams) Reset()         { *m = PoolParams{} }

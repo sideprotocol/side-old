@@ -11,12 +11,12 @@ const TypeMsgCreatePool = "create_pool"
 var _ sdk.Msg = &MsgCreatePool{}
 
 func NewMsgCreatePool(
-	creator string,
+	Sender string,
 	params PoolParams,
 	liquidity []PoolAsset,
 ) *MsgCreatePool {
 	return &MsgCreatePool{
-		Creator:   creator,
+		Sender:   Sender,
 		Params:    &params,
 		Liquidity: liquidity,
 	}
@@ -31,11 +31,11 @@ func (msg *MsgCreatePool) Type() string {
 }
 
 func (msg *MsgCreatePool) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	Sender, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		panic(err)
 	}
-	return []sdk.AccAddress{creator}
+	return []sdk.AccAddress{Sender}
 }
 
 func (msg *MsgCreatePool) GetSignBytes() []byte {
@@ -44,9 +44,9 @@ func (msg *MsgCreatePool) GetSignBytes() []byte {
 }
 
 func (msg *MsgCreatePool) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	_, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
-		return sdkerrors.Wrapf(ErrInvalidAddress, "invalid creator address (%s)", err)
+		return sdkerrors.Wrapf(ErrInvalidAddress, "invalid Sender address (%s)", err)
 	}
 	if msg.Params == nil {
 		return ErrInvalidPoolParams
@@ -69,10 +69,10 @@ func (msg *MsgCreatePool) GetPoolType() PoolType {
 	return msg.Params.Type
 }
 
-// The creator of the pool, who pays the PoolCreationFee, provides initial liquidity,
+// The Sender of the pool, who pays the PoolCreationFee, provides initial liquidity,
 // and gets the initial LP shares.
 func (msg *MsgCreatePool) PoolCreator() sdk.AccAddress {
-	return sdk.MustAccAddressFromBech32(msg.Creator)
+	return sdk.MustAccAddressFromBech32(msg.Sender)
 }
 
 // Initial Liquidity for the pool that the sender is required to send to the pool account
@@ -110,7 +110,7 @@ func (msg *MsgCreatePool) CreatePool() Pool {
 	poolShareBaseDenom := GetPoolShareDenom(newPoolID)
 	pool := Pool{
 		PoolId:      newPoolID,
-		Creator:     msg.Creator,
+		Sender:     msg.Sender,
 		PoolParams:  *msg.Params,
 		Assets:      assets,
 		TotalShares: sdk.NewCoin(poolShareBaseDenom, totalShares),

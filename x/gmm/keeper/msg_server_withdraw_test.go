@@ -11,7 +11,7 @@ func (suite *KeeperTestSuite) TestMsgWithdraw() {
 
 	// Add liquidity to the pool
 	msg := types.MsgWithdraw{
-		Creator:  types.Alice,
+		Sender:  types.Alice,
 		Receiver: types.Carol,
 		PoolId:   poolID,
 		Share:    sdk.NewCoin(poolID, sdk.NewInt(100)),

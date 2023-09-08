@@ -22,10 +22,10 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 	// Emit events
 	k.EmitEvent(
 		ctx, types.EventValueActionCreatePool, *pooID,
-		msg.Creator,
+		msg.Sender,
 		sdk.Attribute{
 			Key:   types.AttributeKeyPoolCreator,
-			Value: msg.Creator,
+			Value: msg.Sender,
 		},
 	)
 

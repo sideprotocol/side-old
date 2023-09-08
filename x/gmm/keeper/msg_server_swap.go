@@ -24,14 +24,14 @@ func (k msgServer) Swap(goCtx context.Context, msg *types.MsgSwap) (*types.MsgSw
 	}
 
 	// Move asset from sender to module account
-	if err := k.LockTokens(ctx, msg.PoolId, sdk.MustAccAddressFromBech32(msg.Creator), sdk.NewCoins(
+	if err := k.LockTokens(ctx, msg.PoolId, sdk.MustAccAddressFromBech32(msg.Sender), sdk.NewCoins(
 		msg.TokenIn,
 	)); err != nil {
 		return nil, err
 	}
 
 	// Send wanted token from pool to user
-	if err := k.UnLockTokens(ctx, msg.PoolId, sdk.MustAccAddressFromBech32(msg.Creator), sdk.NewCoins(
+	if err := k.UnLockTokens(ctx, msg.PoolId, sdk.MustAccAddressFromBech32(msg.Sender), sdk.NewCoins(
 		out,
 	)); err != nil {
 		return nil, err

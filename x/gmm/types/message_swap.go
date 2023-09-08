@@ -12,12 +12,12 @@ const TypeMsgSwap = "swap"
 var _ sdk.Msg = &MsgSwap{}
 
 func NewMsgSwap(
-	creator, poolID string,
+	Sender, poolID string,
 	tokenIn sdk.Coin,
 	denomOut string,
 ) *MsgSwap {
 	return &MsgSwap{
-		Creator:  creator,
+		Sender:  Sender,
 		PoolId:   poolID,
 		TokenIn:  tokenIn,
 		DenomOut: denomOut,
@@ -33,11 +33,11 @@ func (msg *MsgSwap) Type() string {
 }
 
 func (msg *MsgSwap) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	Sender, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		panic(err)
 	}
-	return []sdk.AccAddress{creator}
+	return []sdk.AccAddress{Sender}
 }
 
 func (msg *MsgSwap) GetSignBytes() []byte {
@@ -46,9 +46,9 @@ func (msg *MsgSwap) GetSignBytes() []byte {
 }
 
 func (msg *MsgSwap) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	_, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
-		return sdkerrors.Wrapf(ErrInvalidAddress, "invalid creator address (%s)", err)
+		return sdkerrors.Wrapf(ErrInvalidAddress, "invalid Sender address (%s)", err)
 	}
 
 	if strings.TrimSpace(msg.PoolId) == "" {

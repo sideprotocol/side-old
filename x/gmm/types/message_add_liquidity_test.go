@@ -17,14 +17,14 @@ func TestMsgAddLiquidity_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: MsgAddLiquidity{
-				Creator: "invalid_address",
+				Sender: "invalid_address",
 			},
 			err: ErrInvalidAddress,
 		},
 		{
 			name: "invalid poolID",
 			msg: MsgAddLiquidity{
-				Creator: sample.AccAddress(),
+				Sender: sample.AccAddress(),
 				PoolId:  "",
 			},
 			err: ErrInvalidPoolID,
@@ -32,7 +32,7 @@ func TestMsgAddLiquidity_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid liquidity (length = 0)",
 			msg: MsgAddLiquidity{
-				Creator:   sample.AccAddress(),
+				Sender:   sample.AccAddress(),
 				PoolId:    "test",
 				Liquidity: []sdk.Coin{},
 			},
@@ -41,7 +41,7 @@ func TestMsgAddLiquidity_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid liquidity (length > 2)",
 			msg: MsgAddLiquidity{
-				Creator: sample.AccAddress(),
+				Sender: sample.AccAddress(),
 				PoolId:  "test",
 				Liquidity: []sdk.Coin{
 					{Denom: "test1", Amount: sdk.NewInt(1000000000)},
@@ -54,7 +54,7 @@ func TestMsgAddLiquidity_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid liquidity (amounts)",
 			msg: MsgAddLiquidity{
-				Creator: sample.AccAddress(),
+				Sender: sample.AccAddress(),
 				PoolId:  "test",
 				Liquidity: []sdk.Coin{
 					{Denom: "test", Amount: sdk.NewInt(0)},
@@ -66,7 +66,7 @@ func TestMsgAddLiquidity_ValidateBasic(t *testing.T) {
 		{
 			name: "valid addLiquidity message",
 			msg: MsgAddLiquidity{
-				Creator: sample.AccAddress(),
+				Sender: sample.AccAddress(),
 				PoolId:  "test",
 				Liquidity: []sdk.Coin{
 					{Denom: "test", Amount: sdk.NewInt(1000000000)},

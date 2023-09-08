@@ -18,7 +18,7 @@ service Msg {
 
 }
 message MsgCreatePool {
-           string     creator   = 1;
+           string     sender   = 1;
            PoolParams params    = 2;
   repeated PoolAsset  liquidity = 3 [(gogoproto.nullable) = false];
 }
@@ -28,7 +28,7 @@ message MsgCreatePoolResponse {
 }
 
 message MsgAddLiquidity {
-           string                   creator   = 1;
+           string                   sender   = 1;
            string                   pool_id   = 2;
   repeated cosmos.base.v1beta1.Coin liquidity = 3 [(gogoproto.nullable) = false];
 }
@@ -38,7 +38,7 @@ message MsgAddLiquidityResponse {
 }
 
 message MsgWithdraw {
-  string creator = 1;
+  string sender = 1;
   string receiver = 2;
   string pool_id = 3;
   cosmos.base.v1beta1.Coin share = 4 [(gogoproto.nullable) = false];
@@ -49,7 +49,7 @@ message MsgWithdrawResponse {
 }
 
 message MsgSwap {
-  string creator = 1;
+  string sender = 1;
   string pool_id = 2;
   cosmos.base.v1beta1.Coin tokenIn = 3 [(gogoproto.nullable) = false];
   string denom_out = 4;

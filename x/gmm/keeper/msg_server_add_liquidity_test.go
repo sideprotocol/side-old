@@ -13,7 +13,7 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidity() {
 
 	// Add liquidity to the pool
 	msg := types.MsgAddLiquidity{
-		Creator: types.Carol,
+		Sender: types.Carol,
 		PoolId:  poolID,
 		Liquidity: []sdk.Coin{
 			sdk.NewCoin(
@@ -45,7 +45,7 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidityFail() {
 			"invalid poolID",
 			func() {
 				msg = &types.MsgAddLiquidity{
-					Creator: sample.AccAddress(),
+					Sender: sample.AccAddress(),
 					PoolId:  "",
 					Liquidity: []sdk.Coin{
 						sdk.NewCoin(
@@ -60,7 +60,7 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidityFail() {
 			"not enough funds",
 			func() {
 				msg = &types.MsgAddLiquidity{
-					Creator: sample.AccAddress(),
+					Sender: sample.AccAddress(),
 					PoolId:  poolID,
 					Liquidity: []sdk.Coin{
 						sdk.NewCoin(

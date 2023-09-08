@@ -26,8 +26,8 @@ import (
 )
 
 const (
-	DefaultBondDenom = "aside"
-	AltDenom         = "usdc"
+	DefaultBondDenom = "uside"
+	AltDenom         = "uusdc"
 )
 
 // Setup initializes a new App. A Nop logger is set in App.

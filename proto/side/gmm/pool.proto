@@ -11,7 +11,7 @@ import "cosmos_proto/cosmos.proto";
 message Pool {
   option (cosmos_proto.implements_interface) = "PoolI";
   string pool_id = 1; 
-  string creator = 2; 
+  string sender = 2; 
   PoolParams poolParams = 3 [(gogoproto.nullable) = false]; 
   map<string, PoolAsset> assets = 4  [(gogoproto.nullable) = false]; 
   // sum of all LP tokens sent out

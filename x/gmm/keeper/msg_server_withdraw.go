@@ -25,7 +25,7 @@ func (k msgServer) Withdraw(goCtx context.Context, msg *types.MsgWithdraw) (*typ
 	}
 
 	// Check creator has enough share or not
-	bal := k.bankKeeper.GetBalance(ctx, sdk.MustAccAddressFromBech32(msg.Creator),
+	bal := k.bankKeeper.GetBalance(ctx, sdk.MustAccAddressFromBech32(msg.Sender),
 		msg.Share.Denom,
 	)
 	if bal.IsLT(msg.Share) {
@@ -38,7 +38,7 @@ func (k msgServer) Withdraw(goCtx context.Context, msg *types.MsgWithdraw) (*typ
 	}
 
 	// Burn lp token
-	if err = k.BurnTokens(ctx, sdk.MustAccAddressFromBech32(msg.Creator), msg.Share); err != nil {
+	if err = k.BurnTokens(ctx, sdk.MustAccAddressFromBech32(msg.Sender), msg.Share); err != nil {
 		return nil, err
 	}
 

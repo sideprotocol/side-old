@@ -18,14 +18,14 @@ func TestMsgCreatePool_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: MsgCreatePool{
-				Creator: "invalid_address",
+				Sender: "invalid_address",
 			},
 			err: ErrInvalidAddress,
 		},
 		{
 			name: "valid address, invalid PoolParams",
 			msg: MsgCreatePool{
-				Creator: sample.AccAddress(),
+				Sender: sample.AccAddress(),
 				Params:  nil,
 			},
 			err: ErrInvalidPoolParams, // Replace with the actual error
@@ -33,7 +33,7 @@ func TestMsgCreatePool_ValidateBasic(t *testing.T) {
 		{
 			name: "valid address, valid PoolParams, empty Liquidity",
 			msg: MsgCreatePool{
-				Creator: sample.AccAddress(),
+				Sender: sample.AccAddress(),
 				Params: &PoolParams{
 					Type:    PoolType_WEIGHT,
 					SwapFee: sdkmath.LegacyNewDec(int64(0)),
@@ -45,7 +45,7 @@ func TestMsgCreatePool_ValidateBasic(t *testing.T) {
 		{
 			name: "valid address, valid PoolParams, valid Liquidity",
 			msg: MsgCreatePool{
-				Creator: sample.AccAddress(),
+				Sender: sample.AccAddress(),
 				Params: &PoolParams{
 					Type:    PoolType_WEIGHT,
 					SwapFee: sdkmath.LegacyNewDec(int64(0)),
@@ -63,7 +63,7 @@ func TestMsgCreatePool_ValidateBasic(t *testing.T) {
 		{
 			name: "valid address, valid PoolParams, valid Liquidity",
 			msg: MsgCreatePool{
-				Creator: sample.AccAddress(),
+				Sender: sample.AccAddress(),
 				Params: &PoolParams{
 					Type:    PoolType_WEIGHT,
 					SwapFee: sdkmath.LegacyNewDec(int64(0)),

@@ -12,11 +12,11 @@ const TypeMsgAddLiquidity = "add_liquidity"
 var _ sdk.Msg = &MsgAddLiquidity{}
 
 func NewMsgAddLiquidity(
-	creator, poolID string,
+	Sender, poolID string,
 	liquidity sdk.Coins,
 ) *MsgAddLiquidity {
 	return &MsgAddLiquidity{
-		Creator:   creator,
+		Sender:   Sender,
 		PoolId:    poolID,
 		Liquidity: liquidity,
 	}
@@ -31,11 +31,11 @@ func (msg *MsgAddLiquidity) Type() string {
 }
 
 func (msg *MsgAddLiquidity) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	Sender, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		panic(err)
 	}
-	return []sdk.AccAddress{creator}
+	return []sdk.AccAddress{Sender}
 }
 
 func (msg *MsgAddLiquidity) GetSignBytes() []byte {
@@ -44,9 +44,9 @@ func (msg *MsgAddLiquidity) GetSignBytes() []byte {
 }
 
 func (msg *MsgAddLiquidity) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	_, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
-		return sdkerrors.Wrapf(ErrInvalidAddress, "invalid creator address (%s)", err)
+		return sdkerrors.Wrapf(ErrInvalidAddress, "invalid Sender address (%s)", err)
 	}
 	if strings.TrimSpace(msg.PoolId) == "" {
 		return sdkerrors.Wrap(ErrInvalidPoolID, "pool id cannot be empty")
