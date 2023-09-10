@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simapp "github.com/sideprotocol/side/app"
 	"github.com/sideprotocol/side/x/gmm/types"
@@ -15,7 +16,8 @@ func (suite *KeeperTestSuite) TestMsgSwap() {
 		Sender:   types.Alice,
 		PoolId:   poolID,
 		TokenIn:  sdk.NewCoin(simapp.DefaultBondDenom, sdk.NewInt(100)),
-		TokenOut: sdk.NewCoin(simapp.AltDenom, sdk.NewInt(100)),
+		TokenOut: sdk.NewCoin(simapp.AltDenom, sdk.NewInt(50)),
+		Slippage: sdkmath.NewInt(1),
 	}
 
 	ctx := sdk.WrapSDKContext(suite.ctx)

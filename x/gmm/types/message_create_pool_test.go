@@ -10,6 +10,7 @@ import (
 )
 
 func TestMsgCreatePool_ValidateBasic(t *testing.T) {
+	weight := sdkmath.NewInt(int64(50))
 	tests := []struct {
 		name string
 		msg  MsgCreatePool
@@ -37,7 +38,6 @@ func TestMsgCreatePool_ValidateBasic(t *testing.T) {
 				Params: &PoolParams{
 					Type:    PoolType_WEIGHT,
 					SwapFee: sdkmath.LegacyNewDec(int64(0)),
-					Amp:     sdk.NewInt(0),
 				}, // Replace with a sample valid PoolParams
 			},
 			err: ErrEmptyLiquidity, // Replace with the actual error
@@ -49,12 +49,11 @@ func TestMsgCreatePool_ValidateBasic(t *testing.T) {
 				Params: &PoolParams{
 					Type:    PoolType_WEIGHT,
 					SwapFee: sdkmath.LegacyNewDec(int64(0)),
-					Amp:     sdk.NewInt(0),
 				}, // Replace with a sample valid PoolParams
 				Liquidity: []PoolAsset{
 					{
 						Token:  sdk.NewCoin("test1", sdk.NewInt(100000000000000)),
-						Weight: sdkmath.NewInt(int64(1)),
+						Weight: &weight,
 					},
 				}, // Replace with a sample valid Liquidity
 			},
@@ -67,16 +66,16 @@ func TestMsgCreatePool_ValidateBasic(t *testing.T) {
 				Params: &PoolParams{
 					Type:    PoolType_WEIGHT,
 					SwapFee: sdkmath.LegacyNewDec(int64(0)),
-					Amp:     sdk.NewInt(0),
+					Amp:     &weight,
 				}, // Replace with a sample valid PoolParams
 				Liquidity: []PoolAsset{
 					{
 						Token:  sdk.NewCoin("test1", sdk.NewInt(100000000000000)),
-						Weight: sdkmath.NewInt(int64(1)),
+						Weight: &weight,
 					},
 					{
 						Token:  sdk.NewCoin("test2", sdk.NewInt(100000000000000)),
-						Weight: sdkmath.NewInt(int64(1)),
+						Weight: &weight,
 					},
 				}, // Replace with a sample valid Liquidity
 			},

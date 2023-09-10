@@ -52,12 +52,12 @@ func (p *Pool) estimateShareInStablePool(coins sdk.Coins) (sdk.Coin, error) {
 	}
 
 	// Get current and new invariants, taking swap fees into account
-	currentInvariant, err := calculateInvariantInStablePool(p.PoolParams.Amp, p.GetLiquidity())
+	currentInvariant, err := calculateInvariantInStablePool(*p.PoolParams.Amp, p.GetLiquidity())
 	if err != nil {
 		return sdk.NewCoin(p.PoolId, sdkmath.NewInt(0)), nil
 	}
 
-	newInvariant, err := calculateInvariantInStablePool(p.PoolParams.Amp, newBalances)
+	newInvariant, err := calculateInvariantInStablePool(*p.PoolParams.Amp, newBalances)
 	if err != nil {
 		return sdk.NewCoin(p.PoolId, sdkmath.NewInt(0)), nil
 	}
@@ -92,7 +92,7 @@ func (p *Pool) estimateSwapInStablePool(tokenIn sdk.Coin, denomOut string) (sdk.
 
 	tokenInDec := MinusFees(tokenIn.Amount, p.PoolParams.SwapFee)
 
-	inv, err := calculateInvariantInStablePool(p.PoolParams.Amp, p.GetLiquidity())
+	inv, err := calculateInvariantInStablePool(*p.PoolParams.Amp, p.GetLiquidity())
 	if err != nil {
 		return sdk.Coin{}, err
 	}
@@ -107,7 +107,7 @@ func (p *Pool) estimateSwapInStablePool(tokenIn sdk.Coin, denomOut string) (sdk.
 	}
 
 	finalBalanceOut, err := getTokenBalanceGivenInvariantAndAllOtherBalances(
-		p.PoolParams.Amp, inv, assets, tokenIn.Denom,
+		*p.PoolParams.Amp, inv, assets, tokenIn.Denom,
 	)
 	out := p.Assets[denomOut].Token.Amount.Sub(finalBalanceOut).Sub(sdkmath.OneInt())
 	return sdk.NewCoin(denomOut, out), err

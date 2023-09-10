@@ -12,6 +12,7 @@ enum PoolType {
 
 message PoolParams {
   PoolType type  = 1;
+  // swapFee is ranged from 0 to 10000.
   string swapFee = 2 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
     (gogoproto.nullable) = false
@@ -24,7 +25,6 @@ message PoolParams {
 
   // Amplifier parameters for stable pool. 
   string amp = 5 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
-    (gogoproto.nullable) = false
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int"
   ];
 }

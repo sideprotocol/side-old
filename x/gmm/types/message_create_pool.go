@@ -62,6 +62,10 @@ func (msg *MsgCreatePool) ValidateBasic() error {
 	if msg.Params.Amp.GT(sdkmath.NewInt(100)) {
 		return sdkerrors.Wrapf(ErrInvalidAmp, "amp (%d) is out of range", msg.Params.Amp)
 	}
+	totalWeight := sdkmath.NewInt(0)
+	for _, asset := range msg.Liquidity {
+		totalWeight = totalWeight.Add(*asset.Weight)
+	}
 	return nil
 }
 

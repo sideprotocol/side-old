@@ -11,23 +11,24 @@ import (
 func (suite *KeeperTestSuite) TestMsgCreatePool() {
 	var msg *types.MsgCreatePool
 	suite.SetupTest()
-
+	weight := sdk.NewInt(50)
+	amp := sdk.NewInt(100)
 	msg = types.NewMsgCreatePool(
 		types.Alice,
 		types.PoolParams{
 			Type:    types.PoolType_WEIGHT,
 			SwapFee: sdkmath.LegacyDec(sdk.NewInt(100)),
-			Amp:     sdk.NewInt(100),
+			Amp:     &amp,
 		},
 		[]types.PoolAsset{
 			{
 				Token:   sdk.NewCoin(simapp.DefaultBondDenom, sdkmath.NewInt(100)),
-				Weight:  sdk.NewInt(50),
+				Weight:  &weight,
 				Decimal: sdk.NewInt(6),
 			},
 			{
 				Token:   sdk.NewCoin(simapp.AltDenom, sdkmath.NewInt(100)),
-				Weight:  sdk.NewInt(50),
+				Weight:  &weight,
 				Decimal: sdk.NewInt(6),
 			},
 		},
@@ -50,6 +51,8 @@ func (suite *KeeperTestSuite) TestMsgCreatePool() {
 func (suite *KeeperTestSuite) TestMsgCreatePoolFail() {
 	var msg *types.MsgCreatePool
 	suite.SetupTest()
+	weight := sdk.NewInt(50)
+	amp := sdk.NewInt(100)
 
 	testCases := []struct {
 		name   string
@@ -67,17 +70,17 @@ func (suite *KeeperTestSuite) TestMsgCreatePoolFail() {
 					types.PoolParams{
 						Type:    types.PoolType_WEIGHT,
 						SwapFee: sdkmath.LegacyDec(sdk.NewInt(100)),
-						Amp:     sdk.NewInt(100),
+						Amp:     &amp,
 					},
 					[]types.PoolAsset{
 						{
-							Token:   sdk.NewCoin("aside", sdkmath.NewInt(100)),
-							Weight:  sdk.NewInt(50),
+							Token:   sdk.NewCoin(simapp.DefaultBondDenom, sdkmath.NewInt(100)),
+							Weight:  &weight,
 							Decimal: sdk.NewInt(6),
 						},
 						{
-							Token:   sdk.NewCoin("usdc", sdkmath.NewInt(100)),
-							Weight:  sdk.NewInt(50),
+							Token:   sdk.NewCoin(simapp.AltDenom, sdkmath.NewInt(100)),
+							Weight:  &weight,
 							Decimal: sdk.NewInt(6),
 						},
 					},
@@ -106,22 +109,25 @@ func (suite *KeeperTestSuite) CreateNewPool() string {
 	var msg *types.MsgCreatePool
 	suite.SetupTest()
 
+	weight := sdk.NewInt(50)
+	amp := sdk.NewInt(100)
+
 	msg = types.NewMsgCreatePool(
 		types.Alice,
 		types.PoolParams{
 			Type:    types.PoolType_WEIGHT,
 			SwapFee: sdkmath.LegacyDec(sdk.NewInt(100)),
-			Amp:     sdk.NewInt(100),
+			Amp:     &amp,
 		},
 		[]types.PoolAsset{
 			{
-				Token:   sdk.NewCoin("aside", sdkmath.NewInt(100)),
-				Weight:  sdk.NewInt(50),
+				Token:   sdk.NewCoin(simapp.DefaultBondDenom, sdkmath.NewInt(100)),
+				Weight:  &weight,
 				Decimal: sdk.NewInt(6),
 			},
 			{
-				Token:   sdk.NewCoin("usdc", sdkmath.NewInt(100)),
-				Weight:  sdk.NewInt(50),
+				Token:   sdk.NewCoin(simapp.AltDenom, sdkmath.NewInt(100)),
+				Weight:  &weight,
 				Decimal: sdk.NewInt(6),
 			},
 		},

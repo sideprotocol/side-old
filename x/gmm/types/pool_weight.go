@@ -27,7 +27,7 @@ func (p *Pool) estimateShareWithSingleLiquidityInWeightPool(coin sdk.Coin) (sdk.
 
 	decToken := (sdk.NewDecCoinFromCoin(coin))
 	decAsset := sdk.NewDecCoinFromCoin(asset.Token)
-	weight := sdk.NewDecFromInt(asset.Weight).Quo(sdk.NewDec(100)) // divide by 100
+	weight := sdk.NewDecFromInt(*asset.Weight).Quo(sdk.NewDec(100)) // divide by 100
 	ratio := decToken.Amount.Quo(decAsset.Amount).Add(sdk.NewDec(1))
 	exponent := (math.Pow(ratio.MustFloat64(), weight.MustFloat64()) - 1) * Multiplier
 	factor, err := sdk.NewDecFromStr(fmt.Sprintf("%f", exponent/Multiplier))
@@ -55,7 +55,7 @@ func (p *Pool) estimateShareWithTalLiquidityInWeightPool(coins sdk.Coins) (sdk.C
 		decSupply := sdk.NewDecCoinFromCoin(p.TotalShares)
 
 		ratio := decToken.Amount.Quo(decAsset.Amount).Mul(sdk.NewDec(Multiplier))
-		issueAmount := (decSupply.Amount.Mul(sdk.NewDecFromInt(asset.Weight)).Mul(ratio).Quo(sdk.NewDec(100)).Quo(sdk.NewDec(Multiplier)))
+		issueAmount := (decSupply.Amount.Mul(sdk.NewDecFromInt(*asset.Weight)).Mul(ratio).Quo(sdk.NewDec(100)).Quo(sdk.NewDec(Multiplier)))
 
 		share = share.Add(issueAmount.RoundInt())
 	}
@@ -95,8 +95,8 @@ func (p *Pool) estimateSwapInWeightPool(amountIn sdk.Coin, denomOut string) (sdk
 
 	balanceOut := sdk.NewDecFromBigInt(assetOut.Token.Amount.BigInt())
 	balanceIn := sdk.NewDecFromBigInt(assetIn.Token.Amount.BigInt())
-	weightIn := sdk.NewDecFromInt(assetIn.Weight).Quo(sdk.NewDec(100))
-	weightOut := sdk.NewDecFromInt(assetIn.Weight).Quo(sdk.NewDec(100))
+	weightIn := sdk.NewDecFromInt(*assetIn.Weight).Quo(sdk.NewDec(100))
+	weightOut := sdk.NewDecFromInt(*assetIn.Weight).Quo(sdk.NewDec(100))
 	amount := p.TakeFees(amountIn.Amount)
 
 	// Ao = Bo * ((1 - Bi / (Bi + Ai)) ** Wi/Wo)

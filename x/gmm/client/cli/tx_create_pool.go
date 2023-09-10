@@ -45,6 +45,8 @@ func CmdCreatePool() *cobra.Command {
 			if err != nil {
 				return err
 			}
+
+			// swapFee is ranged from 0 to 10000.
 			if swapFee > 10000 {
 				return fmt.Errorf("swap fee must be less than 10000")
 			}
@@ -57,9 +59,10 @@ func CmdCreatePool() *cobra.Command {
 				if len(tokens) != len(decimals) {
 					return fmt.Errorf("liquidity and weights must have the same length")
 				}
+				weight := sdk.NewInt(int64(weights[i]))
 				liquidity = append(liquidity, types.PoolAsset{
 					Token:   tokens[i],
-					Weight:  sdk.NewInt(int64(weights[i])),
+					Weight:  &weight,
 					Decimal: sdk.NewInt(int64(decimals[i])),
 				})
 			}

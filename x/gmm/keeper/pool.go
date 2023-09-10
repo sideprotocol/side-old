@@ -7,7 +7,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	utils "github.com/sideprotocol/side/sideutils"
 	"github.com/sideprotocol/side/x/gmm/types"
 )
 
@@ -36,12 +35,6 @@ func (k Keeper) initializePool(ctx sdk.Context, msg *types.MsgCreatePool) (*stri
 		if balance.Amount.LT(liquidity.Token.Amount) {
 			return nil, types.ErrInsufficientBalance
 		}
-	}
-
-	// Create Module Account
-	escrowAccount := types.GetEscrowAddress(pool.PoolId)
-	if err := utils.CreateModuleAccount(ctx, k.accountKeeper, escrowAccount); err != nil {
-		return nil, err
 	}
 
 	// Move asset from Sender to module account

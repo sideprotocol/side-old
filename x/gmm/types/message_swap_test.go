@@ -3,6 +3,7 @@ package types
 import (
 	"testing"
 
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/sideprotocol/side/testutil/sample"
 	"github.com/stretchr/testify/require"
@@ -39,23 +40,15 @@ func TestMsgSwap_ValidateBasic(t *testing.T) {
 			err: ErrInvalidTokenAmount,
 		},
 		{
-			name: "invalid denomOut",
+			name: "invalid slippage",
 			msg: MsgSwap{
 				Sender:   sample.AccAddress(),
 				PoolId:   "test1",
 				TokenIn:  sdk.NewCoin("test1", sdk.NewInt(100)),
 				TokenOut: sdk.NewCoin("test2", sdk.NewInt(100)),
+				Slippage: sdkmath.NewInt(10000),
 			},
-			err: ErrEmptyDenom,
-		},
-		{
-			name: "invalid denomOut",
-			msg: MsgSwap{
-				Sender:   sample.AccAddress(),
-				PoolId:   "test1",
-				TokenIn:  sdk.NewCoin("test1", sdk.NewInt(100)),
-				TokenOut: sdk.NewCoin("test2", sdk.NewInt(100)),
-			},
+			err: ErrInvalidSlippage,
 		},
 	}
 	for _, tt := range tests {
