@@ -9,11 +9,55 @@ import (
 )
 
 func (suite *KeeperTestSuite) TestMsgCreatePool() {
-	var msg *types.MsgCreatePool
 	suite.SetupTest()
+
+	tests := []struct {
+		name    string
+		mutator func(msg *types.MsgCreatePool)
+	}{
+		{
+			"weight pool",
+			func(msg *types.MsgCreatePool) {
+				msg.Params.Type = types.PoolType_WEIGHT
+			},
+		},
+		{
+			"stable pool",
+			func(msg *types.MsgCreatePool) {
+				amp := sdk.NewInt(100)
+				msg.Params.Type = types.PoolType_STABLE
+				msg.Params.Amp = &amp
+				msg.Liquidity = suite.createStablePoolLiquidity()
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		suite.Run(tc.name, func() {
+			msg := suite.defaultMsgCreatePool()
+			tc.mutator(msg)
+
+			ctx := sdk.WrapSDKContext(suite.ctx)
+			res, err := suite.msgServer.CreatePool(ctx, msg)
+
+			suite.Require().NoError(err)
+			suite.Require().NotNil(res)
+
+			// Check pool is created or not
+			pool, err := suite.queryClient.Pool(ctx, &types.QueryPoolRequest{
+				PoolId: res.PoolId,
+			})
+			suite.Require().NoError(err)
+			suite.Require().Equal(pool.Pool.PoolId, res.PoolId)
+		})
+	}
+}
+
+// Helper method to create a default MsgCreatePool for testing
+func (suite *KeeperTestSuite) defaultMsgCreatePool() *types.MsgCreatePool {
 	weight := sdk.NewInt(50)
 	amp := sdk.NewInt(100)
-	msg = types.NewMsgCreatePool(
+	return types.NewMsgCreatePool(
 		types.Alice,
 		types.PoolParams{
 			Type:    types.PoolType_WEIGHT,
@@ -27,25 +71,29 @@ func (suite *KeeperTestSuite) TestMsgCreatePool() {
 				Decimal: sdk.NewInt(6),
 			},
 			{
-				Token:   sdk.NewCoin(simapp.AltDenom, sdkmath.NewInt(100)),
+				Token:   sdk.NewCoin(simapp.USDC, sdkmath.NewInt(100)),
 				Weight:  &weight,
 				Decimal: sdk.NewInt(6),
 			},
 		},
 	)
+}
 
-	ctx := sdk.WrapSDKContext(suite.ctx)
-	res, err := suite.msgServer.CreatePool(ctx, msg)
-
-	suite.Require().NoError(err)
-	suite.Require().NotNil(res)
-
-	// Check pool is created or not
-	pool, err := suite.queryClient.Pool(ctx, &types.QueryPoolRequest{
-		PoolId: res.PoolId,
-	})
-	suite.Require().NoError(err)
-	suite.Require().Equal(pool.Pool.PoolId, res.PoolId)
+// Helper method to create stable pool liquidity for testing
+func (suite *KeeperTestSuite) createStablePoolLiquidity() []types.PoolAsset {
+	weight := sdk.NewInt(50)
+	return []types.PoolAsset{
+		{
+			Token:   sdk.NewCoin(simapp.WDAI, sdkmath.NewInt(100)),
+			Weight:  &weight,
+			Decimal: sdk.NewInt(6),
+		},
+		{
+			Token:   sdk.NewCoin(simapp.WUSDT, sdkmath.NewInt(100)),
+			Weight:  &weight,
+			Decimal: sdk.NewInt(6),
+		},
+	}
 }
 
 func (suite *KeeperTestSuite) TestMsgCreatePoolFail() {
@@ -79,7 +127,7 @@ func (suite *KeeperTestSuite) TestMsgCreatePoolFail() {
 							Decimal: sdk.NewInt(6),
 						},
 						{
-							Token:   sdk.NewCoin(simapp.AltDenom, sdkmath.NewInt(100)),
+							Token:   sdk.NewCoin(simapp.USDC, sdkmath.NewInt(100)),
 							Weight:  &weight,
 							Decimal: sdk.NewInt(6),
 						},
@@ -104,8 +152,18 @@ func (suite *KeeperTestSuite) TestMsgCreatePoolFail() {
 	}
 }
 
+func (suite *KeeperTestSuite) CreateNewPool(poolType types.PoolType) string {
+
+	switch poolType {
+	case types.PoolType_STABLE:
+		return suite.createNewStablePool()
+	default:
+		return suite.createNewWeightPool()
+	}
+}
+
 // Helper function to create a new pool
-func (suite *KeeperTestSuite) CreateNewPool() string {
+func (suite *KeeperTestSuite) createNewWeightPool() string {
 	var msg *types.MsgCreatePool
 	suite.SetupTest()
 
@@ -126,7 +184,43 @@ func (suite *KeeperTestSuite) CreateNewPool() string {
 				Decimal: sdk.NewInt(6),
 			},
 			{
-				Token:   sdk.NewCoin(simapp.AltDenom, sdkmath.NewInt(100)),
+				Token:   sdk.NewCoin(simapp.USDC, sdkmath.NewInt(100)),
+				Weight:  &weight,
+				Decimal: sdk.NewInt(6),
+			},
+		},
+	)
+
+	ctx := sdk.WrapSDKContext(suite.ctx)
+	res, err := suite.msgServer.CreatePool(ctx, msg)
+
+	suite.Require().NoError(err)
+	suite.Require().NotNil(res)
+	return res.PoolId
+}
+
+func (suite *KeeperTestSuite) createNewStablePool() string {
+	var msg *types.MsgCreatePool
+	suite.SetupTest()
+
+	weight := sdk.NewInt(50)
+	amp := sdk.NewInt(100)
+
+	msg = types.NewMsgCreatePool(
+		types.Alice,
+		types.PoolParams{
+			Type:    types.PoolType_STABLE,
+			SwapFee: sdkmath.LegacyDec(sdk.NewInt(100)),
+			Amp:     &amp,
+		},
+		[]types.PoolAsset{
+			{
+				Token:   sdk.NewCoin(simapp.WDAI, sdkmath.NewInt(100)),
+				Weight:  &weight,
+				Decimal: sdk.NewInt(6),
+			},
+			{
+				Token:   sdk.NewCoin(simapp.WUSDT, sdkmath.NewInt(100)),
 				Weight:  &weight,
 				Decimal: sdk.NewInt(6),
 			},

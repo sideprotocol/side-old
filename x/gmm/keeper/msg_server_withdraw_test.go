@@ -7,7 +7,7 @@ import (
 
 func (suite *KeeperTestSuite) TestMsgWithdraw() {
 	// Create a new pool
-	poolID := suite.CreateNewPool()
+	poolID := suite.CreateNewPool(types.PoolType_WEIGHT)
 
 	// Add liquidity to the pool
 	msg := types.MsgWithdraw{

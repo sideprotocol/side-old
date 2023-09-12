@@ -86,11 +86,22 @@ func makeBalance(address string, balance int64, denom string) banktypes.Balance 
 func getBankGenesis() *banktypes.GenesisState {
 	coins := []banktypes.Balance{
 		makeBalance(types.Alice, balAlice, simapp.DefaultBondDenom),
-		makeBalance(types.Alice, balAlice, simapp.AltDenom),
+		makeBalance(types.Alice, balAlice, simapp.USDC),
+		makeBalance(types.Alice, balAlice, simapp.WBTC),
+		makeBalance(types.Alice, balAlice, simapp.WDAI),
+		makeBalance(types.Alice, balAlice, simapp.WUSDT),
+
 		makeBalance(types.Bob, balBob, simapp.DefaultBondDenom),
-		makeBalance(types.Bob, balBob, simapp.AltDenom),
+		makeBalance(types.Bob, balBob, simapp.USDC),
+		makeBalance(types.Bob, balAlice, simapp.WBTC),
+		makeBalance(types.Bob, balAlice, simapp.WDAI),
+		makeBalance(types.Bob, balAlice, simapp.WUSDT),
+
 		makeBalance(types.Carol, balCarol, simapp.DefaultBondDenom),
-		makeBalance(types.Carol, balCarol, simapp.AltDenom),
+		makeBalance(types.Carol, balCarol, simapp.USDC),
+		makeBalance(types.Carol, balAlice, simapp.WBTC),
+		makeBalance(types.Carol, balAlice, simapp.WDAI),
+		makeBalance(types.Carol, balAlice, simapp.WUSDT),
 	}
 
 	params := banktypes.DefaultParams()
@@ -101,7 +112,7 @@ func getBankGenesis() *banktypes.GenesisState {
 		addAll(coins),
 		[]banktypes.Metadata{}, []banktypes.SendEnabled{
 			{Denom: simapp.DefaultBondDenom, Enabled: true},
-			{Denom: simapp.AltDenom, Enabled: true},
+			{Denom: simapp.USDC, Enabled: true},
 		})
 
 	return state

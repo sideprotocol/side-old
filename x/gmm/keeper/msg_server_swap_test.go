@@ -9,14 +9,14 @@ import (
 
 func (suite *KeeperTestSuite) TestMsgSwap() {
 	// Create a new pool
-	poolID := suite.CreateNewPool()
+	poolID := suite.CreateNewPool(types.PoolType_WEIGHT)
 
 	// Add liquidity to the pool
 	msg := types.MsgSwap{
 		Sender:   types.Alice,
 		PoolId:   poolID,
 		TokenIn:  sdk.NewCoin(simapp.DefaultBondDenom, sdk.NewInt(100)),
-		TokenOut: sdk.NewCoin(simapp.AltDenom, sdk.NewInt(50)),
+		TokenOut: sdk.NewCoin(simapp.USDC, sdk.NewInt(50)),
 		Slippage: sdkmath.NewInt(1),
 	}
 
@@ -27,7 +27,7 @@ func (suite *KeeperTestSuite) TestMsgSwap() {
 
 	outAssetBeforeSwap := queryResBeforeSwap.Pool.Assets[msg.TokenOut.Denom]
 
-	estimatedOut, err := queryResBeforeSwap.Pool.EstimateSwap(msg.TokenIn, simapp.AltDenom)
+	estimatedOut, err := queryResBeforeSwap.Pool.EstimateSwap(msg.TokenIn, simapp.USDC)
 	suite.Require().NoError(err)
 
 	res, err := suite.msgServer.Swap(ctx, &msg)

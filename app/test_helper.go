@@ -27,7 +27,10 @@ import (
 
 const (
 	DefaultBondDenom = "uside"
-	AltDenom         = "uusdc"
+	USDC             = "uusdc"
+	WBTC             = "wbtc"
+	WDAI             = "wdai"
+	WUSDT            = "wusdt"
 )
 
 // Setup initializes a new App. A Nop logger is set in App.
@@ -49,7 +52,7 @@ func Setup(t *testing.T) *App {
 		Address: acc.GetAddress().String(),
 		Coins: sdk.NewCoins(
 			sdk.NewCoin(DefaultBondDenom, sdk.NewInt(100000000000000)),
-			sdk.NewCoin(AltDenom, sdk.NewInt(100000000000000)),
+			sdk.NewCoin(USDC, sdk.NewInt(100000000000000)),
 		),
 	}
 
