@@ -8,37 +8,74 @@ import (
 )
 
 func (suite *KeeperTestSuite) TestMsgSwap() {
-	// Create a new pool
-	poolID := suite.CreateNewPool(types.PoolType_WEIGHT)
+	suite.SetupTest()
 
-	// Add liquidity to the pool
-	msg := types.MsgSwap{
-		Sender:   types.Alice,
-		PoolId:   poolID,
-		TokenIn:  sdk.NewCoin(simapp.DefaultBondDenom, sdk.NewInt(100)),
-		TokenOut: sdk.NewCoin(simapp.USDC, sdk.NewInt(50)),
-		Slippage: sdkmath.NewInt(1),
+	tests := []struct {
+		name     string
+		poolType types.PoolType
+		mutator  func(*types.MsgSwap, string)
+	}{
+		{
+			"swap in weight pool",
+			types.PoolType_WEIGHT,
+			func(msg *types.MsgSwap, poolID string) {
+				msg.TokenIn = sdk.NewCoin(simapp.DefaultBondDenom, sdk.NewInt(100))
+				msg.TokenOut = sdk.NewCoin(simapp.USDC, sdk.NewInt(0))
+			},
+		},
+		{
+			"swap in stable pool",
+			types.PoolType_STABLE,
+			func(msg *types.MsgSwap, poolID string) {
+				msg.TokenIn = sdk.NewCoin(simapp.WDAI, sdk.NewInt(100))
+				msg.TokenOut = sdk.NewCoin(simapp.WUSDT, sdk.NewInt(0))
+			},
+		},
 	}
 
-	ctx := sdk.WrapSDKContext(suite.ctx)
-	queryResBeforeSwap, err := suite.queryClient.Pool(ctx, &types.QueryPoolRequest{
-		PoolId: poolID,
-	})
+	for _, tc := range tests {
+		suite.Run(tc.name, func() {
+			// Create a new pool of the specific type
+			poolID := suite.CreateNewPool(tc.poolType)
 
-	outAssetBeforeSwap := queryResBeforeSwap.Pool.Assets[msg.TokenOut.Denom]
+			// Initialize the MsgSwap
+			msg := types.MsgSwap{
+				Sender:   types.Alice,
+				PoolId:   poolID,
+				Slippage: sdkmath.NewInt(1),
+			}
 
-	estimatedOut, err := queryResBeforeSwap.Pool.EstimateSwap(msg.TokenIn, simapp.USDC)
-	suite.Require().NoError(err)
+			// Use the mutator to set the token in and token out for the specific pool type
+			tc.mutator(&msg, poolID)
 
-	res, err := suite.msgServer.Swap(ctx, &msg)
-	suite.Require().NoError(err)
-	suite.Require().NotNil(res)
+			ctx := sdk.WrapSDKContext(suite.ctx)
 
-	queryResAfterSwap, err := suite.queryClient.Pool(ctx, &types.QueryPoolRequest{
-		PoolId: poolID,
-	})
-	outAssetAfterSwap := queryResAfterSwap.Pool.Assets[msg.TokenOut.Denom]
+			// Query the pool before the swap
+			queryResBeforeSwap, err := suite.queryClient.Pool(ctx, &types.QueryPoolRequest{
+				PoolId: poolID,
+			})
+			suite.Require().NoError(err)
 
-	out := outAssetBeforeSwap.Token.Sub(outAssetAfterSwap.Token)
-	suite.Require().Equal(out, estimatedOut)
+			outAssetBeforeSwap := queryResBeforeSwap.Pool.Assets[msg.TokenOut.Denom]
+			estimatedOut, err := queryResBeforeSwap.Pool.EstimateSwap(msg.TokenIn, msg.TokenOut.Denom)
+			msg.TokenOut = estimatedOut
+
+			suite.Require().NoError(err)
+
+			// Perform the swap
+			res, err := suite.msgServer.Swap(ctx, &msg)
+			suite.Require().NoError(err)
+			suite.Require().NotNil(res)
+
+			// Query the pool after the swap
+			queryResAfterSwap, err := suite.queryClient.Pool(ctx, &types.QueryPoolRequest{
+				PoolId: poolID,
+			})
+			suite.Require().NoError(err)
+
+			outAssetAfterSwap := queryResAfterSwap.Pool.Assets[msg.TokenOut.Denom]
+			out := outAssetBeforeSwap.Token.Sub(outAssetAfterSwap.Token)
+			suite.Require().Equal(out, estimatedOut)
+		})
+	}
 }

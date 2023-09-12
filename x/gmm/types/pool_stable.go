@@ -52,15 +52,9 @@ func (p *Pool) estimateShareInStablePool(coins sdk.Coins) (sdk.Coin, error) {
 	}
 
 	// Get current and new invariants, taking swap fees into account
-	currentInvariant, err := calculateInvariantInStablePool(*p.PoolParams.Amp, p.GetLiquidity())
-	if err != nil {
-		return sdk.NewCoin(p.PoolId, sdkmath.NewInt(0)), nil
-	}
+	currentInvariant := calculateInvariantInStablePool(*p.PoolParams.Amp, p.GetLiquidity())
 
-	newInvariant, err := calculateInvariantInStablePool(*p.PoolParams.Amp, newBalances)
-	if err != nil {
-		return sdk.NewCoin(p.PoolId, sdkmath.NewInt(0)), nil
-	}
+	newInvariant := calculateInvariantInStablePool(*p.PoolParams.Amp, newBalances)
 
 	invariantRatio := sdkmath.LegacyNewDecFromInt(newInvariant).Quo(
 		sdkmath.LegacyNewDecFromInt(currentInvariant),
@@ -92,10 +86,7 @@ func (p *Pool) estimateSwapInStablePool(tokenIn sdk.Coin, denomOut string) (sdk.
 
 	tokenInDec := MinusFees(tokenIn.Amount, p.PoolParams.SwapFee)
 
-	inv, err := calculateInvariantInStablePool(*p.PoolParams.Amp, p.GetLiquidity())
-	if err != nil {
-		return sdk.Coin{}, err
-	}
+	inv := calculateInvariantInStablePool(*p.PoolParams.Amp, p.GetLiquidity())
 
 	assets := p.Assets
 
@@ -156,7 +147,7 @@ var AmpPrecision = sdkmath.NewInt(1000)
 func calculateInvariantInStablePool(
 	amp sdkmath.Int,
 	assets []sdk.Coin,
-) (sdkmath.Int, error) {
+) sdkmath.Int {
 	sum := sdkmath.NewInt(0)
 
 	// Number of tokens
@@ -167,7 +158,7 @@ func calculateInvariantInStablePool(
 	}
 
 	if sum.IsZero() {
-		return sum, nil
+		return sum
 	}
 
 	inv := sum
@@ -176,28 +167,25 @@ func calculateInvariantInStablePool(
 	// nolint:staticcheck
 	for i := 0; i < 255; i++ {
 		PD := numTokens.Mul(assets[0].Amount)
-		for _, asset := range assets {
+		for _, asset := range assets[1:] {
 			PD = PD.Mul(asset.Amount).Mul(numTokens).Quo(inv)
 		}
 
 		preInv := inv
-		inv1 := numTokens.Mul(inv).Mul(inv).Add((ampTimeTotal.Mul(sum).Mul(PD)).Quo(AmpPrecision))
-		inv2 := (numTokens.Add(sdk.OneInt()).Mul(inv)).Add(
-			ampTimeTotal.Sub(AmpPrecision).Mul(PD).Quo(AmpPrecision),
-		)
-		inv = inv1.Add(inv2)
+		numerator1 := numTokens.Mul(inv).Mul(inv)
+		numerator2 := ampTimeTotal.Mul(sum).Mul(PD).Quo(AmpPrecision)
+		denominator := numTokens.Add(sdk.OneInt()).Mul(inv).Add(ampTimeTotal.Sub(AmpPrecision).Mul(PD).Quo(AmpPrecision))
+		inv = numerator1.Add(numerator2).Quo(denominator)
 
 		if inv.GT(preInv) {
-			if inv.Sub(preInv).LTE(sdk.OneInt()) {
-				return inv, nil
+			if inv.Sub(preInv).LTE(sdkmath.NewInt(1e18)) {
+				break
 			}
-		} else if preInv.Sub(inv).LTE(sdk.OneInt()) {
-			return inv, nil
+		} else if preInv.Sub(inv).LTE(sdkmath.NewInt(1e18)) {
+			break
 		}
-		return sdkmath.ZeroInt(), ErrInvalidInvariantConverge
 	}
-
-	return sdkmath.ZeroInt(), nil
+	return inv
 }
 
 func getTokenBalanceGivenInvariantAndAllOtherBalances(

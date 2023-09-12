@@ -6,19 +6,49 @@ import (
 )
 
 func (suite *KeeperTestSuite) TestMsgWithdraw() {
-	// Create a new pool
-	poolID := suite.CreateNewPool(types.PoolType_WEIGHT)
+	suite.SetupTest()
 
-	// Add liquidity to the pool
-	msg := types.MsgWithdraw{
-		Sender:   types.Alice,
-		Receiver: types.Carol,
-		PoolId:   poolID,
-		Share:    sdk.NewCoin(poolID, sdk.NewInt(100)),
+	tests := []struct {
+		name     string
+		poolType types.PoolType
+		mutator  func(*types.MsgWithdraw, string)
+	}{
+		{
+			"withdraw from weight pool",
+			types.PoolType_WEIGHT,
+			func(msg *types.MsgWithdraw, poolID string) {
+				msg.Share = sdk.NewCoin(poolID, sdk.NewInt(100))
+			},
+		},
+		{
+			"withdraw from stable pool",
+			types.PoolType_STABLE,
+			func(msg *types.MsgWithdraw, poolID string) {
+				msg.Share = sdk.NewCoin(poolID, sdk.NewInt(200))
+			},
+		},
 	}
 
-	ctx := sdk.WrapSDKContext(suite.ctx)
-	res, err := suite.msgServer.Withdraw(ctx, &msg)
-	suite.Require().NoError(err)
-	suite.Require().NotNil(res)
+	for _, tc := range tests {
+		suite.Run(tc.name, func() {
+			// Create a new pool of the specific type
+			poolID := suite.CreateNewPool(tc.poolType)
+
+			// Initialize the MsgWithdraw
+			msg := types.MsgWithdraw{
+				Sender:   types.Alice,
+				Receiver: types.Carol,
+				PoolId:   poolID,
+			}
+
+			// Use the mutator to set the share for the specific pool type
+			tc.mutator(&msg, poolID)
+
+			ctx := sdk.WrapSDKContext(suite.ctx)
+			res, err := suite.msgServer.Withdraw(ctx, &msg)
+
+			suite.Require().NoError(err)
+			suite.Require().NotNil(res)
+		})
+	}
 }

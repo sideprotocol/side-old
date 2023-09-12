@@ -204,7 +204,7 @@ func (suite *KeeperTestSuite) createNewStablePool() string {
 	suite.SetupTest()
 
 	weight := sdk.NewInt(50)
-	amp := sdk.NewInt(100)
+	amp := sdk.NewInt(1)
 
 	msg = types.NewMsgCreatePool(
 		types.Alice,
