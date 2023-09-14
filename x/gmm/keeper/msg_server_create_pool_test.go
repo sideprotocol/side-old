@@ -167,7 +167,6 @@ func (suite *KeeperTestSuite) TestMsgCreatePoolFail() {
 }
 
 func (suite *KeeperTestSuite) CreateNewPool(poolType types.PoolType) string {
-
 	switch poolType {
 	case types.PoolType_STABLE:
 		return suite.createNewStablePool()
