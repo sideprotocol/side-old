@@ -504,8 +504,8 @@ localnet-show-logstream:
 ###                                Releasing                                ###
 ###############################################################################
 
-PACKAGE_NAME:=github.com/sideprotocol/sidechain
-GOLANG_CROSS_VERSION  = v1.19
+PACKAGE_NAME:=github.com/sideprotocol/side
+GOLANG_CROSS_VERSION  = v1.20
 GOPATH ?= '$(HOME)/go'
 release-dry-run:
 	docker run \
