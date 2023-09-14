@@ -66,15 +66,15 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidityFail() {
 
 	testCases := []struct {
 		name   string
-		mallet func()
+		mallet func(msg *types.MsgAddLiquidity, poolID string)
 	}{
 		{
 			"invalid sender",
-			func() {},
+			func(msg *types.MsgAddLiquidity, poolID string) {},
 		},
 		{
 			"invalid poolID",
-			func() {
+			func(msg *types.MsgAddLiquidity, poolID string) {
 				msg = &types.MsgAddLiquidity{
 					Sender: sample.AccAddress(),
 					PoolId: "",
@@ -89,7 +89,7 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidityFail() {
 		},
 		{
 			"not enough funds",
-			func() {
+			func(msg *types.MsgAddLiquidity, poolID string) {
 				msg = &types.MsgAddLiquidity{
 					Sender: sample.AccAddress(),
 					PoolId: poolID,
@@ -102,6 +102,22 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidityFail() {
 				}
 			},
 		},
+		{
+			"invalid asset type",
+			func(msg *types.MsgAddLiquidity, poolID string) {
+				msg.Liquidity = []sdk.Coin{
+					sdk.NewCoin("INVALID_ASSET_TYPE", sdk.NewInt(100)),
+				}
+			},
+		},
+		{
+			"zero liquidity",
+			func(msg *types.MsgAddLiquidity, poolID string) {
+				msg.Liquidity = []sdk.Coin{
+					sdk.NewCoin(simapp.DefaultBondDenom, sdk.NewInt(0)),
+				}
+			},
+		},
 	}
 
 	for _, tc := range testCases {
@@ -111,7 +127,7 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidityFail() {
 			poolID,
 			[]sdk.Coin{},
 		)
-		tc.mallet()
+		tc.mallet(msg, poolID)
 
 		res, err := suite.msgServer.AddLiquidity(sdk.WrapSDKContext(suite.ctx), msg)
 		suite.Require().Error(err)

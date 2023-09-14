@@ -52,3 +52,63 @@ func (suite *KeeperTestSuite) TestMsgWithdraw() {
 		})
 	}
 }
+
+func (suite *KeeperTestSuite) TestMsgWithdrawFail() {
+	suite.SetupTest()
+
+	tests := []struct {
+		name     string
+		poolType types.PoolType
+		mutator  func(*types.MsgWithdraw, string)
+	}{
+		{
+			"withdraw from non-existent pool",
+			types.PoolType_WEIGHT,
+			func(msg *types.MsgWithdraw, poolID string) {
+				msg.PoolId = "invalid_pool_id"
+			},
+		},
+		{
+			"withdraw with invalid sender",
+			types.PoolType_WEIGHT,
+			func(msg *types.MsgWithdraw, poolID string) {
+				msg.Sender = "invalid_sender_address"
+			},
+		},
+		{
+			"withdraw with insufficient balance",
+			types.PoolType_WEIGHT,
+			func(msg *types.MsgWithdraw, poolID string) {
+				msg.Share = sdk.NewCoin(poolID, sdk.NewInt(1000000)) // Some large number
+			},
+		},
+		// Add more failure test cases to cover all scenarios
+	}
+
+	for _, tc := range tests {
+		suite.Run(tc.name, func() {
+			// Create a new pool of the specific type if necessary
+			poolID := suite.CreateNewPool(tc.poolType)
+
+			// Initialize the MsgWithdraw
+			msg := types.MsgWithdraw{
+				Sender:   types.Alice,
+				Receiver: types.Carol,
+				PoolId:   poolID,
+				Share:    sdk.NewCoin(poolID, sdk.NewInt(200)),
+			}
+
+			// Use the mutator to set the failure condition
+			tc.mutator(&msg, poolID)
+
+			ctx := sdk.WrapSDKContext(suite.ctx)
+
+			// Perform the withdraw
+			res, err := suite.msgServer.Withdraw(ctx, &msg)
+
+			// Expect an error and nil result
+			suite.Require().Error(err)
+			suite.Require().Nil(res)
+		})
+	}
+}

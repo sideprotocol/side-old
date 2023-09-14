@@ -135,6 +135,20 @@ func (suite *KeeperTestSuite) TestMsgCreatePoolFail() {
 				)
 			},
 		},
+		{
+			"create pool with zero liquidity",
+			func() {
+				msg = types.NewMsgCreatePool(
+					sample.AccAddress(),
+					types.PoolParams{
+						Type:    types.PoolType_WEIGHT,
+						SwapFee: sdkmath.LegacyDec(sdk.NewInt(100)),
+						Amp:     &amp,
+					},
+					[]types.PoolAsset{},
+				)
+			},
+		},
 	}
 
 	for _, tc := range testCases {
