@@ -1,0 +1,14 @@
+syntax = "proto3";
+package side.gmm;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/sideprotocol/side/x/gmm/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  uint64 poolCreationFee = 1;
+}
+
+

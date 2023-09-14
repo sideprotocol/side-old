@@ -117,10 +117,14 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cast"
 
+	gmmmodule "github.com/sideprotocol/side/x/gmm"
+	gmmmodulekeeper "github.com/sideprotocol/side/x/gmm/keeper"
+	gmmmoduletypes "github.com/sideprotocol/side/x/gmm/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
-	appparams "sidechain/app/params"
-	"sidechain/docs"
+	appparams "github.com/sideprotocol/side/app/params"
+	"github.com/sideprotocol/side/docs"
 
 	// wasmd module integrate
 	"github.com/CosmWasm/wasmd/x/wasm"
@@ -185,6 +189,7 @@ var (
 		ibcfee.AppModuleBasic{},
 		wasm.AppModuleBasic{},
 
+		gmmmodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -200,6 +205,7 @@ var (
 		ibcfeetypes.ModuleName:         nil,
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		wasm.ModuleName:                {authtypes.Burner},
+		gmmmoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -268,6 +274,8 @@ type App struct {
 
 	scopedWasmKeeper capabilitykeeper.ScopedKeeper
 
+	GmmKeeper gmmmodulekeeper.Keeper
+
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -314,6 +322,7 @@ func New(
 		govtypes.StoreKey, paramstypes.StoreKey, ibcexported.StoreKey, upgradetypes.StoreKey,
 		feegrant.StoreKey, evidencetypes.StoreKey, ibctransfertypes.StoreKey, icahosttypes.StoreKey,
 		capabilitytypes.StoreKey, group.StoreKey, icacontrollertypes.StoreKey, consensusparamtypes.StoreKey, wasmTypes.StoreKey, ibcfeetypes.StoreKey,
+		gmmmoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -509,7 +518,7 @@ func New(
 	icaModule := ica.NewAppModule(&icaControllerKeeper, &app.ICAHostKeeper)
 	icaHostIBCModule := icahost.NewIBCModule(app.ICAHostKeeper)
 
-	// Create evidence Keeper for to register the IBC light client misbehaviour evidence route
+	// Create evidence Keeper for to register the IBC light client misbehavior evidence route
 	evidenceKeeper := evidencekeeper.NewKeeper(
 		appCodec,
 		keys[evidencetypes.StoreKey],
@@ -574,6 +583,16 @@ func New(
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 		wasmOpts...,
 	)
+
+	app.GmmKeeper = *gmmmodulekeeper.NewKeeper(
+		appCodec,
+		keys[gmmmoduletypes.StoreKey],
+		keys[gmmmoduletypes.MemStoreKey],
+		app.GetSubspace(gmmmoduletypes.ModuleName),
+		app.AccountKeeper,
+		app.BankKeeper,
+	)
+	gmmModule := gmmmodule.NewAppModule(appCodec, app.GmmKeeper, app.AccountKeeper, app.BankKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
@@ -641,6 +660,7 @@ func New(
 		params.NewAppModule(app.ParamsKeeper),
 
 		icaModule,
+		gmmModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 
 		crisis.NewAppModule(app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)), // always be last to make sure that it checks for all invariants and not only part of them
@@ -675,6 +695,7 @@ func New(
 		consensusparamtypes.ModuleName,
 		ibcfeetypes.ModuleName,
 		wasmTypes.ModuleName,
+		gmmmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -702,6 +723,7 @@ func New(
 		consensusparamtypes.ModuleName,
 		ibcfeetypes.ModuleName,
 		wasmTypes.ModuleName,
+		gmmmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -734,6 +756,7 @@ func New(
 		vestingtypes.ModuleName,
 		consensusparamtypes.ModuleName,
 		wasmTypes.ModuleName,
+		gmmmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	}
 	app.mm.SetOrderInitGenesis(genesisModuleOrder...)
@@ -918,9 +941,10 @@ func (app *App) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig
 
 	// Register grpc-gateway routes for all modules.
 	ModuleBasics.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
-
-	// register app's OpenAPI routes.
-	docs.RegisterOpenAPIService(Name, apiSvr.Router)
+	if apiConfig.Enable {
+		// register app's OpenAPI routes.
+		docs.RegisterOpenAPIService(Name, apiSvr.Router)
+	}
 }
 
 // RegisterTxService implements the Application.RegisterTxService method.
@@ -959,6 +983,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibcexported.ModuleName)
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
+	paramsKeeper.Subspace(gmmmoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper

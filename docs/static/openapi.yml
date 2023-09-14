@@ -52201,6 +52201,150 @@ paths:
                         }
       tags:
         - Query
+  /sideprotocol/side/gmm/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: SideGmmParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
+                properties:
+                  poolCreationFee:
+                    type: string
+                    format: uint64
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /sideprotocol/side/gmm/{pool_id}:
+    get:
+      operationId: SideGmmPool
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              pool:
+                type: object
+                properties:
+                  pool_id:
+                    type: string
+                  sender:
+                    type: string
+                  poolParams:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - WEIGHT
+                          - STABLE
+                        default: WEIGHT
+                      swapFee:
+                        type: string
+                        description: swapFee is ranged from 0 to 10000.
+                      exitFee:
+                        type: string
+                      useOracle:
+                        type: boolean
+                      amp:
+                        type: string
+                        description: Amplifier parameters for stable pool.
+                  assets:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        token:
+                          type: object
+                          properties:
+                            denom:
+                              type: string
+                            amount:
+                              type: string
+                          description: >-
+                            Coin defines a token with a denomination and an
+                            amount.
+
+
+                            NOTE: The amount field is an Int which implements
+                            the custom method
+
+                            signatures required by gogoproto.
+                        weight:
+                          type: string
+                        decimal:
+                          type: string
+                  total_shares:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                    description: >-
+                      Coin defines a token with a denomination and an amount.
+
+
+                      NOTE: The amount field is an Int which implements the
+                      custom method
+
+                      signatures required by gogoproto.
+                    title: sum of all LP tokens sent out
+            title: >-
+              QueryLiquidityPoolResponse is response type for the
+              Query/Liquidity RPC method
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pool_id
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
 definitions:
   cosmos.auth.v1beta1.AddressBytesToStringResponse:
     type: object
@@ -82591,3 +82735,242 @@ definitions:
     description: |-
       Version defines the versioning scheme used to negotiate the IBC verison in
       the connection handshake.
+  side.gmm.MsgAddLiquidityResponse:
+    type: object
+    properties:
+      pool_id:
+        type: string
+  side.gmm.MsgCreatePoolResponse:
+    type: object
+    properties:
+      pool_id:
+        type: string
+  side.gmm.MsgSwapResponse:
+    type: object
+    properties:
+      pool_id:
+        type: string
+      tokenIn:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+  side.gmm.MsgWithdrawResponse:
+    type: object
+    properties:
+      share:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+  side.gmm.Params:
+    type: object
+    properties:
+      poolCreationFee:
+        type: string
+        format: uint64
+    description: Params defines the parameters for the module.
+  side.gmm.Pool:
+    type: object
+    properties:
+      pool_id:
+        type: string
+      sender:
+        type: string
+      poolParams:
+        type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - WEIGHT
+              - STABLE
+            default: WEIGHT
+          swapFee:
+            type: string
+            description: swapFee is ranged from 0 to 10000.
+          exitFee:
+            type: string
+          useOracle:
+            type: boolean
+          amp:
+            type: string
+            description: Amplifier parameters for stable pool.
+      assets:
+        type: object
+        additionalProperties:
+          type: object
+          properties:
+            token:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+            weight:
+              type: string
+            decimal:
+              type: string
+      total_shares:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+        title: sum of all LP tokens sent out
+  side.gmm.PoolAsset:
+    type: object
+    properties:
+      token:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+      weight:
+        type: string
+      decimal:
+        type: string
+  side.gmm.PoolParams:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - WEIGHT
+          - STABLE
+        default: WEIGHT
+      swapFee:
+        type: string
+        description: swapFee is ranged from 0 to 10000.
+      exitFee:
+        type: string
+      useOracle:
+        type: boolean
+      amp:
+        type: string
+        description: Amplifier parameters for stable pool.
+  side.gmm.PoolType:
+    type: string
+    enum:
+      - WEIGHT
+      - STABLE
+    default: WEIGHT
+  side.gmm.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params holds all the parameters of this module.
+        type: object
+        properties:
+          poolCreationFee:
+            type: string
+            format: uint64
+    description: QueryParamsResponse is response type for the Query/Params RPC method.
+  side.gmm.QueryPoolResponse:
+    type: object
+    properties:
+      pool:
+        type: object
+        properties:
+          pool_id:
+            type: string
+          sender:
+            type: string
+          poolParams:
+            type: object
+            properties:
+              type:
+                type: string
+                enum:
+                  - WEIGHT
+                  - STABLE
+                default: WEIGHT
+              swapFee:
+                type: string
+                description: swapFee is ranged from 0 to 10000.
+              exitFee:
+                type: string
+              useOracle:
+                type: boolean
+              amp:
+                type: string
+                description: Amplifier parameters for stable pool.
+          assets:
+            type: object
+            additionalProperties:
+              type: object
+              properties:
+                token:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                    amount:
+                      type: string
+                  description: >-
+                    Coin defines a token with a denomination and an amount.
+
+
+                    NOTE: The amount field is an Int which implements the custom
+                    method
+
+                    signatures required by gogoproto.
+                weight:
+                  type: string
+                decimal:
+                  type: string
+          total_shares:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+            description: >-
+              Coin defines a token with a denomination and an amount.
+
+
+              NOTE: The amount field is an Int which implements the custom
+              method
+
+              signatures required by gogoproto.
+            title: sum of all LP tokens sent out
+    title: >-
+      QueryLiquidityPoolResponse is response type for the Query/Liquidity RPC
+      method

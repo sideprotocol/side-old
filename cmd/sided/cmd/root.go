@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -36,10 +37,11 @@ import (
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+
 	// this line is used by starport scaffolding # root/moduleImport
 
-	"sidechain/app"
-	appparams "sidechain/app/params"
+	"github.com/sideprotocol/side/app"
+	appparams "github.com/sideprotocol/side/app/params"
 )
 
 // NewRootCmd creates a new root command for a Cosmos SDK application
@@ -208,7 +210,9 @@ func overwriteFlagDefaults(c *cobra.Command, defaults map[string]string) {
 	set := func(s *pflag.FlagSet, key, val string) {
 		if f := s.Lookup(key); f != nil {
 			f.DefValue = val
-			f.Value.Set(val)
+			if err := f.Value.Set(val); err != nil {
+				fmt.Println(err)
+			}
 		}
 	}
 	for key, val := range defaults {
