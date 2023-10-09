@@ -15,18 +15,20 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/sideprotocol/side/gmm/params";
   }
-
-  rpc Pool    (QueryPoolRequest) returns (QueryPoolResponse) {
-    option (google.api.http).get = "/sideprotocol/side/gmm/{pool_id}";
-  }
-
-  rpc Pools    (QueryPoolsRequest) returns (QueryPoolsResponse) {
+  rpc Pools    (QueryAllPoolsRequest) returns (QueryPoolsResponse) {
     option (google.api.http).get = "/sideprotocol/side/gmm/all";
   }
 
   rpc MyPools    (QueryPoolsRequest) returns (QueryPoolsResponse) {
     option (google.api.http).get = "/sideprotocol/side/gmm/{creator}";
   }
+
+  rpc Pool    (QueryPoolRequest) returns (QueryPoolResponse) {
+    option (google.api.http).get = "/sideprotocol/side/gmm/{pool_id}";
+  }
+
+
+ 
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -48,6 +50,10 @@ message QueryPoolResponse {
   Pool pool = 1;
 }
 
+// QueryPoolsRequest is request type for the Query/Liquidities RPC method.
+message QueryAllPoolsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
 
 // QueryPoolsRequest is request type for the Query/Liquidities RPC method.
 message QueryPoolsRequest {

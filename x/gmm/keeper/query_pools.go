@@ -24,12 +24,12 @@ func (k Keeper) Pool(goCtx context.Context, req *types.QueryPoolRequest) (*types
 	return &types.QueryPoolResponse{Pool: &pool}, nil
 }
 
-func (k Keeper) Pools(goCtx context.Context, req *types.QueryPoolsRequest) (*types.QueryPoolsResponse, error) {
-	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid request")
-	}
+func (k Keeper) Pools(goCtx context.Context, req *types.QueryAllPoolsRequest) (*types.QueryPoolsResponse, error) {
+	// if req == nil {
+	// 	return nil, status.Error(codes.InvalidArgument, "invalid request")
+	// }
 
-	var pools []types.Pool
+	pools := []types.Pool{}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Use the store with the mapping of poolId to its count
@@ -54,7 +54,7 @@ func (k Keeper) Pools(goCtx context.Context, req *types.QueryPoolsRequest) (*typ
 
 		var pool types.Pool
 		if err := k.cdc.Unmarshal(poolBytes, &pool); err != nil {
-			return err
+			return nil
 		}
 
 		pools = append(pools, pool)
