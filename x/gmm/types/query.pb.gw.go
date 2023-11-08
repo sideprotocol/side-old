@@ -438,11 +438,11 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 var (
 	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"sideprotocol", "side", "gmm", "params"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_Pools_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"sideprotocol", "side", "gmm", "all"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Pools_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"sideprotocol", "side", "gmm", "pool", "all"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_MyPools_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"sideprotocol", "side", "gmm", "creator"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_MyPools_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"sideprotocol", "side", "gmm", "pool", "creator"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_Pool_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"sideprotocol", "side", "gmm", "pool_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Pool_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"sideprotocol", "side", "gmm", "pool", "pool_id"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

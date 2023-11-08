@@ -16,19 +16,16 @@ service Query {
     option (google.api.http).get = "/sideprotocol/side/gmm/params";
   }
   rpc Pools    (QueryAllPoolsRequest) returns (QueryPoolsResponse) {
-    option (google.api.http).get = "/sideprotocol/side/gmm/all";
+    option (google.api.http).get = "/sideprotocol/side/gmm/pool/all";
   }
 
   rpc MyPools    (QueryPoolsRequest) returns (QueryPoolsResponse) {
-    option (google.api.http).get = "/sideprotocol/side/gmm/{creator}";
+    option (google.api.http).get = "/sideprotocol/side/gmm/pool/{creator}";
   }
 
   rpc Pool    (QueryPoolRequest) returns (QueryPoolResponse) {
-    option (google.api.http).get = "/sideprotocol/side/gmm/{pool_id}";
+    option (google.api.http).get = "/sideprotocol/side/gmm/pool/{pool_id}";
   }
-
-
- 
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
