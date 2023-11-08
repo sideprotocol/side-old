@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"strings"
 
-	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -37,12 +36,12 @@ func CmdCreatePool() *cobra.Command {
 				return err
 			}
 
-			decimals, err := parseDecimals(args[1])
+			decimals, err := parseDecimals(args[3])
 			if err != nil {
 				return err
 			}
 
-			swapFee, err := strconv.Atoi(args[3])
+			swapFee, err := strconv.Atoi(args[4])
 			if err != nil {
 				return err
 			}
@@ -68,12 +67,10 @@ func CmdCreatePool() *cobra.Command {
 				})
 			}
 
-			amp := math.NewInt(0)
 			msg := types.NewMsgCreatePool(
 				clientCtx.GetFromAddress().String(),
 				types.PoolParams{
 					SwapFee: sdk.NewDec(int64(swapFee)),
-					Amp:     &amp,
 				},
 				liquidity,
 			)
