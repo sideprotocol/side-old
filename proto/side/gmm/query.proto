@@ -20,7 +20,7 @@ service Query {
   }
 
   rpc MyPools    (QueryPoolsRequest) returns (QueryPoolsResponse) {
-    option (google.api.http).get = "/sideprotocol/side/gmm/pool/{creator}";
+    option (google.api.http).get = "/sideprotocol/side/gmm/me/{creator}";
   }
 
   rpc Pool    (QueryPoolRequest) returns (QueryPoolResponse) {
