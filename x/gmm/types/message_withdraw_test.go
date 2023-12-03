@@ -52,13 +52,26 @@ func TestMsgWithdraw_ValidateBasic(t *testing.T) {
 			err: ErrInvalidTokenAmount,
 		},
 		{
-			name: "valid message",
+			name: "mismatched share denom",
 			msg: MsgWithdraw{
 				Sender:   sample.AccAddress(),
 				Receiver: sample.AccAddress(),
 				PoolId:   "test1",
 				Share: sdk.NewCoin(
 					"test",
+					sdk.NewInt(1),
+				),
+			},
+			err: ErrMismatchedShareDenom,
+		},
+		{
+			name: "valid message",
+			msg: MsgWithdraw{
+				Sender:   sample.AccAddress(),
+				Receiver: sample.AccAddress(),
+				PoolId:   "test1",
+				Share: sdk.NewCoin(
+					"test1",
 					sdk.NewInt(10),
 				),
 			},

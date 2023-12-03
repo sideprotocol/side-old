@@ -62,5 +62,9 @@ func (msg *MsgWithdraw) ValidateBasic() error {
 	if msg.Share.Amount.IsZero() {
 		return sdkerrors.Wrap(ErrInvalidTokenAmount, "share amount cannot be zero")
 	}
+
+	if msg.PoolId != msg.Share.GetDenom() {
+		return sdkerrors.Wrapf(ErrMismatchedShareDenom, "share denom and pool id do not match")
+	}
 	return nil
 }
