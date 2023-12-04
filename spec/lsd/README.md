@@ -21,9 +21,8 @@ The architecture comprises ICA, ICQ modules, minting module, allowing users to s
 - Calculation and distribution of staking rewards.
 - Users rewards are accumulated in derivative tokens i.e value of derivative token increases over time.
 
-## Techincal Details
-
-The technical implementation is divided into 4 flows which are as follows:
+## Technical Details
+The technical implementation is divided into 4 flows, let's further detail each of the four flows to provide a more comprehensive understanding of the technical implementation.
 
 1. Deposit and mintLSD flow:
     - Users initiate the deposit process by sending a specified amount of stakable assets to the liquid staking module.
