@@ -42,5 +42,8 @@ The technical implementation is divided into 4 flows, let's further detail each 
     - Introduction of an epoch module to manage time-based operations and ensure the consistency of staking rewards and unbonding periods.
     - Triggers epoch-based events, such as reward claim, unbonding requests and claimable requests.
 
-5. LSM:
+### LSM:
     - This allows users who have already staked their assets and don't want to unstake to move to LSD, they can do so directly.
+
+### Hooks
+Hooks are used to trigger certain actions such as `Deposit`, `Unbond`, `Claim`.

@@ -3,9 +3,11 @@
 User Deposits Stakable Assets to Module
 
 ## Description:
+
 Users can deposit stakable assets to the module, initiating various actions on the Host Chain.
 
 ## Implementation Steps:
+
 - Users initiate a deposit transaction to the module.
 - The module creates an (Interchain account)[https://tutorials.cosmos.network/academy/3-ibc/8-ica.html] on the Host Chain as a prerequisite for further interactions which are as follows:
 
@@ -47,6 +49,18 @@ Users can deposit stakable assets to the module, initiating various actions on t
 
 - After a certain time-period, a epoch event is trigerred,
     1. Controller chain sends funds to Host Chain Side-ICA for staking.
+        ```go
+        MsgTransfer{
+            SourcePort:       sourcePort,
+            SourceChannel:    sourceChannel,
+            Token:            stakable_token,
+            Sender:           module_account_address,
+            Receiver:         side-ica,
+            TimeoutHeight:    timeoutHeight,
+            TimeoutTimestamp: timeoutTimestamp,
+            Memo:             memo,
+        }
+        ```
     2. Controller chain send delegate message to Host Chain SIDE-ICA.
 
 - `Exchange Rate Calculation`: The exchange rate (ex_rt) is calculated based on the total token staked through SIDE-ICA and the total supply of LSD tokens issued by the SIDE-Chain.
@@ -71,7 +85,30 @@ Users can deposit stakable assets to the module, initiating various actions on t
 
 ## Data Structure
 
-- `User Deposits`: These deposits are stored in
-- `Validator Set`: 
-
-- DS for validator storage, amount, weight etc
+- `User Deposits`: These deposits are stored with each epoch number,
+    ```go
+    DepositStore {
+        Epoch              uint64
+        Amount             types1.Coin 
+        HostChain          string
+        Status             Deposit_Status
+    }
+    ```
+    - After each epoch end, module transfers Amount to HostChain and update status
+    ```go
+    Status {
+        DEPOSIT_PENDING,
+        DEPOSIT_SENT,
+        DEPOSIT_RECEIVED
+        DEPOSIT_STAKED,
+    }
+    ```
+- `Validator Set`: Validator parameters are stored as array of:
+    ```go
+    Set {
+        Validator_address string
+        Weight uint64
+        Status VALIDATOR_STATUS
+        Amount_staked uint64
+    }
+    ```
