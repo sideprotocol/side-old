@@ -82,6 +82,7 @@
 - Process:
     - After the unbonding period lapses, an epoch event is triggered.
     - Transfer unstaked tokens from Host to SIDE chain, and the status of unbonding requests is set to CLAIMABLE.
+
     ```go
         MsgTransfer{
             SourcePort:       sourcePort,
@@ -93,5 +94,5 @@
             TimeoutTimestamp: timeoutTimestamp,
             Memo:             memo,
         }
-        ```
+    ```
     - Users receive their unstaked tokens.(can be triggered via hooks or begin/end block)
