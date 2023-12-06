@@ -43,11 +43,11 @@ type MsgWithdrawDelegatorReward struct {
 }
 ```
 - Parameters:
-    - `DelegatorAddress`: The address of the delegator setting the withdrawal address.
-    - `WithdrawAddress`: The designated address for receiving rewards.
+    - `DelegatorAddress`: The address of the delegator setting the withdrawal address.(side-ICA)
+    - `WithdrawAddress`: The designated address for receiving rewards.(rewards-ICA)
 
 ### Deposit Request Preparation:
-- A deposit request is prepared to send the claimed rewards back to the SIDE Chain.
+- A deposit request is prepared to stake the claimed rewards back to validators.
 
 ### Deposit to Validators:
 - The deposit request is executed, and the claimed rewards are deposited back to the respective validators.
