@@ -6,8 +6,12 @@
 ```
 ignite chain serve
 ```
-
 `serve` command installs dependencies, builds, initializes, and starts your blockchain in development.
+
+### Requirements
+
+- `ignite version: 0.27.1`
+- `go version >= 1.20.x`
 
 ### Configure
 
