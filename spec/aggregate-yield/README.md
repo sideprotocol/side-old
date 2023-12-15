@@ -10,10 +10,10 @@ ICS-27 Interchain Accounts outlines a cross-chain account management protocol bu
 
 ## Definitions
 
-`Host Chain`: The chain where the interchain account is registered. The host chain listens for IBC packets from a controller chain which contain instructions (e.g. cosmos SDK messages) that the interchain account will execute.
-`Controller Chain`: The chain registering and controlling an account on a host chain. The controller chain sends IBC packets to the host chain to control the account.
-`Interchain Account(ICA)`: An account on a host chain. An interchain account has all the capabilities of a normal account. However, rather than signing transactions with a private key, a controller chain will send IBC packets to the host chain which signals what transactions the interchain account must execute.
-`Interchain Account Owner`: An account on the controller chain. Every interchain account on a host chain has a respective owner account on the controller chain.
+- `Host Chain`: The chain where the interchain account is registered. The host chain listens for IBC packets from a controller chain which contain instructions (e.g. cosmos SDK messages) that the interchain account will execute.
+- `Controller Chain`: The chain registering and controlling an account on a host chain. The controller chain sends IBC packets to the host chain to control the account.
+- `Interchain Account(ICA)`: An account on a host chain. An interchain account has all the capabilities of a normal account. However, rather than signing transactions with a private key, a controller chain will send IBC packets to the host chain which signals what transactions the interchain account must execute.
+- `Interchain Account Owner`: An account on the controller chain. Every interchain account on a host chain has a respective owner account on the controller chain.
 
 ## Primary Actors
 
@@ -25,27 +25,40 @@ ICS-27 Interchain Accounts outlines a cross-chain account management protocol bu
 
 1. User Deposit Process
 
-`User Action`: Users send TOKEN from an IBC-enabled chain to the SIDE chain.
-`IBC Protocol (ICS20)`: Facilitates the cross-chain transfer of TOKEN.
+- `User Action`: Users send TOKEN from an IBC-enabled chain to the SIDE chain.
+- `IBC Protocol (ICS20)`: Facilitates the cross-chain transfer of TOKEN.
 
 2. Middleware Processing
 
-`Middleware Role`: Intercepts incoming IBC messages and filters them for specific criteria (e.g., native yield, no yield etc).
-`Transfer to Stride`: The middleware forwards the filtered TOKEN to the Stride platform for liquid staking.
+- `Middleware Role`: Intercepts incoming IBC messages and filters them for specific criteria (e.g., native yield, no yield etc).
+- `Transfer to Stride`: The middleware forwards the filtered TOKEN to the Stride platform for liquid staking.
 
 3. Liquid Staking with Stride
 
-Staking Transaction: Stride receives ATOM tokens and stakes them.
-stATOM Generation: Stride issues stATOM tokens, representing the staked ATOM assets.
+- `Staking Transaction`: Stride receives TOKEN and SIDE calls stake message to stake them.
+- `stATOM Generation`: Stride issues stTOKEN tokens, representing the staked TOKEN assets.
+
 4. Receiving stATOM and Issuing sdATOM
 
-Receipt on SIDE Chain: The SIDE chain receives stATOM tokens in a designated account.
-sdATOM Issuance: Corresponding sdATOM tokens are issued to the users on the SIDE chain, representing their staked assets.
+- `Receipt on SIDE Chain:` The SIDE chain account receives stTOKEN tokens in a designated account(SIDE-ICA).
+- `sdTOKEN Issuance`: Corresponding sdTOKEN tokens are issued to the users on the SIDE chain, representing their staked assets using `mint` module.
+
 5. Utilizing Interchain Accounts (ICA)
 
-Role of ICA: Enables the SIDE chain to operate accounts on other IBC-enabled chains, specifically for managing staking operations.
-StakeAtom Message: An ICA transaction is sent from the SIDE chain to the Stride chain to initiate the staking of ATOM tokens.
+### Role of Interchain Accounts (ICA)
+
+- `Definition`: Interchain Accounts (ICA) is a protocol within the IBC ecosystem that allows a blockchain (the controller chain) to operate an account on another blockchain (the host chain).
+- `Controller Chain`: In this scenario, the SIDE chain acts as the controller chain. It has the authority to initiate actions on the Stride chain through the ICA protocol.
+- `Host Chain`: The Stride chain serves as the host chain. It holds the accounts that are controlled by the SIDE chain through ICA.
+
+### ICA Operations in Liquid Staking
+
+- `Account Management`: The SIDE chain, via ICA, manages specific accounts on the Stride chain. These accounts are used for staking operations.
+- `Staking Transactions`: When a user deposits ATOM tokens to the SIDE chain for liquid staking, the SIDE chain initiates a StakeAtom message through its ICA on the Stride chain. This message triggers the staking of ATOM tokens on the Stride chain.
+- `Receipt of stATOM`: Once staking is confirmed on the Stride chain, stATOM tokens are issued to the SIDE chain's account on the Stride chain.
+- `StakeAtom Message`: An ICA transaction is sent from the SIDE chain to the Stride chain to initiate the staking of ATOM tokens.
+
 6. Epoch Module
 
-Purpose: Manages and triggers epoch-based events in the staking process.
-Functionality: Could include handling rewards, rebalancing staked assets, or triggering specific contract actions based on time or other conditions.
+- `Purpose`: Manages and triggers epoch-based events in the staking process.
+- `Functionality`: Could include handling rewards, rebalancing staked assets, or triggering specific contract actions based on time or other conditions.
