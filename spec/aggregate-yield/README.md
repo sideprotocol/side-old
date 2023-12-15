@@ -21,6 +21,16 @@ ICS-27 Interchain Accounts outlines a cross-chain account management protocol bu
 - SIDE chain: Enable users to earn native yields.
 - Stride platform: Provide staking for tokens.
 
+## Architecture
+
+1. Deposit flow
+
+![Alt text](Untitled-4.jpg)
+
+2. Withdraw flow
+
+![Alt text](Untitled-5.jpg)
+
 ## Detailed Specification
 
 1. User Deposit Process
@@ -62,3 +72,6 @@ ICS-27 Interchain Accounts outlines a cross-chain account management protocol bu
 
 - `Purpose`: Manages and triggers epoch-based events in the staking process.
 - `Functionality`: Could include handling rewards, rebalancing staked assets, or triggering specific contract actions based on time or other conditions.
+
+## Implementation details
+
