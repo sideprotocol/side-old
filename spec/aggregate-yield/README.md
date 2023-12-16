@@ -27,9 +27,13 @@ ICS-27 Interchain Accounts outlines a cross-chain account management protocol bu
 
 ![Alt text](Untitled-4.jpg)
 
+`Note: If TOKEN is from chain X, SIDE chain first transfers it to chain X first and then to stride`
+
 2. Withdraw flow
 
 ![Alt text](Untitled-5.jpg)
+
+`Note: If TOKEN is from chain X, SIDE chain first transfers it to chain X first and then to side chain`
 
 ## Detailed Specification
 
@@ -41,7 +45,7 @@ ICS-27 Interchain Accounts outlines a cross-chain account management protocol bu
 2. Middleware Processing
 
 - `Middleware Role`: Intercepts incoming IBC messages and filters them for specific criteria (e.g., native yield, no yield etc).
-- `Transfer to Stride`: The middleware forwards the filtered TOKEN to the Stride platform for liquid staking.
+- `Transfer to Stride`: The middleware forwards the filtered TOKEN to the Stride platform for liquid staking. For example: If ATOM is sent, first ATOM will be sent to cosmos hub and then to stride.
 
 3. Liquid Staking with Stride
 
