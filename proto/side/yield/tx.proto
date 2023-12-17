@@ -1,0 +1,7 @@
+syntax = "proto3";
+package side.yield;
+
+option go_package = "github.com/sideprotocol/side/x/yield/types";
+
+// Msg defines the Msg service.
+service Msg {}
