@@ -9,10 +9,21 @@ const TypeMsgRegisterHostChain = "register_host_chain"
 
 var _ sdk.Msg = &MsgRegisterHostChain{}
 
-func NewMsgRegisterHostChain(creator string, msg string) *MsgRegisterHostChain {
+func NewMsgRegisterHostChain(
+	creator string,
+	connectionId string,
+	bech32prefix string,
+	hostDenom string,
+	ibcDenom string,
+	transferChannelId string,
+) *MsgRegisterHostChain {
 	return &MsgRegisterHostChain{
-		Creator: creator,
-		Msg:     msg,
+		Creator:           creator,
+		ConnectionId:      connectionId,
+		Bech32Prefix:      bech32prefix,
+		HostDenom:         hostDenom,
+		IbcDenom:          ibcDenom,
+		TransferChannelId: transferChannelId,
 	}
 }
 

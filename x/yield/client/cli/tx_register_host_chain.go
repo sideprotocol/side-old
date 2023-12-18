@@ -14,20 +14,28 @@ var _ = strconv.Itoa(0)
 
 func CmdRegisterHostChain() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "register-host-chain [msg]",
+		Use:   "register-host-chain [connection-id] [host-denom] [bech32prefix] [ibc-denom] [channel-id]",
 		Short: "Broadcast message register-host-chain",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argMsg := args[0]
-
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
+			connectionId := args[0]
+			hostDenom := args[1]
+			bech32prefix := args[2]
+			ibcDenom := args[3]
+			channelId := args[4]
+
 			msg := types.NewMsgRegisterHostChain(
 				clientCtx.GetFromAddress().String(),
-				argMsg,
+				connectionId,
+				bech32prefix,
+				hostDenom,
+				ibcDenom,
+				channelId,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
