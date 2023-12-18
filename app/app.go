@@ -124,6 +124,7 @@ import (
 	yieldmodule "github.com/sideprotocol/side/x/yield"
 	yieldmodulekeeper "github.com/sideprotocol/side/x/yield/keeper"
 	yieldmoduletypes "github.com/sideprotocol/side/x/yield/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "github.com/sideprotocol/side/app/params"
@@ -608,6 +609,7 @@ func New(
 		app.GetSubspace(yieldmoduletypes.ModuleName),
 
 		app.BankKeeper,
+		app.IBCKeeper,
 	)
 	yieldModule := yieldmodule.NewAppModule(appCodec, app.YieldKeeper, app.AccountKeeper, app.BankKeeper)
 
