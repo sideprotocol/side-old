@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"fmt"
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -19,10 +18,10 @@ func (k msgServer) RegisterHostChain(goCtx context.Context, msg *types.MsgRegist
 	}
 
 	// get the host chain id
-	chainID, err := k.GetChainID(ctx, msg.ConnectionId)
-	if err != nil {
-		return nil, fmt.Errorf("chain id not found for connection \"%s\": \"%w\"", msg.ConnectionId, err)
-	}
+	// chainID, err := k.GetChainID(ctx, msg.ConnectionId)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("chain id not found for connection \"%s\": \"%w\"", msg.ConnectionId, err)
+	// }
 	_ = ctx
 
 	return &types.MsgRegisterHostChainResponse{}, nil
