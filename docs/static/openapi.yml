@@ -83486,6 +83486,8 @@ definitions:
                    PageResponse page = 2;
            }
     title: QueryPoolsResponse is response type for the Query/Pools RPC method
+  side.yield.MsgRegisterHostChainResponse:
+    type: object
   side.yield.Params:
     type: object
     description: Params defines the parameters for the module.
