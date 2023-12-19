@@ -20,12 +20,6 @@ type BankKeeper interface {
 	// Methods imported from bank should be defined here
 }
 
-type ICAControllerKeeper interface {
-	RegisterInterchainAccount(ctx sdk.Context, connectionID, owner string, version string) error
-	GetInterchainAccountAddress(ctx sdk.Context, connectionID, portID string) (string, bool)
-	GetOpenActiveChannel(ctx sdk.Context, connectionID, portID string) (string, bool)
-}
-
 type ICQKeeper interface {
 	MakeRequest(ctx sdk.Context, connectionID string, chainID string, queryType string, request []byte, period math.Int, module string, callbackID string, ttl uint64)
 }

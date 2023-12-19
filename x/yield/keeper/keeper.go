@@ -8,6 +8,7 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	icacontrollerkeeper "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/keeper"
 	"github.com/cosmos/ibc-go/v7/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
 	ibctmtypes "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
@@ -25,8 +26,7 @@ type (
 
 		bankKeeper types.BankKeeper
 
-		icaControllerKeeper types.ICAControllerKeeper
-		ibcTransferKeeper   types.IBCTransferKeeper
+		icaControllerKeeper icacontrollerkeeper.Keeper
 		icqKeeper           types.ICQKeeper
 		ibcKeeper           *ibckeeper.Keeper
 	}
