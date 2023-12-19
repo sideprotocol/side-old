@@ -1,5 +1,5 @@
 package types
 
-func FormatICAAccountOwner(chainId string, accountType string) (result string) {
-	return chainId + "." + accountType
+func FormatICAAccountOwner(chainID string, accountType string) (result string) {
+	return chainID + "." + accountType
 }

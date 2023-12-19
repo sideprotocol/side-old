@@ -64,7 +64,7 @@ func (k msgServer) RegisterHostChain(goCtx context.Context, msg *types.MsgRegist
 		}
 	}
 
-	hc := &types.HostChain{
+	hc := types.HostChain{
 		ChainId:           chainID,
 		Bech32Prefix:      msg.Bech32Prefix,
 		ConnectionId:      msg.ConnectionId,

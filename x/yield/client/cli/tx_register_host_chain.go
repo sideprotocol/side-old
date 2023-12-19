@@ -23,19 +23,19 @@ func CmdRegisterHostChain() *cobra.Command {
 				return err
 			}
 
-			connectionId := args[0]
+			connectionID := args[0]
 			hostDenom := args[1]
 			bech32prefix := args[2]
 			ibcDenom := args[3]
-			channelId := args[4]
+			channelID := args[4]
 
 			msg := types.NewMsgRegisterHostChain(
 				clientCtx.GetFromAddress().String(),
-				connectionId,
+				connectionID,
 				bech32prefix,
 				hostDenom,
 				ibcDenom,
-				channelId,
+				channelID,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

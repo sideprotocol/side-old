@@ -11,19 +11,19 @@ var _ sdk.Msg = &MsgRegisterHostChain{}
 
 func NewMsgRegisterHostChain(
 	creator string,
-	connectionId string,
+	connectionID string,
 	bech32prefix string,
 	hostDenom string,
 	ibcDenom string,
-	transferChannelId string,
+	transferChannelID string,
 ) *MsgRegisterHostChain {
 	return &MsgRegisterHostChain{
 		Creator:           creator,
-		ConnectionId:      connectionId,
+		ConnectionId:      connectionID,
 		Bech32Prefix:      bech32prefix,
 		HostDenom:         hostDenom,
 		IbcDenom:          ibcDenom,
-		TransferChannelId: transferChannelId,
+		TransferChannelId: transferChannelID,
 	}
 }
 
