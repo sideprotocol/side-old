@@ -12,7 +12,7 @@ message HostChain {
   string bech32prefix = 2;
   string connection_id = 3;
   string transfer_channel_id = 4;
-  // ibc denom on stride
+  // ibc denom on side
   string ibc_denom = 5;
   // native denom on host zone
   string host_denom = 6;

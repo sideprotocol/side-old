@@ -30,7 +30,7 @@ type HostChain struct {
 	Bech32Prefix      string `protobuf:"bytes,2,opt,name=bech32prefix,proto3" json:"bech32prefix,omitempty"`
 	ConnectionId      string `protobuf:"bytes,3,opt,name=connection_id,json=connectionId,proto3" json:"connection_id,omitempty"`
 	TransferChannelId string `protobuf:"bytes,4,opt,name=transfer_channel_id,json=transferChannelId,proto3" json:"transfer_channel_id,omitempty"`
-	// ibc denom on stride
+	// ibc denom on side
 	IbcDenom string `protobuf:"bytes,5,opt,name=ibc_denom,json=ibcDenom,proto3" json:"ibc_denom,omitempty"`
 	// native denom on host zone
 	HostDenom string `protobuf:"bytes,6,opt,name=host_denom,json=hostDenom,proto3" json:"host_denom,omitempty"`

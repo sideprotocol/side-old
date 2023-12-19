@@ -117,6 +117,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cast"
 
+	interchainquerykeeper "github.com/sideprotocol/side/x/interchainquery/keeper"
+
 	gmmmodule "github.com/sideprotocol/side/x/gmm"
 	gmmmodulekeeper "github.com/sideprotocol/side/x/gmm/keeper"
 	gmmmoduletypes "github.com/sideprotocol/side/x/gmm/types"
@@ -263,6 +265,7 @@ type App struct {
 	ParamsKeeper          paramskeeper.Keeper
 	IBCKeeper             *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
 	IBCFeeKeeper          ibcfeekeeper.Keeper
+	InterchainQueryKeeper interchainquerykeeper.Keeper
 	EvidenceKeeper        evidencekeeper.Keeper
 	TransferKeeper        ibctransferkeeper.Keeper
 	ICAHostKeeper         icahostkeeper.Keeper
@@ -609,6 +612,7 @@ func New(
 		app.GetSubspace(yieldmoduletypes.ModuleName),
 
 		app.BankKeeper,
+		app.InterchainQueryKeeper,
 		app.IBCKeeper,
 	)
 	yieldModule := yieldmodule.NewAppModule(appCodec, app.YieldKeeper, app.AccountKeeper, app.BankKeeper)

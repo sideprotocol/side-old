@@ -13,6 +13,7 @@ import (
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
 	ibctmtypes "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
 	ibclocalhosttypes "github.com/cosmos/ibc-go/v7/modules/light-clients/09-localhost"
+	interchainquerykeeper "github.com/sideprotocol/side/x/interchainquery/keeper"
 
 	"github.com/sideprotocol/side/x/yield/types"
 )
@@ -27,7 +28,7 @@ type (
 		bankKeeper types.BankKeeper
 
 		icaControllerKeeper icacontrollerkeeper.Keeper
-		icqKeeper           types.ICQKeeper
+		icqKeeper           interchainquerykeeper.Keeper
 		ibcKeeper           *ibckeeper.Keeper
 	}
 )
@@ -39,6 +40,7 @@ func NewKeeper(
 	ps paramtypes.Subspace,
 
 	bankKeeper types.BankKeeper,
+	icqKeeper interchainquerykeeper.Keeper,
 	ibcKeeper *ibckeeper.Keeper,
 ) *Keeper {
 	// set KeyTable if it has not already been set
@@ -54,6 +56,7 @@ func NewKeeper(
 
 		bankKeeper: bankKeeper,
 		ibcKeeper:  ibcKeeper,
+		icqKeeper:  icqKeeper,
 	}
 }
 

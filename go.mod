@@ -54,7 +54,6 @@ require (
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gogogateway v1.2.0 // indirect
 	github.com/cosmos/iavl v0.20.0 // indirect
-	github.com/cosmos/ics23/go v0.10.0 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.12.1 // indirect
 	github.com/cosmos/rosetta-sdk-go v0.10.0 // indirect
 	github.com/creachadair/taskgroup v0.4.2 // indirect
@@ -174,6 +173,7 @@ require (
 	cosmossdk.io/math v1.0.1
 	github.com/CosmWasm/wasmd v0.40.1
 	github.com/cosmos/cosmos-proto v1.0.0-beta.2
+	github.com/cosmos/ics23/go v0.10.0
 	github.com/prometheus/client_golang v1.15.0
 	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4
 	google.golang.org/grpc v1.55.0
