@@ -23,7 +23,7 @@ var (
 )
 
 const (
-	opWeightMsgRegisterHostChain = "op_weight_msg_register_host_chain"
+	opWeightMsgRegisterHostChain = "op_weight_msg_register_host_chain" // #nosec
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgRegisterHostChain int = 100
 
@@ -72,7 +72,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 }
 
 // ProposalMsgs returns msgs used for governance proposals for simulations.
-func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.WeightedProposalMsg {
+func (am AppModule) ProposalMsgs(_ module.SimulationState) []simtypes.WeightedProposalMsg {
 	return []simtypes.WeightedProposalMsg{
 		simulation.NewWeightedProposalMsg(
 			opWeightMsgRegisterHostChain,

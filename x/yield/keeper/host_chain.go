@@ -92,9 +92,8 @@ func (k Keeper) IterateHostChains(ctx sdk.Context, fn func(ctx sdk.Context, inde
 		zone := types.HostChain{}
 		k.cdc.MustUnmarshal(iterator.Value(), &zone)
 
-		error := fn(ctx, i, zone)
-
-		if error != nil {
+		err := fn(ctx, i, zone)
+		if err != nil {
 			break
 		}
 		i++
