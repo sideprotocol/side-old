@@ -84,7 +84,7 @@ func (k Keeper) VerifyKeyProof(ctx sdk.Context, msg *types.MsgSubmitQueryRespons
 			"Only tendermint client state is supported (%s provided)", clientState.ClientType())
 	}
 	var stateRoot exported.Root = tendermintConsensusState.Root
-	var clientStateProof []*ics23.ProofSpec = tendermintClientState.ProofSpecs
+	var clientStateProof []*ics23.ProofSpec = tendermintClientState.ProofSpecs // nolint
 
 	// Get the merkle path and merkle proof
 	path := commitmenttypes.NewMerklePath([]string{pathParts[1], url.PathEscape(string(query.RequestData))}...)
