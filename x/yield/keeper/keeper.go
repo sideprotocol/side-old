@@ -24,7 +24,11 @@ type (
 		paramstore paramtypes.Subspace
 
 		bankKeeper types.BankKeeper
-		ibcKeeper  *ibckeeper.Keeper
+
+		icaControllerKeeper types.ICAControllerKeeper
+		ibcTransferKeeper   types.IBCTransferKeeper
+		icqKeeper           types.ICQKeeper
+		ibcKeeper           *ibckeeper.Keeper
 	}
 )
 
@@ -55,6 +59,16 @@ func NewKeeper(
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+// RegisterICAAccount registers an ICA
+func (k *Keeper) RegisterICAAccount(ctx sdk.Context, connectionID, owner string) error {
+	return k.icaControllerKeeper.RegisterInterchainAccount(
+		ctx,
+		connectionID,
+		owner,
+		"",
+	)
 }
 
 // GetClientState retrieves the client state given a connection id
