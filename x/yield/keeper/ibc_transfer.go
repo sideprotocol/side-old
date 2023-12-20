@@ -7,7 +7,7 @@ import (
 	"github.com/Stride-Labs/stride/v16/utils"
 	icacallbackstypes "github.com/Stride-Labs/stride/v16/x/icacallbacks/types"
 
-	"github.com/Stride-Labs/stride/v16/x/records/types"
+	"github.com/sideprotocol/side/x/yield/types"
 )
 
 // Transfers native tokens, to the cosmos hub.
@@ -44,6 +44,7 @@ func (k Keeper) IBCTransferNativeTokens(ctx sdk.Context, msg *transfertypes.MsgT
 
 	// update the record state to TRANSFER_IN_PROGRESS
 	// TODO: Update state for deposit for a user
+	// TODO: Add ibc transfer tests
 	// depositRecord.Status = types.DepositRecord_TRANSFER_IN_PROGRESS
 	// k.SetDepositRecord(ctx, depositRecord)
 
