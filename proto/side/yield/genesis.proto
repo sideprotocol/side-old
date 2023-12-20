@@ -1,0 +1,12 @@
+syntax = "proto3";
+package side.yield;
+
+import "gogoproto/gogo.proto";
+import "side/yield/params.proto";
+
+option go_package = "github.com/sideprotocol/side/x/yield/types";
+
+// GenesisState defines the yield module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}

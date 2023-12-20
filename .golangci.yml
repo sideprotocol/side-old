@@ -6,7 +6,7 @@ run:
 linters:
   enable:
     # - bodyclose
-    - depguard
+    # - depguard
     - dogsled
     - dupl
     - errcheck

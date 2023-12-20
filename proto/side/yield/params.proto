@@ -1,0 +1,12 @@
+syntax = "proto3";
+package side.yield;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/sideprotocol/side/x/yield/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  string admin = 1;
+}
