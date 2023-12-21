@@ -11,7 +11,7 @@ import (
 )
 
 // Transfers native tokens, to the cosmos hub.
-// Then from cosmos hub to stride
+// TODO: Then from cosmos hub to stride
 func (k Keeper) IBCTransferNativeTokens(ctx sdk.Context, msg *transfertypes.MsgTransfer, depositRecord types.DepositRecord) error {
 	// Submit IBC transfer
 	msgTransferResponse, err := k.TransferKeeper.Transfer(sdk.WrapSDKContext(ctx), msg)

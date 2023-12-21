@@ -34,8 +34,8 @@ func (k Keeper) UnmarshalTransferCallbackArgs(ctx sdk.Context, transferCallback 
 }
 
 // TODO: First callback
-// TODO: Second callback
-// TODO: Stake callback
+// TODO: Second callback ICA tx (IBC)
+// TODO: Stake callback ICA tx (Stake)
 func (k Keeper) TransferCallback(ctx sdk.Context, packet channeltypes.Packet, ackResponse *icacallbackstypes.AcknowledgementResponse, args []byte) error {
 	k.Logger(ctx).Info("TransferCallback executing", "packet", packet)
 
@@ -54,7 +54,7 @@ func (k Keeper) TransferCallback(ctx sdk.Context, packet channeltypes.Packet, ac
 	if ackResponse.Status == icacallbackstypes.AckResponseStatus_TIMEOUT {
 		// timeout
 		// put record back in the TRANSFER_QUEUE
-		depositRecord.Status = types.DepositRecord_TRANSFER_QUEUE
+		depositRecord.Status = types.DepositRecord_TRANSFER_FIRST_QUEUE
 		k.SetDepositRecord(ctx, depositRecord)
 		k.Logger(ctx).Error(fmt.Sprintf("TransferCallback timeout, ack is nil, packet %v", packet))
 		return nil
@@ -63,7 +63,7 @@ func (k Keeper) TransferCallback(ctx sdk.Context, packet channeltypes.Packet, ac
 	if ackResponse.Status == icacallbackstypes.AckResponseStatus_FAILURE {
 		// error on host chain
 		// put record back in the TRANSFER_QUEUE
-		depositRecord.Status = types.DepositRecord_TRANSFER_QUEUE
+		depositRecord.Status = types.DepositRecord_TRANSFER_FIRST_QUEUE
 		k.SetDepositRecord(ctx, depositRecord)
 		k.Logger(ctx).Error(fmt.Sprintf("Error  %s", ackResponse.Error))
 		return nil
@@ -77,7 +77,7 @@ func (k Keeper) TransferCallback(ctx sdk.Context, packet channeltypes.Packet, ac
 	k.Logger(ctx).Info(fmt.Sprintf("TransferCallback unmarshalled FungibleTokenPacketData %v", data))
 
 	// put the deposit record in the DELEGATION_QUEUE
-	depositRecord.Status = types.DepositRecord_DELEGATION_QUEUE
+	depositRecord.Status = types.DepositRecord_TRANSFER_SECOND_QUEUE
 	k.SetDepositRecord(ctx, depositRecord)
 	k.Logger(ctx).Info(fmt.Sprintf("\t [IBC-TRANSFER] Deposit record updated: {%v}, status: {%s}", depositRecord.Id, depositRecord.Status.String()))
 	k.Logger(ctx).Info(fmt.Sprintf("[IBC-TRANSFER] success to %s", depositRecord.HostChainId))

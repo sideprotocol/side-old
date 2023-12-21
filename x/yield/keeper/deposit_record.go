@@ -106,7 +106,7 @@ func (k Keeper) GetTransferDepositRecordByEpochAndChain(ctx sdk.Context, epochNu
 	for _, depositRecord := range records {
 		if depositRecord.DepositEpochNumber == epochNumber &&
 			depositRecord.HostChainId == chainID &&
-			depositRecord.Status == types.DepositRecord_TRANSFER_QUEUE {
+			depositRecord.Status == types.DepositRecord_TRANSFER_FIRST_QUEUE {
 			return &depositRecord, true
 		}
 	}
