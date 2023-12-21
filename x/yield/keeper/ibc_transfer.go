@@ -23,7 +23,7 @@ func (k Keeper) IBCTransferNativeTokens(ctx sdk.Context, msg *transfertypes.MsgT
 	transferCallback := types.TransferCallback{
 		DepositRecordId: depositRecord.Id,
 	}
-	k.Logger(ctx).Info(utils.LogWithHostZone(depositRecord.HostZoneId, "Marshalling TransferCallback args: %+v", transferCallback))
+	k.Logger(ctx).Info(utils.LogWithHostZone(depositRecord.HostChainId, "Marshalling TransferCallback args: %+v", transferCallback))
 	marshalledCallbackArgs, err := k.MarshalTransferCallbackArgs(ctx, transferCallback)
 	if err != nil {
 		return err
@@ -39,14 +39,14 @@ func (k Keeper) IBCTransferNativeTokens(ctx sdk.Context, msg *transfertypes.MsgT
 		CallbackId:   IBCCallbacksID_NativeTransfer,
 		CallbackArgs: marshalledCallbackArgs,
 	}
-	k.Logger(ctx).Info(utils.LogWithHostZone(depositRecord.HostZoneId, "Storing callback data: %+v", callback))
+	k.Logger(ctx).Info(utils.LogWithHostZone(depositRecord.HostChainId, "Storing callback data: %+v", callback))
 	k.ICACallbacksKeeper.SetCallbackData(ctx, callback)
 
 	// update the record state to TRANSFER_IN_PROGRESS
 	// TODO: Update state for deposit for a user
 	// TODO: Add ibc transfer tests
-	// depositRecord.Status = types.DepositRecord_TRANSFER_IN_PROGRESS
-	// k.SetDepositRecord(ctx, depositRecord)
+	depositRecord.Status = types.DepositRecord_TRANSFER_FIRST_IN_PROGRESS
+	k.SetDepositRecord(ctx, depositRecord)
 
 	return nil
 }
