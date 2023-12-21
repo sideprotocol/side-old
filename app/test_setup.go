@@ -22,8 +22,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	//cmdcfg "github.com/sideprotocol/side/cmd/sided/config"
-	//cmdcfg "github.com/Stride-Labs/stride/v16/cmd/sided/config"
+	// cmdcfg "github.com/Stride-Labs/stride/v16/cmd/sided/config"
 	errorsmod "cosmossdk.io/errors"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
