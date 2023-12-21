@@ -23,7 +23,7 @@ func (k Keeper) IBCTransferNativeTokens(ctx sdk.Context, msg *transfertypes.MsgT
 	transferCallback := types.TransferCallback{
 		DepositRecordId: depositRecord.Id,
 	}
-	k.Logger(ctx).Info(utils.LogWithHostZone(depositRecord.HostChainId, "Marshalling TransferCallback args: %+v", transferCallback))
+	k.Logger(ctx).Info(utils.LogWithHostZone(depositRecord.HostChainId, "Marshaling TransferCallback args: %+v", transferCallback))
 	marshalledCallbackArgs, err := k.MarshalTransferCallbackArgs(ctx, transferCallback)
 	if err != nil {
 		return err
@@ -36,7 +36,7 @@ func (k Keeper) IBCTransferNativeTokens(ctx sdk.Context, msg *transfertypes.MsgT
 		PortId:       msg.SourcePort,
 		ChannelId:    msg.SourceChannel,
 		Sequence:     sequence,
-		CallbackId:   IBCCallbacksID_NativeTransfer,
+		CallbackId:   IBCCallbacksIDNativeTransfer,
 		CallbackArgs: marshalledCallbackArgs,
 	}
 	k.Logger(ctx).Info(utils.LogWithHostZone(depositRecord.HostChainId, "Storing callback data: %+v", callback))

@@ -34,7 +34,6 @@ func SetupConfig() {
 	valoperpub := sdk.PrefixValidator + sdk.PrefixOperator + sdk.PrefixPublic
 	config.SetBech32PrefixForAccount(Bech32Prefix, Bech32Prefix+sdk.PrefixPublic)
 	config.SetBech32PrefixForValidator(Bech32Prefix+valoper, Bech32Prefix+valoperpub)
-	//cmdcfg.SetAddressPrefixes(config)
 }
 
 // Initializes a new SideApp without IBC functionality
