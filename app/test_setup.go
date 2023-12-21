@@ -22,7 +22,7 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
-const Bech32Prefix = "Side"
+const Bech32Prefix = "side"
 
 func init() {
 	SetupConfig()
