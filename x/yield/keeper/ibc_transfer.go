@@ -12,7 +12,7 @@ import (
 
 // Transfers native tokens, to the cosmos hub.
 // Then from cosmos hub to stride
-func (k Keeper) IBCTransferNativeTokens(ctx sdk.Context, msg *transfertypes.MsgTransfer, depositRecord types.DepositRecord, first bool) error {
+func (k Keeper) IBCTransferNativeTokens(ctx sdk.Context, msg *transfertypes.MsgTransfer, depositRecord types.DepositRecord) error {
 	// Submit IBC transfer
 	msgTransferResponse, err := k.TransferKeeper.Transfer(sdk.WrapSDKContext(ctx), msg)
 	if err != nil {
@@ -43,13 +43,8 @@ func (k Keeper) IBCTransferNativeTokens(ctx sdk.Context, msg *transfertypes.MsgT
 	k.ICACallbacksKeeper.SetCallbackData(ctx, callback)
 
 	// update the record state to TRANSFER_IN_PROGRESS
-	// TODO: Update state for deposit for a user
 	// TODO: Add ibc transfer tests
-	if first {
-		depositRecord.Status = types.DepositRecord_TRANSFER_FIRST_IN_PROGRESS
-	} else {
-		depositRecord.Status = types.DepositRecord_TRANSFER_SECOND_IN_PROGRESS
-	}
+	depositRecord.Status = types.DepositRecord_TRANSFER_FIRST_IN_PROGRESS
 	k.SetDepositRecord(ctx, depositRecord)
 
 	return nil
