@@ -3,12 +3,14 @@ package keeper
 import (
 	"fmt"
 
+	icacallbackskeeper "github.com/Stride-Labs/stride/v16/x/icacallbacks/keeper"
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	icacontrollerkeeper "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/keeper"
+	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
 	"github.com/cosmos/ibc-go/v7/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
 	ibctmtypes "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
@@ -30,6 +32,8 @@ type (
 		icaControllerKeeper icacontrollerkeeper.Keeper
 		icqKeeper           interchainquerykeeper.Keeper
 		ibcKeeper           *ibckeeper.Keeper
+		TransferKeeper      ibctransferkeeper.Keeper
+		ICACallbacksKeeper  icacallbackskeeper.Keeper
 	}
 )
 
@@ -42,6 +46,8 @@ func NewKeeper(
 	bankKeeper types.BankKeeper,
 	icqKeeper interchainquerykeeper.Keeper,
 	ibcKeeper *ibckeeper.Keeper,
+	transferKeeper ibctransferkeeper.Keeper,
+	icaCallbacksKeeper icacallbackskeeper.Keeper,
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -54,9 +60,11 @@ func NewKeeper(
 		memKey:     memKey,
 		paramstore: ps,
 
-		bankKeeper: bankKeeper,
-		ibcKeeper:  ibcKeeper,
-		icqKeeper:  icqKeeper,
+		bankKeeper:         bankKeeper,
+		ibcKeeper:          ibcKeeper,
+		TransferKeeper:     transferKeeper,
+		icqKeeper:          icqKeeper,
+		ICACallbacksKeeper: icaCallbacksKeeper,
 	}
 }
 

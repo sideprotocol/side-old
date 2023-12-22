@@ -26,3 +26,36 @@ message MsgRegisterHostChain {
 
 message MsgRegisterHostChainResponse {}
 
+message DepositRecord {
+  uint64 id = 1;
+  string amount = 2 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+  string denom = 3;
+  string host_chain_id = 4;
+  enum Status {
+    // in transfer queue to be sent to the delegation ICA (Hub)
+    TRANSFER_FIRST_QUEUE = 0;
+    // transfer in progress (IBC packet sent, ack not received) (to Hub)
+    TRANSFER_FIRST_IN_PROGRESS = 2;
+    // in transfer queue to be sent to the delegation ICA (Stride)
+    TRANSFER_SECOND_QUEUE = 3;
+    // transfer in progress (IBC packet sent, ack not received) (from Hub to stride)
+    TRANSFER_SECOND_IN_PROGRESS = 4;
+    // in staking queue on delegation ICA
+    DELEGATION_QUEUE = 1;
+    // staking in progress (ICA packet sent, ack not received)
+    DELEGATION_IN_PROGRESS = 5;
+  }
+  enum Source {
+    SIDE = 0;
+    HUB = 1;
+  }
+  Status status = 6;
+  uint64 deposit_epoch_number = 7;
+  Source source = 8;
+
+  reserved 5;
+}
+

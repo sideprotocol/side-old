@@ -12,12 +12,15 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/sideprotocol/side/app"
 	"github.com/sideprotocol/side/x/yield/keeper"
 	"github.com/sideprotocol/side/x/yield/types"
 	"github.com/stretchr/testify/require"
 )
 
 func YieldKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
+	app := app.InitSideTestApp(false)
+
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 
@@ -45,6 +48,8 @@ func YieldKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		nil,
 		*icqk,
 		nil,
+		app.TransferKeeper,
+		app.IcacallbacksKeeper,
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())

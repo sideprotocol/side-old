@@ -14,3 +14,6 @@ message DelegateCallback {
 message UndelegateCallback {
   string host_chain_id = 1;
 }
+
+message TransferCallback { uint64 deposit_record_id = 1; }
+

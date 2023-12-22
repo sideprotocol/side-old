@@ -103,6 +103,8 @@ import (
 	ibcfeekeeper "github.com/cosmos/ibc-go/v7/modules/apps/29-fee/keeper"
 	ibcfeetypes "github.com/cosmos/ibc-go/v7/modules/apps/29-fee/types"
 
+	icacallbacksmodulekeeper "github.com/Stride-Labs/stride/v16/x/icacallbacks/keeper"
+	icacallbacksmoduletypes "github.com/Stride-Labs/stride/v16/x/icacallbacks/types"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
 	ibc "github.com/cosmos/ibc-go/v7/modules/core"
@@ -269,6 +271,7 @@ type App struct {
 	EvidenceKeeper        evidencekeeper.Keeper
 	TransferKeeper        ibctransferkeeper.Keeper
 	ICAHostKeeper         icahostkeeper.Keeper
+	IcacallbacksKeeper    icacallbacksmodulekeeper.Keeper
 	FeeGrantKeeper        feegrantkeeper.Keeper
 	GroupKeeper           groupkeeper.Keeper
 	ConsensusParamsKeeper consensusparamkeeper.Keeper
@@ -526,6 +529,15 @@ func New(
 		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
 		scopedICAControllerKeeper, app.MsgServiceRouter(),
 	)
+
+	app.IcacallbacksKeeper = *icacallbacksmodulekeeper.NewKeeper(
+		appCodec,
+		keys[icacallbacksmoduletypes.StoreKey],
+		keys[icacallbacksmoduletypes.MemStoreKey],
+		app.GetSubspace(icacallbacksmoduletypes.ModuleName),
+		*app.IBCKeeper,
+	)
+
 	icaModule := ica.NewAppModule(&icaControllerKeeper, &app.ICAHostKeeper)
 	icaHostIBCModule := icahost.NewIBCModule(app.ICAHostKeeper)
 
@@ -614,6 +626,8 @@ func New(
 		app.BankKeeper,
 		app.InterchainQueryKeeper,
 		app.IBCKeeper,
+		app.TransferKeeper,
+		app.IcacallbacksKeeper,
 	)
 	yieldModule := yieldmodule.NewAppModule(appCodec, app.YieldKeeper, app.AccountKeeper, app.BankKeeper)
 
