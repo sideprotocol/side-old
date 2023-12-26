@@ -31,6 +31,7 @@ message DepositRecord {
   string amount        = 2 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int", (gogoproto.nullable) = false];
   string denom         = 3;
   string host_chain_id = 4;
+  string receiver      = 9;
 
   enum Status {
     
@@ -59,8 +60,6 @@ message DepositRecord {
   Status status               = 6;
   uint64 deposit_epoch_number = 7;
   Source source               = 8;
-
-  reserved 5;
 }
 
 message MsgLiquidStake {
