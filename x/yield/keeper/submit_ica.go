@@ -18,30 +18,30 @@ import (
 // SubmitTxs submits an ICA transaction containing multiple messages
 func (k Keeper) SubmitTxs(
 	ctx sdk.Context,
-	connectionId string,
+	connectionID string,
 	msgs []proto.Message,
 	timeoutTimestamp uint64,
-	callbackId string,
+	callbackID string,
 	callbackArgs []byte,
 ) (uint64, error) {
-	chainId, err := k.GetChainID(ctx, connectionId)
+	chainID, err := k.GetChainID(ctx, connectionID)
 	if err != nil {
 		return 0, err
 	}
-	owner := types.FormatICAAccountOwner(chainId, "delegationAccount")
+	owner := types.FormatICAAccountOwner(chainID, "delegationAccount")
 	portID, err := icatypes.NewControllerPortID(owner)
 	if err != nil {
 		return 0, err
 	}
 
-	k.Logger(ctx).Info(utils.LogWithHostZone(chainId, "  Submitting ICA Tx on %s, %s with TTL: %d", portID, connectionId, timeoutTimestamp))
+	k.Logger(ctx).Info(utils.LogWithHostZone(chainID, "  Submitting ICA Tx on %s, %s with TTL: %d", portID, connectionID, timeoutTimestamp))
 	protoMsgs := []proto.Message{}
 	for _, msg := range msgs {
-		k.Logger(ctx).Info(utils.LogWithHostZone(chainId, "    Msg: %+v", msg))
+		k.Logger(ctx).Info(utils.LogWithHostZone(chainID, "    Msg: %+v", msg))
 		protoMsgs = append(protoMsgs, msg)
 	}
 
-	channelID, found := k.icaControllerKeeper.GetActiveChannelID(ctx, connectionId, portID)
+	channelID, found := k.icaControllerKeeper.GetActiveChannelID(ctx, connectionID, portID)
 	if !found {
 		return 0, errorsmod.Wrapf(icatypes.ErrActiveChannelNotFound, "failed to retrieve active channel for port %s", portID)
 	}
@@ -59,7 +59,7 @@ func (k Keeper) SubmitTxs(
 	// Submit ICA tx
 	msgServer := icacontrollerkeeper.NewMsgServerImpl(&k.icaControllerKeeper)
 	relativeTimeoutOffset := timeoutTimestamp - uint64(ctx.BlockTime().UnixNano())
-	msgSendTx := icacontrollertypes.NewMsgSendTx(owner, connectionId, relativeTimeoutOffset, packetData)
+	msgSendTx := icacontrollertypes.NewMsgSendTx(owner, connectionID, relativeTimeoutOffset, packetData)
 	res, err := msgServer.SendTx(ctx, msgSendTx)
 	if err != nil {
 		return 0, err
@@ -67,16 +67,16 @@ func (k Keeper) SubmitTxs(
 	sequence := res.Sequence
 
 	// Store the callback data
-	if callbackId != "" && callbackArgs != nil {
+	if callbackID != "" && callbackArgs != nil {
 		callback := icacallbackstypes.CallbackData{
 			CallbackKey:  icacallbackstypes.PacketID(portID, channelID, sequence),
 			PortId:       portID,
 			ChannelId:    channelID,
 			Sequence:     sequence,
-			CallbackId:   callbackId,
+			CallbackId:   callbackID,
 			CallbackArgs: callbackArgs,
 		}
-		k.Logger(ctx).Info(utils.LogWithHostZone(chainId, "Storing callback data: %+v", callback))
+		k.Logger(ctx).Info(utils.LogWithHostZone(chainID, "Storing callback data: %+v", callback))
 		k.ICACallbacksKeeper.SetCallbackData(ctx, callback)
 	}
 

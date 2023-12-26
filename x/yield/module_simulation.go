@@ -27,7 +27,7 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgRegisterHostChain int = 100
 
-	opWeightMsgLiquidStake = "op_weight_msg_liquid_stake"
+	opWeightMsgLiquidStake = "op_weight_msg_liquid_stake" // #nosec
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgLiquidStake int = 100
 
