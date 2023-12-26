@@ -5811,6 +5811,41 @@ paths:
           type: string
       tags:
         - Query
+  /cosmos/base/node/v1beta1/config:
+    get:
+      summary: Config queries for the operator configuration.
+      operationId: CosmosBaseNodeV1Beta1Config
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              minimum_gas_price:
+                type: string
+            description: >-
+              ConfigResponse defines the response structure for the Config gRPC
+              query.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Service
   /cosmos/base/tendermint/v1beta1/abci_query:
     get:
       summary: >-
@@ -56020,6 +56055,12 @@ definitions:
 
       NOTE: The amount field is an Int which implements the custom method
       signatures required by gogoproto.
+  cosmos.base.node.v1beta1.ConfigResponse:
+    type: object
+    properties:
+      minimum_gas_price:
+        type: string
+    description: ConfigResponse defines the response structure for the Config gRPC query.
   cosmos.base.tendermint.v1beta1.ABCIQueryResponse:
     type: object
     properties:
@@ -83448,6 +83489,12 @@ definitions:
                    PageResponse page = 2;
            }
     title: QueryPoolsResponse is response type for the Query/Pools RPC method
+  side.yield.MsgLiquidStakeResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
   side.yield.MsgRegisterHostChainResponse:
     type: object
   side.yield.Params:

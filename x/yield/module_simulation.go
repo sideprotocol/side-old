@@ -27,6 +27,10 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgRegisterHostChain int = 100
 
+	opWeightMsgLiquidStake = "op_weight_msg_liquid_stake"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgLiquidStake int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -66,6 +70,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		yieldsimulation.SimulateMsgRegisterHostChain(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
+	var weightMsgLiquidStake int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgLiquidStake, &weightMsgLiquidStake, nil,
+		func(_ *rand.Rand) {
+			weightMsgLiquidStake = defaultWeightMsgLiquidStake
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgLiquidStake,
+		yieldsimulation.SimulateMsgLiquidStake(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
@@ -79,6 +94,14 @@ func (am AppModule) ProposalMsgs(_ module.SimulationState) []simtypes.WeightedPr
 			defaultWeightMsgRegisterHostChain,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
 				yieldsimulation.SimulateMsgRegisterHostChain(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgLiquidStake,
+			defaultWeightMsgLiquidStake,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				yieldsimulation.SimulateMsgLiquidStake(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),
