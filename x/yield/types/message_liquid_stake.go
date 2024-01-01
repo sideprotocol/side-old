@@ -1,7 +1,10 @@
 package types
 
 import (
+	"strings"
+
 	errorsmod "cosmossdk.io/errors"
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -10,12 +13,16 @@ const TypeMsgLiquidStake = "liquid_stake"
 
 var _ sdk.Msg = &MsgLiquidStake{}
 
-func NewMsgLiquidStake(creator string, denom string, amount uint64) *MsgLiquidStake {
+func NewMsgLiquidStake(creator string, denom string, amount sdkmath.Int) *MsgLiquidStake {
 	return &MsgLiquidStake{
 		Creator: creator,
 		Denom:   denom,
 		Amount:  amount,
 	}
+}
+
+func IsIBCToken(denom string) bool {
+	return strings.HasPrefix(denom, "ibc/")
 }
 
 func (msg *MsgLiquidStake) Route() string {

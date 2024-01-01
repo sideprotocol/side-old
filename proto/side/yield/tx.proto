@@ -65,7 +65,10 @@ message DepositRecord {
 message MsgLiquidStake {
   string creator = 1;
   string denom   = 2;
-  uint64 amount  = 3;
+  string amount  = 3 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
 }
 
 message MsgLiquidStakeResponse {
