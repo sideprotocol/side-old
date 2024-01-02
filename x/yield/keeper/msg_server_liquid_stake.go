@@ -40,6 +40,37 @@ func (k msgServer) LiquidStake(goCtx context.Context, msg *types.MsgLiquidStake)
 		return nil, errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds, "balance is lower than staking amount. staking amount: %v, balance: %v", msg.Amount, balance.Amount)
 	}
 
+	// // Determine the amount of sdTokens to mint using the redemption rate
+	// stAmount := (sdk.NewDecFromInt(msg.Amount).Quo(hostZone.RedemptionRate)).TruncateInt()
+	// if stAmount.IsZero() {
+	// 	return nil, errorsmod.Wrapf(types.ErrInsufficientLiquidStake,
+	// 		"Liquid stake of %s%s would return 0 sdTokens", msg.Amount.String(), hostZone.HostDenom)
+	// }
+
+	// // Transfer the native tokens from the user to module account
+	// if err := k.bankKeeper.SendCoins(ctx, liquidStakerAddress, hostZoneDepositAddress, sdk.NewCoins(nativeCoin)); err != nil {
+	// 	return nil, errorsmod.Wrap(err, "failed to send tokens from Account to Module")
+	// }
+
+	// // Mint the sdTokens and transfer them to the user
+	// stDenom := types.StAssetDenomFromHostZoneDenom(msg.HostDenom)
+	// stCoin := sdk.NewCoin(stDenom, stAmount)
+	// if err := k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(stCoin)); err != nil {
+	// 	return nil, errorsmod.Wrapf(err, "Failed to mint coins")
+	// }
+	// if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, liquidStakerAddress, sdk.NewCoins(stCoin)); err != nil {
+	// 	return nil, errorsmod.Wrapf(err, "Failed to send %s from module to account", stCoin.String())
+	// }
+
+	// // Update the liquid staked amount on the deposit record
+	// depositRecord.Amount = depositRecord.Amount.Add(msg.Amount)
+	// k.RecordsKeeper.SetDepositRecord(ctx, *depositRecord)
+
+	// // Emit liquid stake event
+	// EmitSuccessfulLiquidStakeEvent(ctx, msg, *hostZone, stAmount)
+
+	// k.hooks.AfterLiquidStake(ctx, liquidStakerAddress)
+
 	// TODO: Handling the message
 	// - Check balance
 	// - Transfer amount given in message
