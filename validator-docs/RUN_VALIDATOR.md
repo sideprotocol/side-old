@@ -4,7 +4,7 @@
 
 Validators are responsible for committing new blocks to the blockchain through an automated voting process. A validator's stake is slashed if they become unavailable or sign blocks at the same height. Because there is a chance of slashing, we suggest you read about Sentry Node Architecture to protect your node from DDOS attacks and to ensure high-availability.
 
-The following instructions assume you have already set up a full-node and are synchonised to the latest blockheight.
+The following instructions assume you have already set up a full-node and are synchronized to the latest block height.
 
 ## Creating Your Validator
 
