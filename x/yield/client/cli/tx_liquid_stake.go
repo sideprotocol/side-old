@@ -3,11 +3,14 @@ package cli
 import (
 	"strconv"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	errorsmod "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/sideprotocol/side/x/yield/types"
-	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 )
 
@@ -20,9 +23,9 @@ func CmdLiquidStake() *cobra.Command {
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argDenom := args[0]
-			argAmount, err := cast.ToUint64E(args[1])
-			if err != nil {
-				return err
+			argAmount, found := sdk.NewIntFromString(args[1])
+			if !found {
+				return errorsmod.Wrap(sdkerrors.ErrInvalidType, "can not convert string to int")
 			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
