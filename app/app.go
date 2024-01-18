@@ -129,6 +129,10 @@ import (
 	yieldmodulekeeper "github.com/sideprotocol/side/x/yield/keeper"
 	yieldmoduletypes "github.com/sideprotocol/side/x/yield/types"
 
+	routermodule "github.com/sideprotocol/side/x/router"
+	routermodulekeeper "github.com/sideprotocol/side/x/router/keeper"
+	routermoduletypes "github.com/sideprotocol/side/x/router/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "github.com/sideprotocol/side/app/params"
@@ -199,6 +203,7 @@ var (
 
 		gmmmodule.AppModuleBasic{},
 		yieldmodule.AppModuleBasic{},
+		routermodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -288,7 +293,9 @@ type App struct {
 
 	GmmKeeper gmmmodulekeeper.Keeper
 
-	YieldKeeper yieldmodulekeeper.Keeper
+	YieldKeeper        yieldmodulekeeper.Keeper
+	ScopedRouterKeeper capabilitykeeper.ScopedKeeper
+	RouterKeeper       routermodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -337,6 +344,7 @@ func New(
 		capabilitytypes.StoreKey, group.StoreKey, icacontrollertypes.StoreKey, consensusparamtypes.StoreKey, wasmTypes.StoreKey, ibcfeetypes.StoreKey,
 		gmmmoduletypes.StoreKey,
 		yieldmoduletypes.StoreKey,
+		routermoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -631,6 +639,26 @@ func New(
 	)
 	yieldModule := yieldmodule.NewAppModule(appCodec, app.YieldKeeper, app.AccountKeeper, app.BankKeeper)
 
+	scopedRouterKeeper := app.CapabilityKeeper.ScopeToModule(routermoduletypes.ModuleName)
+	app.ScopedRouterKeeper = scopedRouterKeeper
+	app.RouterKeeper = *routermodulekeeper.NewKeeper(
+		appCodec,
+		keys[routermoduletypes.StoreKey],
+		keys[routermoduletypes.MemStoreKey],
+		app.GetSubspace(routermoduletypes.ModuleName),
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		scopedRouterKeeper,
+	)
+	routerModule := routermodule.NewAppModule(appCodec, app.RouterKeeper, app.AccountKeeper, app.BankKeeper)
+
+	var wasmStack ibcporttypes.IBCModule
+	wasmStack = wasm.NewIBCHandler(app.wasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCKeeper.ChannelKeeper)
+	wasmStack = routermodule.NewIBCMiddleware(
+		wasmStack,
+		app.RouterKeeper,
+	)
+	//routerIBCModule := routermodule.NewIBCMiddleware(*app, app.RouterKeeper)
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	/**** IBC Routing ****/
@@ -642,7 +670,8 @@ func New(
 	ibcRouter := ibcporttypes.NewRouter()
 	ibcRouter.AddRoute(icahosttypes.SubModuleName, icaHostIBCModule).
 		AddRoute(ibctransfertypes.ModuleName, transferIBCModule).
-		AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.wasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCKeeper.ChannelKeeper))
+		//AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.wasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCKeeper.ChannelKeeper))
+		AddRoute(wasm.ModuleName, wasmStack)
 
 	// this line is used by starport scaffolding # ibc/app/router
 	app.IBCKeeper.SetRouter(ibcRouter)
@@ -699,6 +728,7 @@ func New(
 		icaModule,
 		gmmModule,
 		yieldModule,
+		routerModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 
 		crisis.NewAppModule(app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)), // always be last to make sure that it checks for all invariants and not only part of them
@@ -735,6 +765,7 @@ func New(
 		wasmTypes.ModuleName,
 		gmmmoduletypes.ModuleName,
 		yieldmoduletypes.ModuleName,
+		routermoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -764,6 +795,7 @@ func New(
 		wasmTypes.ModuleName,
 		gmmmoduletypes.ModuleName,
 		yieldmoduletypes.ModuleName,
+		routermoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -798,6 +830,7 @@ func New(
 		wasmTypes.ModuleName,
 		gmmmoduletypes.ModuleName,
 		yieldmoduletypes.ModuleName,
+		routermoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	}
 	app.mm.SetOrderInitGenesis(genesisModuleOrder...)
@@ -1026,6 +1059,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(gmmmoduletypes.ModuleName)
 	paramsKeeper.Subspace(yieldmoduletypes.ModuleName)
+	paramsKeeper.Subspace(routermoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper
