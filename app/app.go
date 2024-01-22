@@ -649,6 +649,8 @@ func New(
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedRouterKeeper,
+		app.GmmKeeper,
+		app.wasmKeeper,
 	)
 	routerModule := routermodule.NewAppModule(appCodec, app.RouterKeeper, app.AccountKeeper, app.BankKeeper)
 

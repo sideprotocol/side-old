@@ -1,9 +1,9 @@
 package keeper
 
 import (
+	"encoding/json"
 	"fmt"
 
-	errorsmod "cosmossdk.io/errors"
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
@@ -15,9 +15,10 @@ import (
 	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
 	"github.com/cosmos/ibc-go/v7/modules/core/exported"
 
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	sdkmath "cosmossdk.io/math"
+	//wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	porttypes "github.com/cosmos/ibc-go/v7/modules/core/05-port/types"
+	gmmtypes "github.com/sideprotocol/side/x/gmm/types"
 	"github.com/sideprotocol/side/x/router/types"
 )
 
@@ -27,13 +28,15 @@ type (
 		storeKey   storetypes.StoreKey
 		memKey     storetypes.StoreKey
 		paramstore paramtypes.Subspace
-		wasmKeeper types.WasmKeeper
 
-		channelKeeper     types.ChannelKeeper
-		portKeeper        types.PortKeeper
-		scopedKeeper      exported.ScopedKeeper
-		ics4Wrapper       porttypes.ICS4Wrapper
-		ibcContractKeeper wasmtypes.IBCContractKeeper
+		channelKeeper types.ChannelKeeper
+		portKeeper    types.PortKeeper
+		scopedKeeper  exported.ScopedKeeper
+		ics4Wrapper   porttypes.ICS4Wrapper
+		//ibcContractKeeper wasmtypes.IBCContractKeeper
+
+		wasmKeeper types.WasmKeeper
+		gmmKeeper  types.GmmKeeper
 	}
 )
 
@@ -45,6 +48,8 @@ func NewKeeper(
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper exported.ScopedKeeper,
+	wasmKeeper types.WasmKeeper,
+	gmmKeeper types.GmmKeeper,
 
 ) *Keeper {
 	// set KeyTable if it has not already been set
@@ -61,6 +66,8 @@ func NewKeeper(
 		channelKeeper: channelKeeper,
 		portKeeper:    portKeeper,
 		scopedKeeper:  scopedKeeper,
+		wasmKeeper:    wasmKeeper,
+		gmmKeeper:     gmmKeeper,
 	}
 }
 
@@ -118,46 +125,113 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
+func (k Keeper) SwapWithRouters(ctx sdk.Context, tokenIn sdk.Coin, routes types.SwapAmountInRoutes, contract sdk.AccAddress, slippage sdkmath.Int) error {
+	in := tokenIn
+	for _, router := range routes {
+		pool, _, err := k.getPool(ctx, router.PoolId, contract)
+		if err != nil {
+			return err
+		}
+		out, err := pool.EstimateSwap(in, router.OutDenom)
+		if err != nil {
+			return err
+		}
+		in = out
+	}
+	return k.performSwap(ctx, in, routes, contract)
+}
+
+func (k Keeper) getPool(ctx sdk.Context, poolID string, contract sdk.AccAddress) (gmmtypes.Pool, bool, error) {
+	poolRes, err := k.gmmKeeper.Pool(ctx, &gmmtypes.QueryPoolRequest{PoolId: poolID})
+	if err == nil {
+		return *poolRes.Pool, false, nil
+	}
+
+	poolQuery := types.PoolQuery{PoolID: poolID}
+	rawPoolQueryData, err := json.Marshal(poolQuery)
+	if err != nil {
+		return gmmtypes.Pool{}, true, err
+	}
+	rawPoolRes, err := k.wasmKeeper.QuerySmart(ctx, contract, rawPoolQueryData)
+	if err != nil {
+		return gmmtypes.Pool{}, true, err
+	}
+	var iPoolRes types.InterchainPoolResponse
+	if err = json.Unmarshal(rawPoolRes, &iPoolRes); err != nil {
+		return gmmtypes.Pool{}, true, err
+	}
+	return iPoolRes.ToGmmPool(), true, nil
+}
+
+func (k Keeper) performSwap(ctx sdk.Context, in sdk.Coin, routes types.SwapAmountInRoutes, contract sdk.AccAddress) error {
+	for _, router := range routes {
+		pool, isWasmPool, err := k.getPool(ctx, router.PoolId, contract)
+		if err != nil {
+			return err
+		}
+
+		out, err := pool.EstimateSwap(in, router.OutDenom)
+		if err != nil {
+			return err
+		}
+
+		msgSwap := &gmmtypes.MsgSwap{
+			Sender:   types.ModuleName,
+			PoolId:   pool.PoolId,
+			TokenIn:  in,
+			TokenOut: out,
+			Slippage: sdkmath.NewInt(0),
+		}
+
+		if _, err = k.executeSwap(ctx, pool, contract, msgSwap, isWasmPool); err != nil {
+			return err
+		}
+		in = out
+	}
+	return nil
+}
+
+func (k Keeper) executeSwap(ctx sdk.Context, pool gmmtypes.Pool, contract sdk.AccAddress, msgSwap *gmmtypes.MsgSwap, isWasmPool bool) (*gmmtypes.MsgSwapResponse, error) {
+	if !isWasmPool {
+		return k.gmmKeeper.Swap(ctx, msgSwap)
+	}
+	_, err := k.wasmKeeper.Execute(ctx, contract, sdk.AccAddress(types.ModuleName), []byte{}, sdk.NewCoins(msgSwap.TokenIn))
+	return &gmmtypes.MsgSwapResponse{}, err
+}
+
 // func (k Keeper) SendPacket(
 // 	ctx sdk.Context,
-// 	chanCap *capabilitytypes.Capability,
-// 	sourcePort string, sourceChannel string,
+// 	sourcePort,
+// 	sourceChannel string,
 // 	timeoutHeight clienttypes.Height,
 // 	timeoutTimestamp uint64,
 // 	data []byte,
-// ) (sequence uint64, err error) {
-// 	return k.ics4Wrapper.SendPacket(ctx, chanCap, sourcePort, sourceChannel, timeoutHeight, timeoutTimestamp, data)
+// ) (*uint64, error) {
+// 	_, found := k.channelKeeper.GetChannel(ctx, sourcePort, sourceChannel)
+// 	if !found {
+// 		return nil, errorsmod.Wrapf(channeltypes.ErrChannelNotFound, "port ID (%s) channel ID (%s)", sourcePort, sourceChannel)
+// 	}
+
+// 	// get the next sequence
+// 	_, found = k.channelKeeper.GetNextSequenceSend(ctx, sourcePort, sourceChannel)
+// 	if !found {
+// 		return nil, errorsmod.Wrapf(
+// 			channeltypes.ErrSequenceSendNotFound,
+// 			"source port: %s, source channel: %s", sourcePort, sourceChannel,
+// 		)
+// 	}
+
+// 	// begin createOutgoingPacket logic
+// 	// See spec for this logic: https://github.com/cosmos/ibc/tree/master/spec/app/ics-020-fungible-token-transfer#packet-relay
+// 	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
+// 	if !ok {
+// 		return nil, errorsmod.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
+// 	}
+
+// 	sequence, err := k.ics4Wrapper.SendPacket(ctx, channelCap, sourcePort, sourceChannel, timeoutHeight, timeoutTimestamp, data)
+// 	return &sequence, err
 // }
 
-func (k Keeper) SendPacket(
-	ctx sdk.Context,
-	sourcePort,
-	sourceChannel string,
-	timeoutHeight clienttypes.Height,
-	timeoutTimestamp uint64,
-	data []byte,
-) (*uint64, error) {
-	_, found := k.channelKeeper.GetChannel(ctx, sourcePort, sourceChannel)
-	if !found {
-		return nil, errorsmod.Wrapf(channeltypes.ErrChannelNotFound, "port ID (%s) channel ID (%s)", sourcePort, sourceChannel)
-	}
+func (k *Keeper) TimeoutShouldRetry(ctx sdk.Context, packet channeltypes.Packet) {
 
-	// get the next sequence
-	_, found = k.channelKeeper.GetNextSequenceSend(ctx, sourcePort, sourceChannel)
-	if !found {
-		return nil, errorsmod.Wrapf(
-			channeltypes.ErrSequenceSendNotFound,
-			"source port: %s, source channel: %s", sourcePort, sourceChannel,
-		)
-	}
-
-	// begin createOutgoingPacket logic
-	// See spec for this logic: https://github.com/cosmos/ibc/tree/master/spec/app/ics-020-fungible-token-transfer#packet-relay
-	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
-	if !ok {
-		return nil, errorsmod.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
-	}
-
-	sequence, err := k.ics4Wrapper.SendPacket(ctx, channelCap, sourcePort, sourceChannel, timeoutHeight, timeoutTimestamp, data)
-	return &sequence, err
 }
