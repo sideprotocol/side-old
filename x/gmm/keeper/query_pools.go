@@ -21,7 +21,9 @@ func (k Keeper) Pool(goCtx context.Context, req *types.QueryPoolRequest) (*types
 	if !found {
 		return &types.QueryPoolResponse{}, types.ErrPoolNotFound
 	}
-	return &types.QueryPoolResponse{Pool: &pool}, nil
+
+	poolI := convertPoolForWasm(pool)
+	return &types.QueryPoolResponse{Pool: &poolI}, nil
 }
 
 func (k Keeper) Pools(goCtx context.Context, req *types.QueryAllPoolsRequest) (*types.QueryPoolsResponse, error) {
@@ -29,7 +31,7 @@ func (k Keeper) Pools(goCtx context.Context, req *types.QueryAllPoolsRequest) (*
 	// 	return nil, status.Error(codes.InvalidArgument, "invalid request")
 	// }
 
-	pools := []types.Pool{}
+	pools := []types.PoolI{}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Use the store with the mapping of poolId to its count
@@ -56,8 +58,8 @@ func (k Keeper) Pools(goCtx context.Context, req *types.QueryAllPoolsRequest) (*
 		if err := k.cdc.Unmarshal(poolBytes, &pool); err != nil {
 			return nil
 		}
-
-		pools = append(pools, pool)
+		poolI := convertPoolForWasm(pool)
+		pools = append(pools, poolI)
 		return nil
 	})
 	if err != nil {
@@ -72,7 +74,7 @@ func (k Keeper) MyPools(goCtx context.Context, req *types.QueryPoolsRequest) (*t
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var pools []types.Pool
+	var pools []types.PoolI
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Use the store with the mapping of poolId to its count
@@ -100,7 +102,8 @@ func (k Keeper) MyPools(goCtx context.Context, req *types.QueryPoolsRequest) (*t
 			return err
 		}
 		if pool.Sender == req.Creator {
-			pools = append(pools, pool)
+			poolI := convertPoolForWasm(pool)
+			pools = append(pools, poolI)
 		}
 		return nil
 	})
@@ -109,4 +112,23 @@ func (k Keeper) MyPools(goCtx context.Context, req *types.QueryPoolsRequest) (*t
 	}
 
 	return &types.QueryPoolsResponse{Pools: pools, Pagination: pageRes}, nil
+}
+
+func convertPoolForWasm(pool types.Pool) types.PoolI {
+	assets := []*types.PoolWasmAsset{}
+	for _, asset := range pool.Assets {
+		assets = append(assets, &types.PoolWasmAsset{
+			Balance: &asset.Token,
+			Decimal: uint32(asset.Decimal.Int64()),
+			Weight:  uint32(asset.Weight.Int64()),
+		})
+	}
+	poolI := types.PoolI{
+		Id:            pool.PoolId,
+		SourceCreator: pool.Sender,
+		Assets:        assets,
+		SwapFee:       uint32(pool.PoolParams.SwapFee.RoundInt().Int64()),
+		Supply:        &pool.TotalShares,
+	}
+	return poolI
 }
