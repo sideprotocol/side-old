@@ -44,7 +44,7 @@ message QueryPoolRequest {
 
 // QueryLiquidityPoolResponse is response type for the Query/Liquidity RPC method
 message QueryPoolResponse {
-  Pool pool = 1;
+  PoolI pool = 1;
 }
 
 // QueryPoolsRequest is request type for the Query/Liquidities RPC method.
@@ -60,7 +60,7 @@ message QueryPoolsRequest {
 
 // QueryPoolsResponse is response type for the Query/Pools RPC method
 message QueryPoolsResponse {
-  repeated Pool pools = 1 [(gogoproto.nullable) = false];
+  repeated PoolI pools = 1 [(gogoproto.nullable) = false];
   cosmos.base.query.v1beta1.PageResponse pagination            = 2;
 }
 

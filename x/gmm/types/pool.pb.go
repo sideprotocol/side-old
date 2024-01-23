@@ -102,39 +102,185 @@ func (m *Pool) GetTotalShares() types.Coin {
 	return types.Coin{}
 }
 
+type PoolI struct {
+	Id            string           `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	SourceCreator string           `protobuf:"bytes,2,opt,name=source_creator,json=sourceCreator,proto3" json:"source_creator,omitempty"`
+	Assets        []*PoolWasmAsset `protobuf:"bytes,3,rep,name=assets,proto3" json:"assets,omitempty"`
+	SwapFee       uint32           `protobuf:"varint,4,opt,name=swap_fee,json=swapFee,proto3" json:"swap_fee,omitempty"`
+	Supply        *types.Coin      `protobuf:"bytes,5,opt,name=supply,proto3" json:"supply,omitempty"`
+}
+
+func (m *PoolI) Reset()         { *m = PoolI{} }
+func (m *PoolI) String() string { return proto.CompactTextString(m) }
+func (*PoolI) ProtoMessage()    {}
+func (*PoolI) Descriptor() ([]byte, []int) {
+	return fileDescriptor_539300364e2e3e52, []int{1}
+}
+func (m *PoolI) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *PoolI) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_PoolI.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *PoolI) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PoolI.Merge(m, src)
+}
+func (m *PoolI) XXX_Size() int {
+	return m.Size()
+}
+func (m *PoolI) XXX_DiscardUnknown() {
+	xxx_messageInfo_PoolI.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PoolI proto.InternalMessageInfo
+
+func (m *PoolI) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *PoolI) GetSourceCreator() string {
+	if m != nil {
+		return m.SourceCreator
+	}
+	return ""
+}
+
+func (m *PoolI) GetAssets() []*PoolWasmAsset {
+	if m != nil {
+		return m.Assets
+	}
+	return nil
+}
+
+func (m *PoolI) GetSwapFee() uint32 {
+	if m != nil {
+		return m.SwapFee
+	}
+	return 0
+}
+
+func (m *PoolI) GetSupply() *types.Coin {
+	if m != nil {
+		return m.Supply
+	}
+	return nil
+}
+
+type PoolWasmAsset struct {
+	Balance *types.Coin `protobuf:"bytes,1,opt,name=balance,proto3" json:"balance,omitempty"`
+	Weight  uint32      `protobuf:"varint,2,opt,name=weight,proto3" json:"weight,omitempty"`
+	Decimal uint32      `protobuf:"varint,3,opt,name=decimal,proto3" json:"decimal,omitempty"`
+}
+
+func (m *PoolWasmAsset) Reset()         { *m = PoolWasmAsset{} }
+func (m *PoolWasmAsset) String() string { return proto.CompactTextString(m) }
+func (*PoolWasmAsset) ProtoMessage()    {}
+func (*PoolWasmAsset) Descriptor() ([]byte, []int) {
+	return fileDescriptor_539300364e2e3e52, []int{2}
+}
+func (m *PoolWasmAsset) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *PoolWasmAsset) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_PoolWasmAsset.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *PoolWasmAsset) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PoolWasmAsset.Merge(m, src)
+}
+func (m *PoolWasmAsset) XXX_Size() int {
+	return m.Size()
+}
+func (m *PoolWasmAsset) XXX_DiscardUnknown() {
+	xxx_messageInfo_PoolWasmAsset.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PoolWasmAsset proto.InternalMessageInfo
+
+func (m *PoolWasmAsset) GetBalance() *types.Coin {
+	if m != nil {
+		return m.Balance
+	}
+	return nil
+}
+
+func (m *PoolWasmAsset) GetWeight() uint32 {
+	if m != nil {
+		return m.Weight
+	}
+	return 0
+}
+
+func (m *PoolWasmAsset) GetDecimal() uint32 {
+	if m != nil {
+		return m.Decimal
+	}
+	return 0
+}
+
 func init() {
 	proto.RegisterType((*Pool)(nil), "side.gmm.Pool")
 	proto.RegisterMapType((map[string]PoolAsset)(nil), "side.gmm.Pool.AssetsEntry")
+	proto.RegisterType((*PoolI)(nil), "side.gmm.PoolI")
+	proto.RegisterType((*PoolWasmAsset)(nil), "side.gmm.PoolWasmAsset")
 }
 
 func init() { proto.RegisterFile("side/gmm/pool.proto", fileDescriptor_539300364e2e3e52) }
 
 var fileDescriptor_539300364e2e3e52 = []byte{
-	// 376 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x54, 0x51, 0x3d, 0xaf, 0xda, 0x30,
-	0x14, 0x4d, 0xf8, 0x48, 0x5b, 0xa7, 0x43, 0x65, 0x50, 0x1b, 0x52, 0x29, 0x20, 0xa6, 0x74, 0xb1,
-	0x05, 0x5d, 0x10, 0x5b, 0x53, 0x75, 0xe8, 0x52, 0xa1, 0x74, 0x6a, 0x17, 0xe4, 0x24, 0x56, 0x88,
-	0x1a, 0xc7, 0x51, 0x6c, 0x50, 0xf3, 0x2f, 0xde, 0xcf, 0x62, 0x64, 0x64, 0x42, 0x4f, 0xf0, 0x0f,
-	0xde, 0x2f, 0x78, 0xb2, 0x93, 0xf7, 0x44, 0xb6, 0x7b, 0xee, 0x39, 0xc7, 0xbe, 0xe7, 0x5e, 0x30,
-	0x12, 0x59, 0x42, 0x71, 0xca, 0x18, 0x2e, 0x39, 0xcf, 0x51, 0x59, 0x71, 0xc9, 0xe1, 0x5b, 0xd5,
-	0x44, 0x29, 0x63, 0xae, 0xdb, 0xa1, 0xb7, 0x25, 0xa9, 0x08, 0x13, 0x8d, 0xca, 0x9d, 0x74, 0x39,
-	0x22, 0x04, 0x95, 0x2d, 0x35, 0x4e, 0x79, 0xca, 0x75, 0x89, 0x55, 0xd5, 0x76, 0xbd, 0x98, 0x0b,
-	0xc6, 0x05, 0x8e, 0x88, 0xa0, 0xf8, 0xb0, 0x88, 0xa8, 0x24, 0x0b, 0x1c, 0xf3, 0xac, 0x68, 0xf8,
-	0xf9, 0xb9, 0x07, 0x06, 0x1b, 0xce, 0x73, 0xf8, 0x09, 0xbc, 0xd1, 0x4f, 0x66, 0x89, 0x63, 0xce,
-	0x4c, 0xff, 0x5d, 0x68, 0x29, 0xf8, 0x33, 0x81, 0x1f, 0x81, 0x25, 0x68, 0x91, 0xd0, 0xca, 0xe9,
-	0x35, 0xfd, 0x06, 0xc1, 0x35, 0x00, 0x4a, 0xb1, 0xd1, 0xe3, 0x39, 0xfd, 0x99, 0xe9, 0xdb, 0xcb,
-	0x31, 0x7a, 0x49, 0x81, 0x36, 0xaf, 0x5c, 0x30, 0x38, 0x5e, 0xa6, 0x46, 0x78, 0xa7, 0x86, 0x2b,
-	0x60, 0xe9, 0xd1, 0x85, 0x33, 0x98, 0xf5, 0x7d, 0x7b, 0xe9, 0x76, 0x7d, 0xe8, 0x9b, 0x26, 0x7f,
-	0x14, 0xb2, 0xaa, 0x5b, 0x77, 0xab, 0x87, 0x7f, 0xc0, 0x7b, 0xc9, 0x25, 0xc9, 0xb7, 0x62, 0x47,
-	0x2a, 0x2a, 0x9c, 0xa1, 0xfe, 0x77, 0x82, 0x9a, 0x98, 0x48, 0xc5, 0x44, 0x6d, 0x4c, 0xf4, 0x9d,
-	0x67, 0x45, 0xf0, 0x59, 0xd9, 0x9f, 0x2e, 0xd3, 0x51, 0x4d, 0x58, 0xbe, 0x9e, 0xdf, 0x9b, 0xe7,
-	0xa1, 0xad, 0xe1, 0x6f, 0x8d, 0xdc, 0x5f, 0xc0, 0xbe, 0xfb, 0x17, 0x7e, 0x00, 0xfd, 0x7f, 0xb4,
-	0x6e, 0x97, 0xa1, 0x4a, 0xf8, 0x05, 0x0c, 0x0f, 0x24, 0xdf, 0x53, 0xbd, 0x08, 0x7b, 0x39, 0xea,
-	0x0e, 0xad, 0xbd, 0x61, 0xa3, 0x58, 0xf7, 0x56, 0x66, 0x10, 0x1c, 0xaf, 0x9e, 0x79, 0xba, 0x7a,
-	0xe6, 0xe3, 0xd5, 0x33, 0x1f, 0x6e, 0x9e, 0x71, 0xba, 0x79, 0xc6, 0xf9, 0xe6, 0x19, 0x7f, 0xfd,
-	0x34, 0x93, 0xbb, 0x7d, 0x84, 0x62, 0xce, 0xb0, 0x7a, 0x43, 0x9f, 0x22, 0xe6, 0xb9, 0x06, 0xf8,
-	0xbf, 0xbe, 0xaf, 0xac, 0x4b, 0x2a, 0x22, 0x4b, 0x53, 0x5f, 0x9f, 0x03, 0x00, 0x00, 0xff, 0xff,
-	0xd4, 0x9b, 0x76, 0x23, 0x33, 0x02, 0x00, 0x00,
+	// 511 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x53, 0xcd, 0x6e, 0x9b, 0x4c,
+	0x14, 0x35, 0xfe, 0xcd, 0x37, 0x7c, 0x44, 0xd5, 0x38, 0x6a, 0x30, 0x95, 0x88, 0x85, 0x54, 0x89,
+	0x6e, 0x06, 0xd9, 0xd9, 0x44, 0xde, 0xd5, 0x51, 0x2b, 0x65, 0x53, 0x59, 0x74, 0x51, 0xb5, 0x1b,
+	0x6b, 0x80, 0x29, 0x46, 0x65, 0x18, 0xc4, 0x8c, 0x9d, 0xf2, 0x16, 0x7d, 0xa1, 0xee, 0xb3, 0xcc,
+	0x32, 0xab, 0xa8, 0xb2, 0xdf, 0xa0, 0x4f, 0x50, 0xcd, 0x00, 0x96, 0xd9, 0xb4, 0xbb, 0x39, 0xf7,
+	0x9c, 0xcb, 0xbd, 0xe7, 0xe8, 0x02, 0xc6, 0x3c, 0x89, 0x88, 0x17, 0x53, 0xea, 0xe5, 0x8c, 0xa5,
+	0x28, 0x2f, 0x98, 0x60, 0xf0, 0x4c, 0x16, 0x51, 0x4c, 0xa9, 0x65, 0xb5, 0xe8, 0x75, 0x8e, 0x0b,
+	0x4c, 0x79, 0xa5, 0xb2, 0x26, 0x6d, 0x0e, 0x73, 0x4e, 0x44, 0x4d, 0x5d, 0xc4, 0x2c, 0x66, 0xea,
+	0xe9, 0xc9, 0x57, 0x5d, 0xb5, 0x43, 0xc6, 0x29, 0xe3, 0x5e, 0x80, 0x39, 0xf1, 0x76, 0xb3, 0x80,
+	0x08, 0x3c, 0xf3, 0x42, 0x96, 0x64, 0x15, 0xef, 0x3c, 0x75, 0x41, 0x7f, 0xc5, 0x58, 0x0a, 0x2f,
+	0xc1, 0x48, 0x7d, 0x32, 0x89, 0x4c, 0x6d, 0xaa, 0xb9, 0xff, 0xf9, 0x43, 0x09, 0xef, 0x22, 0xf8,
+	0x12, 0x0c, 0x39, 0xc9, 0x22, 0x52, 0x98, 0xdd, 0xaa, 0x5e, 0x21, 0xb8, 0x00, 0x40, 0x2a, 0x56,
+	0x6a, 0x3d, 0xb3, 0x37, 0xd5, 0x5c, 0x7d, 0x7e, 0x81, 0x1a, 0x17, 0x68, 0x75, 0xe4, 0x96, 0xfd,
+	0x87, 0xe7, 0xab, 0x8e, 0x7f, 0xa2, 0x86, 0x37, 0x60, 0xa8, 0x56, 0xe7, 0x66, 0x7f, 0xda, 0x73,
+	0xf5, 0xb9, 0xd5, 0xee, 0x43, 0x6f, 0x15, 0xf9, 0x2e, 0x13, 0x45, 0x59, 0x77, 0xd7, 0x7a, 0xf8,
+	0x19, 0xfc, 0x2f, 0x98, 0xc0, 0xe9, 0x9a, 0x6f, 0x70, 0x41, 0xb8, 0x39, 0x50, 0x73, 0x27, 0xa8,
+	0xb2, 0x89, 0xa4, 0x4d, 0x54, 0xdb, 0x44, 0xb7, 0x2c, 0xc9, 0x96, 0xaf, 0x64, 0xfb, 0xef, 0xe7,
+	0xab, 0x71, 0x89, 0x69, 0xba, 0x70, 0x4e, 0x9b, 0x1d, 0x5f, 0x57, 0xf0, 0xa3, 0x42, 0xd6, 0x07,
+	0xa0, 0x9f, 0xcc, 0x85, 0x2f, 0x40, 0xef, 0x1b, 0x29, 0xeb, 0x30, 0xe4, 0x13, 0xbe, 0x01, 0x83,
+	0x1d, 0x4e, 0xb7, 0x44, 0x05, 0xa1, 0xcf, 0xc7, 0xed, 0xa5, 0x55, 0xaf, 0x5f, 0x29, 0x16, 0xdd,
+	0x1b, 0xcd, 0xf9, 0xa9, 0x81, 0x81, 0x24, 0xee, 0xe0, 0x39, 0xe8, 0x1e, 0x63, 0xed, 0x26, 0x11,
+	0x7c, 0x0d, 0xce, 0x39, 0xdb, 0x16, 0x21, 0x59, 0x87, 0x05, 0xc1, 0x82, 0x35, 0xd1, 0x1a, 0x55,
+	0xf5, 0xb6, 0x2a, 0x42, 0xef, 0x98, 0x52, 0x4f, 0xa5, 0x74, 0xd9, 0x1e, 0xf8, 0x09, 0x73, 0x5a,
+	0x0d, 0x6d, 0xc2, 0x99, 0x80, 0x33, 0x7e, 0x8f, 0xf3, 0xf5, 0x57, 0x42, 0xcc, 0xfe, 0x54, 0x73,
+	0x0d, 0x7f, 0x24, 0xf1, 0x7b, 0x42, 0xe0, 0x0c, 0x0c, 0xf9, 0x36, 0xcf, 0xd3, 0xf2, 0x9f, 0x89,
+	0xf9, 0xb5, 0xd0, 0xd9, 0x01, 0xa3, 0x35, 0x06, 0x5e, 0x83, 0x51, 0x80, 0x53, 0x9c, 0x85, 0x44,
+	0x79, 0xf9, 0xeb, 0x47, 0x1a, 0xa5, 0x3c, 0x9f, 0x7b, 0x92, 0xc4, 0x1b, 0xa1, 0x3c, 0x1a, 0x7e,
+	0x8d, 0xa0, 0x09, 0x46, 0x11, 0x09, 0x13, 0x8a, 0x53, 0x75, 0x3b, 0x86, 0xdf, 0xc0, 0xe5, 0xf2,
+	0x61, 0x6f, 0x6b, 0x8f, 0x7b, 0x5b, 0xfb, 0xb5, 0xb7, 0xb5, 0x1f, 0x07, 0xbb, 0xf3, 0x78, 0xb0,
+	0x3b, 0x4f, 0x07, 0xbb, 0xf3, 0xc5, 0x8d, 0x13, 0xb1, 0xd9, 0x06, 0x28, 0x64, 0xd4, 0x93, 0x51,
+	0xa8, 0x13, 0x0e, 0x59, 0xaa, 0x80, 0xf7, 0x5d, 0xfd, 0x17, 0xa2, 0xcc, 0x09, 0x0f, 0x86, 0x8a,
+	0xba, 0xfe, 0x13, 0x00, 0x00, 0xff, 0xff, 0x48, 0x74, 0x7e, 0x57, 0x6b, 0x03, 0x00, 0x00,
 }
 
 func (m *Pool) Marshal() (dAtA []byte, err error) {
@@ -218,6 +364,119 @@ func (m *Pool) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *PoolI) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *PoolI) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PoolI) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Supply != nil {
+		{
+			size, err := m.Supply.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPool(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.SwapFee != 0 {
+		i = encodeVarintPool(dAtA, i, uint64(m.SwapFee))
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.Assets) > 0 {
+		for iNdEx := len(m.Assets) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Assets[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintPool(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if len(m.SourceCreator) > 0 {
+		i -= len(m.SourceCreator)
+		copy(dAtA[i:], m.SourceCreator)
+		i = encodeVarintPool(dAtA, i, uint64(len(m.SourceCreator)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Id) > 0 {
+		i -= len(m.Id)
+		copy(dAtA[i:], m.Id)
+		i = encodeVarintPool(dAtA, i, uint64(len(m.Id)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *PoolWasmAsset) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *PoolWasmAsset) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PoolWasmAsset) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Decimal != 0 {
+		i = encodeVarintPool(dAtA, i, uint64(m.Decimal))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Weight != 0 {
+		i = encodeVarintPool(dAtA, i, uint64(m.Weight))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Balance != nil {
+		{
+			size, err := m.Balance.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPool(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintPool(dAtA []byte, offset int, v uint64) int {
 	offset -= sovPool(v)
 	base := offset
@@ -256,6 +515,55 @@ func (m *Pool) Size() (n int) {
 	}
 	l = m.TotalShares.Size()
 	n += 1 + l + sovPool(uint64(l))
+	return n
+}
+
+func (m *PoolI) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Id)
+	if l > 0 {
+		n += 1 + l + sovPool(uint64(l))
+	}
+	l = len(m.SourceCreator)
+	if l > 0 {
+		n += 1 + l + sovPool(uint64(l))
+	}
+	if len(m.Assets) > 0 {
+		for _, e := range m.Assets {
+			l = e.Size()
+			n += 1 + l + sovPool(uint64(l))
+		}
+	}
+	if m.SwapFee != 0 {
+		n += 1 + sovPool(uint64(m.SwapFee))
+	}
+	if m.Supply != nil {
+		l = m.Supply.Size()
+		n += 1 + l + sovPool(uint64(l))
+	}
+	return n
+}
+
+func (m *PoolWasmAsset) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Balance != nil {
+		l = m.Balance.Size()
+		n += 1 + l + sovPool(uint64(l))
+	}
+	if m.Weight != 0 {
+		n += 1 + sovPool(uint64(m.Weight))
+	}
+	if m.Decimal != 0 {
+		n += 1 + sovPool(uint64(m.Decimal))
+	}
 	return n
 }
 
@@ -553,6 +861,333 @@ func (m *Pool) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPool(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthPool
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *PoolI) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPool
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: PoolI: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: PoolI: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPool
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPool
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPool
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Id = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SourceCreator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPool
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPool
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPool
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SourceCreator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Assets", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPool
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthPool
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPool
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Assets = append(m.Assets, &PoolWasmAsset{})
+			if err := m.Assets[len(m.Assets)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SwapFee", wireType)
+			}
+			m.SwapFee = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPool
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SwapFee |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Supply", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPool
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthPool
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPool
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Supply == nil {
+				m.Supply = &types.Coin{}
+			}
+			if err := m.Supply.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipPool(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthPool
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *PoolWasmAsset) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowPool
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: PoolWasmAsset: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: PoolWasmAsset: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Balance", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPool
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthPool
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPool
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Balance == nil {
+				m.Balance = &types.Coin{}
+			}
+			if err := m.Balance.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Weight", wireType)
+			}
+			m.Weight = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPool
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Weight |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Decimal", wireType)
+			}
+			m.Decimal = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPool
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Decimal |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipPool(dAtA[iNdEx:])

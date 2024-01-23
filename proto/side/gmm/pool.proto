@@ -20,3 +20,16 @@ message Pool {
   ];
 }
 
+message PoolI {
+  string id = 1; 
+  string source_creator = 2; 
+  repeated PoolWasmAsset assets = 3;
+  uint32 swap_fee = 4;
+  cosmos.base.v1beta1.Coin supply = 5;
+}
+
+message PoolWasmAsset {
+  cosmos.base.v1beta1.Coin balance = 1;
+  uint32 weight = 2;
+  uint32 decimal = 3;
+}
