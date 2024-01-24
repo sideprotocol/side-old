@@ -18,6 +18,11 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.inputs.release_tag }}
+      - name: Create .release-env file
+        run: |
+          echo "GITHUB_TOKEN=${{ secrets.GHCR_TOKEN }}" > .release-env
+          echo "COSMWASM_VERSION=v0.40.1" >> .release-env
+        shell: bash
       - name: Make release
         run: |
           sudo rm -rf dist
