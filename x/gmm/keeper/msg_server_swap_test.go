@@ -56,8 +56,9 @@ func (suite *KeeperTestSuite) TestMsgSwap() {
 			})
 			suite.Require().NoError(err)
 
-			outAssetBeforeSwap := queryResBeforeSwap.Pool.Assets[msg.TokenOut.Denom]
-			estimatedOut, err := queryResBeforeSwap.Pool.EstimateSwap(msg.TokenIn, msg.TokenOut.Denom)
+			pool := queryResBeforeSwap.Pool.ToPool()
+			outAssetBeforeSwap := pool.Assets[msg.TokenOut.Denom]
+			estimatedOut, err := pool.EstimateSwap(msg.TokenIn, msg.TokenOut.Denom)
 			msg.TokenOut = estimatedOut
 
 			suite.Require().NoError(err)
@@ -72,8 +73,8 @@ func (suite *KeeperTestSuite) TestMsgSwap() {
 				PoolId: poolID,
 			})
 			suite.Require().NoError(err)
-
-			outAssetAfterSwap := queryResAfterSwap.Pool.Assets[msg.TokenOut.Denom]
+			pool = queryResAfterSwap.Pool.ToPool()
+			outAssetAfterSwap := pool.Assets[msg.TokenOut.Denom]
 			out := outAssetBeforeSwap.Token.Sub(outAssetAfterSwap.Token)
 			suite.Require().Equal(out, estimatedOut)
 		})
