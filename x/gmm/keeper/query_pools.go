@@ -117,8 +117,9 @@ func (k Keeper) MyPools(goCtx context.Context, req *types.QueryPoolsRequest) (*t
 func convertPoolForWasm(pool types.Pool) types.PoolI {
 	assets := []*types.PoolWasmAsset{}
 	for _, asset := range pool.Assets {
+		assetCopy := asset
 		assets = append(assets, &types.PoolWasmAsset{
-			Balance: &asset.Token,
+			Balance: &assetCopy.Token,
 			Decimal: uint32(asset.Decimal.Int64()),
 			Weight:  uint32(asset.Weight.Int64()),
 		})
