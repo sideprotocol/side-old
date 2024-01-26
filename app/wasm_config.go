@@ -23,14 +23,3 @@ func GasRegisterConfig() wasmkeeper.WasmGasRegisterConfig {
 func NewSideWasmGasRegister() wasmkeeper.WasmGasRegister {
 	return wasmkeeper.NewWasmGasRegister(GasRegisterConfig())
 }
-
-func AllCapabilities() []string {
-	return []string{
-		"iterator",
-		"staking",
-		"stargate",
-		"cosmwasm_1_1",
-		"cosmwasm_1_2",
-		"cosmwasm_1_3",
-	}
-}
