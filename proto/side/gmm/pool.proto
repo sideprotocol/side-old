@@ -25,8 +25,11 @@ message PoolI {
   string source_creator = 2; 
   repeated PoolWasmAsset assets = 3;
   uint32 swap_fee = 4;
-  cosmos.base.v1beta1.Coin supply = 5;
-  PoolType pool_type = 6;
+  string amp = 5 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int"
+  ];
+  cosmos.base.v1beta1.Coin supply = 6;
+  PoolType pool_type = 7;
 }
 
 message PoolWasmAsset {

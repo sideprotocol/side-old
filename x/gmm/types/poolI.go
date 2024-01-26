@@ -5,7 +5,6 @@ import (
 )
 
 func (p *PoolI) ToPool() Pool {
-	amp := sdkmath.NewInt(0)
 	assets := make(map[string]PoolAsset)
 	for _, asset := range p.Assets {
 		weight := sdkmath.NewIntFromUint64(uint64(asset.Weight))
@@ -23,7 +22,7 @@ func (p *PoolI) ToPool() Pool {
 			SwapFee:   sdkmath.LegacyNewDecFromInt(sdkmath.NewInt(int64(p.SwapFee))),
 			ExitFee:   sdkmath.LegacyNewDecFromInt(sdkmath.NewInt(int64(p.SwapFee))),
 			UseOracle: false,
-			Amp:       &amp,
+			Amp:       p.Amp,
 		},
 		Assets:      assets,
 		TotalShares: *p.Supply,

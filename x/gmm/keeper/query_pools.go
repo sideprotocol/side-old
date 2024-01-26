@@ -129,6 +129,7 @@ func convertPoolForWasm(pool types.Pool) types.PoolI {
 		SourceCreator: pool.Sender,
 		Assets:        assets,
 		SwapFee:       uint32(pool.PoolParams.SwapFee.RoundInt().Int64()),
+		Amp:           pool.PoolParams.Amp,
 		Supply:        &pool.TotalShares,
 		PoolType:      pool.PoolParams.Type,
 	}
