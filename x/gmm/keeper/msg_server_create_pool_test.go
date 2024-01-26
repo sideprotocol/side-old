@@ -48,7 +48,7 @@ func (suite *KeeperTestSuite) TestMsgCreatePool() {
 				PoolId: res.PoolId,
 			})
 			suite.Require().NoError(err)
-			suite.Require().Equal(pool.Pool.PoolId, res.PoolId)
+			suite.Require().Equal(pool.Pool.Id, res.PoolId)
 		})
 	}
 }

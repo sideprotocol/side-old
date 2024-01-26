@@ -167,6 +167,7 @@ func setup(withGenesis bool, invCheckPeriod uint) (*App, GenesisState) {
 	db := dbm.NewMemDB()
 	encCdc := MakeEncodingConfig()
 	appOptions := make(simtestutil.AppOptionsMap, 0)
+
 	app := New(
 		log.NewNopLogger(),
 		db,

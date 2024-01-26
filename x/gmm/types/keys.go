@@ -15,7 +15,7 @@ const (
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_gmm"
 
-	Version = "side-1"
+	Version = "2672694"
 
 	GAMMTokenPrefix = "side/gamm/"
 )
