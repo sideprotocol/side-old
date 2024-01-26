@@ -31,4 +31,5 @@ var (
 	ErrNotMeetSlippage          = sdkerrors.Register(ModuleName, 1121, "not meet slippage")
 	ErrInvalidSlippage          = sdkerrors.Register(ModuleName, 1122, "invalid slippage")
 	ErrMismatchedShareDenom     = sdkerrors.Register(ModuleName, 1123, "mismatched share denom")
+	ErrInvalidTokenPair         = sdkerrors.Register(ModuleName, 1124, "invalid token pair")
 )
