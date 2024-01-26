@@ -28,9 +28,6 @@ genesis:
     crisis:
       constant_fee:
         denom: uside
-    evm:
-      params:
-        evm_denom: uside
     gov:
       deposit_params:
         min_deposit:
@@ -46,6 +43,8 @@ genesis:
   consensus_params:
     block:
       max_gas: "100000000"
+  yield_params:
+    admin: ""
 validators:
   - name: alice
     bonded: 10000000000000000000000uside

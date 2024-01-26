@@ -1,6 +1,7 @@
 package keepers
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -117,10 +118,9 @@ type AppKeepers struct {
 	ScopedIBCKeeper   capabilitykeeper.ScopedKeeper
 	ScopeIBCFeeKeeper capabilitykeeper.ScopedKeeper
 
-	ScopedTransferKeeper      capabilitykeeper.ScopedKeeper
-	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
-	ScopedICAControllerKeeper capabilitykeeper.ScopedKeeper
-	scopedWasmKeeper          capabilitykeeper.ScopedKeeper
+	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
+	ScopedICAHostKeeper  capabilitykeeper.ScopedKeeper
+	scopedWasmKeeper     capabilitykeeper.ScopedKeeper
 
 	GmmKeeper gmmmodulekeeper.Keeper
 
@@ -166,7 +166,6 @@ func (appKeepers *AppKeepers) InitSpecialKeepers(
 	appKeepers.CapabilityKeeper = capabilitykeeper.NewKeeper(appCodec, appKeepers.keys[capabilitytypes.StoreKey], appKeepers.memKeys[capabilitytypes.MemStoreKey])
 	appKeepers.ScopedIBCKeeper = appKeepers.CapabilityKeeper.ScopeToModule(ibcexported.ModuleName)
 	appKeepers.ScopedICAHostKeeper = appKeepers.CapabilityKeeper.ScopeToModule(icahosttypes.SubModuleName)
-	appKeepers.ScopedICAControllerKeeper = appKeepers.CapabilityKeeper.ScopeToModule(icacontrollertypes.SubModuleName)
 	appKeepers.ScopedTransferKeeper = appKeepers.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
 
 	// TODO: Make a SetInvCheckPeriod fn on CrisisKeeper.
@@ -273,16 +272,6 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		groupConfig,
 	)
 
-	// Create evidence Keeper for to register the IBC light client misbehavior evidence route
-	evidenceKeeper := evidencekeeper.NewKeeper(
-		appCodec,
-		appKeepers.keys[evidencetypes.StoreKey],
-		appKeepers.StakingKeeper,
-		appKeepers.SlashingKeeper,
-	)
-	// If evidence needs to be handled for the app, set routes in router here and seal
-	appKeepers.EvidenceKeeper = *evidenceKeeper
-
 	// Create IBC Keeper
 	appKeepers.IBCKeeper = ibckeeper.NewKeeper(
 		appCodec, appKeepers.keys[ibcexported.StoreKey],
@@ -299,26 +288,6 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		appKeepers.IBCKeeper.ChannelKeeper,
 		&appKeepers.IBCKeeper.PortKeeper, appKeepers.AccountKeeper, appKeepers.BankKeeper,
 	)
-
-	govConfig := govtypes.DefaultConfig()
-	govKeeper := govkeeper.NewKeeper(
-		appCodec,
-		appKeepers.keys[govtypes.StoreKey],
-		appKeepers.AccountKeeper,
-		appKeepers.BankKeeper,
-		appKeepers.StakingKeeper,
-		bApp.MsgServiceRouter(),
-		govConfig,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
-	)
-
-	govRouter := govv1beta1.NewRouter()
-	govRouter.
-		AddRoute(govtypes.RouterKey, govv1beta1.ProposalHandler).
-		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(appKeepers.ParamsKeeper)).
-		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(appKeepers.UpgradeKeeper)).
-		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(appKeepers.IBCKeeper.ClientKeeper))
-	govKeeper.SetLegacyRouter(govRouter)
 
 	appKeepers.ICAHostKeeper = icahostkeeper.NewKeeper(
 		appCodec, appKeepers.keys[icahosttypes.StoreKey],
@@ -339,6 +308,16 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		*appKeepers.IBCKeeper,
 	)
 
+	scopedICAControllerKeeper := appKeepers.CapabilityKeeper.ScopeToModule(icacontrollertypes.SubModuleName)
+
+	appKeepers.IcaControllerKeeper = icacontrollerkeeper.NewKeeper(
+		appCodec, appKeepers.keys[icacontrollertypes.StoreKey],
+		appKeepers.GetSubspace(icacontrollertypes.SubModuleName),
+		appKeepers.IBCKeeper.ChannelKeeper, // may be replaced with middleware such as ics29 fee
+		appKeepers.IBCKeeper.ChannelKeeper, &appKeepers.IBCKeeper.PortKeeper,
+		scopedICAControllerKeeper, bApp.MsgServiceRouter(),
+	)
+
 	// Create Transfer Keepers
 	appKeepers.TransferKeeper = ibctransferkeeper.NewKeeper(
 		appCodec,
@@ -352,10 +331,41 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		appKeepers.ScopedTransferKeeper,
 	)
 
+	// Create evidence Keeper for to register the IBC light client misbehavior evidence route
+	evidenceKeeper := evidencekeeper.NewKeeper(
+		appCodec,
+		appKeepers.keys[evidencetypes.StoreKey],
+		appKeepers.StakingKeeper,
+		appKeepers.SlashingKeeper,
+	)
+	// If evidence needs to be handled for the app, set routes in router here and seal
+	appKeepers.EvidenceKeeper = *evidenceKeeper
+
+	govConfig := govtypes.DefaultConfig()
+
+	fmt.Println("gove key", appKeepers.keys[govtypes.StoreKey])
+	govKeeper := govkeeper.NewKeeper(
+		appCodec,
+		appKeepers.keys[govtypes.StoreKey],
+		appKeepers.AccountKeeper,
+		appKeepers.BankKeeper,
+		appKeepers.StakingKeeper,
+		bApp.MsgServiceRouter(),
+		govConfig,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+	)
+	appKeepers.GovKeeper = *govKeeper
+
+	govRouter := govv1beta1.NewRouter()
+	govRouter.
+		AddRoute(govtypes.RouterKey, govv1beta1.ProposalHandler).
+		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(appKeepers.ParamsKeeper)).
+		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(appKeepers.UpgradeKeeper)).
+		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(appKeepers.IBCKeeper.ClientKeeper))
+	govKeeper.SetLegacyRouter(govRouter)
+
 	// Create Wasmd Keepers
 	// this line is used by starport scaffolding # stargate/app/scopedKeeper
-	scopedWasmKeeper := appKeepers.CapabilityKeeper.ScopeToModule(wasm.ModuleName)
-
 	availableCapabilities := strings.Join(AllCapabilities(), ",")
 	appKeepers.WasmKeeper = wasmkeeper.NewKeeper(
 		appCodec,
@@ -367,7 +377,7 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		appKeepers.IBCFeeKeeper,
 		appKeepers.IBCKeeper.ChannelKeeper,
 		&appKeepers.IBCKeeper.PortKeeper,
-		scopedWasmKeeper,
+		appKeepers.scopedWasmKeeper,
 		appKeepers.TransferKeeper,
 		bApp.MsgServiceRouter(),
 		bApp.GRPCQueryRouter(),
@@ -377,7 +387,6 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 		wasmOpts...,
 	)
-	appKeepers.CapabilityKeeper.Seal()
 
 	appKeepers.GmmKeeper = *gmmmodulekeeper.NewKeeper(
 		appCodec,
@@ -403,6 +412,8 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 
 	transferIBCModule := transfer.NewIBCModule(appKeepers.TransferKeeper)
 	icaHostIBCModule := icahost.NewIBCModule(appKeepers.ICAHostKeeper)
+
+	appKeepers.CapabilityKeeper.Seal()
 	// wire up x/wasm to IBC
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := ibcporttypes.NewRouter()
@@ -417,7 +428,6 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 // initParamsKeeper init params keeper and its subspaces.
 func (appKeepers *AppKeepers) initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino, key, tkey storetypes.StoreKey) paramskeeper.Keeper {
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)
-
 	paramsKeeper.Subspace(authtypes.ModuleName)
 	paramsKeeper.Subspace(banktypes.ModuleName)
 	paramsKeeper.Subspace(stakingtypes.ModuleName)
