@@ -297,7 +297,8 @@ func New(
 	app.mm.RegisterInvariants(app.CrisisKeeper)
 	app.configurator = module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
 	app.mm.RegisterServices(app.configurator)
-
+	// register upgrade handler
+	app.setupUpgradeHandlers()
 	autocliv1.RegisterQueryServer(app.GRPCQueryRouter(), runtimeservices.NewAutoCLIQueryService(app.mm.Modules))
 	reflectionSvc, err := runtimeservices.NewReflectionService()
 	if err != nil {
@@ -501,4 +502,21 @@ func (app *App) setupUpgradeStoreLoaders() {
 			app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
 		}
 	}
+}
+
+func (app *App) setupUpgradeHandlers() {
+	for _, upgrade := range Upgrades {
+		fmt.Println("upgrades==>", upgrade)
+		app.UpgradeKeeper.SetUpgradeHandler(
+			upgrade.UpgradeName,
+			upgrade.CreateUpgradeHandler(
+				app.mm,
+				app.configurator,
+				&app.AppKeepers,
+			),
+		)
+	}
+	plans1, _ := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
+	fmt.Println("registered plan", plans1)
+
 }

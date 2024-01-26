@@ -1,7 +1,6 @@
 package keepers
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -343,7 +342,6 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 
 	govConfig := govtypes.DefaultConfig()
 
-	fmt.Println("gove key", appKeepers.keys[govtypes.StoreKey])
 	govKeeper := govkeeper.NewKeeper(
 		appCodec,
 		appKeepers.keys[govtypes.StoreKey],

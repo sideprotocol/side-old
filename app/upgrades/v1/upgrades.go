@@ -1,6 +1,8 @@
 package v01
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
@@ -18,12 +20,12 @@ func CreateUpgradeHandler(
 	return func(ctx sdk.Context, _ upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
 		logger := ctx.Logger().With("upgrade", UpgradeName)
 		logger.Debug("running module migrations ...")
-		// versionSetter := keepers.UpgradeKeeper.GetVersionSetter()
-		// versionSetter.SetProtocolVersion(2672694)
-		// _, correctTypecast := mm.Modules[types.ModuleName].(gmmmodule.AppModule)
-		// if !correctTypecast {
-		// 	panic("mm.Modules[gmm.ModuleName] is not of type ica.AppModule")
-		// }
+		// Check if the yield module is new and set its version
+		fmt.Println("yield verison", vm["yield"])
+		fmt.Println("gmm verison", vm["gmm"])
+		if vm["yield"] == 0 {
+			vm["yield"] = 2672694 // Set to expected version
+		}
 
 		return mm.RunMigrations(ctx, configurator, vm)
 	}

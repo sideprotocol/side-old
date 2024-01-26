@@ -1,8 +1,6 @@
 package app
 
 import (
-	"fmt"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth"
@@ -103,7 +101,6 @@ func appModules(
 	gmmModule := gmmmodule.NewAppModule(appCodec, app.GmmKeeper, app.AccountKeeper, app.BankKeeper)
 	yieldModule := yieldmodule.NewAppModule(appCodec, app.YieldKeeper, app.AccountKeeper, app.BankKeeper)
 
-	fmt.Println("gov params==>:", &app.GovKeeper)
 	return []module.AppModule{
 		genutil.NewAppModule(
 			app.AccountKeeper,
