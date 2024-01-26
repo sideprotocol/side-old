@@ -84,9 +84,7 @@ const (
 	Name                 = "side"
 )
 
-var (
-	Upgrades = []upgrades.Upgrade{v1.Upgrade}
-)
+var Upgrades = []upgrades.Upgrade{v1.Upgrade}
 
 // this line is used by starport scaffolding # stargate/wasm/app/enabledProposals
 
@@ -100,21 +98,6 @@ var (
 	ModuleBasics = keepers.AppModuleBasics
 
 	// module account permissions
-	maccPerms = map[string][]string{
-		authtypes.FeeCollectorName:     nil,
-		distrtypes.ModuleName:          nil,
-		icatypes.ModuleName:            nil,
-		minttypes.ModuleName:           {authtypes.Minter},
-		stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
-		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
-		govtypes.ModuleName:            {authtypes.Burner},
-		ibcfeetypes.ModuleName:         nil,
-		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
-		wasm.ModuleName:                {authtypes.Burner},
-		gmmmoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner, authtypes.Staking},
-		yieldmoduletypes.ModuleName:    {authtypes.Minter, authtypes.Burner, authtypes.Staking},
-		// this line is used by starport scaffolding # stargate/app/maccPerms
-	}
 )
 
 var (
@@ -189,7 +172,6 @@ func New(
 	}
 
 	app.homePath = homePath
-	dataDir := filepath.Join(homePath, "data")
 	wasmDir := filepath.Join(homePath, "wasm")
 	wasmConfig, err := wasm.ReadWasmConfig(appOpts)
 	wasmOpts := GetWasmOpts(appOpts)
@@ -202,7 +184,6 @@ func New(
 	app.InitSpecialKeepers(
 		appCodec,
 		bApp,
-		wasmDir,
 		cdc,
 		invCheckPeriod,
 		skipUpgradeHeights,
@@ -214,8 +195,7 @@ func New(
 		appCodec,
 		encodingConfig,
 		bApp,
-		maccPerms,
-		dataDir,
+		moduleAccountPermissions,
 		wasmDir,
 		wasmConfig,
 		wasmOpts,
@@ -381,7 +361,7 @@ func (app *App) LoadHeight(height int64) error {
 // ModuleAccountAddrs returns all the app's module account addresses.
 func (app *App) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
-	for acc := range maccPerms {
+	for acc := range moduleAccountPermissions {
 		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
 	}
 
@@ -518,5 +498,4 @@ func (app *App) setupUpgradeHandlers() {
 	}
 	plans1, _ := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
 	fmt.Println("registered plan", plans1)
-
 }

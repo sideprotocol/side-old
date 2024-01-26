@@ -135,7 +135,6 @@ type AppKeepers struct {
 func (appKeepers *AppKeepers) InitSpecialKeepers(
 	appCodec codec.Codec,
 	bApp *baseapp.BaseApp,
-	wasmDir string,
 	cdc *codec.LegacyAmino,
 	invCheckPeriod uint,
 	skipUpgradeHeights map[int64]bool,
@@ -181,7 +180,6 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 	encodingConfig appparams.EncodingConfig,
 	bApp *baseapp.BaseApp,
 	maccPerms map[string][]string,
-	dataDir string,
 	wasmDir string,
 	wasmConfig wasmtypes.WasmConfig,
 	wasmOpts []wasmkeeper.Option,
@@ -460,7 +458,6 @@ func (appKeepers *AppKeepers) SetupHooks() {
 			appKeepers.SlashingKeeper.Hooks(),
 		),
 	)
-
 }
 
 // TODO: We need to automate this, by bundling with a module struct...
@@ -474,29 +471,6 @@ func KVStoreKeys() []string {
 		gmmmoduletypes.StoreKey,
 		yieldmoduletypes.StoreKey,
 	}
-}
-
-// initParamsKeeper init params keeper and its subspaces
-func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino, key, tkey storetypes.StoreKey) paramskeeper.Keeper {
-	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)
-
-	paramsKeeper.Subspace(authtypes.ModuleName)
-	paramsKeeper.Subspace(banktypes.ModuleName)
-	paramsKeeper.Subspace(stakingtypes.ModuleName)
-	paramsKeeper.Subspace(minttypes.ModuleName)
-	paramsKeeper.Subspace(distrtypes.ModuleName)
-	paramsKeeper.Subspace(slashingtypes.ModuleName)
-	paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govv1.ParamKeyTable()) //nolint:staticcheck
-	paramsKeeper.Subspace(crisistypes.ModuleName)
-	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
-	paramsKeeper.Subspace(ibcexported.ModuleName)
-	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
-	paramsKeeper.Subspace(icahosttypes.SubModuleName)
-	paramsKeeper.Subspace(gmmmoduletypes.ModuleName)
-	paramsKeeper.Subspace(yieldmoduletypes.ModuleName)
-	// this line is used by starport scaffolding # stargate/app/paramSubspace
-
-	return paramsKeeper
 }
 
 func AllCapabilities() []string {

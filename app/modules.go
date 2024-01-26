@@ -239,16 +239,6 @@ func OrderInitGenesis() []string {
 	}
 }
 
-// ModuleAccountAddrs returns all the app's module account addresses.
-func ModuleAccountAddrs() map[string]bool {
-	modAccAddrs := make(map[string]bool)
-	for acc := range maccPerms {
-		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
-	}
-
-	return modAccAddrs
-}
-
 func (app *App) GetAccountKeeper() authkeeper.AccountKeeper {
 	return app.AppKeepers.AccountKeeper
 }
@@ -261,6 +251,7 @@ func (app *App) GetBankKeeper() bankkeeper.Keeper {
 func (app *App) GetStakingKeeper() ibctestingtypes.StakingKeeper {
 	return *app.AppKeepers.StakingKeeper // Dereferencing the pointer
 }
+
 func (app *App) GetSDKStakingKeeper() stakingkeeper.Keeper {
 	return *app.AppKeepers.StakingKeeper // Dereferencing the pointer
 }

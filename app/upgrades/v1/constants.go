@@ -9,8 +9,7 @@ import (
 
 // UpgradeName defines the on-chain upgrade name for the Osmosis v21 upgrade.
 const (
-	UpgradeName    = "v01"
-	TestingChainId = "testing-chain-id"
+	UpgradeName = "v01"
 )
 
 var Upgrade = upgrades.Upgrade{

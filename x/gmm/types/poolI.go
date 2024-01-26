@@ -1,8 +1,30 @@
 package types
 
-// func(p *PoolI) ToPool() Pool {
-// 	assets := []Pool{}
-// 	for _, wasmPool := range p.Assets {
+import (
+	sdkmath "cosmossdk.io/math"
+)
 
-// 	}
-// }
+func (p *PoolI) ToPool() Pool {
+	assets := make(map[string]PoolAsset)
+	for _, asset := range p.Assets {
+		weight := sdkmath.NewIntFromUint64(uint64(asset.Weight))
+		assets[asset.Balance.Denom] = PoolAsset{
+			Token:   *asset.Balance,
+			Weight:  &weight,
+			Decimal: sdkmath.NewIntFromUint64(uint64(asset.Decimal)),
+		}
+	}
+	return Pool{
+		PoolId: p.Id,
+		Sender: p.SourceCreator,
+		PoolParams: PoolParams{
+			Type:      p.PoolType,
+			SwapFee:   sdkmath.LegacyNewDecFromInt(sdkmath.NewInt(int64(p.SwapFee))),
+			ExitFee:   sdkmath.LegacyNewDecFromInt(sdkmath.NewInt(int64(p.SwapFee))),
+			UseOracle: false,
+			Amp:       p.Amp,
+		},
+		Assets:      assets,
+		TotalShares: *p.Supply,
+	}
+}
