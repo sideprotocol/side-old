@@ -19,10 +19,10 @@ func (p *PoolI) ToPool() Pool {
 		PoolId: p.Id,
 		Sender: p.SourceCreator,
 		PoolParams: PoolParams{
-			Type:      PoolType_WEIGHT,
+			Type:      p.PoolType,
 			SwapFee:   sdkmath.LegacyNewDecFromInt(sdkmath.NewInt(int64(p.SwapFee))),
 			ExitFee:   sdkmath.LegacyNewDecFromInt(sdkmath.NewInt(int64(p.SwapFee))),
-			UseOracle: true,
+			UseOracle: false,
 			Amp:       &amp,
 		},
 		Assets:      assets,

@@ -26,6 +26,7 @@ message PoolI {
   repeated PoolWasmAsset assets = 3;
   uint32 swap_fee = 4;
   cosmos.base.v1beta1.Coin supply = 5;
+  PoolType pool_type = 6;
 }
 
 message PoolWasmAsset {
