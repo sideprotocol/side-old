@@ -9,16 +9,16 @@ import (
 )
 
 func RegisterCustomPlugins(
-	bank *bankkeeper.BaseKeeper,
-	tokenFactory *gmmkeeper.Keeper,
+	bank *bankkeeper.Keeper,
+	gmm *gmmkeeper.Keeper,
 ) []wasmkeeper.Option {
-	wasmQueryPlugin := NewQueryPlugin(tokenFactory)
+	wasmQueryPlugin := NewQueryPlugin(gmm)
 
 	queryPluginOpt := wasmkeeper.WithQueryPlugins(&wasmkeeper.QueryPlugins{
 		Custom: CustomQuerier(wasmQueryPlugin),
 	})
 	messengerDecoratorOpt := wasmkeeper.WithMessageHandlerDecorator(
-		CustomMessageDecorator(bank, tokenFactory),
+		CustomMessageDecorator(bank, gmm),
 	)
 
 	return []wasmkeeper.Option{

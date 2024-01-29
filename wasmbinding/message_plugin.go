@@ -16,7 +16,7 @@ import (
 )
 
 // CustomMessageDecorator returns decorator for custom CosmWasm bindings messages
-func CustomMessageDecorator(bank *bankkeeper.BaseKeeper, gmm *gmmkeeper.Keeper) func(wasmkeeper.Messenger) wasmkeeper.Messenger {
+func CustomMessageDecorator(bank *bankkeeper.Keeper, gmm *gmmkeeper.Keeper) func(wasmkeeper.Messenger) wasmkeeper.Messenger {
 	return func(old wasmkeeper.Messenger) wasmkeeper.Messenger {
 		return &CustomMessenger{
 			wrapped: old,
@@ -28,7 +28,7 @@ func CustomMessageDecorator(bank *bankkeeper.BaseKeeper, gmm *gmmkeeper.Keeper) 
 
 type CustomMessenger struct {
 	wrapped wasmkeeper.Messenger
-	bank    *bankkeeper.BaseKeeper
+	bank    *bankkeeper.Keeper
 	gmm     *gmmkeeper.Keeper
 }
 
@@ -60,7 +60,7 @@ func (m *CustomMessenger) swap(ctx sdk.Context, contractAddr sdk.AccAddress, cre
 }
 
 // PerformSwap is used with swap to swap a token denom; validates the msgSwap.
-func PerformSwap(f *gmmkeeper.Keeper, b *bankkeeper.BaseKeeper, ctx sdk.Context, contractAddr sdk.AccAddress, swap *bindings.Swap) error {
+func PerformSwap(f *gmmkeeper.Keeper, b *bankkeeper.Keeper, ctx sdk.Context, contractAddr sdk.AccAddress, swap *bindings.Swap) error {
 	if swap == nil {
 		return wasmvmtypes.InvalidRequest{Err: "swap token null swap token"}
 	}
