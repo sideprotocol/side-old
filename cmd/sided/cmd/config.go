@@ -5,7 +5,7 @@ import (
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"side/app"
+	"github.com/sideprotocol/side/app"
 )
 
 func initSDKConfig() {

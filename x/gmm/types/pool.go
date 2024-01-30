@@ -61,9 +61,9 @@ func (p *Pool) EstimateWithdrawals(share sdk.Coin) ([]sdk.Coin, error) {
 }
 
 // Helper functions
-func (p *Pool) TakeFees(amount sdkmath.Int) sdk.Dec {
-	amountDec := sdk.NewDecFromInt(amount)
-	feeRate := p.PoolParams.SwapFee.Quo(sdk.NewDec(10000))
+func (p *Pool) TakeFees(amount sdkmath.Int) sdkmath.LegacyDec {
+	amountDec := sdkmath.LegacyNewDecFromInt(amount)
+	feeRate := p.PoolParams.SwapFee.Quo(sdkmath.LegacyNewDec(10000))
 	fees := amountDec.Mul(feeRate)
 	amountMinusFees := amountDec.Sub(fees)
 	return amountMinusFees
@@ -149,5 +149,5 @@ func (p *Pool) Sum() sdkmath.Int {
 		}
 		return sum
 	}
-	return sdk.ZeroInt()
+	return sdkmath.ZeroInt()
 }

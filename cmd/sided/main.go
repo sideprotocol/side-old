@@ -6,8 +6,8 @@ import (
 
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 
-	"side/app"
-	"side/cmd/sided/cmd"
+	"github.com/sideprotocol/cmd/sided/cmd"
+	"github.com/sideprotocol/side/app"
 )
 
 func main() {

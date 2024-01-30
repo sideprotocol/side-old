@@ -25,7 +25,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"side/app"
+	"github.com/sideprotocol/side/app"
 )
 
 func initRootCmd(

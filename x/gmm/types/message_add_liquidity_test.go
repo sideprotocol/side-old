@@ -3,6 +3,7 @@ package types
 import (
 	"testing"
 
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/sideprotocol/side/testutil/sample"
 	"github.com/stretchr/testify/require"
@@ -44,9 +45,9 @@ func TestMsgAddLiquidity_ValidateBasic(t *testing.T) {
 				Sender: sample.AccAddress(),
 				PoolId: "test",
 				Liquidity: []sdk.Coin{
-					{Denom: "test1", Amount: sdk.NewInt(1000000000)},
-					{Denom: "test2", Amount: sdk.NewInt(1000000000)},
-					{Denom: "test3", Amount: sdk.NewInt(1000000000)},
+					{Denom: "test1", Amount: sdkmath.NewInt(1000000000)},
+					{Denom: "test2", Amount: sdkmath.NewInt(1000000000)},
+					{Denom: "test3", Amount: sdkmath.NewInt(1000000000)},
 				},
 			},
 			err: ErrInvalidLiquidityInLength,
@@ -57,8 +58,8 @@ func TestMsgAddLiquidity_ValidateBasic(t *testing.T) {
 				Sender: sample.AccAddress(),
 				PoolId: "test",
 				Liquidity: []sdk.Coin{
-					{Denom: "test", Amount: sdk.NewInt(0)},
-					{Denom: "test2", Amount: sdk.NewInt(1000000000)},
+					{Denom: "test", Amount: sdkmath.NewInt(0)},
+					{Denom: "test2", Amount: sdkmath.NewInt(1000000000)},
 				},
 			},
 			err: ErrInvalidLiquidityAmount,
@@ -69,8 +70,8 @@ func TestMsgAddLiquidity_ValidateBasic(t *testing.T) {
 				Sender: sample.AccAddress(),
 				PoolId: "test",
 				Liquidity: []sdk.Coin{
-					{Denom: "test", Amount: sdk.NewInt(1000000000)},
-					{Denom: "test2", Amount: sdk.NewInt(1000000000)},
+					{Denom: "test", Amount: sdkmath.NewInt(1000000000)},
+					{Denom: "test2", Amount: sdkmath.NewInt(1000000000)},
 				},
 			},
 			err: nil,

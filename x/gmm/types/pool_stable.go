@@ -40,7 +40,7 @@ func (p *Pool) estimateShareInStablePool(coins sdk.Coins) (sdk.Coin, error) {
 			nonTaxableAmount := asset.Token.Amount.Quo(sdkmath.Int(invariantRatioWithFees).Sub(sdkmath.Int(sdkmath.LegacyOneDec())))
 			taxableAmount := amountIn.Amount.Sub(nonTaxableAmount)
 			remainFee := sdkmath.LegacyNewDec(10000).Sub(p.PoolParams.SwapFee).RoundInt()
-			amountInWithoutFee = nonTaxableAmount.Add(taxableAmount.Mul(sdk.NewInt(10000)).Quo(remainFee))
+			amountInWithoutFee = nonTaxableAmount.Add(taxableAmount.Mul(sdkmath.NewInt(1000)).Quo(remainFee))
 
 		} else {
 			amountInWithoutFee = amountIn.Amount
@@ -174,7 +174,7 @@ func calculateInvariantInStablePool(
 		preInv := inv
 		numerator1 := numTokens.Mul(inv).Mul(inv)
 		numerator2 := ampTimeTotal.Mul(sum).Mul(PD).Quo(AmpPrecision)
-		denominator := numTokens.Add(sdk.OneInt()).Mul(inv).Add(ampTimeTotal.Sub(AmpPrecision).Mul(PD).Quo(AmpPrecision))
+		denominator := numTokens.Add(sdkmath.OneInt()).Mul(inv).Add(ampTimeTotal.Sub(AmpPrecision).Mul(PD).Quo(AmpPrecision))
 		inv = numerator1.Add(numerator2).Quo(denominator)
 
 		if inv.GT(preInv) {
@@ -230,9 +230,9 @@ func getTokenBalanceGivenInvariantAndAllOtherBalances(
 }
 
 // Helper functions
-func MinusFees(amount sdkmath.Int, swapFee sdkmath.LegacyDec) sdk.Dec {
-	amountDec := sdk.NewDecFromInt(amount)
-	feeRate := swapFee.Quo(sdk.NewDec(10000))
+func MinusFees(amount sdkmath.Int, swapFee sdkmath.LegacyDec) sdkmath.LegacyDec {
+	amountDec := sdkmath.LegacyNewDecFromInt(amount)
+	feeRate := swapFee.Quo(sdkmath.LegacyNewDecFromInt(sdkmath.NewInt(10000)))
 	fees := amountDec.Mul(feeRate)
 	amountMinusFees := amountDec.Sub(fees)
 	return amountMinusFees

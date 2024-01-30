@@ -3,6 +3,7 @@ package types
 import (
 	"testing"
 
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/sideprotocol/side/testutil/sample"
 	"github.com/stretchr/testify/require"
@@ -46,7 +47,7 @@ func TestMsgWithdraw_ValidateBasic(t *testing.T) {
 				PoolId:   "test1",
 				Share: sdk.NewCoin(
 					"test",
-					sdk.NewInt(0),
+					sdkmath.NewInt(0),
 				),
 			},
 			err: ErrInvalidTokenAmount,
@@ -59,7 +60,7 @@ func TestMsgWithdraw_ValidateBasic(t *testing.T) {
 				PoolId:   "test1",
 				Share: sdk.NewCoin(
 					"test",
-					sdk.NewInt(1),
+					sdkmath.NewInt(1),
 				),
 			},
 			err: ErrMismatchedShareDenom,
@@ -72,7 +73,7 @@ func TestMsgWithdraw_ValidateBasic(t *testing.T) {
 				PoolId:   "test1",
 				Share: sdk.NewCoin(
 					"test1",
-					sdk.NewInt(10),
+					sdkmath.NewInt(10),
 				),
 			},
 		},

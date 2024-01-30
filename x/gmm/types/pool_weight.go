@@ -4,6 +4,7 @@ import (
 	fmt "fmt"
 	math "math"
 
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -27,14 +28,14 @@ func (p *Pool) estimateShareWithSingleLiquidityInWeightPool(coin sdk.Coin) (sdk.
 
 	decToken := (sdk.NewDecCoinFromCoin(coin))
 	decAsset := sdk.NewDecCoinFromCoin(asset.Token)
-	weight := sdk.NewDecFromInt(*asset.Weight).Quo(sdk.NewDec(100)) // divide by 100
-	ratio := decToken.Amount.Quo(decAsset.Amount).Add(sdk.NewDec(1))
+	weight := sdkmath.LegacyNewDec(*asset.Weight).Quo(sdkmath.LegacyNewDec(100)) // divide by 100
+	ratio := decToken.Amount.Quo(decAsset.Amount).Add(sdkmath.LegacyNewDec(1))
 	exponent := (math.Pow(ratio.MustFloat64(), weight.MustFloat64()) - 1) * Multiplier
-	factor, err := sdk.NewDecFromStr(fmt.Sprintf("%f", exponent/Multiplier))
+	factor, err := sdkmath.LegacyNewDecFromStr(fmt.Sprintf("%f", exponent/Multiplier))
 	if err != nil {
 		return sdk.Coin{}, err
 	}
-	issueAmount := p.TotalShares.Amount.Mul(factor.RoundInt()).Quo(sdk.NewInt(1e10))
+	issueAmount := p.TotalShares.Amount.Mul(factor.RoundInt()).Quo(sdkmath.NewInt(1e10))
 	outputToken := sdk.Coin{
 		Amount: issueAmount,
 		Denom:  p.TotalShares.Denom,
@@ -43,7 +44,7 @@ func (p *Pool) estimateShareWithSingleLiquidityInWeightPool(coin sdk.Coin) (sdk.
 }
 
 func (p *Pool) estimateShareWithTalLiquidityInWeightPool(coins sdk.Coins) (sdk.Coin, error) {
-	share := sdk.NewInt(0)
+	share := sdkmath.NewInt(0)
 	for _, coin := range coins {
 		asset, err := p.findAssetByDenom(coin.Denom)
 		if err != nil {
@@ -54,8 +55,8 @@ func (p *Pool) estimateShareWithTalLiquidityInWeightPool(coins sdk.Coins) (sdk.C
 		decAsset := sdk.NewDecCoinFromCoin(asset.Token)
 		decSupply := sdk.NewDecCoinFromCoin(p.TotalShares)
 
-		ratio := decToken.Amount.Quo(decAsset.Amount).Mul(sdk.NewDec(Multiplier))
-		issueAmount := (decSupply.Amount.Mul(sdk.NewDecFromInt(*asset.Weight)).Mul(ratio).Quo(sdk.NewDec(100)).Quo(sdk.NewDec(Multiplier)))
+		ratio := decToken.Amount.Quo(decAsset.Amount).Mul(sdkmath.LegacyNewDec(Multiplier))
+		issueAmount := (decSupply.Amount.Mul(sdkmath.LegacyNewDec(*asset.Weight)).Mul(ratio).Quo(sdkmath.LegacyNewDec(100)).Quo(sdkmath.LegacyNewDec(Multiplier)))
 
 		share = share.Add(issueAmount.RoundInt())
 	}
@@ -93,22 +94,22 @@ func (p *Pool) estimateSwapInWeightPool(amountIn sdk.Coin, denomOut string) (sdk
 		return sdk.Coin{}, fmt.Errorf("left swap failed: could not find asset out by denom")
 	}
 
-	balanceOut := sdk.NewDecFromBigInt(assetOut.Token.Amount.BigInt())
-	balanceIn := sdk.NewDecFromBigInt(assetIn.Token.Amount.BigInt())
-	weightIn := sdk.NewDecFromInt(*assetIn.Weight).Quo(sdk.NewDec(100))
-	weightOut := sdk.NewDecFromInt(*assetIn.Weight).Quo(sdk.NewDec(100))
+	balanceOut := sdkmath.LegacyNewDecFromBigInt(assetOut.Token.Amount.BigInt())
+	balanceIn := sdkmath.LegacyNewDecFromBigInt(assetIn.Token.Amount.BigInt())
+	weightIn := sdkmath.LegacyNewDecFromBigInt(*assetIn.Weight).Quo(sdkmath.LegacyNewDec(100))
+	weightOut := sdkmath.LegacyNewDecFromBigInt(*assetIn.Weight).Quo(sdkmath.LegacyNewDec(100))
 	amount := p.TakeFees(amountIn.Amount)
 
 	// Ao = Bo * ((1 - Bi / (Bi + Ai)) ** Wi/Wo)
 	balanceInPlusAmount := balanceIn.Add(amount)
 	ratio := balanceIn.Quo(balanceInPlusAmount)
-	oneMinusRatio := sdk.NewDec(1).Sub(ratio)
+	oneMinusRatio := sdkmath.LegacyNewDec(1).Sub(ratio)
 
 	power := weightIn.Quo(weightOut)
 	factor := math.Pow(oneMinusRatio.MustFloat64(), power.MustFloat64()) * Multiplier
 	finalFactor := factor / 1e8
 
-	amountOut := balanceOut.Mul(sdk.MustNewDecFromStr(fmt.Sprintf("%f", finalFactor))).Quo(sdk.NewDec(1e10))
+	amountOut := balanceOut.Mul(sdkmath.LegacyMustNewDecFromStr(fmt.Sprintf("%f", finalFactor))).Quo(sdkmath.LegacyNewDec(1e10))
 	return sdk.Coin{
 		Amount: amountOut.RoundInt(),
 		Denom:  denomOut,
