@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"fmt"
 
+	sdkmath "cosmossdk.io/math"
 	"cosmossdk.io/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -13,7 +14,7 @@ import (
 func (k Keeper) initializePool(ctx sdk.Context, msg *types.MsgCreatePool) (*string, error) {
 	poolCreator := msg.PoolCreator()
 	pool := msg.CreatePool()
-	totalShares := sdk.NewInt(0)
+	totalShares := sdkmath.NewInt(0)
 
 	poolShareBaseDenom := pool.PoolId
 	poolShareDisplayDenom := pool.PoolId

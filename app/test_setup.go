@@ -10,7 +10,6 @@ import (
 	"github.com/cometbft/cometbft/crypto/secp256k1"
 	tmtypes "github.com/cometbft/cometbft/types"
 	dbm "github.com/cosmos/cosmos-db"
-	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	"github.com/cosmos/cosmos-sdk/testutil/mock"
@@ -105,12 +104,10 @@ func GenesisStateWithValSet(app *App) GenesisState {
 		Address: acc.GetAddress().String(),
 		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdkmath.NewInt(100000000000000))),
 	}
-	registry := codectypes.NewInterfaceRegistry()
-	cdc := codec.NewProtoCodec(registry)
 
 	//////////////////////
 	balances := []banktypes.Balance{balance}
-	genesisState := NewDefaultGenesisState(cdc)
+	genesisState := app.DefaultGenesis()
 	genAccs := []authtypes.GenesisAccount{acc}
 	authGenesis := authtypes.NewGenesisState(authtypes.DefaultParams(), genAccs)
 	genesisState[authtypes.ModuleName] = app.AppCodec().MustMarshalJSON(authGenesis)

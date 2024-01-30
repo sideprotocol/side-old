@@ -65,7 +65,11 @@ import (
 	// wasmd module integrate
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
+
 	// upgrades
+
+	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
+	paramsclient "github.com/cosmos/cosmos-sdk/x/params/client"
 )
 
 // moduleAccountPermissions defines module account permissions
@@ -82,7 +86,6 @@ var moduleAccountPermissions = map[string][]string{
 	ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 	wasm.ModuleName:                {authtypes.Burner},
 	gmmmoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner, authtypes.Staking},
-	yieldmoduletypes.ModuleName:    {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 }
 
 // appModules return modules to initialize module manager.
@@ -113,10 +116,10 @@ func appModules(
 		groupmodule.NewAppModule(appCodec, app.GroupKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		gov.NewAppModule(appCodec, &app.GovKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(govtypes.ModuleName)),
 		mint.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper, nil, app.GetSubspace(minttypes.ModuleName)),
-		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper, app.GetSubspace(slashingtypes.ModuleName)),
+		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper, app.GetSubspace(slashingtypes.ModuleName), app.interfaceRegistry),
 		distr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper, app.GetSubspace(distrtypes.ModuleName)),
 		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(stakingtypes.ModuleName)),
-		upgrade.NewAppModule(app.UpgradeKeeper),
+		upgrade.NewAppModule(app.UpgradeKeeper, app.AccountKeeper.AddressCodec()),
 		evidence.NewAppModule(app.EvidenceKeeper),
 		consensus.NewAppModule(appCodec, app.ConsensusParamsKeeper),
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmTypes.ModuleName)),
@@ -127,10 +130,20 @@ func appModules(
 
 		icaModule,
 		gmmModule,
-		yieldModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 
 		crisis.NewAppModule(app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)), // always be last to make sure that it checks for all invariants and not only part of them
+	}
+}
+
+func appBasicModules() []module.AppModuleBasic {
+	return []module.AppModuleBasic{
+		genutil.NewAppModuleBasic(genutiltypes.DefaultMessageValidator),
+		gov.NewAppModuleBasic(
+			[]govclient.ProposalHandler{
+				paramsclient.ProposalHandler,
+			},
+		),
 	}
 }
 
@@ -162,7 +175,6 @@ func orderBeginBlockers() []string {
 		ibcfeetypes.ModuleName,
 		wasmTypes.ModuleName,
 		gmmmoduletypes.ModuleName,
-		yieldmoduletypes.ModuleName,
 	}
 	return ord
 }
@@ -194,7 +206,6 @@ func OrderEndBlockers() []string {
 		ibcfeetypes.ModuleName,
 		wasmTypes.ModuleName,
 		gmmmoduletypes.ModuleName,
-		yieldmoduletypes.ModuleName,
 	}
 	return ord
 }
@@ -231,7 +242,6 @@ func OrderInitGenesis() []string {
 		consensusparamtypes.ModuleName,
 		wasmTypes.ModuleName,
 		gmmmoduletypes.ModuleName,
-		yieldmoduletypes.ModuleName,
 	}
 }
 

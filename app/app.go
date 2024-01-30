@@ -93,8 +93,8 @@ var (
 	// ModuleBasics defines the module BasicManager is in charge of setting up basic,
 	// non-dependant module elements, such as codec registration
 	// and genesis verification.
-	ModuleBasics = keepers.AppModuleBasics
-
+	ModuleManager      *module.Manager
+	ModuleBasicManager module.BasicManager
 	// module account permissions
 )
 
@@ -125,6 +125,7 @@ type App struct {
 	invCheckPeriod    uint
 
 	mm           *module.Manager
+	bm           module.BasicManager
 	sm           *module.SimulationManager
 	configurator module.Configurator
 	homePath     string
@@ -217,6 +218,12 @@ func New(
 	app.mm = module.NewManager(
 		appModules(app, encodingConfig, skipGenesisInvariants)...,
 	)
+
+	app.bm = module.NewBasicManager(
+		appBasicModules()...,
+	)
+	ModuleManager = app.mm
+	ModuleBasicManager = app.bm
 
 	// During begin block slashing happens after distr.BeginBlocker so that
 	// there is nothing left over in the validator fee pool, so as to keep the
@@ -328,12 +335,12 @@ func (app *App) Name() string { return app.BaseApp.Name() }
 
 // BeginBlocker application updates every begin block
 func (app *App) BeginBlocker(ctx sdk.Context) (sdk.BeginBlock, error) {
-	return app.ModuleManager.BeginBlock(ctx)
+	return app.mm.BeginBlock(ctx)
 }
 
 // EndBlocker application updates every end block
 func (app *App) EndBlocker(ctx sdk.Context) (sdk.EndBlock, error) {
-	return app.ModuleManager.EndBlock(ctx)
+	return app.mm.EndBlock(ctx)
 }
 
 // InitChainer application update at chain initialization
@@ -416,7 +423,7 @@ func (app *App) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig
 	nodeservice.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 
 	// Register grpc-gateway routes for all modules.
-	ModuleBasics.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
+	app.bm.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 	if apiConfig.Enable {
 		// register app's OpenAPI routes.
 		docs.RegisterOpenAPIService(Name, apiSvr.Router)
@@ -496,4 +503,9 @@ func (app *App) setupUpgradeHandlers() {
 	}
 	plans1, _ := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
 	fmt.Println("registered plan", plans1)
+}
+
+// DefaultGenesis returns a default genesis from the registered AppModuleBasic's.
+func (a *App) DefaultGenesis() map[string]json.RawMessage {
+	return a.bm.DefaultGenesis(a.appCodec)
 }

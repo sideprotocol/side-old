@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simapp "github.com/sideprotocol/side/app"
 	"github.com/sideprotocol/side/testutil/sample"
@@ -20,7 +21,7 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidity() {
 			types.PoolType_WEIGHT,
 			func(msg *types.MsgAddLiquidity, poolID string) {
 				msg.Liquidity = []sdk.Coin{
-					sdk.NewCoin(simapp.DefaultBondDenom, sdk.NewInt(100)),
+					sdk.NewCoin(simapp.DefaultBondDenom, sdkmath.NewInt(100)),
 				}
 			},
 		},
@@ -29,8 +30,8 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidity() {
 			types.PoolType_STABLE,
 			func(msg *types.MsgAddLiquidity, poolID string) {
 				msg.Liquidity = []sdk.Coin{
-					sdk.NewCoin(simapp.WDAI, sdk.NewInt(100)),
-					sdk.NewCoin(simapp.WUSDT, sdk.NewInt(100)),
+					sdk.NewCoin(simapp.WDAI, sdkmath.NewInt(100)),
+					sdk.NewCoin(simapp.WUSDT, sdkmath.NewInt(100)),
 				}
 			},
 		},
@@ -81,7 +82,7 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidityFail() {
 					Liquidity: []sdk.Coin{
 						sdk.NewCoin(
 							simapp.DefaultBondDenom,
-							sdk.NewInt(100),
+							sdkmath.NewInt(100),
 						),
 					},
 				}
@@ -96,7 +97,7 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidityFail() {
 					Liquidity: []sdk.Coin{
 						sdk.NewCoin(
 							simapp.DefaultBondDenom,
-							sdk.NewInt(100),
+							sdkmath.NewInt(100),
 						),
 					},
 				}
@@ -106,7 +107,7 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidityFail() {
 			"invalid asset type",
 			func(msg *types.MsgAddLiquidity, poolID string) {
 				msg.Liquidity = []sdk.Coin{
-					sdk.NewCoin("INVALID_ASSET_TYPE", sdk.NewInt(100)),
+					sdk.NewCoin("INVALID_ASSET_TYPE", sdkmath.NewInt(100)),
 				}
 			},
 		},
@@ -114,7 +115,7 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidityFail() {
 			"zero liquidity",
 			func(msg *types.MsgAddLiquidity, poolID string) {
 				msg.Liquidity = []sdk.Coin{
-					sdk.NewCoin(simapp.DefaultBondDenom, sdk.NewInt(0)),
+					sdk.NewCoin(simapp.DefaultBondDenom, sdkmath.NewInt(0)),
 				}
 			},
 		},

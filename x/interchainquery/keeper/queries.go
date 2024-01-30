@@ -16,6 +16,7 @@ import (
 	"github.com/cometbft/cometbft/crypto"
 	"github.com/cosmos/cosmos-sdk/codec"
 
+	storetypes "cosmossdk.io/store/types"
 	"github.com/sideprotocol/side/x/interchainquery/types"
 )
 
@@ -118,7 +119,7 @@ func (k Keeper) GetQueryUID(ctx sdk.Context) []byte {
 // IterateQueries iterate through queries
 func (k Keeper) IterateQueries(ctx sdk.Context, fn func(index int64, queryInfo types.Query) (stop bool)) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefixQuery)
-	iterator := sdk.KVStorePrefixIterator(store, nil)
+	iterator := storetypes.KVStorePrefixIterator(store, nil)
 	defer iterator.Close()
 
 	i := int64(0)

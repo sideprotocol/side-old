@@ -29,7 +29,7 @@ func MakeEncodingConfig() params.EncodingConfig {
 	encodingConfig := makeEncodingConfig()
 	std.RegisterLegacyAminoCodec(encodingConfig.Amino)
 	std.RegisterInterfaces(encodingConfig.InterfaceRegistry)
-	ModuleBasics.RegisterLegacyAminoCodec(encodingConfig.Amino)
-	ModuleBasics.RegisterInterfaces(encodingConfig.InterfaceRegistry)
+	ModuleBasicManager.RegisterLegacyAminoCodec(encodingConfig.Amino)
+	ModuleBasicManager.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 	return encodingConfig
 }

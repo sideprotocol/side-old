@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/sideprotocol/side/x/gmm/types"
 )
@@ -17,14 +18,14 @@ func (suite *KeeperTestSuite) TestMsgWithdraw() {
 			"withdraw from weight pool",
 			types.PoolType_WEIGHT,
 			func(msg *types.MsgWithdraw, poolID string) {
-				msg.Share = sdk.NewCoin(poolID, sdk.NewInt(100))
+				msg.Share = sdk.NewCoin(poolID, sdkmath.NewInt(100))
 			},
 		},
 		{
 			"withdraw from stable pool",
 			types.PoolType_STABLE,
 			func(msg *types.MsgWithdraw, poolID string) {
-				msg.Share = sdk.NewCoin(poolID, sdk.NewInt(200))
+				msg.Share = sdk.NewCoin(poolID, sdkmath.NewInt(200))
 			},
 		},
 	}
@@ -79,7 +80,7 @@ func (suite *KeeperTestSuite) TestMsgWithdrawFail() {
 			"withdraw with insufficient balance",
 			types.PoolType_WEIGHT,
 			func(msg *types.MsgWithdraw, poolID string) {
-				msg.Share = sdk.NewCoin(poolID, sdk.NewInt(1000000)) // Some large number
+				msg.Share = sdk.NewCoin(poolID, sdkmath.NewInt(1000000)) // Some large number
 			},
 		},
 		// Add more failure test cases to cover all scenarios
@@ -95,7 +96,7 @@ func (suite *KeeperTestSuite) TestMsgWithdrawFail() {
 				Sender:   types.Alice,
 				Receiver: types.Carol,
 				PoolId:   poolID,
-				Share:    sdk.NewCoin(poolID, sdk.NewInt(200)),
+				Share:    sdk.NewCoin(poolID, sdkmath.NewInt(200)),
 			}
 
 			// Use the mutator to set the failure condition

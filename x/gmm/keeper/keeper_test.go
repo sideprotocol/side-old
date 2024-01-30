@@ -2,9 +2,7 @@ package keeper_test
 
 import (
 	"testing"
-	"time"
 
-	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -13,7 +11,8 @@ import (
 	"github.com/sideprotocol/side/x/gmm/types"
 	"github.com/stretchr/testify/suite"
 
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	sdkmath "cosmossdk.io/math"
+
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
@@ -43,12 +42,10 @@ var gmmModuleAddress string
 func (suite *KeeperTestSuite) SetupTest() {
 	// app := simapp.InitSideTestApp(initChain)
 	app := simapp.Setup(suite.T())
-	ctx := app.BaseApp.NewContext(false, tmproto.Header{Time: time.Now()})
-
-	app.AccountKeeper.SetParams(ctx, authtypes.DefaultParams())
+	ctx := app.BaseApp.NewContext(false)
 	app.BankKeeper.SetParams(ctx, banktypes.DefaultParams())
 	stakingParams := stakingtypes.DefaultParams()
-	stakingParams.MinCommissionRate = sdk.OneDec()
+	stakingParams.MinCommissionRate = sdkmath.LegacyOneDec()
 	app.StakingKeeper.SetParams(ctx, stakingtypes.DefaultParams())
 
 	gmmModuleAddress = app.AccountKeeper.GetModuleAddress(types.ModuleName).String()
@@ -77,7 +74,7 @@ func makeBalance(address string, balance int64, denom string) banktypes.Balance 
 		Coins: sdk.Coins{
 			sdk.Coin{
 				Denom:  denom,
-				Amount: sdk.NewInt(balance),
+				Amount: sdkmath.NewInt(balance),
 			},
 		},
 	}

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"cosmossdk.io/math"
+	sdkmath "cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -60,11 +61,11 @@ func CmdCreatePool() *cobra.Command {
 				if len(tokens) != len(decimals) {
 					return fmt.Errorf("liquidity and weights must have the same length")
 				}
-				weight := sdk.NewInt(int64(weights[i]))
+				weight := sdkmath.NewInt(int64(weights[i]))
 				liquidity = append(liquidity, types.PoolAsset{
 					Token:   tokens[i],
 					Weight:  &weight,
-					Decimal: sdk.NewInt(int64(decimals[i])),
+					Decimal: sdkmath.NewInt(int64(decimals[i])),
 				})
 			}
 
@@ -72,7 +73,7 @@ func CmdCreatePool() *cobra.Command {
 			msg := types.NewMsgCreatePool(
 				clientCtx.GetFromAddress().String(),
 				types.PoolParams{
-					SwapFee: sdk.NewDec(int64(swapFee)),
+					SwapFee: sdkmath.LegacyNewDec(int64(swapFee)),
 					Amp:     &amp,
 				},
 				liquidity,

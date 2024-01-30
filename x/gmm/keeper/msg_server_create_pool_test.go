@@ -24,7 +24,7 @@ func (suite *KeeperTestSuite) TestMsgCreatePool() {
 		{
 			"stable pool",
 			func(msg *types.MsgCreatePool) {
-				amp := sdk.NewInt(100)
+				amp := sdkmath.NewInt(100)
 				msg.Params.Type = types.PoolType_STABLE
 				msg.Params.Amp = &amp
 				msg.Liquidity = suite.createStablePoolLiquidity()
@@ -55,25 +55,25 @@ func (suite *KeeperTestSuite) TestMsgCreatePool() {
 
 // Helper method to create a default MsgCreatePool for testing
 func (suite *KeeperTestSuite) defaultMsgCreatePool() *types.MsgCreatePool {
-	weight := sdk.NewInt(50)
-	amp := sdk.NewInt(100)
+	weight := sdkmath.NewInt(50)
+	amp := sdkmath.NewInt(100)
 	return types.NewMsgCreatePool(
 		types.Alice,
 		types.PoolParams{
 			Type:    types.PoolType_WEIGHT,
-			SwapFee: sdkmath.LegacyDec(sdk.NewInt(100)),
+			SwapFee: sdkmath.LegacyDec(sdkmath.NewInt(100)),
 			Amp:     &amp,
 		},
 		[]types.PoolAsset{
 			{
 				Token:   sdk.NewCoin(simapp.DefaultBondDenom, sdkmath.NewInt(100)),
 				Weight:  &weight,
-				Decimal: sdk.NewInt(6),
+				Decimal: sdkmath.NewInt(6),
 			},
 			{
 				Token:   sdk.NewCoin(simapp.USDC, sdkmath.NewInt(100)),
 				Weight:  &weight,
-				Decimal: sdk.NewInt(6),
+				Decimal: sdkmath.NewInt(6),
 			},
 		},
 	)
@@ -81,17 +81,17 @@ func (suite *KeeperTestSuite) defaultMsgCreatePool() *types.MsgCreatePool {
 
 // Helper method to create stable pool liquidity for testing
 func (suite *KeeperTestSuite) createStablePoolLiquidity() []types.PoolAsset {
-	weight := sdk.NewInt(50)
+	weight := sdkmath.NewInt(50)
 	return []types.PoolAsset{
 		{
 			Token:   sdk.NewCoin(simapp.WDAI, sdkmath.NewInt(100)),
 			Weight:  &weight,
-			Decimal: sdk.NewInt(6),
+			Decimal: sdkmath.NewInt(6),
 		},
 		{
 			Token:   sdk.NewCoin(simapp.WUSDT, sdkmath.NewInt(100)),
 			Weight:  &weight,
-			Decimal: sdk.NewInt(6),
+			Decimal: sdkmath.NewInt(6),
 		},
 	}
 }
@@ -99,8 +99,8 @@ func (suite *KeeperTestSuite) createStablePoolLiquidity() []types.PoolAsset {
 func (suite *KeeperTestSuite) TestMsgCreatePoolFail() {
 	var msg *types.MsgCreatePool
 	suite.SetupTest()
-	weight := sdk.NewInt(50)
-	amp := sdk.NewInt(100)
+	weight := sdkmath.NewInt(50)
+	amp := sdkmath.NewInt(100)
 
 	testCases := []struct {
 		name   string
@@ -117,19 +117,19 @@ func (suite *KeeperTestSuite) TestMsgCreatePoolFail() {
 					sample.AccAddress(),
 					types.PoolParams{
 						Type:    types.PoolType_WEIGHT,
-						SwapFee: sdkmath.LegacyDec(sdk.NewInt(100)),
+						SwapFee: sdkmath.LegacyDec(sdkmath.NewInt(100)),
 						Amp:     &amp,
 					},
 					[]types.PoolAsset{
 						{
 							Token:   sdk.NewCoin(simapp.DefaultBondDenom, sdkmath.NewInt(100)),
 							Weight:  &weight,
-							Decimal: sdk.NewInt(6),
+							Decimal: sdkmath.NewInt(6),
 						},
 						{
 							Token:   sdk.NewCoin(simapp.USDC, sdkmath.NewInt(100)),
 							Weight:  &weight,
-							Decimal: sdk.NewInt(6),
+							Decimal: sdkmath.NewInt(6),
 						},
 					},
 				)
@@ -142,7 +142,7 @@ func (suite *KeeperTestSuite) TestMsgCreatePoolFail() {
 					sample.AccAddress(),
 					types.PoolParams{
 						Type:    types.PoolType_WEIGHT,
-						SwapFee: sdkmath.LegacyDec(sdk.NewInt(100)),
+						SwapFee: sdkmath.LegacyDec(sdkmath.NewInt(100)),
 						Amp:     &amp,
 					},
 					[]types.PoolAsset{},
@@ -180,26 +180,26 @@ func (suite *KeeperTestSuite) createNewWeightPool() string {
 	var msg *types.MsgCreatePool
 	suite.SetupTest()
 
-	weight := sdk.NewInt(50)
-	amp := sdk.NewInt(100)
+	weight := sdkmath.NewInt(50)
+	amp := sdkmath.NewInt(100)
 
 	msg = types.NewMsgCreatePool(
 		types.Alice,
 		types.PoolParams{
 			Type:    types.PoolType_WEIGHT,
-			SwapFee: sdkmath.LegacyDec(sdk.NewInt(100)),
+			SwapFee: sdkmath.LegacyDec(sdkmath.NewInt(100)),
 			Amp:     &amp,
 		},
 		[]types.PoolAsset{
 			{
 				Token:   sdk.NewCoin(simapp.DefaultBondDenom, sdkmath.NewInt(100)),
 				Weight:  &weight,
-				Decimal: sdk.NewInt(6),
+				Decimal: sdkmath.NewInt(6),
 			},
 			{
 				Token:   sdk.NewCoin(simapp.USDC, sdkmath.NewInt(100)),
 				Weight:  &weight,
-				Decimal: sdk.NewInt(6),
+				Decimal: sdkmath.NewInt(6),
 			},
 		},
 	)
@@ -216,26 +216,26 @@ func (suite *KeeperTestSuite) createNewStablePool() string {
 	var msg *types.MsgCreatePool
 	suite.SetupTest()
 
-	weight := sdk.NewInt(50)
-	amp := sdk.NewInt(1)
+	weight := sdkmath.NewInt(50)
+	amp := sdkmath.NewInt(1)
 
 	msg = types.NewMsgCreatePool(
 		types.Alice,
 		types.PoolParams{
 			Type:    types.PoolType_STABLE,
-			SwapFee: sdkmath.LegacyDec(sdk.NewInt(100)),
+			SwapFee: sdkmath.LegacyDec(sdkmath.NewInt(100)),
 			Amp:     &amp,
 		},
 		[]types.PoolAsset{
 			{
 				Token:   sdk.NewCoin(simapp.WDAI, sdkmath.NewInt(100)),
 				Weight:  &weight,
-				Decimal: sdk.NewInt(6),
+				Decimal: sdkmath.NewInt(6),
 			},
 			{
 				Token:   sdk.NewCoin(simapp.WUSDT, sdkmath.NewInt(100)),
 				Weight:  &weight,
-				Decimal: sdk.NewInt(6),
+				Decimal: sdkmath.NewInt(6),
 			},
 		},
 	)
