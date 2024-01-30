@@ -1,0 +1,18 @@
+{
+  "title": "Upgrade to v01",
+  "summary": "This proposal is to upgrade the Side protocol to version 0.0.5.",
+  "deposit": "100000uside",
+  "proposer": "side18859xt008299j4ej90dg6uct7jtgw77pr7537g",
+  "metadata": "",
+  "messages": [
+    {
+      "@type": "/cosmos.upgrade.v1beta1.MsgSoftwareUpgrade",
+      "authority": "side18859xt008299j4ej90dg6uct7jtgw77pr7537g",
+      "plan": {
+        "name": "v01",
+        "info": "https://github.com/sideprotocol/side/releases/download/v0.0.5/sided-v5-mac",
+        "height": "100"
+      }
+    }
+  ]
+}

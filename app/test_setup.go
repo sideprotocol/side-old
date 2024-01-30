@@ -5,7 +5,6 @@ import (
 	"time"
 
 	sdkmath "cosmossdk.io/math"
-	"github.com/Stride-Labs/stride/v16/testutil"
 	cometbftdb "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/crypto/secp256k1"
@@ -22,7 +21,6 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	// cmdcfg "github.com/Stride-Labs/stride/v16/cmd/sided/config"
 	errorsmod "cosmossdk.io/errors"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -180,15 +178,15 @@ func GenesisStateWithValSet(app *App) GenesisState {
 	)
 	genesisState[banktypes.ModuleName] = app.AppCodec().MustMarshalJSON(bankGenesis)
 
-	vals, err := tmtypes.PB2TM.ValidatorUpdates(initValPowers)
+	_, err := tmtypes.PB2TM.ValidatorUpdates(initValPowers)
 	if err != nil {
 		panic("failed to get vals")
 	}
 
-	consumerGenesisState := testutil.CreateMinimalConsumerTestGenesis()
-	consumerGenesisState.InitialValSet = initValPowers
-	consumerGenesisState.ProviderConsensusState.NextValidatorsHash = tmtypes.NewValidatorSet(vals).Hash()
-	consumerGenesisState.Params.Enabled = true
+	// consumerGenesisState := testutil.CreateMinimalConsumerTestGenesis()
+	// consumerGenesisState.InitialValSet = initValPowers
+	// consumerGenesisState.ProviderConsensusState.NextValidatorsHash = tmtypes.NewValidatorSet(vals).Hash()
+	// consumerGenesisState.Params.Enabled = true
 
 	return genesisState
 }

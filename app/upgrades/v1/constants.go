@@ -1,10 +1,9 @@
 package v01
 
 import (
-	store "github.com/cosmos/cosmos-sdk/store/types"
+	store "cosmossdk.io/store/types"
 	"github.com/sideprotocol/side/app/upgrades"
 	gmmypes "github.com/sideprotocol/side/x/gmm/types"
-	yieldmoduletypes "github.com/sideprotocol/side/x/yield/types"
 )
 
 // UpgradeName defines the on-chain upgrade name for the Osmosis v21 upgrade.
@@ -18,7 +17,6 @@ var Upgrade = upgrades.Upgrade{
 	StoreUpgrades: store.StoreUpgrades{
 		Added: []string{
 			gmmypes.ModuleName,
-			yieldmoduletypes.ModuleName,
 		},
 		Deleted: []string{},
 	},
