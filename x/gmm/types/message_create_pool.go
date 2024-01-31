@@ -107,7 +107,7 @@ func (msg *MsgCreatePool) CreatePool() Pool {
 	denoms := msg.GetAssetDenoms()
 
 	assets := make(map[string]PoolAsset)
-	totalShares := sdk.NewInt(0)
+	totalShares := sdkmath.NewInt(0)
 	for _, liquidity := range msg.Liquidity {
 		assets[liquidity.Token.Denom] = liquidity
 		totalShares = totalShares.Add(liquidity.Token.Amount)
