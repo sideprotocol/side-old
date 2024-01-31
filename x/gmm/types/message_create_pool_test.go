@@ -52,7 +52,7 @@ func TestMsgCreatePool_ValidateBasic(t *testing.T) {
 				}, // Replace with a sample valid PoolParams
 				Liquidity: []PoolAsset{
 					{
-						Token:  sdk.NewCoin("test1", sdk.NewInt(100000000000000)),
+						Token:  sdk.NewCoin("test1", sdkmath.NewInt(100000000000000)),
 						Weight: &weight,
 					},
 				}, // Replace with a sample valid Liquidity
@@ -70,11 +70,11 @@ func TestMsgCreatePool_ValidateBasic(t *testing.T) {
 				}, // Replace with a sample valid PoolParams
 				Liquidity: []PoolAsset{
 					{
-						Token:  sdk.NewCoin("test1", sdk.NewInt(100000000000000)),
+						Token:  sdk.NewCoin("test1", sdkmath.NewInt(100000000000000)),
 						Weight: &weight,
 					},
 					{
-						Token:  sdk.NewCoin("test2", sdk.NewInt(100000000000000)),
+						Token:  sdk.NewCoin("test2", sdkmath.NewInt(100000000000000)),
 						Weight: &weight,
 					},
 				}, // Replace with a sample valid Liquidity

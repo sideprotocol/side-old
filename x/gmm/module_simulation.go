@@ -60,7 +60,7 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 }
 
 // RegisterStoreDecoder registers a decoder.
-func (am AppModule) RegisterStoreDecoder(_ sdk.StoreDecoderRegistry) {}
+//func (am AppModule) RegisterStoreDecoder(_ storetypes.StoreDecoderRegistry) {}
 
 // ProposalContents doesn't return any content functions for governance proposals.
 func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedProposalMsg {
@@ -72,7 +72,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	operations := make([]simtypes.WeightedOperation, 0)
 	_ = simState
 	var weightMsgAddLiquidity int
-	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgAddLiquidity, &weightMsgAddLiquidity, nil,
+	simState.AppParams.GetOrGenerate(opWeightMsgAddLiquidity, &weightMsgAddLiquidity, nil,
 		func(_ *rand.Rand) {
 			weightMsgAddLiquidity = defaultWeightMsgAddLiquidity
 		},
@@ -83,7 +83,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	))
 
 	var weightMsgCreatePool int
-	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgCreatePool, &weightMsgCreatePool, nil,
+	simState.AppParams.GetOrGenerate(opWeightMsgCreatePool, &weightMsgCreatePool, nil,
 		func(_ *rand.Rand) {
 			weightMsgCreatePool = defaultWeightMsgCreatePool
 		},
@@ -94,7 +94,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	))
 
 	var weightMsgWithdraw int
-	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgWithdraw, &weightMsgWithdraw, nil,
+	simState.AppParams.GetOrGenerate(opWeightMsgWithdraw, &weightMsgWithdraw, nil,
 		func(_ *rand.Rand) {
 			weightMsgWithdraw = defaultWeightMsgWithdraw
 		},
@@ -105,7 +105,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	))
 
 	var weightMsgSwap int
-	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgSwap, &weightMsgSwap, nil,
+	simState.AppParams.GetOrGenerate(opWeightMsgSwap, &weightMsgSwap, nil,
 		func(_ *rand.Rand) {
 			weightMsgSwap = defaultWeightMsgSwap
 		},
@@ -116,7 +116,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	))
 
 	var weightMsgDeletePool int
-	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgDeletePool, &weightMsgDeletePool, nil,
+	simState.AppParams.GetOrGenerate(opWeightMsgDeletePool, &weightMsgDeletePool, nil,
 		func(_ *rand.Rand) {
 			weightMsgDeletePool = defaultWeightMsgDeletePool
 		},

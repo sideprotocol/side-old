@@ -14,17 +14,17 @@ message PoolParams {
   PoolType type  = 1;
   // swapFee is ranged from 0 to 10000.
   string swapFee = 2 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
     (gogoproto.nullable) = false
   ];
   string exitFee = 3 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
     (gogoproto.nullable) = false
   ];
   bool useOracle = 4;
 
   // Amplifier parameters for stable pool. 
   string amp = 5 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int"
+    (gogoproto.customtype) = "cosmossdk.io/math.Int"
   ];
 }

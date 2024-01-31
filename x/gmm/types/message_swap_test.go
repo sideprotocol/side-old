@@ -35,7 +35,7 @@ func TestMsgSwap_ValidateBasic(t *testing.T) {
 			msg: MsgSwap{
 				Sender:  sample.AccAddress(),
 				PoolId:  "test1",
-				TokenIn: sdk.NewCoin("test1", sdk.NewInt(0)),
+				TokenIn: sdk.NewCoin("test1", sdkmath.NewInt(0)),
 			},
 			err: ErrInvalidTokenAmount,
 		},
@@ -44,8 +44,8 @@ func TestMsgSwap_ValidateBasic(t *testing.T) {
 			msg: MsgSwap{
 				Sender:   sample.AccAddress(),
 				PoolId:   "test1",
-				TokenIn:  sdk.NewCoin("test1", sdk.NewInt(100)),
-				TokenOut: sdk.NewCoin("test2", sdk.NewInt(100)),
+				TokenIn:  sdk.NewCoin("test1", sdkmath.NewInt(100)),
+				TokenOut: sdk.NewCoin("test2", sdkmath.NewInt(100)),
 				Slippage: sdkmath.NewInt(10000),
 			},
 			err: ErrInvalidSlippage,
