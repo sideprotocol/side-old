@@ -106,6 +106,16 @@ type AppModule struct {
 	keeper keeper.Keeper
 }
 
+// IsAppModule implements module.AppModule.
+func (AppModule) IsAppModule() {
+	panic("unimplemented")
+}
+
+// IsOnePerModuleType implements module.AppModule.
+func (AppModule) IsOnePerModuleType() {
+	panic("unimplemented")
+}
+
 // NewAppModule return a new AppModule
 func NewAppModule(cdc codec.Codec, keeper keeper.Keeper) AppModule {
 	return AppModule{
@@ -149,15 +159,14 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 }
 
 // BeginBlock executes all ABCI BeginBlock logic respective to the capability module.
-func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {
-	// am.keeper.BeginBlocker(ctx)
+func (am AppModule) BeginBlocker(ctx sdk.Context) (sdk.BeginBlock, error) {
+	return sdk.BeginBlock{}, nil
 }
 
 // EndBlock executes all ABCI EndBlock logic respective to the capability module. It
 // returns no validator updates.
-func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
-	am.keeper.EndBlocker(ctx)
-	return []abci.ValidatorUpdate{}
+func (am AppModule) EndBlock(ctx sdk.Context) (sdk.EndBlock, error) {
+	return sdk.EndBlock{}, nil
 }
 
 // ___________________________________________________________________________
@@ -180,8 +189,8 @@ func (AppModule) RandomizedParams(_ *rand.Rand) []simtypes.LegacyParamChange {
 }
 
 // RegisterStoreDecoder registers a decoder for supply module's types
-func (am AppModule) RegisterStoreDecoder(_ sdk.StoreDecoderRegistry) {
-}
+// func (am AppModule) RegisterStoreDecoder(_ sdk.StoreDecoderRegistry) {
+// }
 
 // WeightedOperations returns the all the gov module operations with their respective weights.
 func (am AppModule) WeightedOperations(_ module.SimulationState) []simtypes.WeightedOperation {
