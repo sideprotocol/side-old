@@ -6,8 +6,8 @@ import (
 	"time"
 
 	pruningtypes "cosmossdk.io/store/pruning/types"
-	tmdb "github.com/cometbft/cometbft-db"
 	tmrand "github.com/cometbft/cometbft/libs/rand"
+	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
@@ -62,7 +62,7 @@ func DefaultConfig() network.Config {
 		AppConstructor: func(val network.ValidatorI) servertypes.Application {
 			return app.New(
 				val.GetCtx().Logger,
-				tmdb.NewMemDB(),
+				dbm.NewMemDB(),
 				nil,
 				true,
 				map[int64]bool{},
@@ -75,7 +75,7 @@ func DefaultConfig() network.Config {
 				baseapp.SetChainID(chainID),
 			)
 		},
-		GenesisState:    app.ModuleBasics.DefaultGenesis(encoding.Marshaler),
+		GenesisState:    app.ModuleBasicManager.DefaultGenesis(encoding.Marshaler),
 		TimeoutCommit:   2 * time.Second,
 		ChainID:         chainID,
 		NumValidators:   1,

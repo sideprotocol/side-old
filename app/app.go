@@ -9,6 +9,7 @@ import (
 
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
+	"cosmossdk.io/core/appmodule"
 	"cosmossdk.io/log"
 	evidencetypes "cosmossdk.io/x/evidence/types"
 	"cosmossdk.io/x/feegrant"
@@ -73,6 +74,8 @@ import (
 	"github.com/sideprotocol/side/app/upgrades"
 
 	// upgrades
+	"cosmossdk.io/client/v2/autocli"
+	authcodec "github.com/cosmos/cosmos-sdk/x/auth/codec"
 	"github.com/sideprotocol/side/app/keepers"
 	v1 "github.com/sideprotocol/side/app/upgrades/v1"
 )
@@ -94,7 +97,9 @@ var (
 	// non-dependant module elements, such as codec registration
 	// and genesis verification.
 	ModuleManager      *module.Manager
-	ModuleBasicManager module.BasicManager
+	ModuleBasicManager = module.NewBasicManager(
+		appBasicModules()...,
+	)
 	// module account permissions
 )
 
@@ -281,7 +286,7 @@ func New(
 
 	app.mm.RegisterInvariants(app.CrisisKeeper)
 	app.configurator = module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
-	app.mm.RegisterServices(app.configurator)
+	//app.mm.RegisterServices(app.configurator)
 	// register upgrade handler
 	app.setupUpgradeHandlers()
 	autocliv1.RegisterQueryServer(app.GRPCQueryRouter(), runtimeservices.NewAutoCLIQueryService(app.mm.Modules))
@@ -505,7 +510,28 @@ func (app *App) setupUpgradeHandlers() {
 	fmt.Println("registered plan", plans1)
 }
 
+// AutoCliOpts returns the autocli options for the app.
+func (app *App) AutoCliOpts() autocli.AppOptions {
+	modules := make(map[string]appmodule.AppModule, 0)
+	for _, m := range app.mm.Modules {
+		if moduleWithName, ok := m.(module.HasName); ok {
+			moduleName := moduleWithName.Name()
+			if appModule, ok := moduleWithName.(appmodule.AppModule); ok {
+				modules[moduleName] = appModule
+			}
+		}
+	}
+
+	return autocli.AppOptions{
+		Modules:               modules,
+		ModuleOptions:         runtimeservices.ExtractAutoCLIOptions(app.mm.Modules),
+		AddressCodec:          authcodec.NewBech32Codec(sdk.GetConfig().GetBech32AccountAddrPrefix()),
+		ValidatorAddressCodec: authcodec.NewBech32Codec(sdk.GetConfig().GetBech32ValidatorAddrPrefix()),
+		ConsensusAddressCodec: authcodec.NewBech32Codec(sdk.GetConfig().GetBech32ConsensusAddrPrefix()),
+	}
+}
+
 // DefaultGenesis returns a default genesis from the registered AppModuleBasic's.
 func (a *App) DefaultGenesis() map[string]json.RawMessage {
-	return a.bm.DefaultGenesis(a.appCodec)
+	return ModuleBasicManager.DefaultGenesis(a.appCodec)
 }

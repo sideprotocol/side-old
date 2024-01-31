@@ -11,14 +11,14 @@ import (
 	"cosmossdk.io/log"
 	"cosmossdk.io/store"
 	"cosmossdk.io/store/snapshots"
-	tmcfg "github.com/cometbft/cometbft/config"
-	tmcli "github.com/cometbft/cometbft/libs/cli"
+	cmtcfg "github.com/cometbft/cometbft/config"
+
+	//cmtcmd "github.com/cometbft/cometbft/cmd"
 	tmtypes "github.com/cometbft/cometbft/types"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/config"
-	"github.com/cosmos/cosmos-sdk/client/debug"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
@@ -26,15 +26,16 @@ import (
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 
-	//sdk "github.com/cosmos/cosmos-sdk/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	//banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
-	//"github.com/cosmos/cosmos-sdk/x/genutil"
+	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
-	//genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+
+	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -43,6 +44,9 @@ import (
 
 	snapshottypes "cosmossdk.io/store/snapshots/types"
 	storetypes "cosmossdk.io/store/types"
+	confixcmd "cosmossdk.io/tools/confix/cmd"
+	"github.com/cosmos/cosmos-sdk/codec/address"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/sideprotocol/side/app"
 	appparams "github.com/sideprotocol/side/app/params"
 )
@@ -89,18 +93,40 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 	}
 
 	initRootCmd(rootCmd, encodingConfig)
+
+	tempApp := app.New(
+		log.NewNopLogger(),
+		dbm.NewMemDB(),
+		nil,
+		true,
+		make(map[int64]bool),
+		"",
+		uint(1),
+		encodingConfig,
+		NewAppOptionsWithFlagHome(""),
+	)
+
+	// add keyring to autocli opts
+	autoCliOpts := tempApp.AutoCliOpts()
+	initClientCtx, _ = config.ReadFromClientConfig(initClientCtx)
+	autoCliOpts.Keyring, _ = keyring.NewAutoCLIKeyring(initClientCtx.Keyring)
+	autoCliOpts.ClientCtx = initClientCtx
+
+	if err := autoCliOpts.EnhanceRootCommand(rootCmd); err != nil {
+		panic(err)
+	}
+
 	overwriteFlagDefaults(rootCmd, map[string]string{
 		flags.FlagChainID:        strings.ReplaceAll(app.Name, "-", ""),
 		flags.FlagKeyringBackend: "test",
 	})
-
 	return rootCmd, encodingConfig
 }
 
 // initTendermintConfig helps to override default Tendermint Config values.
 // return tmcfg.DefaultConfig if no custom configuration is required for the application.
-func initTendermintConfig() *tmcfg.Config {
-	cfg := tmcfg.DefaultConfig()
+func initTendermintConfig() *cmtcfg.Config {
+	cfg := cmtcfg.DefaultConfig()
 	return cfg
 }
 
@@ -111,23 +137,27 @@ func initRootCmd(
 	// Set config
 	initSDKConfig()
 
-	//gentxModule := app.ModuleBasicManager[genutiltypes.ModuleName].(genutil.AppModuleBasic)
+	gentxModule := app.ModuleBasicManager[genutiltypes.ModuleName].(genutil.AppModuleBasic)
 	rootCmd.AddCommand(
 		genutilcli.InitCmd(app.ModuleBasicManager, app.DefaultNodeHome),
-		//genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, app.DefaultNodeHome, gentxModule.GenTxValidator),
+		genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, app.DefaultNodeHome, gentxModule.GenTxValidator, address.NewBech32Codec(
+			sdk.GetConfig().GetBech32ValidatorAddrPrefix(),
+		)),
 		genutilcli.MigrateGenesisCmd(nil),
-		// genutilcli.GenTxCmd(
-		// 	app.ModuleBasicManager,
-		// 	encodingConfig.TxConfig,
-		// 	banktypes.GenesisBalancesIterator{},
-		// 	app.DefaultNodeHome,
-
-		// ),
+		genutilcli.GenTxCmd(
+			app.ModuleBasicManager,
+			encodingConfig.TxConfig,
+			banktypes.GenesisBalancesIterator{},
+			app.DefaultNodeHome,
+			address.Bech32Codec{
+				Bech32Prefix: sdk.GetConfig().GetBech32AccountAddrPrefix(),
+			},
+		),
 		genutilcli.ValidateGenesisCmd(app.ModuleBasicManager),
 		AddGenesisAccountCmd(app.DefaultNodeHome),
-		tmcli.NewCompletionCmd(rootCmd, true),
-		debug.Cmd(),
-		//config.Cmd(),
+		//cmtcmd.NewCompletionCmd(rootCmd, true),
+		//debug.Cmd(),
+		confixcmd.ConfigCommand(),
 		// this line is used by starport scaffolding # root/commands
 	)
 
@@ -376,4 +406,20 @@ func initAppConfig() (string, interface{}) {
 	customAppTemplate := serverconfig.DefaultConfigTemplate
 
 	return customAppTemplate, customAppConfig
+}
+
+type AppOptionsMap map[string]interface{}
+
+func (m AppOptionsMap) Get(key string) interface{} {
+	v, ok := m[key]
+	if !ok {
+		return interface{}(nil)
+	}
+
+	return v
+}
+func NewAppOptionsWithFlagHome(homePath string) servertypes.AppOptions {
+	return AppOptionsMap{
+		flags.FlagHome: homePath,
+	}
 }
