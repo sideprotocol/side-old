@@ -154,7 +154,11 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 func (AppModule) ConsensusVersion() uint64 { return 1 }
 
 // BeginBlock contains the logic that is automatically triggered at the beginning of each block
-func (am AppModule) BeginBlocker(ctx sdk.Context) (sdk.BeginBlock, error)
+func (am AppModule) BeginBlocker(ctx sdk.Context) (sdk.BeginBlock, error) {
+	return sdk.BeginBlock{}, nil
+}
 
 // EndBlock contains the logic that is automatically triggered at the end of each block
-func (am AppModule) EndBlock(ctx sdk.Context) (sdk.EndBlock, error)
+func (am AppModule) EndBlock(ctx sdk.Context) (sdk.EndBlock, error) {
+	return sdk.EndBlock{}, nil
+}
