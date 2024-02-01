@@ -171,7 +171,7 @@ func setup(withGenesis bool, invCheckPeriod uint) (*App, GenesisState) {
 		db,
 		nil, true, map[int64]bool{}, DefaultNodeHome, invCheckPeriod, encCdc, appOptions)
 	if withGenesis {
-		return app, NewDefaultGenesisState(encCdc.Marshaler)
+		return app, app.DefaultGenesis()
 	}
 	return app, GenesisState{}
 }

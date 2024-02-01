@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"bufio"
-	"encoding/json"
 	"errors"
 	"fmt"
+
+	cmtjson "github.com/cometbft/cometbft/libs/json"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -171,7 +172,7 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 
 			appState[banktypes.ModuleName] = bankGenStateBz
 
-			appStateJSON, err := json.Marshal(appState)
+			appStateJSON, err := cmtjson.Marshal(appState)
 			if err != nil {
 				return fmt.Errorf("failed to marshal application genesis state: %w", err)
 			}

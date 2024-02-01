@@ -107,7 +107,7 @@ func BenchmarkSimulation(b *testing.B) {
 		simtestutil.AppStateFn(
 			bApp.AppCodec(),
 			bApp.SimulationManager(),
-			app.NewDefaultGenesisState(bApp.AppCodec()),
+			app.ModuleBasicManager.DefaultGenesis(bApp.AppCodec()),
 		),
 		simulationtypes.RandomAccounts,
 		simtestutil.SimulationOperations(bApp, bApp.AppCodec(), config),
@@ -187,7 +187,7 @@ func TestAppStateDeterminism(t *testing.T) {
 				simtestutil.AppStateFn(
 					bApp.AppCodec(),
 					bApp.SimulationManager(),
-					app.NewDefaultGenesisState(bApp.AppCodec()),
+					app.ModuleBasicManager.DefaultGenesis(bApp.AppCodec()),
 				),
 				simulationtypes.RandomAccounts,
 				simtestutil.SimulationOperations(bApp, bApp.AppCodec(), config),
@@ -261,7 +261,7 @@ func TestAppImportExport(t *testing.T) {
 		simtestutil.AppStateFn(
 			bApp.AppCodec(),
 			bApp.SimulationManager(),
-			app.NewDefaultGenesisState(bApp.AppCodec()),
+			app.ModuleBasicManager.DefaultGenesis(bApp.AppCodec()),
 		),
 		simulationtypes.RandomAccounts,
 		simtestutil.SimulationOperations(bApp, bApp.AppCodec(), config),
@@ -415,7 +415,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 		simtestutil.AppStateFn(
 			bApp.AppCodec(),
 			bApp.SimulationManager(),
-			app.NewDefaultGenesisState(bApp.AppCodec()),
+			app.ModuleBasicManager.DefaultGenesis(bApp.AppCodec()),
 		),
 		simulationtypes.RandomAccounts,
 		simtestutil.SimulationOperations(bApp, bApp.AppCodec(), config),
@@ -486,7 +486,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 		simtestutil.AppStateFn(
 			bApp.AppCodec(),
 			bApp.SimulationManager(),
-			app.NewDefaultGenesisState(bApp.AppCodec()),
+			app.ModuleBasicManager.DefaultGenesis(bApp.AppCodec()),
 		),
 		simulationtypes.RandomAccounts,
 		simtestutil.SimulationOperations(newApp, newApp.AppCodec(), config),

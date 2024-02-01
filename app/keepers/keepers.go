@@ -131,7 +131,6 @@ func (appKeepers *AppKeepers) InitSpecialKeepers(
 	appCodec codec.Codec,
 	bApp *baseapp.BaseApp,
 	cdc *codec.LegacyAmino,
-	invCheckPeriod uint,
 	skipUpgradeHeights map[int64]bool,
 	homePath string,
 
@@ -167,19 +166,6 @@ func (appKeepers *AppKeepers) InitSpecialKeepers(
 	appKeepers.ScopedICAHostKeeper = appKeepers.CapabilityKeeper.ScopeToModule(icahosttypes.SubModuleName)
 	appKeepers.ScopedTransferKeeper = appKeepers.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
 
-	// TODO: Make a SetInvCheckPeriod fn on CrisisKeeper.
-	// IMO, its bad design atm that it requires this in state machine initialization
-	crisisKeeper := crisiskeeper.NewKeeper(
-		appCodec,
-		runtime.NewKVStoreService(appKeepers.keys[crisistypes.StoreKey]),
-		invCheckPeriod,
-		appKeepers.BankKeeper,
-		authtypes.FeeCollectorName,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
-		appKeepers.AccountKeeper.AddressCodec(),
-	)
-
-	appKeepers.CrisisKeeper = crisisKeeper
 }
 
 // InitNormalKeepers initializes all 'normal' keepers (account, app, bank, auth, staking, distribution, slashing, transfer, gamm, IBC router, pool incentives, governance, mint, txfees keepers).
@@ -193,20 +179,11 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 	wasmOpts []wasmkeeper.Option,
 	blockedAddress map[string]bool,
 	logger log.Logger,
+	invCheckPeriod uint,
 ) {
 	legacyAmino := encodingConfig.Amino
 
 	// add keepers
-
-	appKeepers.AccountKeeper = authkeeper.NewAccountKeeper(
-		appCodec,
-		runtime.NewKVStoreService(appKeepers.keys[authtypes.StoreKey]),
-		authtypes.ProtoBaseAccount,
-		maccPerms,
-		authcodec.NewBech32Codec(sdk.GetConfig().GetBech32AccountAddrPrefix()),
-		sdk.GetConfig().GetBech32AccountAddrPrefix(),
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
-	)
 	appKeepers.AccountKeeper = authkeeper.NewAccountKeeper(
 		appCodec,
 		runtime.NewKVStoreService(appKeepers.keys[authtypes.StoreKey]),
@@ -287,6 +264,20 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		appKeepers.AccountKeeper,
 		groupConfig,
 	)
+
+	// TODO: Make a SetInvCheckPeriod fn on CrisisKeeper.
+	// IMO, its bad design atm that it requires this in state machine initialization
+	crisisKeeper := crisiskeeper.NewKeeper(
+		appCodec,
+		runtime.NewKVStoreService(appKeepers.keys[crisistypes.StoreKey]),
+		invCheckPeriod,
+		appKeepers.BankKeeper,
+		authtypes.FeeCollectorName,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		appKeepers.AccountKeeper.AddressCodec(),
+	)
+
+	appKeepers.CrisisKeeper = crisisKeeper
 
 	// Create IBC Keeper
 	appKeepers.IBCKeeper = ibckeeper.NewKeeper(

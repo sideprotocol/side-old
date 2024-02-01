@@ -13,6 +13,7 @@ import (
 	"cosmossdk.io/log"
 	evidencetypes "cosmossdk.io/x/evidence/types"
 	"cosmossdk.io/x/feegrant"
+	"cosmossdk.io/x/tx/signing"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	abci "github.com/cometbft/cometbft/abci/types"
 	tmos "github.com/cometbft/cometbft/libs/os"
@@ -22,6 +23,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/grpc/cmtservice"
 	nodeservice "github.com/cosmos/cosmos-sdk/client/grpc/node"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/address"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/runtime"
 	runtimeservices "github.com/cosmos/cosmos-sdk/runtime/services"
@@ -34,6 +36,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	authsims "github.com/cosmos/cosmos-sdk/x/auth/simulation"
+	"github.com/cosmos/cosmos-sdk/x/auth/tx"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
@@ -75,7 +78,10 @@ import (
 
 	// upgrades
 	"cosmossdk.io/client/v2/autocli"
+	"github.com/cosmos/cosmos-sdk/std"
+	"github.com/cosmos/cosmos-sdk/types/msgservice"
 	authcodec "github.com/cosmos/cosmos-sdk/x/auth/codec"
+	"github.com/cosmos/gogoproto/proto"
 	"github.com/sideprotocol/side/app/keepers"
 	v1 "github.com/sideprotocol/side/app/upgrades/v1"
 )
@@ -149,10 +155,26 @@ func New(
 	appOpts servertypes.AppOptions,
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) *App {
-	appCodec := encodingConfig.Marshaler
+
 	cdc := encodingConfig.Amino
-	interfaceRegistry := encodingConfig.InterfaceRegistry
-	txConfig := encodingConfig.TxConfig
+	interfaceRegistry, _ := types.NewInterfaceRegistryWithOptions(types.InterfaceRegistryOptions{
+		ProtoFiles: proto.HybridResolver,
+		SigningOptions: signing.Options{
+			AddressCodec: address.Bech32Codec{
+				Bech32Prefix: sdk.GetConfig().GetBech32AccountAddrPrefix(),
+			},
+			ValidatorAddressCodec: address.Bech32Codec{
+				Bech32Prefix: sdk.GetConfig().GetBech32ValidatorAddrPrefix(),
+			},
+		},
+	
+	})
+	appCodec := codec.NewProtoCodec(interfaceRegistry)
+	legacyAmino := codec.NewLegacyAmino()
+	txConfig := tx.NewTxConfig(appCodec, tx.DefaultSignModes)
+
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterInterfaces(interfaceRegistry)
 
 	bApp := baseapp.NewBaseApp(
 		Name,
@@ -185,11 +207,15 @@ func New(
 		panic(fmt.Sprintf("error while reading wasm config: %s", err))
 	}
 
+	// register streaming services
+	if err := bApp.RegisterStreamingServices(appOpts, app.GetKVStoreKey()); err != nil {
+		panic(err)
+	}
+
 	app.InitSpecialKeepers(
 		appCodec,
 		bApp,
 		cdc,
-		invCheckPeriod,
 		skipUpgradeHeights,
 		homePath,
 	)
@@ -205,6 +231,7 @@ func New(
 		wasmOpts,
 		app.BlockedAddrs(),
 		logger,
+		invCheckPeriod,
 	)
 
 	/**** Module Hooks ****/
@@ -229,6 +256,9 @@ func New(
 	)
 	ModuleManager = app.mm
 	ModuleBasicManager = app.bm
+
+	app.bm.RegisterLegacyAminoCodec(legacyAmino)
+	app.bm.RegisterInterfaces(interfaceRegistry)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
 	// there is nothing left over in the validator fee pool, so as to keep the
@@ -278,7 +308,7 @@ func New(
 		gmmmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	}
-	app.mm.SetOrderInitGenesis(OrderInitGenesis()...)
+	app.mm.SetOrderInitGenesis(genesisModuleOrder...)
 	app.mm.SetOrderExportGenesis(genesisModuleOrder...)
 
 	// Uncomment if you want to set a custom migration order here.
@@ -326,6 +356,18 @@ func New(
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
 	app.SetEndBlocker(app.EndBlocker)
+
+	protoFiles, err := proto.MergedRegistry()
+	if err != nil {
+		panic(err)
+	}
+	err = msgservice.ValidateProtoAnnotations(protoFiles)
+	if err != nil {
+		// Once we switch to using protoreflect-based antehandlers, we might
+		// want to panic here instead of logging a warning.
+		fmt.Fprintln(os.Stderr, err.Error())
+	}
+
 	if loadLatest {
 		if err := app.LoadLatestVersion(); err != nil {
 			tmos.Exit(err.Error())
@@ -496,7 +538,6 @@ func (app *App) setupUpgradeStoreLoaders() {
 
 func (app *App) setupUpgradeHandlers() {
 	for _, upgrade := range Upgrades {
-		fmt.Println("upgrades==>", upgrade)
 		app.UpgradeKeeper.SetUpgradeHandler(
 			upgrade.UpgradeName,
 			upgrade.CreateUpgradeHandler(
@@ -506,8 +547,6 @@ func (app *App) setupUpgradeHandlers() {
 			),
 		)
 	}
-	plans1, _ := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
-	fmt.Println("registered plan", plans1)
 }
 
 // AutoCliOpts returns the autocli options for the app.
@@ -533,5 +572,5 @@ func (app *App) AutoCliOpts() autocli.AppOptions {
 
 // DefaultGenesis returns a default genesis from the registered AppModuleBasic's.
 func (a *App) DefaultGenesis() map[string]json.RawMessage {
-	return ModuleBasicManager.DefaultGenesis(a.appCodec)
+	return a.bm.DefaultGenesis(a.appCodec)
 }

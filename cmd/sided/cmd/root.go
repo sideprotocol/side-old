@@ -13,8 +13,10 @@ import (
 	"cosmossdk.io/store/snapshots"
 	cmtcfg "github.com/cometbft/cometbft/config"
 
+	//"github.com/cometbft/cometbft/libs/json"
+
 	//cmtcmd "github.com/cometbft/cometbft/cmd"
-	tmtypes "github.com/cometbft/cometbft/types"
+	//tmtypes "github.com/cometbft/cometbft/types"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -100,10 +102,10 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 		nil,
 		true,
 		make(map[int64]bool),
-		"",
+		app.DefaultNodeHome,
 		uint(1),
 		encodingConfig,
-		NewAppOptionsWithFlagHome(""),
+		NewAppOptionsWithFlagHome(app.DefaultNodeHome),
 	)
 
 	// add keyring to autocli opts
@@ -286,16 +288,25 @@ func (a appCreator) newApp(
 	}
 
 	homeDir := cast.ToString(appOpts.Get(flags.FlagHome))
-	chainID := cast.ToString(appOpts.Get(flags.FlagChainID))
-	if chainID == "" {
-		// fallback to genesis chain-id
-		appGenesis, err := tmtypes.GenesisDocFromFile(filepath.Join(homeDir, "config", "genesis.json"))
-		if err != nil {
-			panic(err)
-		}
+	_ = homeDir
+	chainID := "side-devnet-1" //cast.ToString(appOpts.Get(flags.FlagChainID))
+	// if chainID == "" {
+	// 	fmt.Println("hello happen issue here?")
+	// 	// fallback to genesis chain-id
+	// 	jsonBlob, err := os.ReadFile(filepath.Join(homeDir, "config", "genesis.json"))
+	// 	if err != nil {
+	// 		panic(err)
+	// 	}
+	// 	var genesis types.GenesisState
+	// 	data := json.Unmarshal(jsonBlob, &genesis)
+	// 	fmt.Println("data===>:", data)
+	// 	appGenesis, err := tmtypes.GenesisDocFromFile(filepath.Join(homeDir, "config", "genesis.json"))
+	// 	if err != nil {
+	// 		panic(err)
+	// 	}
 
-		chainID = appGenesis.ChainID
-	}
+	// 	chainID = appGenesis.ChainID
+	// }
 
 	snapshotDir := filepath.Join(cast.ToString(appOpts.Get(flags.FlagHome)), "data", "snapshots")
 	snapshotDB, err := dbm.NewDB("metadata", dbm.GoLevelDBBackend, snapshotDir)
