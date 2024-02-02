@@ -165,6 +165,7 @@ func (appKeepers *AppKeepers) InitSpecialKeepers(
 	appKeepers.ScopedIBCKeeper = appKeepers.CapabilityKeeper.ScopeToModule(ibcexported.ModuleName)
 	appKeepers.ScopedICAHostKeeper = appKeepers.CapabilityKeeper.ScopeToModule(icahosttypes.SubModuleName)
 	appKeepers.ScopedTransferKeeper = appKeepers.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
+	appKeepers.scopedWasmKeeper = appKeepers.CapabilityKeeper.ScopeToModule(wasm.ModuleName)
 
 	// TODO: Make a SetInvCheckPeriod fn on CrisisKeeper.
 	// IMO, its bad design atm that it requires this in state machine initialization
@@ -186,7 +187,6 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 	blockedAddress map[string]bool,
 ) {
 	legacyAmino := encodingConfig.Amino
-
 	// add keepers
 	appKeepers.AccountKeeper = authkeeper.NewAccountKeeper(
 		appCodec,
@@ -277,7 +277,6 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		appKeepers.UpgradeKeeper,
 		appKeepers.ScopedIBCKeeper,
 	)
-
 	// IBC Fee Module keeper
 	appKeepers.IBCFeeKeeper = ibcfeekeeper.NewKeeper(
 		appCodec, appKeepers.keys[ibcfeetypes.StoreKey],
