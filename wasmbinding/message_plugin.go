@@ -39,9 +39,9 @@ func (m *CustomMessenger) DispatchMsg(ctx sdk.Context, contractAddr sdk.AccAddre
 	if msg.Custom != nil {
 		// only handle the happy path where this is really creating / minting / swapping ...
 		// leave everything else for the wrapped version
-		var contractMsg bindings.OsmosisMsg
+		var contractMsg bindings.SideMsg
 		if err := json.Unmarshal(msg.Custom, &contractMsg); err != nil {
-			return nil, nil, errorsmod.Wrap(err, "osmosis msg")
+			return nil, nil, errorsmod.Wrap(err, "side msg")
 		}
 		if contractMsg.Swap != nil {
 			return m.swap(ctx, contractAddr, contractMsg.Swap)

@@ -5,7 +5,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-type OsmosisMsg struct {
+type SideMsg struct {
 	/// Contracts can create swap using gmm pools
 	Swap *Swap `json:"swap,omitempty"`
 }
