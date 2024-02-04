@@ -34,6 +34,7 @@ require (
 	github.com/99designs/keyring v1.2.1 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
 	github.com/ChainSafe/go-schnorrkel v1.0.0 // indirect
+	github.com/CosmWasm/wasmvm v1.2.4 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/aws/aws-sdk-go v1.44.203 // indirect
@@ -210,7 +211,6 @@ require (
 	cosmossdk.io/errors v1.0.1
 	cosmossdk.io/math v1.2.0
 	github.com/CosmWasm/wasmd v0.40.1
-	github.com/CosmWasm/wasmvm v1.2.4
 	github.com/Stride-Labs/stride/v16 v16.0.0
 	github.com/bufbuild/buf v1.7.0
 	github.com/cosmos/cosmos-proto v1.0.0-beta.2
