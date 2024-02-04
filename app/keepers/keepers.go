@@ -389,7 +389,7 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 
 	// Create Wasmd Keepers
 	// this line is used by starport scaffolding # stargate/app/scopedKeeper
-	//availableCapabilities := strings.Join(AllCapabilities(), ",")
+	// availableCapabilities := strings.Join(AllCapabilities(), ",")
 	appKeepers.WasmKeeper = wasmkeeper.NewKeeper(
 		appCodec,
 		appKeepers.keys[wasmtypes.StoreKey],

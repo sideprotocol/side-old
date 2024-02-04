@@ -2,7 +2,7 @@ package bindings
 
 // SideQuery contains osmosis custom queries.
 type SideQuery struct {
-	//Pool   *Pool   `json:"pool,omitempty"`
+	// Pool   *Pool   `json:"pool,omitempty"`
 	Params *Params `json:"params,omitempty"`
 }
 

@@ -11,7 +11,7 @@ type SideMsg struct {
 }
 
 type Swap struct {
-	PoolId   string      `json:"pool_id"`
+	PoolID   string      `json:"pool_id"`
 	TokenIn  sdk.Coin    `json:"token_in"`
 	TokenOut sdk.Coin    `json:"token_out"`
 	Slippage sdkmath.Int `json:"slippage"`

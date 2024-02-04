@@ -41,7 +41,7 @@ func CustomQuerier(qp *QueryPlugin) func(ctx sdk.Context, request json.RawMessag
 
 // ConvertProtoToJsonMarshal  unmarshals the given bytes into a proto message and then marshals it to json.
 // This is done so that clients calling stargate queries do not need to define their own proto unmarshalers,
-// being able to use response directly by json marshalling, which is supported in cosmwasm.
+// being able to use response directly by json marshaling, which is supported in cosmwasm.
 func ConvertProtoToJSONMarshal(protoResponseType codec.ProtoMarshaler, bz []byte, cdc codec.Codec) ([]byte, error) {
 	// unmarshal binary into stargate response data structure
 	err := cdc.Unmarshal(bz, protoResponseType)

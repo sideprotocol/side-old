@@ -60,14 +60,14 @@ func (m *CustomMessenger) swap(ctx sdk.Context, contractAddr sdk.AccAddress, cre
 }
 
 // PerformSwap is used with swap to swap a token denom; validates the msgSwap.
-func PerformSwap(f *gmmkeeper.Keeper, b *bankkeeper.Keeper, ctx sdk.Context, contractAddr sdk.AccAddress, swap *bindings.Swap) error {
+func PerformSwap(f *gmmkeeper.Keeper, _ *bankkeeper.Keeper, ctx sdk.Context, contractAddr sdk.AccAddress, swap *bindings.Swap) error {
 	if swap == nil {
 		return wasmvmtypes.InvalidRequest{Err: "swap token null swap token"}
 	}
 
 	msgServer := gmmkeeper.NewMsgServerImpl(*f)
 
-	msgSwap := gmmtypes.NewMsgSwap(contractAddr.String(), swap.PoolId, swap.TokenIn, swap.TokenOut, swap.Slippage)
+	msgSwap := gmmtypes.NewMsgSwap(contractAddr.String(), swap.PoolID, swap.TokenIn, swap.TokenOut, swap.Slippage)
 
 	if err := msgSwap.ValidateBasic(); err != nil {
 		return errorsmod.Wrap(err, "failed validating MsgSwap")
