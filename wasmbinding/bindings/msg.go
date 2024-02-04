@@ -1,6 +1,9 @@
 package bindings
 
-import sdk "github.com/cosmos/cosmos-sdk/types"
+import (
+	sdkmath "cosmossdk.io/math"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
 
 type OsmosisMsg struct {
 	/// Contracts can create swap using gmm pools
@@ -8,7 +11,8 @@ type OsmosisMsg struct {
 }
 
 type Swap struct {
-	PoolId   string   `json:"pool_id"`
-	TokenIn  sdk.Coin `json:"token_in"`
-	TokenOut sdk.Coin `json:"token_out"`
+	PoolId   string      `json:"pool_id"`
+	TokenIn  sdk.Coin    `json:"token_in"`
+	TokenOut sdk.Coin    `json:"token_out"`
+	Slippage sdkmath.Int `json:"slippage"`
 }

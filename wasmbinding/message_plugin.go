@@ -67,7 +67,7 @@ func PerformSwap(f *gmmkeeper.Keeper, b *bankkeeper.Keeper, ctx sdk.Context, con
 
 	msgServer := gmmkeeper.NewMsgServerImpl(*f)
 
-	msgSwap := gmmtypes.NewMsgSwap(contractAddr.String(), swap.PoolId, swap.TokenIn, swap.TokenOut)
+	msgSwap := gmmtypes.NewMsgSwap(contractAddr.String(), swap.PoolId, swap.TokenIn, swap.TokenOut, swap.Slippage)
 
 	if err := msgSwap.ValidateBasic(); err != nil {
 		return errorsmod.Wrap(err, "failed validating MsgSwap")
