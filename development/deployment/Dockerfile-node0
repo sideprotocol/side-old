@@ -7,6 +7,11 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get dist-upgrade -y
 WORKDIR /app
 
+# export HOME=/home/ubuntu/
+# export DAEMON_HOME=/home/ubuntu/app
+# export DAEMON_NAME=sided
+# export DAEMON_ALLOW_DOWNLOAD_BINARIES=true
+
 ENV HOME=/app
 ENV DAEMON_HOME=/app
 ENV DAEMON_NAME=sidechaind

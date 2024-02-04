@@ -16,12 +16,15 @@ func NewMsgSwap(
 	sender, poolID string,
 	tokenIn sdk.Coin,
 	tokenOut sdk.Coin,
+	slippage sdkmath.Int,
 ) *MsgSwap {
+
 	return &MsgSwap{
 		Sender:   sender,
 		PoolId:   poolID,
 		TokenIn:  tokenIn,
 		TokenOut: tokenOut,
+		Slippage: slippage,
 	}
 }
 

@@ -7,7 +7,6 @@ import (
 	yieldmoduletypes "github.com/sideprotocol/side/x/yield/types"
 )
 
-// UpgradeName defines the on-chain upgrade name for the Osmosis v21 upgrade.
 const (
 	UpgradeName = "v01"
 )
