@@ -130,6 +130,17 @@ func (p *Pool) GetAssetList() []PoolAsset {
 	return nil
 }
 
+func (p *Pool) GetTokens() []sdk.Coin {
+	assets := make([]sdk.Coin, 0)
+	if p != nil {
+		for _, asset := range p.Assets {
+			assets = append(assets, asset.Token)
+		}
+		return assets
+	}
+	return nil
+}
+
 func (p *Pool) GetLiquidity() sdk.Coins {
 	assets := sdk.NewCoins()
 	if p != nil {

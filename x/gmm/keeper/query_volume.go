@@ -9,16 +9,20 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) Volume24(goCtx context.Context, req *types.QueryPoolRequest) (*types.QueryPoolResponse, error) {
+func (k Keeper) Volume24(goCtx context.Context, req *types.QueryVolumeRequest) (*types.QueryVolumeResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	pool, found := k.GetPool(ctx, req.PoolId)
-	if !found {
-		return &types.QueryPoolResponse{}, types.ErrPoolNotFound
-	}
+	volumes := k.GetVolume24(ctx, req.PoolId)
+	return &types.QueryVolumeResponse{Volumes: volumes}, nil
+}
 
-	poolI := convertPoolForWasm(pool)
-	return &types.QueryPoolResponse{Pool: &poolI}, nil
+func (k Keeper) TotalVolume(goCtx context.Context, req *types.QueryVolumeRequest) (*types.QueryVolumeResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	volumes := k.GetVolume24(ctx, req.PoolId)
+	return &types.QueryVolumeResponse{Volumes: volumes}, nil
 }

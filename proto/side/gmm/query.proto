@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "side/gmm/params.proto";
 import "side/gmm/pool.proto"; 
+import "cosmos/base/v1beta1/coin.proto"; 
 
 option go_package = "github.com/sideprotocol/side/x/gmm/types";
 
@@ -27,8 +28,12 @@ service Query {
     option (google.api.http).get = "/sideprotocol/side/gmm/pool/{pool_id}";
   }
 
-  rpc Volume24    (QueryVolume24Request) returns (QueryPoolResponse) {
-    option (google.api.http).get = "/sideprotocol/side/gmm/volume24/{pool_id}";
+  rpc Volume24    (QueryVolumeRequest) returns (QueryVolumeResponse) {
+    option (google.api.http).get = "/sideprotocol/side/gmm/volume/day/{pool_id}";
+  }
+
+  rpc TotalVolume    (QueryVolumeRequest) returns (QueryVolumeResponse) {
+    option (google.api.http).get = "/sideprotocol/side/gmm/volume/total/{pool_id}";
   }
 }
 
@@ -68,13 +73,12 @@ message QueryPoolsResponse {
   cosmos.base.query.v1beta1.PageResponse pagination            = 2;
 }
 
-message QueryVolume24Request {
+message QueryVolumeRequest {
   string pool_id = 1;
 }
 
-message QueryVolume24Response {
+message QueryVolumeResponse {
   repeated cosmos.base.v1beta1.Coin volumes = 1 [
-    (gogoproto.moretags) = "yaml:\"total_shares\"",
     (gogoproto.nullable) = false
   ];
 }

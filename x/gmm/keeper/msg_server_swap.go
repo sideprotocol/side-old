@@ -61,6 +61,6 @@ func (k msgServer) Swap(goCtx context.Context, msg *types.MsgSwap) (*types.MsgSw
 	// Save pool.
 	k.SetPool(ctx, pool)
 	// Observe volume
-	err = k.ObserveVolumeFromPool(ctx, pool)
+	err = k.ObserveVolumeFromPool(ctx, pool.PoolId, msg.TokenIn, out)
 	return &types.MsgSwapResponse{}, err
 }
