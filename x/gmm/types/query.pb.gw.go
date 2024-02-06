@@ -268,7 +268,7 @@ func local_request_Query_Volume24_0(ctx context.Context, marshaler runtime.Marsh
 }
 
 func request_Query_TotalVolume_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryVolumeRequest
+	var protoReq QueryTotalVolumeRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -295,7 +295,7 @@ func request_Query_TotalVolume_0(ctx context.Context, marshaler runtime.Marshale
 }
 
 func local_request_Query_TotalVolume_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryVolumeRequest
+	var protoReq QueryTotalVolumeRequest
 	var metadata runtime.ServerMetadata
 
 	var (

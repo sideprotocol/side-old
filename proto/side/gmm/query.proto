@@ -32,7 +32,7 @@ service Query {
     option (google.api.http).get = "/sideprotocol/side/gmm/volume/day/{pool_id}";
   }
 
-  rpc TotalVolume    (QueryVolumeRequest) returns (QueryVolumeResponse) {
+  rpc TotalVolume    (QueryTotalVolumeRequest) returns (QueryTotalVolumeResponse) {
     option (google.api.http).get = "/sideprotocol/side/gmm/volume/total/{pool_id}";
   }
 }
@@ -78,6 +78,16 @@ message QueryVolumeRequest {
 }
 
 message QueryVolumeResponse {
+  repeated cosmos.base.v1beta1.Coin volumes = 1 [
+    (gogoproto.nullable) = false
+  ];
+}
+
+message QueryTotalVolumeRequest {
+  string pool_id = 1;
+}
+
+message QueryTotalVolumeResponse {
   repeated cosmos.base.v1beta1.Coin volumes = 1 [
     (gogoproto.nullable) = false
   ];

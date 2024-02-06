@@ -31,7 +31,7 @@ func CmdQueryVolume() *cobra.Command {
 				}
 				return clientCtx.PrintProto(res)
 			} else if args[1] == "total" {
-				res, err := queryClient.TotalVolume(cmd.Context(), &types.QueryVolumeRequest{
+				res, err := queryClient.TotalVolume(cmd.Context(), &types.QueryTotalVolumeRequest{
 					PoolId: args[0],
 				})
 				if err != nil {
