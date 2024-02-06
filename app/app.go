@@ -487,7 +487,6 @@ func (app *App) setupUpgradeStoreLoaders() {
 
 func (app *App) setupUpgradeHandlers() {
 	for _, upgrade := range Upgrades {
-		fmt.Println("upgrades==>", upgrade)
 		app.UpgradeKeeper.SetUpgradeHandler(
 			upgrade.UpgradeName,
 			upgrade.CreateUpgradeHandler(
@@ -497,6 +496,4 @@ func (app *App) setupUpgradeHandlers() {
 			),
 		)
 	}
-	plans1, _ := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
-	fmt.Println("registered plan", plans1)
 }

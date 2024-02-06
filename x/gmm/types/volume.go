@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+	"sort"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -34,6 +35,9 @@ func (v *VolumeStack) Encode() ([]byte, error) {
 }
 
 func (v *VolumeStack) Decode(data []byte) error {
+	if len(data) == 0 {
+		return nil
+	}
 	return json.Unmarshal(data, v)
 }
 
@@ -44,26 +48,35 @@ func (vs *VolumeStack) Observe(ctx sdk.Context, poolID string, newSwap sdk.Coins
 	// Update total volume
 	vs.TotalVolume = vs.TotalVolume.Add(newSwap...)
 
-	// Check and update if a recent entry (24 hours) exists
-	updated := false
-	for i := range vs.Data {
-		if vs.Data[i].PoolID == poolID && blockTime-vs.Data[i].BlockTime < SecondsIn24Hours {
-			vs.Data[i].Volume = vs.Data[i].Volume.Add(newSwap...)
-			updated = true
-			break
-		}
+	// Add new data
+	newData := VolumeData{
+		PoolID:    poolID,
+		BlockTime: blockTime,
+		Volume:    newSwap,
 	}
+	vs.Data = append(vs.Data, newData)
 
-	if !updated {
-		// Add new data or replace the oldest if stack is full
-		newData := VolumeData{
-			PoolID:    poolID,
-			BlockTime: blockTime,
-			Volume:    newSwap,
+	// Sort data based on BlockTime
+	sort.Slice(vs.Data, func(i, j int) bool {
+		return vs.Data[i].BlockTime < vs.Data[j].BlockTime
+	})
+
+	// Purge data older than 24 hours
+	currentTime := ctx.BlockTime().Unix()
+	cutoffTime := currentTime - SecondsIn24Hours
+	vs.Data = filter(vs.Data, func(vd VolumeData) bool {
+		return vd.BlockTime >= cutoffTime
+	})
+}
+
+func filter(vs []VolumeData, f func(VolumeData) bool) []VolumeData {
+	vsf := make([]VolumeData, 0)
+	for _, v := range vs {
+		if f(v) {
+			vsf = append(vsf, v)
 		}
-		vs.Data[vs.Top] = newData
-		vs.Top = (vs.Top + 1) % MaxObservations
 	}
+	return vsf
 }
 
 // Calculate24HourVolume calculates the volume for the last 24 hours.

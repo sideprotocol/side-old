@@ -10,7 +10,7 @@ func (k Keeper) ObserveVolumeFromPool(ctx sdk.Context, poolID string, tokenIn, t
 	// Get Asset from pool
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPoolVolumePrefix)
 	rawVolumeStack := store.Get([]byte(poolID))
-	var volumeStack types.VolumeStack
+	volumeStack := types.NewVolumeStack()
 	err := volumeStack.Decode(rawVolumeStack)
 	if err != nil {
 		return err
