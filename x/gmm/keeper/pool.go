@@ -38,13 +38,11 @@ func (k Keeper) initializePool(ctx sdk.Context, msg *types.MsgCreatePool) (*stri
 	}
 
 	// Move asset from Sender to module account
-
 	if err := k.LockTokens(ctx, pool.PoolId, msg.PoolCreator(), msg.InitialLiquidity()); err != nil {
 		return nil, err
 	}
 
 	// Register metadata to bank keeper
-
 	k.bankKeeper.SetDenomMetaData(ctx, banktypes.Metadata{
 		Description: fmt.Sprintf("The share token of the gamm pool %s", pool.GetPoolId()),
 		DenomUnits: []*banktypes.DenomUnit{
