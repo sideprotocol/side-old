@@ -38,7 +38,6 @@ func (k Keeper) GetVolume24(ctx sdk.Context, poolID string) []sdk.Coin {
 	if err != nil {
 		return []sdk.Coin{}
 	}
-
 	return volumeStack.Calculate24HourVolume(ctx, poolID)
 }
 

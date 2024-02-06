@@ -22,7 +22,8 @@ func CmdQueryVolume() *cobra.Command {
 			}
 
 			queryClient := types.NewQueryClient(clientCtx)
-			if args[1] == "day" {
+			switch args[1] {
+			case "day":
 				res, err := queryClient.Volume24(cmd.Context(), &types.QueryVolumeRequest{
 					PoolId: args[0],
 				})
@@ -30,7 +31,7 @@ func CmdQueryVolume() *cobra.Command {
 					return err
 				}
 				return clientCtx.PrintProto(res)
-			} else if args[1] == "total" {
+			case "total":
 				res, err := queryClient.TotalVolume(cmd.Context(), &types.QueryTotalVolumeRequest{
 					PoolId: args[0],
 				})
@@ -38,7 +39,7 @@ func CmdQueryVolume() *cobra.Command {
 					return err
 				}
 				return clientCtx.PrintProto(res)
-			} else {
+			default:
 				return fmt.Errorf("invalid volume type")
 			}
 		},

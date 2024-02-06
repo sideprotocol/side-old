@@ -18,7 +18,6 @@ func NewMsgSwap(
 	tokenOut sdk.Coin,
 	slippage sdkmath.Int,
 ) *MsgSwap {
-
 	return &MsgSwap{
 		Sender:   sender,
 		PoolId:   poolID,
