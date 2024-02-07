@@ -15,7 +15,6 @@ func (k Keeper) ObserveVolumeFromPool(ctx sdk.Context, poolID string, tokenIn, t
 	if err != nil {
 		return err
 	}
-
 	volumeStack.Observe(ctx, poolID, sdk.NewCoins(tokenIn, tokenOut))
 	result, err := volumeStack.Encode()
 	if err != nil {

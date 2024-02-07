@@ -35,6 +35,10 @@ service Query {
   rpc TotalVolume    (QueryTotalVolumeRequest) returns (QueryTotalVolumeResponse) {
     option (google.api.http).get = "/sideprotocol/side/gmm/volume/total/{pool_id}";
   }
+
+  rpc APR    (QueryAPRRequest) returns (QueryAPRResponse) {
+    option (google.api.http).get = "/sideprotocol/side/gmm/apr/{pool_id}";
+  }
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -89,6 +93,16 @@ message QueryTotalVolumeRequest {
 
 message QueryTotalVolumeResponse {
   repeated cosmos.base.v1beta1.Coin volumes = 1 [
+    (gogoproto.nullable) = false
+  ];
+}
+
+message QueryAPRRequest {
+  string pool_id = 1;
+}
+
+message QueryAPRResponse {
+  repeated cosmos.base.v1beta1.Coin apr = 1 [
     (gogoproto.nullable) = false
   ];
 }

@@ -26,7 +26,7 @@ var (
 	KeyCurrentPoolCountPrefix = []byte{0x03}
 	KeyPoolIDToCountPrefix    = []byte{0x04}
 	KeyPoolVolumePrefix       = []byte{0x05}
-	KeyPoolTVLPrefix          = []byte{0x06}
+	KeyPoolAPRPrefix          = []byte{0x06}
 )
 
 func KeyPrefix(p string) []byte {
