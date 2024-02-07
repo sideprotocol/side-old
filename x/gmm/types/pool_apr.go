@@ -37,9 +37,9 @@ func (pa *PoolAPR) CalcAPR(ctx sdk.Context, tvl map[string]PoolAsset) sdk.Coins 
 	var apr sdk.Coins
 	for _, coin := range pa.Fees {
 		interval := (pa.CreatedAt - ctx.BlockTime().Unix())
-		avg := coin.Amount.Mul(sdkmath.NewInt(int64(oneYearAsSec))).Quo(sdkmath.NewInt(interval))
+		avg := coin.Amount.Mul(sdkmath.NewInt(int64(oneYearAsSec))).Mul(sdk.NewInt(1e10)).Quo(sdkmath.NewInt(interval))
 		if _, found := tvl[coin.Denom]; found {
-			avg = avg.Mul(sdk.NewInt(1e10)).Quo(tvl[coin.Denom].Token.Amount)
+			avg = avg.Quo(tvl[coin.Denom].Token.Amount)
 			apr = apr.Add(sdk.NewCoin(coin.Denom, avg))
 		}
 	}
