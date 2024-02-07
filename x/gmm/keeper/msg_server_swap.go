@@ -26,8 +26,9 @@ func (k msgServer) Swap(goCtx context.Context, msg *types.MsgSwap) (*types.MsgSw
 
 	// Track APR
 	fee := pool.TakeFees(msg.TokenIn.Amount)
-	k.ObserveFeeFromPool(ctx, pool.PoolId, sdk.NewCoin(msg.TokenIn.Denom, fee.RoundInt()))
-
+	if err := k.ObserveFeeFromPool(ctx, pool.PoolId, sdk.NewCoin(msg.TokenIn.Denom, fee.RoundInt())); err != nil {
+		return nil, err
+	}
 	// Calculate the absolute difference between the expected and actual token output amounts
 	differ := msg.TokenOut.Amount.Sub(out.Amount).Abs()
 

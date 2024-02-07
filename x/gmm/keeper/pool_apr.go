@@ -11,7 +11,9 @@ func (k Keeper) ObserveFeeFromPool(ctx sdk.Context, poolID string, fee sdk.Coin)
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPoolAPRPrefix)
 	rawAprData := store.Get([]byte(poolID))
 	var aprData types.PoolAPR
-	aprData.Decode(ctx, rawAprData)
+	if err := aprData.Decode(ctx, rawAprData); err != nil {
+		return err
+	}
 	aprData.Fees = aprData.Fees.Add(fee)
 	data, err := aprData.Encode()
 	if err != nil {

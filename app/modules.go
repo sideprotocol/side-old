@@ -1,11 +1,11 @@
 package app
 
 import (
-	//"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 
-	//authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authsims "github.com/cosmos/cosmos-sdk/x/auth/simulation"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
@@ -14,11 +14,11 @@ import (
 	authzmodule "github.com/cosmos/cosmos-sdk/x/authz/module"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 
-	//bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/capability"
 
-	//capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
+	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	"github.com/cosmos/cosmos-sdk/x/consensus"
 	consensusparamtypes "github.com/cosmos/cosmos-sdk/x/consensus/types"
@@ -44,12 +44,12 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 
-	//stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	//ica "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts"
+	ica "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts"
 	icatypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/types"
 	ibcfee "github.com/cosmos/ibc-go/v7/modules/apps/29-fee"
 	ibcfeetypes "github.com/cosmos/ibc-go/v7/modules/apps/29-fee/types"
@@ -58,8 +58,8 @@ import (
 	ibc "github.com/cosmos/ibc-go/v7/modules/core"
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 
-	// ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
-	// ibctestingtypes "github.com/cosmos/ibc-go/v7/testing/types"
+	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
+	ibctestingtypes "github.com/cosmos/ibc-go/v7/testing/types"
 
 	gmmmodule "github.com/sideprotocol/side/x/gmm"
 	gmmmoduletypes "github.com/sideprotocol/side/x/gmm/types"
@@ -103,7 +103,7 @@ func appModules(
 	appCodec := encodingConfig.Marshaler
 
 	transferModule := transfer.NewAppModule(app.TransferKeeper)
-	//icaModule := ica.NewAppModule(&app.IcaControllerKeeper, &app.ICAHostKeeper)
+	icaModule := ica.NewAppModule(&app.IcaControllerKeeper, &app.ICAHostKeeper)
 	gmmModule := gmmmodule.NewAppModule(appCodec, app.GmmKeeper, app.AccountKeeper, app.BankKeeper)
 	yieldModule := yieldmodule.NewAppModule(appCodec, app.YieldKeeper, app.AccountKeeper, app.BankKeeper)
 
@@ -129,13 +129,13 @@ func appModules(
 		upgrade.NewAppModule(app.UpgradeKeeper),
 		evidence.NewAppModule(app.EvidenceKeeper),
 		consensus.NewAppModule(appCodec, app.ConsensusParamsKeeper),
-		//wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmTypes.ModuleName)),
+		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmTypes.ModuleName)),
 		ibc.NewAppModule(app.IBCKeeper),
 		ibcfee.NewAppModule(app.IBCFeeKeeper),
 		transferModule,
 		params.NewAppModule(app.ParamsKeeper),
 
-		//icaModule,
+		icaModule,
 		gmmModule,
 		yieldModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
@@ -245,31 +245,31 @@ func OrderInitGenesis() []string {
 	}
 }
 
-// func (app *App) GetAccountKeeper() authkeeper.AccountKeeper {
-// 	return app.AppKeepers.AccountKeeper
-// }
+func (app *App) GetAccountKeeper() authkeeper.AccountKeeper {
+	return app.AppKeepers.AccountKeeper
+}
 
-// func (app *App) GetBankKeeper() bankkeeper.Keeper {
-// 	return app.AppKeepers.BankKeeper
-// }
+func (app *App) GetBankKeeper() bankkeeper.Keeper {
+	return app.AppKeepers.BankKeeper
+}
 
-// // Required for ibctesting
-// func (app *App) GetStakingKeeper() ibctestingtypes.StakingKeeper {
-// 	return *app.AppKeepers.StakingKeeper // Dereferencing the pointer
-// }
+// Required for ibctesting
+func (app *App) GetStakingKeeper() ibctestingtypes.StakingKeeper {
+	return *app.AppKeepers.StakingKeeper // Dereferencing the pointer
+}
 
-// func (app *App) GetSDKStakingKeeper() stakingkeeper.Keeper {
-// 	return *app.AppKeepers.StakingKeeper // Dereferencing the pointer
-// }
+func (app *App) GetSDKStakingKeeper() stakingkeeper.Keeper {
+	return *app.AppKeepers.StakingKeeper // Dereferencing the pointer
+}
 
-// func (app *App) GetIBCKeeper() *ibckeeper.Keeper {
-// 	return app.AppKeepers.IBCKeeper // This is a *ibckeeper.Keeper
-// }
+func (app *App) GetIBCKeeper() *ibckeeper.Keeper {
+	return app.AppKeepers.IBCKeeper // This is a *ibckeeper.Keeper
+}
 
-// func (app *App) GetScopedIBCKeeper() capabilitykeeper.ScopedKeeper {
-// 	return app.AppKeepers.ScopedIBCKeeper
-// }
+func (app *App) GetScopedIBCKeeper() capabilitykeeper.ScopedKeeper {
+	return app.AppKeepers.ScopedIBCKeeper
+}
 
-// func (app *App) GetTxConfig() client.TxConfig {
-// 	return MakeEncodingConfig().TxConfig
-// }
+func (app *App) GetTxConfig() client.TxConfig {
+	return MakeEncodingConfig().TxConfig
+}
