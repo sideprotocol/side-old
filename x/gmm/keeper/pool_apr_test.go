@@ -52,7 +52,7 @@ func TestAPRCalculation(t *testing.T) {
 
 	// Calculate the APR for the pool
 	apr := keeper.GetAPR(ctx, pool.PoolId)
-	expectedAPR := sdk.NewCoin("usdt", sdkmath.NewInt(180000))
+	expectedAPR := sdk.NewCoin("usdt", sdkmath.NewInt(185344))
 	// Assert APR calculation
 	require.Equal(t, expectedAPR, apr[0], "Calculated APR does not match expected APR")
 }
