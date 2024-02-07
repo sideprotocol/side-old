@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "side/gmm/params.proto";
 import "side/gmm/pool.proto"; 
+import "cosmos/base/v1beta1/coin.proto"; 
 
 option go_package = "github.com/sideprotocol/side/x/gmm/types";
 
@@ -25,6 +26,18 @@ service Query {
 
   rpc Pool    (QueryPoolRequest) returns (QueryPoolResponse) {
     option (google.api.http).get = "/sideprotocol/side/gmm/pool/{pool_id}";
+  }
+
+  rpc Volume24    (QueryVolumeRequest) returns (QueryVolumeResponse) {
+    option (google.api.http).get = "/sideprotocol/side/gmm/volume/day/{pool_id}";
+  }
+
+  rpc TotalVolume    (QueryTotalVolumeRequest) returns (QueryTotalVolumeResponse) {
+    option (google.api.http).get = "/sideprotocol/side/gmm/volume/total/{pool_id}";
+  }
+
+  rpc APR    (QueryAPRRequest) returns (QueryAPRResponse) {
+    option (google.api.http).get = "/sideprotocol/side/gmm/apr/{pool_id}";
   }
 }
 
@@ -63,4 +76,35 @@ message QueryPoolsResponse {
   repeated PoolI pools = 1 [(gogoproto.nullable) = false];
   cosmos.base.query.v1beta1.PageResponse pagination            = 2;
 }
+
+message QueryVolumeRequest {
+  string pool_id = 1;
+}
+
+message QueryVolumeResponse {
+  repeated cosmos.base.v1beta1.Coin volumes = 1 [
+    (gogoproto.nullable) = false
+  ];
+}
+
+message QueryTotalVolumeRequest {
+  string pool_id = 1;
+}
+
+message QueryTotalVolumeResponse {
+  repeated cosmos.base.v1beta1.Coin volumes = 1 [
+    (gogoproto.nullable) = false
+  ];
+}
+
+message QueryAPRRequest {
+  string pool_id = 1;
+}
+
+message QueryAPRResponse {
+  repeated cosmos.base.v1beta1.Coin apr = 1 [
+    (gogoproto.nullable) = false
+  ];
+}
+
 

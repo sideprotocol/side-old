@@ -37,7 +37,7 @@ func CmdSwap() *cobra.Command {
 
 			slippage := sdkmath.NewUintFromString(args[3])
 			// Define the range limits
-			var minSlippage, maxSlippage = sdkmath.NewUint(0), sdkmath.NewUint(100)
+			minSlippage, maxSlippage := sdkmath.NewUint(0), sdkmath.NewUint(100)
 
 			// Check if slippage is within the range [0, 10000]
 			if slippage.LT(minSlippage) || slippage.GT(maxSlippage) {

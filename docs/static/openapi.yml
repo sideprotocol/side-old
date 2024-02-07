@@ -52201,6 +52201,57 @@ paths:
                         }
       tags:
         - Query
+  /sideprotocol/side/gmm/apr/{pool_id}:
+    get:
+      operationId: SideGmmAPR
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              apr:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                    amount:
+                      type: string
+                  description: >-
+                    Coin defines a token with a denomination and an amount.
+
+
+                    NOTE: The amount field is an Int which implements the custom
+                    method
+
+                    signatures required by gogoproto.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pool_id
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
   /sideprotocol/side/gmm/me/{creator}:
     get:
       operationId: SideGmmMyPools
@@ -52249,6 +52300,8 @@ paths:
                     swap_fee:
                       type: integer
                       format: int64
+                    amp:
+                      type: string
                     supply:
                       type: object
                       properties:
@@ -52264,6 +52317,12 @@ paths:
                         custom method
 
                         signatures required by gogoproto.
+                    pool_type:
+                      type: string
+                      enum:
+                        - WEIGHT
+                        - STABLE
+                      default: WEIGHT
               pagination:
                 type: object
                 properties:
@@ -52462,6 +52521,8 @@ paths:
                     swap_fee:
                       type: integer
                       format: int64
+                    amp:
+                      type: string
                     supply:
                       type: object
                       properties:
@@ -52477,6 +52538,12 @@ paths:
                         custom method
 
                         signatures required by gogoproto.
+                    pool_type:
+                      type: string
+                      enum:
+                        - WEIGHT
+                        - STABLE
+                      default: WEIGHT
               pagination:
                 type: object
                 properties:
@@ -52629,6 +52696,8 @@ paths:
                   swap_fee:
                     type: integer
                     format: int64
+                  amp:
+                    type: string
                   supply:
                     type: object
                     properties:
@@ -52644,9 +52713,117 @@ paths:
                       custom method
 
                       signatures required by gogoproto.
+                  pool_type:
+                    type: string
+                    enum:
+                      - WEIGHT
+                      - STABLE
+                    default: WEIGHT
             title: >-
               QueryLiquidityPoolResponse is response type for the
               Query/Liquidity RPC method
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pool_id
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /sideprotocol/side/gmm/volume/day/{pool_id}:
+    get:
+      operationId: SideGmmVolume24
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              volumes:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                    amount:
+                      type: string
+                  description: >-
+                    Coin defines a token with a denomination and an amount.
+
+
+                    NOTE: The amount field is an Int which implements the custom
+                    method
+
+                    signatures required by gogoproto.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pool_id
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /sideprotocol/side/gmm/volume/total/{pool_id}:
+    get:
+      operationId: SideGmmTotalVolume
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              volumes:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                    amount:
+                      type: string
+                  description: >-
+                    Coin defines a token with a denomination and an amount.
+
+
+                    NOTE: The amount field is an Int which implements the custom
+                    method
+
+                    signatures required by gogoproto.
         default:
           description: An unexpected error response.
           schema:
@@ -83205,6 +83382,8 @@ definitions:
       swap_fee:
         type: integer
         format: int64
+      amp:
+        type: string
       supply:
         type: object
         properties:
@@ -83217,6 +83396,12 @@ definitions:
 
           NOTE: The amount field is an Int which implements the custom method
           signatures required by gogoproto.
+      pool_type:
+        type: string
+        enum:
+          - WEIGHT
+          - STABLE
+        default: WEIGHT
   side.gmm.PoolParams:
     type: object
     properties:
@@ -83263,6 +83448,23 @@ definitions:
       decimal:
         type: integer
         format: int64
+  side.gmm.QueryAPRResponse:
+    type: object
+    properties:
+      apr:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
   side.gmm.QueryParamsResponse:
     type: object
     properties:
@@ -83313,6 +83515,8 @@ definitions:
           swap_fee:
             type: integer
             format: int64
+          amp:
+            type: string
           supply:
             type: object
             properties:
@@ -83328,6 +83532,12 @@ definitions:
               method
 
               signatures required by gogoproto.
+          pool_type:
+            type: string
+            enum:
+              - WEIGHT
+              - STABLE
+            default: WEIGHT
     title: >-
       QueryLiquidityPoolResponse is response type for the Query/Liquidity RPC
       method
@@ -83372,6 +83582,8 @@ definitions:
             swap_fee:
               type: integer
               format: int64
+            amp:
+              type: string
             supply:
               type: object
               properties:
@@ -83387,6 +83599,12 @@ definitions:
                 method
 
                 signatures required by gogoproto.
+            pool_type:
+              type: string
+              enum:
+                - WEIGHT
+                - STABLE
+              default: WEIGHT
       pagination:
         type: object
         properties:
@@ -83414,6 +83632,40 @@ definitions:
                    PageResponse page = 2;
            }
     title: QueryPoolsResponse is response type for the Query/Pools RPC method
+  side.gmm.QueryTotalVolumeResponse:
+    type: object
+    properties:
+      volumes:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
+  side.gmm.QueryVolumeResponse:
+    type: object
+    properties:
+      volumes:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
   side.yield.MsgLiquidStakeResponse:
     type: object
     properties:
