@@ -30,8 +30,10 @@ func (k msgServer) Swap(goCtx context.Context, msg *types.MsgSwap) (*types.MsgSw
 		return nil, err
 	}
 	// Calculate the absolute difference between the expected and actual token output amounts
-	differ := msg.TokenOut.Amount.Sub(out.Amount).Abs()
-
+	differ := sdkmath.NewInt(0)
+	if out.Amount.LT(msg.TokenOut.Amount) {
+		differ = msg.TokenOut.Amount.Sub(out.Amount)
+	}
 	// Calculate the expected slippage. Make sure msg.Slippage is in the correct unit (e.g., percentage).
 	// Divide by 100 if msg.Slippage is a percentage.
 	expectedDiffer := msg.TokenOut.Amount.Mul(msg.Slippage).Quo(sdkmath.NewInt(100))
