@@ -66,7 +66,6 @@ func (msg *MsgWithdraw) ValidateBasic() error {
 
 	if msg.PoolId == msg.Share.GetDenom() || fmt.Sprintf("side/gmm/%s", msg.PoolId) == msg.Share.GetDenom() {
 		return nil
-	} else {
-		return sdkerrors.Wrapf(ErrMismatchedShareDenom, "share denom and pool id do not match")
 	}
+	return sdkerrors.Wrapf(ErrMismatchedShareDenom, "share denom and pool id do not match")
 }
