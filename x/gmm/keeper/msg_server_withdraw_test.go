@@ -1,6 +1,8 @@
 package keeper_test
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/sideprotocol/side/x/gmm/types"
 )
@@ -17,14 +19,14 @@ func (suite *KeeperTestSuite) TestMsgWithdraw() {
 			"withdraw from weight pool",
 			types.PoolType_WEIGHT,
 			func(msg *types.MsgWithdraw, poolID string) {
-				msg.Share = sdk.NewCoin(poolID, sdk.NewInt(100))
+				msg.Share = sdk.NewCoin(fmt.Sprintf("side/gmm/%s", poolID), sdk.NewInt(100))
 			},
 		},
 		{
 			"withdraw from stable pool",
 			types.PoolType_STABLE,
 			func(msg *types.MsgWithdraw, poolID string) {
-				msg.Share = sdk.NewCoin(poolID, sdk.NewInt(200))
+				msg.Share = sdk.NewCoin(fmt.Sprintf("side/gmm/%s", poolID), sdk.NewInt(200))
 			},
 		},
 	}
