@@ -71,7 +71,7 @@ func TestMsgWithdraw_ValidateBasic(t *testing.T) {
 				Receiver: sample.AccAddress(),
 				PoolId:   "test1",
 				Share: sdk.NewCoin(
-					"test1",
+					"side/gmm/test1",
 					sdk.NewInt(10),
 				),
 			},
