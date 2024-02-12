@@ -1,7 +1,5 @@
 package types
 
-import fmt "fmt"
-
 const (
 	// ModuleName defines the module name
 	ModuleName = "gmm"
@@ -34,5 +32,5 @@ func KeyPrefix(p string) []byte {
 }
 
 func GetPoolShareDenom(poolID string) string {
-	return fmt.Sprintf("%s%s", GAMMTokenPrefix, poolID)
+	return poolID
 }

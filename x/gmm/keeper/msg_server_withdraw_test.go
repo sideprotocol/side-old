@@ -17,7 +17,7 @@ func (suite *KeeperTestSuite) TestMsgWithdraw() {
 			"withdraw from weight pool",
 			types.PoolType_WEIGHT,
 			func(msg *types.MsgWithdraw, poolID string) {
-				msg.Share = sdk.NewCoin(poolID, sdk.NewInt(100))
+				msg.Share = sdk.NewCoin(poolID, sdk.NewInt(10))
 			},
 		},
 		{
