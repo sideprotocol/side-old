@@ -1,6 +1,7 @@
 package types
 
 import (
+	"fmt"
 	"strings"
 
 	sdkerrors "cosmossdk.io/errors"
@@ -63,8 +64,9 @@ func (msg *MsgWithdraw) ValidateBasic() error {
 		return sdkerrors.Wrap(ErrInvalidTokenAmount, "share amount cannot be zero")
 	}
 
-	if msg.PoolId != msg.Share.GetDenom() {
+	if msg.PoolId == msg.Share.GetDenom() || fmt.Sprintf("side/gmm/%s", msg.PoolId) == msg.Share.GetDenom() {
+		return nil
+	} else {
 		return sdkerrors.Wrapf(ErrMismatchedShareDenom, "share denom and pool id do not match")
 	}
-	return nil
 }
