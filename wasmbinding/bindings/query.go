@@ -10,8 +10,7 @@ type SideQuery struct {
 // 	PoolId string `json:"pool_id"`
 // }
 
-type Params struct {
-}
+type Params struct{}
 
 // type PoolResponse struct {
 // 	Admin string `json:"admin"`
