@@ -69,5 +69,26 @@ func (k msgServer) Swap(goCtx context.Context, msg *types.MsgSwap) (*types.MsgSw
 	k.SetPool(ctx, pool)
 	// Observe volume
 	err = k.ObserveVolumeFromPool(ctx, pool.PoolId, msg.TokenIn, out)
+
+	// Emit events
+	eventAttr := []sdk.Attribute{
+		{
+			Key:   types.AttributeKeyPoolID,
+			Value: msg.PoolId,
+		},
+		{
+			Key:   types.AttributeKeyTokenIn,
+			Value: msg.TokenIn.String(),
+		},
+		{
+			Key:   types.AttributeKeyTokenOut,
+			Value: out.String(),
+		},
+	}
+
+	k.EmitEvent(
+		ctx, types.EventValueActionSwap, msg.PoolId, msg.Sender,
+		eventAttr...,
+	)
 	return &types.MsgSwapResponse{}, err
 }

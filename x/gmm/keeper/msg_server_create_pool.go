@@ -28,7 +28,6 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 			Value: msg.Sender,
 		},
 	)
-
 	return &types.MsgCreatePoolResponse{
 		PoolId: *pooID,
 	}, nil
