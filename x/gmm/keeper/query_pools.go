@@ -126,8 +126,7 @@ func convertPoolForWasm(pool types.Pool) types.PoolI {
 	}
 
 	// Migrate ShareDenom:
-	
-	
+
 	poolI := types.PoolI{
 		Id:            pool.PoolId,
 		SourceCreator: pool.Sender,
