@@ -124,6 +124,10 @@ func convertPoolForWasm(pool types.Pool) types.PoolI {
 			Weight:  uint32(asset.Weight.Int64()),
 		})
 	}
+
+	// Migrate ShareDenom:
+	
+	
 	poolI := types.PoolI{
 		Id:            pool.PoolId,
 		SourceCreator: pool.Sender,

@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/sideprotocol/side/x/gmm/types"
@@ -50,5 +51,28 @@ func (k msgServer) Withdraw(goCtx context.Context, msg *types.MsgWithdraw) (*typ
 
 	// Save pool
 	k.SetPool(ctx, pool)
+
+	rawOuts := []string{}
+	for _, out := range outs {
+		rawOuts = append(rawOuts, out.String())
+	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventValueActionWithdraw,
+			sdk.Attribute{
+				Key:   types.AttributeKeyPoolID,
+				Value: msg.PoolId,
+			},
+			sdk.Attribute{
+				Key:   types.AttributeKeyLpToken,
+				Value: msg.Share.String(),
+			},
+			sdk.Attribute{
+				Key:   types.AttributeKeyTokenOut,
+				Value: strings.Join(rawOuts, ":"),
+			},
+		),
+	)
 	return &types.MsgWithdrawResponse{}, nil
 }
