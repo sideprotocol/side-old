@@ -89,7 +89,7 @@ func (msg *MsgCreatePool) InitialLiquidity() sdk.Coins {
 	for _, asset := range msg.Liquidity {
 		liquidity = liquidity.Add(asset.Token)
 	}
-	return liquidity
+	return liquidity.Sort()
 }
 
 // Return denom list of liquidity

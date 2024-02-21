@@ -18,7 +18,7 @@ func NewMsgAddLiquidity(
 	return &MsgAddLiquidity{
 		Sender:    sender,
 		PoolId:    poolID,
-		Liquidity: liquidity,
+		Liquidity: liquidity.Sort(),
 	}
 }
 
