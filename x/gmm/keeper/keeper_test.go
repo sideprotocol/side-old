@@ -43,7 +43,7 @@ var gmmModuleAddress string
 func (suite *KeeperTestSuite) SetupTest() {
 	// app := simapp.InitSideTestApp(initChain)
 	app := simapp.Setup(suite.T())
-	ctx := app.BaseApp.NewContext(false, tmproto.Header{Time: time.Now()})
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{Time: time.Now().UTC()})
 
 	app.AccountKeeper.SetParams(ctx, authtypes.DefaultParams())
 	app.BankKeeper.SetParams(ctx, banktypes.DefaultParams())
