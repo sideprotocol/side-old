@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"testing"
+	"time"
 
 	tmdb "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
@@ -45,7 +46,9 @@ func GmmKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		nil,
 	)
 
-	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
+	ctx := sdk.NewContext(stateStore, tmproto.Header{
+		Time: time.Now().UTC(),
+	}, false, log.NewNopLogger())
 
 	// Initialize params
 	k.SetParams(ctx, types.DefaultParams())

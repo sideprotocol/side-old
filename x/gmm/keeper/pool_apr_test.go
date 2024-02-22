@@ -43,16 +43,16 @@ func TestAPRCalculation(t *testing.T) {
 	keeper.AppendPool(ctx, pool)
 	// Loop to simulate 1000 observations at different timestamps
 	for i := 0; i < 365; i++ {
-		// Increment the block time for each observation
-		ctx = ctx.WithBlockTime(ctx.BlockTime().Add(24 * time.Hour))
 		// Perform the observation
 		err := keeper.ObserveFeeFromPool(ctx, pool.PoolId, tokenIn)
+		// Increment the block time for each observation
+		ctx = ctx.WithBlockTime(ctx.BlockTime().Add(24 * time.Hour))
 		require.NoError(t, err)
 	}
 
 	// Calculate the APR for the pool
 	apr := keeper.GetAPR(ctx, pool.PoolId)
-	expectedAPR := sdk.NewCoin("usdt", sdkmath.NewInt(185344))
+	expectedAPR := sdk.NewCoin("usdt", sdkmath.NewInt(6614940))
 	// Assert APR calculation
 	require.Equal(t, expectedAPR, apr[0], "Calculated APR does not match expected APR")
 }

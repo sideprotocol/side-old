@@ -6,7 +6,7 @@ require (
 	cosmossdk.io/api v0.3.1
 	github.com/cometbft/cometbft v0.37.4
 	github.com/cometbft/cometbft-db v0.8.0
-	github.com/cosmos/cosmos-sdk v0.47.8
+	github.com/cosmos/cosmos-sdk v0.47.9
 	github.com/cosmos/gogoproto v1.4.10
 	github.com/cosmos/ibc-go/v7 v7.3.0
 	github.com/golang/protobuf v1.5.3
@@ -27,7 +27,7 @@ require (
 	cloud.google.com/go/storage v1.30.1 // indirect
 	cosmossdk.io/core v0.5.1 // indirect
 	cosmossdk.io/depinject v1.0.0-alpha.4 // indirect
-	cosmossdk.io/log v1.3.0 // indirect
+	cosmossdk.io/log v1.3.1 // indirect
 	cosmossdk.io/tools/rosetta v0.2.1 // indirect
 	filippo.io/edwards25519 v1.0.0 // indirect
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
@@ -69,7 +69,7 @@ require (
 	github.com/dgryski/go-farm v0.0.0-20200201041132-a6ae2369ad13 // indirect
 	github.com/docker/distribution v2.8.2+incompatible // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
-	github.com/dvsekhvalnov/jose2go v1.5.0 // indirect
+	github.com/dvsekhvalnov/jose2go v1.6.0 // indirect
 	github.com/felixge/httpsnoop v1.0.2 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/getsentry/sentry-go v0.23.0 // indirect
@@ -143,7 +143,7 @@ require (
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/rs/cors v1.9.0 // indirect
-	github.com/rs/zerolog v1.31.0 // indirect
+	github.com/rs/zerolog v1.32.0 // indirect
 	github.com/sasha-s/go-deadlock v0.3.1 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spf13/afero v1.9.5 // indirect
@@ -187,7 +187,7 @@ require (
 	github.com/CosmWasm/wasmd v0.40.1
 	github.com/CosmWasm/wasmvm v1.2.4
 	github.com/Stride-Labs/stride/v16 v16.0.0
-	github.com/cosmos/cosmos-proto v1.0.0-beta.2
+	github.com/cosmos/cosmos-proto v1.0.0-beta.4
 	github.com/cosmos/ics23/go v0.10.0
 	github.com/prometheus/client_golang v1.15.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20231212172506-995d672761c0
