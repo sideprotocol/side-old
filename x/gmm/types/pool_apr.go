@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -37,10 +36,7 @@ func (pa *PoolAPR) CalcAPR(ctx sdk.Context, tvl map[string]PoolAsset) sdk.Coins 
 	oneYearAsSec := int64(60 * 60 * 24 * 365)
 	var apr sdk.Coins
 	for _, coin := range pa.Fees {
-		fmt.Println(ctx.BlockTime())
-		fmt.Println(ctx.BlockTime().Unix())
-		interval := int64(ctx.BlockTime().Unix()) - pa.CreatedAt
-
+		interval := ctx.BlockTime().Unix() - pa.CreatedAt
 		if _, found := tvl[coin.Denom]; found && !tvl[coin.Denom].Token.Amount.IsZero() {
 			if interval <= 0 {
 				apr = apr.Add(sdk.NewCoin(coin.Denom, sdk.NewInt(0)))
