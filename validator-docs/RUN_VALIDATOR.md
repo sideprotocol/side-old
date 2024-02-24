@@ -38,6 +38,7 @@ sided tx staking create-validator \
 --commission-max-rate="0.2" \
 --commission-max-change-rate="0.05" \
 --min-self-delegation="400000000" \
+--fees="50000uside"
 ```
 
 If you need further explanation for each of these command flags:
