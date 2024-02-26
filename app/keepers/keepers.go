@@ -79,6 +79,10 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+
+	"github.com/sideprotocol/packet-forward-middleware/v7/packetforward"
+	packetforwardkeeper "github.com/sideprotocol/packet-forward-middleware/v7/packetforward/keeper"
+	packetforwardtypes "github.com/sideprotocol/packet-forward-middleware/v7/packetforward/types"
 )
 
 const (
@@ -124,6 +128,8 @@ type AppKeepers struct {
 	GmmKeeper gmmmodulekeeper.Keeper
 
 	YieldKeeper yieldmodulekeeper.Keeper
+
+	PacketForwardKeeper *packetforwardkeeper.Keeper
 
 	// keys to access the substores
 	keys    map[string]*storetypes.KVStoreKey
@@ -314,6 +320,19 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		scopedICAControllerKeeper, bApp.MsgServiceRouter(),
 	)
 
+	// Initialize the packet forward middleware Keeper
+	// It's important to note that the PFM Keeper must be initialized before the Transfer Keeper
+	appKeepers.PacketForwardKeeper = packetforwardkeeper.NewKeeper(
+		appCodec,
+		appKeepers.keys[packetforwardtypes.StoreKey],
+		nil, // will be zero-value here, reference is set later on with SetTransferKeeper.
+		appKeepers.IBCKeeper.ChannelKeeper,
+		appKeepers.DistrKeeper,
+		appKeepers.BankKeeper,
+		appKeepers.IBCKeeper.ChannelKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+	)
+
 	// Create Transfer Keepers
 	appKeepers.TransferKeeper = ibctransferkeeper.NewKeeper(
 		appCodec,
@@ -417,11 +436,22 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 	appKeepers.CapabilityKeeper.Seal()
 	// wire up x/wasm to IBC
 	// Create static IBC router, add transfer route, then set and seal it
+
+	var ics101WasmStack ibcporttypes.IBCModule
+	ics101WasmStack = wasm.NewIBCHandler(appKeepers.WasmKeeper, appKeepers.IBCKeeper.ChannelKeeper, appKeepers.IBCKeeper.ChannelKeeper)
+	ics101WasmStack = packetforward.NewIBCMiddleware(
+		ics101WasmStack,
+		appKeepers.PacketForwardKeeper,
+		0, // retries on timeout
+		packetforwardkeeper.DefaultForwardTransferPacketTimeoutTimestamp, // forward timeout
+		packetforwardkeeper.DefaultRefundTransferPacketTimeoutTimestamp,  // refund timeout
+	)
+
 	ibcRouter := ibcporttypes.NewRouter()
 	ibcRouter.AddRoute(icahosttypes.SubModuleName, icaHostIBCModule).
-		AddRoute(ibctransfertypes.ModuleName, transferIBCModule).
-		AddRoute(wasm.ModuleName, wasm.NewIBCHandler(appKeepers.WasmKeeper, appKeepers.IBCKeeper.ChannelKeeper, appKeepers.IBCKeeper.ChannelKeeper))
-
+		AddRoute(ibctransfertypes.ModuleName, transferIBCModule)
+		//.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(appKeepers.WasmKeeper, appKeepers.IBCKeeper.ChannelKeeper, appKeepers.IBCKeeper.ChannelKeeper))
+	ibcRouter.AddRoute(wasm.ModuleName, ics101WasmStack)
 	// this line is used by starport scaffolding # ibc/app/router
 	appKeepers.IBCKeeper.SetRouter(ibcRouter)
 }
@@ -444,6 +474,7 @@ func (appKeepers *AppKeepers) initParamsKeeper(appCodec codec.BinaryCodec, legac
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(gmmmoduletypes.ModuleName)
 	paramsKeeper.Subspace(yieldmoduletypes.ModuleName)
+	paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper
@@ -476,6 +507,7 @@ func KVStoreKeys() []string {
 		capabilitytypes.StoreKey, group.StoreKey, icacontrollertypes.StoreKey, consensusparamtypes.StoreKey, wasmtypes.StoreKey, ibcfeetypes.StoreKey,
 		gmmmoduletypes.StoreKey,
 		yieldmoduletypes.StoreKey,
+		packetforwardtypes.StoreKey,
 	}
 }
 

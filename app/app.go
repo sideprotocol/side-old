@@ -77,6 +77,7 @@ import (
 	// upgrades
 	"github.com/sideprotocol/side/app/keepers"
 	v1 "github.com/sideprotocol/side/app/upgrades/v1"
+	// packet forward module
 )
 
 const (
