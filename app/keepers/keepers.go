@@ -450,7 +450,6 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 	ibcRouter := ibcporttypes.NewRouter()
 	ibcRouter.AddRoute(icahosttypes.SubModuleName, icaHostIBCModule).
 		AddRoute(ibctransfertypes.ModuleName, transferIBCModule)
-		//.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(appKeepers.WasmKeeper, appKeepers.IBCKeeper.ChannelKeeper, appKeepers.IBCKeeper.ChannelKeeper))
 	ibcRouter.AddRoute(wasm.ModuleName, ics101WasmStack)
 	// this line is used by starport scaffolding # ibc/app/router
 	appKeepers.IBCKeeper.SetRouter(ibcRouter)
