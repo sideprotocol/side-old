@@ -21,7 +21,8 @@ func (k msgServer) AddLiquidity(goCtx context.Context, msg *types.MsgAddLiquidit
 	poolCreator := sdk.MustAccAddressFromBech32(msg.Sender)
 
 	// Move asset from sender to module account
-	if err := k.LockTokens(ctx, msg.PoolId, poolCreator, msg.Liquidity); err != nil {
+
+	if err := k.LockTokens(ctx, msg.PoolId, poolCreator, types.GetLiquidityAsCoins(msg.Liquidity)); err != nil {
 		return nil, err
 	}
 

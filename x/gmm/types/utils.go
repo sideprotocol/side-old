@@ -36,3 +36,7 @@ func GetEventAttrOfAsset(assets []sdk.Coin) []sdk.Attribute {
 	}
 	return attr
 }
+
+func GetLiquidityAsCoins(tokens []sdk.Coin) sdk.Coins {
+	return sdk.NewCoins(tokens...).Sort()
+}

@@ -34,7 +34,7 @@ func (k msgServer) Withdraw(goCtx context.Context, msg *types.MsgWithdraw) (*typ
 	}
 
 	// Unlock asset from pool
-	if err = k.UnLockTokens(ctx, pool.PoolId, sdk.MustAccAddressFromBech32(msg.Receiver), outs); err != nil {
+	if err = k.UnLockTokens(ctx, pool.PoolId, sdk.MustAccAddressFromBech32(msg.Receiver), types.GetLiquidityAsCoins(outs)); err != nil {
 		return nil, err
 	}
 
