@@ -77,6 +77,8 @@ import (
 	// upgrades
 	"github.com/sideprotocol/side/app/keepers"
 	v1 "github.com/sideprotocol/side/app/upgrades/v1"
+	v2 "github.com/sideprotocol/side/app/upgrades/v2"
+	// packet forward module
 )
 
 const (
@@ -84,7 +86,7 @@ const (
 	Name                 = "side"
 )
 
-var Upgrades = []upgrades.Upgrade{v1.Upgrade}
+var Upgrades = []upgrades.Upgrade{v1.Upgrade, v2.Upgrade}
 
 // this line is used by starport scaffolding # stargate/wasm/app/enabledProposals
 
