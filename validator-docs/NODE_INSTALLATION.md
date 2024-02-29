@@ -4,14 +4,14 @@ Instruction to install and configure the sided binary
 
 ## Hardware Specifications
 1. Minimum Requirements
-    1. CPU: 2 cores
-    2. RAM: 4 GB
+    1. CPU: 4 cores
+    2. RAM: 8 GB
     3. Storage: 200 GB
     4. Network: 1 Gbps
 
 2. Recommended Specifications
-    1. CPU: 4 cores
-    2. RAM: 8 GB
+    1. CPU: 8 cores
+    2. RAM: 16 GB
     3. Storage: 500 GB
     4. Network: 1 Gbps
 
