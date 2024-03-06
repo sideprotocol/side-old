@@ -63,6 +63,4 @@ func (msg *MsgAddLiquidity) ValidateBasic() error {
 	return nil
 }
 
-func (msg *MsgAddLiquidity) GetLiquidityAsCoins() sdk.Coins {
-	return sdk.NewCoins(msg.Liquidity...).Sort()
-}
+
