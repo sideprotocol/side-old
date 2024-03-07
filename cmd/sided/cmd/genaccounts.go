@@ -16,6 +16,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+	sidekr "github.com/sideprotocol/side/bitcoin/keyring"
 	"github.com/spf13/cobra"
 )
 
@@ -51,6 +52,10 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 			}
 
 			addr, err := sdk.AccAddressFromBech32(args[0])
+
+			// fmt.Println("args--->", args[0])
+			// fmt.Println("address--->", addr)
+			// fmt.Println("err--->", err)
 			if err != nil {
 				inBuf := bufio.NewReader(cmd.InOrStdin())
 				keyringBackend, err := cmd.Flags().GetString(flags.FlagKeyringBackend)
@@ -59,12 +64,13 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 				}
 
 				// attempt to lookup address from Keybase if no address was provided
-				kb, err := keyring.New(sdk.KeyringServiceName(), keyringBackend, clientCtx.HomeDir, inBuf, cdc)
+				kb, err := keyring.New(sdk.KeyringServiceName(), keyringBackend, clientCtx.HomeDir, inBuf, cdc, sidekr.Option())
 				if err != nil {
 					return err
 				}
 
 				info, err := kb.Key(args[0])
+				fmt.Println("address--->", err)
 				if err != nil {
 					return fmt.Errorf("failed to get address from Keybase: %w", err)
 				}

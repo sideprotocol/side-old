@@ -46,7 +46,7 @@ func TestKeyring(t *testing.T) {
 
 	println(seed)
 	masterKey, _ := bip32.NewMasterKey(seed)
-	hd.DerivePrivateKeyForPath([32]byte(masterKey.Key), 0, path)
+	hd.DerivePrivateKeyForPath([32]byte(masterKey.Key), [32]byte(masterKey.ChainCode), path)
 
 	keyring.NewInMemory(TestCodec)
 

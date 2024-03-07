@@ -28,7 +28,7 @@ var (
 
 const (
 	PrivKeySize = 32
-	keyType     = "segwit"
+	KeyType     = "segwit"
 	PrivKeyName = "bitcoin/PrivKeySegWit"
 	PubKeyName  = "bitcoin/PubKeySegWit"
 )
@@ -78,7 +78,7 @@ func (privKey *PrivKey) Equals(other cryptotypes.LedgerPrivKey) bool {
 }
 
 func (privKey *PrivKey) Type() string {
-	return keyType
+	return KeyType
 }
 
 // MarshalAmino overrides Amino binary marshaling.
@@ -218,7 +218,7 @@ func (pubKey *PubKey) String() string {
 }
 
 func (pubKey *PubKey) Type() string {
-	return keyType
+	return KeyType
 }
 
 func (pubKey *PubKey) Equals(other cryptotypes.PubKey) bool {
