@@ -1,5 +1,5 @@
 syntax = "proto3";
-package bitcoin.segwit;
+package bitcoin.keys.segwit;
 
 import "amino/amino.proto";
 import "gogoproto/gogo.proto";
