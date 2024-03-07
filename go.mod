@@ -60,7 +60,6 @@ require (
 	github.com/containerd/containerd v1.6.8 // indirect
 	github.com/containerd/typeurl v1.0.2 // indirect
 	github.com/cosmos/btcutil v1.0.5 // indirect
-	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gogogateway v1.2.0 // indirect
 	github.com/cosmos/iavl v0.20.1 // indirect
 	github.com/cosmos/interchain-security/v3 v3.2.0 // indirect
@@ -215,8 +214,11 @@ require (
 	github.com/CosmWasm/wasmd v0.40.1
 	github.com/CosmWasm/wasmvm v1.2.4
 	github.com/Stride-Labs/stride/v16 v16.0.0
+	github.com/btcsuite/btcd v0.20.1-beta
+	github.com/btcsuite/btcutil v1.0.2
 	github.com/bufbuild/buf v1.7.0
 	github.com/cosmos/cosmos-proto v1.0.0-beta.4
+	github.com/cosmos/go-bip39 v1.0.0
 	github.com/cosmos/ics23/go v0.10.0
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.1.0
 	github.com/prometheus/client_golang v1.15.0

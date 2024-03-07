@@ -1,27 +1,33 @@
-package segwit
+package segwit_test
 
 import (
 	//"fmt"
+	"strings"
 	"testing"
-	// "github.com/cosmos/cosmos-sdk/crypto/hd"
-	// "github.com/cosmos/cosmos-sdk/types/bech32"
-	// "github.com/cosmos/go-bip39"
-	// "github.com/sideprotocol/side/bitcoin/keys/segwit" // Import the segwit package
+
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
+	"github.com/sideprotocol/side/bitcoin/keys/segwit"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/cosmos/go-bip39"
 )
 
 func TestSegwit(t *testing.T) {
+	mnemonic := "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
+	seed := bip39.NewSeed(mnemonic, "")
 
-	// seed, _ := bip39.MnemonicToByteArray(mnemonic)
-	// hd.ComputeMastersFromSeed(seed)
+	masterKey, chParams := hd.ComputeMastersFromSeed(seed)
+	derivedPrivKey, err := hd.DerivePrivateKeyForPath(masterKey, chParams, "m/84'/0'/0'/0/0")
+	assert.NoError(t, err, "Private key derivation should not fail")
 
-	// parm, err := hd.NewParamsFromPath("m/84'/0'/0'/0/0")
+	privKey := segwit.PrivKey{Key: derivedPrivKey}
+	pubKey := privKey.PubKey()
+	assert.NotNil(t, pubKey, "Public key should not be nil")
 
-	// privKey := PrivKey{key: ""}
-	// pubKey := privKey.PubKey()
-
-	// fmt.Println("Address:", pubKey.Address())
-	// t.Log("Address:", pubKey.Address())
-
-	// addr, _ := bech32.ConvertAndEncode("bc", pubKey.Address().Bytes())
-	// t.Log("Bech Address:", addr)
+	bech32Address, err := segwit.BitCoinAddr(pubKey.Bytes())
+	assert.NoError(t, err)
+	t.Logf("Generated SegWit Address: %s", bech32Address)
+	// Check if the Bech32 encoded address has the correct prefix and structure.
+	assert.True(t, strings.HasPrefix(bech32Address, "bc1q"), "Address should start with 'bc1q'")
+	t.Logf("Generated SegWit Address: %s", bech32Address)
 }

@@ -12,7 +12,7 @@ import (
 	"github.com/cometbft/cometbft/crypto"
 	secp256k1dcrd "github.com/decred/dcrd/dcrec/secp256k1/v4"
 	"gitlab.com/yawning/secp256k1-voi/secec"
-	"golang.org/x/crypto/ripemd160" //nolint: staticcheck // keep around for backwards compatibility
+	"golang.org/x/crypto/ripemd160"
 
 	errorsmod "cosmossdk.io/errors"
 
@@ -46,7 +46,29 @@ func (privKey *PrivKey) PubKey() cryptotypes.PubKey {
 		panic(err)
 	}
 
-	return &PubKey{Key: privateKeyObject.PublicKey().CompressedBytes()}
+	return &PubKey{Key: SerializeCompressed(privateKeyObject.PublicKey())}
+}
+
+// SerializeCompressed serializes a public key in a 33-byte compressed format.
+func SerializeCompressed(p *secec.PublicKey) []byte {
+	b := make([]byte, 0, PubKeySize)
+	format := pubkeyCompressed
+	if p.Point().IsYOdd() != 0 {
+		format |= 0x1
+	}
+	b = append(b, format)
+	xBytes, _ := p.Point().XBytes()
+	return paddedAppend(32, b, xBytes)
+}
+
+// paddedAppend appends the src byte slice to dst, returning the new slice.
+// If the length of the source is smaller than the passed size, leading zero
+// bytes are appended to the dst slice before appending src.
+func paddedAppend(size uint, dst, src []byte) []byte {
+	for i := 0; i < int(size)-len(src); i++ {
+		dst = append(dst, 0)
+	}
+	return append(dst, src...)
 }
 
 // Equals - you probably don't need to use this.
@@ -165,17 +187,25 @@ var (
 // PubKeySize is comprised of 32 bytes for one field element
 // (the x-coordinate), plus one byte for the parity of the y-coordinate.
 const PubKeySize = 33
+const pubkeyCompressed byte = 0x2
 
 // Address returns a Bitcoin style addresses: RIPEMD160(SHA256(pubkey))
 func (pubKey *PubKey) Address() crypto.Address {
 	if len(pubKey.Key) != PubKeySize {
-		panic("length of pubkey is incorrect")
+		panic("length of pubkey is incorrect") // Handle this as needed
 	}
 
+	// Generate the public key hash.
 	sha := sha256.Sum256(pubKey.Key)
 	hasherRIPEMD160 := ripemd160.New()
-	hasherRIPEMD160.Write(sha[:]) // does not error
-	return crypto.Address(hasherRIPEMD160.Sum(nil))
+	hasherRIPEMD160.Write(sha[:]) // Check for errors as appropriate
+	pubKeyHash := hasherRIPEMD160.Sum(nil)
+	// For P2WPKH, we use a witness version of 0
+	witnessVersion := byte(0x00) // Version 0 for P2WPKH
+	witnessPubKeyHash := append([]byte{witnessVersion}, pubKeyHash...)
+
+	// Return the hash as a crypto.Address, assuming crypto.Address can hold []byte.
+	return crypto.Address(witnessPubKeyHash) // Ensure this is how your crypto.Address is expected to be constructed
 }
 
 // Bytes returns the pubkey byte format.
