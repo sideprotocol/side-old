@@ -40,6 +40,8 @@ func SetupConfig() {
 	config.SetBech32PrefixForAccount(Bech32Prefix, Bech32Prefix+sdk.PrefixPublic)
 	config.SetBech32PrefixForValidator(Bech32Prefix+valoper, Bech32Prefix+valoperpub)
 
+	config.SetCoinType(84) // use the same coin type as bitcoin
+
 	// This is copied from the cosmos sdk v0.43.0-beta1
 	// source: https://github.com/cosmos/cosmos-sdk/blob/v0.43.0-beta1/types/address.go#L141
 	config.SetAddressVerifier(func(bytes []byte) error {
