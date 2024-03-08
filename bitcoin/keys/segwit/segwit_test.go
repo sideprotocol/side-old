@@ -8,7 +8,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/sideprotocol/side/bitcoin/keys/segwit"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/go-bip39"
 )
 
@@ -30,4 +32,8 @@ func TestSegwit(t *testing.T) {
 	// Check if the Bech32 encoded address has the correct prefix and structure.
 	assert.True(t, strings.HasPrefix(bech32Address, "bc1q"), "Address should start with 'bc1q'")
 	t.Logf("Generated SegWit Address: %s", bech32Address)
+	acc, err := sdk.AccAddressFromBech32(bech32Address)
+	require.NoError(t, err)
+	t.Logf("Generated SegWit Address: %s", acc)
+
 }
