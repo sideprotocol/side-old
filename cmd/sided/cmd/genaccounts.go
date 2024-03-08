@@ -40,7 +40,6 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 			cdc := clientCtx.Codec
-
 			serverCtx := server.GetServerContextFromCmd(cmd)
 			config := serverCtx.Config
 
@@ -53,9 +52,6 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 
 			addr, err := sdk.AccAddressFromBech32(args[0])
 
-			// fmt.Println("args--->", args[0])
-			// fmt.Println("address--->", addr)
-			// fmt.Println("err--->", err)
 			if err != nil {
 				inBuf := bufio.NewReader(cmd.InOrStdin())
 				keyringBackend, err := cmd.Flags().GetString(flags.FlagKeyringBackend)
@@ -64,18 +60,20 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 				}
 
 				// attempt to lookup address from Keybase if no address was provided
+				//registry := codectypes.NewInterfaceRegistry()
+				//codec.NewProtoCodec(registry)
 				kb, err := keyring.New(sdk.KeyringServiceName(), keyringBackend, clientCtx.HomeDir, inBuf, cdc, sidekr.Option())
 				if err != nil {
 					return err
 				}
 
 				info, err := kb.Key(args[0])
-				fmt.Println("address--->", err)
 				if err != nil {
 					return fmt.Errorf("failed to get address from Keybase: %w", err)
 				}
 
 				addr, err = info.GetAddress()
+				fmt.Println("addrress:", addr)
 				if err != nil {
 					return fmt.Errorf("failed to get address from Keybase: %w", err)
 				}
@@ -196,3 +194,10 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 
 	return cmd
 }
+
+// func getBitcoinCodec() codec.Codec {
+// 	registry := codectypes.NewInterfaceRegistry()
+// 	bitcoincdc.RegisterInterfaces(registry)
+// 	cryptocodec.RegisterInterfaces(registry)
+// 	return codec.NewProtoCodec(registry)
+// }

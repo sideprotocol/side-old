@@ -1,20 +1,22 @@
 package segwit
 
+import (
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
+)
+
 // Sign creates an ECDSA signature on curve Secp256k1, using SHA256 on the msg.
 func (privKey *PrivKey) Sign(msg []byte) ([]byte, error) {
-	// rsv, err := secp256k1.Sign(crypto.Sha256(msg), privKey.Key)
-	// if err != nil {
-	//	 return nil, err
-	// }
-	// // we do not need v  in r||s||v:
-	// rs := rsv[:len(rsv)-1]
-	// return rs, nil
-	return nil, nil
+	derivedKey := secp256k1.PrivKey{
+		Key: privKey.Key,
+	}
+	return derivedKey.Sign(msg)
 }
 
 // VerifySignature validates the signature.
 // The msg will be hashed prior to signature verification.
-func (pubKey *PubKey) VerifySignature(msg, sigStr []byte) bool {
-	// return secp256k1.VerifySignature(pubKey.Bytes(), crypto.Sha256(msg), sigStr)
-	return false
+func (pubKey *PubKey) VerifySignature(msg []byte, sigStr []byte) bool {
+	derivedPubKey := secp256k1.PubKey{
+		Key: pubKey.Key,
+	}
+	return derivedPubKey.VerifySignature(msg, sigStr)
 }

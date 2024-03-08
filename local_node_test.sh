@@ -1,7 +1,7 @@
 #!/bin/bash
 
-KEYS=("dev0")
-CHAINID="side-devnet-1"
+KEYS=("dev0" "dev1" "dev2")
+CHAINID="side-testnet-1"
 MONIKER="freebird"
 BINARY="sided"
 DENOMS=("uside" "uusdc")
@@ -59,10 +59,6 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	for KEY in "${KEYS[@]}"; do
 		$BINARY keys add "$KEY" --keyring-backend $KEYRING --algo $KEYALGO --home "$HOMEDIR"
 	done
-	# for KEY in "${KEYS[@]}"; do
-    # # Add the --recover flag to initiate recovery mode
-    # 	$BINARY keys add "$KEY" --keyring-backend $KEYRING --algo $KEYALGO --recover --home "$HOMEDIR"
-	# done
 
 	# Set moniker and chain-id for Cascadia (Moniker can be anything, chain-id must be an integer)
 	$BINARY init $MONIKER -o --chain-id $CHAINID --home "$HOMEDIR"

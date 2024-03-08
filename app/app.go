@@ -28,7 +28,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	authsims "github.com/cosmos/cosmos-sdk/x/auth/simulation"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -51,12 +50,14 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	icatypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/types"
+	"github.com/sideprotocol/side/ante"
 
 	ibcfeetypes "github.com/cosmos/ibc-go/v7/modules/apps/29-fee/types"
 
 	ibctransfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
-	"github.com/prometheus/client_golang/prometheus"
+
+	// "github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cast"
 
 	gmmmoduletypes "github.com/sideprotocol/side/x/gmm/types"
@@ -69,9 +70,9 @@ import (
 	"github.com/sideprotocol/side/docs"
 
 	// wasmd module integrate
-	"github.com/CosmWasm/wasmd/x/wasm"
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	//"github.com/CosmWasm/wasmd/x/wasm"
+	//wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	//wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/sideprotocol/side/app/upgrades"
 
 	// upgrades
@@ -79,6 +80,7 @@ import (
 	v1 "github.com/sideprotocol/side/app/upgrades/v1"
 	v2 "github.com/sideprotocol/side/app/upgrades/v2"
 	// packet forward module
+	// bitcoincdc "github.com/sideprotocol/side/bitcoin/codec"
 )
 
 const (
@@ -152,6 +154,8 @@ func New(
 	interfaceRegistry := encodingConfig.InterfaceRegistry
 	txConfig := encodingConfig.TxConfig
 
+	//bitcoincdc.RegisterInterfaces(interfaceRegistry)
+	//bitcoincdc.RegisterCrypto(cdc)
 	bApp := baseapp.NewBaseApp(
 		Name,
 		logger,
@@ -174,14 +178,14 @@ func New(
 	}
 
 	app.homePath = homePath
-	wasmDir := filepath.Join(homePath, "wasm")
-	wasmConfig, err := wasm.ReadWasmConfig(appOpts)
-	wasmOpts := GetWasmOpts(appOpts)
+	//wasmDir := filepath.Join(homePath, "wasm")
+	//wasmConfig, err := wasm.ReadWasmConfig(appOpts)
+	// wasmOpts := GetWasmOpts(appOpts)
 	// Uncomment this for debugging contracts. In the future this could be made into a param passed by the tests
 	// wasmConfig.ContractDebugMode = true
-	if err != nil {
-		panic(fmt.Sprintf("error while reading wasm config: %s", err))
-	}
+	// if err != nil {
+	// 	panic(fmt.Sprintf("error while reading wasm config: %s", err))
+	// }
 
 	app.InitSpecialKeepers(
 		appCodec,
@@ -198,9 +202,9 @@ func New(
 		encodingConfig,
 		bApp,
 		moduleAccountPermissions,
-		wasmDir,
-		wasmConfig,
-		wasmOpts,
+		//wasmDir,
+		//wasmConfig,
+		//wasmOpts,
 		app.BlockedAddrs(),
 	)
 
@@ -265,7 +269,7 @@ func New(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		consensusparamtypes.ModuleName,
-		wasmTypes.ModuleName,
+		//wasmTypes.ModuleName,
 		gmmmoduletypes.ModuleName,
 		yieldmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
@@ -457,16 +461,16 @@ func (app *App) ModuleManager() *module.Manager {
 	return app.mm
 }
 
-func GetWasmOpts(appOpts servertypes.AppOptions) []wasm.Option {
-	var wasmOpts []wasm.Option
-	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
-		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
-	}
+// func GetWasmOpts(appOpts servertypes.AppOptions) []wasm.Option {
+// 	var wasmOpts []wasm.Option
+// 	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
+// 		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
+// 	}
 
-	wasmOpts = append(wasmOpts, wasmkeeper.WithGasRegister(NewSideWasmGasRegister()))
+// 	wasmOpts = append(wasmOpts, wasmkeeper.WithGasRegister(NewSideWasmGasRegister()))
 
-	return wasmOpts
-}
+// 	return wasmOpts
+// }
 
 func (app *App) setupUpgradeStoreLoaders() {
 	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
