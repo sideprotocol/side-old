@@ -9,10 +9,12 @@ import (
 	"io"
 	"math/big"
 
+	"github.com/btcsuite/btcd/chaincfg"
+	"github.com/btcsuite/btcutil"
+	"github.com/btcsuite/btcutil/bech32"
 	"github.com/cometbft/cometbft/crypto"
 	secp256k1dcrd "github.com/decred/dcrd/dcrec/secp256k1/v4"
 	"gitlab.com/yawning/secp256k1-voi/secec"
-	"golang.org/x/crypto/ripemd160"
 
 	errorsmod "cosmossdk.io/errors"
 
@@ -195,17 +197,16 @@ func (pubKey *PubKey) Address() crypto.Address {
 		panic("length of pubkey is incorrect") // Handle this as needed
 	}
 
-	// Generate the public key hash.
-	sha := sha256.Sum256(pubKey.Key)
-	hasherRIPEMD160 := ripemd160.New()
-	hasherRIPEMD160.Write(sha[:]) // Check for errors as appropriate
-	pubKeyHash := hasherRIPEMD160.Sum(nil)
-	// For P2WPKH, we use a witness version of 0
-	witnessVersion := byte(0x00) // Version 0 for P2WPKH
-	witnessPubKeyHash := append([]byte{witnessVersion}, pubKeyHash...)
-
-	// Return the hash as a crypto.Address, assuming crypto.Address can hold []byte.
-	return crypto.Address(witnessPubKeyHash) // Ensure this is how your crypto.Address is expected to be constructed
+	witnessProg := btcutil.Hash160(pubKey.Bytes())
+	bech32Address, err := btcutil.NewAddressWitnessPubKeyHash(witnessProg, &chaincfg.MainNetParams)
+	if err != nil {
+		panic(err)
+	}
+	_, bz, err1 := bech32.Decode(bech32Address.String())
+	if err1 != nil {
+		panic(err1)
+	}
+	return crypto.Address(bz)
 }
 
 // Bytes returns the pubkey byte format.
@@ -214,7 +215,7 @@ func (pubKey *PubKey) Bytes() []byte {
 }
 
 func (pubKey *PubKey) String() string {
-	return fmt.Sprintf("PubKeySecp256k1{%X}", pubKey.Key)
+	return fmt.Sprintf("PubKeySegWit{%X}", pubKey.Key)
 }
 
 func (pubKey *PubKey) Type() string {
