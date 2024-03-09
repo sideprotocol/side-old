@@ -41,7 +41,7 @@ import (
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	// wasmd module integrate
-	//"github.com/CosmWasm/wasmd/x/wasm"
+	"github.com/CosmWasm/wasmd/x/wasm"
 	// upgrades
 	"github.com/sideprotocol/packet-forward-middleware/v7/packetforward"
 )
@@ -72,7 +72,7 @@ var AppModuleBasics = module.NewBasicManager(
 	vesting.AppModuleBasic{},
 	consensus.AppModuleBasic{},
 	ibcfee.AppModuleBasic{},
-	//wasm.AppModuleBasic{},
+	wasm.AppModuleBasic{},
 	gmmmodule.AppModuleBasic{},
 	yieldmodule.AppModuleBasic{},
 	packetforward.AppModuleBasic{},

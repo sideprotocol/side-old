@@ -36,7 +36,7 @@ import (
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	paramproposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 
-	//swasm "github.com/sideprotocol/side/wasmbinding"
+	swasm "github.com/sideprotocol/side/wasmbinding"
 
 	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
@@ -77,11 +77,11 @@ import (
 
 	appparams "github.com/sideprotocol/side/app/params"
 
-	//"github.com/CosmWasm/wasmd/x/wasm"
-	//wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	//wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
-	// "github.com/sideprotocol/packet-forward-middleware/v7/packetforward"
+	"github.com/sideprotocol/packet-forward-middleware/v7/packetforward"
 	packetforwardkeeper "github.com/sideprotocol/packet-forward-middleware/v7/packetforward/keeper"
 	packetforwardtypes "github.com/sideprotocol/packet-forward-middleware/v7/packetforward/types"
 )
@@ -120,7 +120,7 @@ type AppKeepers struct {
 	FeeGrantKeeper        feegrantkeeper.Keeper
 	GroupKeeper           groupkeeper.Keeper
 	ConsensusParamsKeeper consensusparamkeeper.Keeper
-	//WasmKeeper            wasm.Keeper
+	WasmKeeper            wasm.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper   capabilitykeeper.ScopedKeeper
@@ -178,7 +178,7 @@ func (appKeepers *AppKeepers) InitSpecialKeepers(
 	appKeepers.ScopedIBCKeeper = appKeepers.CapabilityKeeper.ScopeToModule(ibcexported.ModuleName)
 	appKeepers.ScopedICAHostKeeper = appKeepers.CapabilityKeeper.ScopeToModule(icahosttypes.SubModuleName)
 	appKeepers.ScopedTransferKeeper = appKeepers.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
-	//appKeepers.scopedWasmKeeper = appKeepers.CapabilityKeeper.ScopeToModule(wasm.ModuleName)
+	appKeepers.scopedWasmKeeper = appKeepers.CapabilityKeeper.ScopeToModule(wasm.ModuleName)
 
 	// TODO: Make a SetInvCheckPeriod fn on CrisisKeeper.
 	// IMO, its bad design atm that it requires this in state machine initialization
@@ -194,9 +194,9 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 	encodingConfig appparams.EncodingConfig,
 	bApp *baseapp.BaseApp,
 	maccPerms map[string][]string,
-	//wasmDir string,
-	//wasmConfig wasmtypes.WasmConfig,
-	//wasmOpts []wasmkeeper.Option,
+	wasmDir string,
+	wasmConfig wasmtypes.WasmConfig,
+	wasmOpts []wasmkeeper.Option,
 	blockedAddress map[string]bool,
 ) {
 	legacyAmino := encodingConfig.Amino
@@ -410,33 +410,33 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
-	// supportedFeatures := "iterator,staking,stargate,side,cosmwasm_1_1,cosmwasm_1_2,cosmwasm_1_4"
+	supportedFeatures := "iterator,staking,stargate,side,cosmwasm_1_1,cosmwasm_1_2,cosmwasm_1_4"
 
-	// wasmOpts = append(swasm.RegisterCustomPlugins(&appKeepers.BankKeeper, &appKeepers.GmmKeeper), wasmOpts...)
+	wasmOpts = append(swasm.RegisterCustomPlugins(&appKeepers.BankKeeper, &appKeepers.GmmKeeper), wasmOpts...)
 
 	// Create Wasmd Keepers
 	// this line is used by starport scaffolding # stargate/app/scopedKeeper
 	// availableCapabilities := strings.Join(AllCapabilities(), ",")
-	// appKeepers.WasmKeeper = wasmkeeper.NewKeeper(
-	// 	appCodec,
-	// 	appKeepers.keys[wasmtypes.StoreKey],
-	// 	appKeepers.AccountKeeper,
-	// 	appKeepers.BankKeeper,
-	// 	appKeepers.StakingKeeper,
-	// 	distrkeeper.NewQuerier(appKeepers.DistrKeeper),
-	// 	appKeepers.IBCFeeKeeper,
-	// 	appKeepers.IBCKeeper.ChannelKeeper,
-	// 	&appKeepers.IBCKeeper.PortKeeper,
-	// 	appKeepers.scopedWasmKeeper,
-	// 	appKeepers.TransferKeeper,
-	// 	bApp.MsgServiceRouter(),
-	// 	bApp.GRPCQueryRouter(),
-	// 	wasmDir,
-	// 	wasmConfig,
-	// 	supportedFeatures,
-	// 	govAuthor,
-	// 	wasmOpts...,
-	// )
+	appKeepers.WasmKeeper = wasmkeeper.NewKeeper(
+		appCodec,
+		appKeepers.keys[wasmtypes.StoreKey],
+		appKeepers.AccountKeeper,
+		appKeepers.BankKeeper,
+		appKeepers.StakingKeeper,
+		distrkeeper.NewQuerier(appKeepers.DistrKeeper),
+		appKeepers.IBCFeeKeeper,
+		appKeepers.IBCKeeper.ChannelKeeper,
+		&appKeepers.IBCKeeper.PortKeeper,
+		appKeepers.scopedWasmKeeper,
+		appKeepers.TransferKeeper,
+		bApp.MsgServiceRouter(),
+		bApp.GRPCQueryRouter(),
+		wasmDir,
+		wasmConfig,
+		supportedFeatures,
+		govAuthor,
+		wasmOpts...,
+	)
 
 	transferIBCModule := transfer.NewIBCModule(appKeepers.TransferKeeper)
 	icaHostIBCModule := icahost.NewIBCModule(appKeepers.ICAHostKeeper)
@@ -445,20 +445,20 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 	// wire up x/wasm to IBC
 	// Create static IBC router, add transfer route, then set and seal it
 
-	// var ics101WasmStack ibcporttypes.IBCModule
-	// ics101WasmStack = wasm.NewIBCHandler(appKeepers.WasmKeeper, appKeepers.IBCKeeper.ChannelKeeper, appKeepers.IBCKeeper.ChannelKeeper)
-	// ics101WasmStack = packetforward.NewIBCMiddleware(
-	// 	ics101WasmStack,
-	// 	appKeepers.PacketForwardKeeper,
-	// 	0, // retries on timeout
-	// 	packetforwardkeeper.DefaultForwardTransferPacketTimeoutTimestamp, // forward timeout
-	// 	packetforwardkeeper.DefaultRefundTransferPacketTimeoutTimestamp,  // refund timeout
-	// )
+	var ics101WasmStack ibcporttypes.IBCModule
+	ics101WasmStack = wasm.NewIBCHandler(appKeepers.WasmKeeper, appKeepers.IBCKeeper.ChannelKeeper, appKeepers.IBCKeeper.ChannelKeeper)
+	ics101WasmStack = packetforward.NewIBCMiddleware(
+		ics101WasmStack,
+		appKeepers.PacketForwardKeeper,
+		0, // retries on timeout
+		packetforwardkeeper.DefaultForwardTransferPacketTimeoutTimestamp, // forward timeout
+		packetforwardkeeper.DefaultRefundTransferPacketTimeoutTimestamp,  // refund timeout
+	)
 
 	ibcRouter := ibcporttypes.NewRouter()
 	ibcRouter.AddRoute(icahosttypes.SubModuleName, icaHostIBCModule).
 		AddRoute(ibctransfertypes.ModuleName, transferIBCModule)
-	//ibcRouter.AddRoute(wasm.ModuleName, ics101WasmStack)
+	ibcRouter.AddRoute(wasm.ModuleName, ics101WasmStack)
 	// this line is used by starport scaffolding # ibc/app/router
 	appKeepers.IBCKeeper.SetRouter(ibcRouter)
 }
@@ -511,7 +511,7 @@ func KVStoreKeys() []string {
 		crisistypes.StoreKey, minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibcexported.StoreKey, upgradetypes.StoreKey,
 		feegrant.StoreKey, evidencetypes.StoreKey, ibctransfertypes.StoreKey, icahosttypes.StoreKey,
-		capabilitytypes.StoreKey, group.StoreKey, icacontrollertypes.StoreKey, consensusparamtypes.StoreKey, //wasmtypes.StoreKey,
+		capabilitytypes.StoreKey, group.StoreKey, icacontrollertypes.StoreKey, consensusparamtypes.StoreKey, wasmtypes.StoreKey,
 		ibcfeetypes.StoreKey,
 		gmmmoduletypes.StoreKey,
 		yieldmoduletypes.StoreKey,

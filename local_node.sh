@@ -1,6 +1,6 @@
 #!/bin/bash
 
-KEYS=("dev0")
+KEYS=("dev0" "dev1" "dev2")
 CHAINID="side-devnet-1"
 MONIKER="freebird"
 BINARY="sided"
