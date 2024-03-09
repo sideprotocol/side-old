@@ -3,7 +3,7 @@
 KEYS=("dev0" "dev1" "dev2")
 CHAINID="side-devnet-1"
 MONIKER="freebird"
-BINARY="sided"
+BINARY="./build/sided"
 DENOMS=("uside" "uusdc")
 INITIAL_SUPPLY="100000000000000000000"
 BLOCK_GAS=10000000
@@ -98,7 +98,7 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	        jq -r --arg total_supply "$total_supply" --arg denom "$DENOM" '.app_state["bank"]["supply"] += [{"denom": $denom, "amount": $total_supply}]' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 	    fi
 	done
-	
+
 	# Sign genesis transaction
 	$BINARY gentx "${KEYS[0]}" ${INITIAL_SUPPLY}${DENOMS[0]} --keyring-backend $KEYRING --chain-id $CHAINID --home "$HOMEDIR"
 
@@ -122,4 +122,4 @@ fi
 
 
 # Start the node (remove the --pruning=nothing flag if historical queries are not needed)
-$BINARY start --log_level info --minimum-gas-prices=0.0001${DENOMS[0]} 
+$BINARY start --log_level info --minimum-gas-prices=0.0001${DENOMS[0]}
