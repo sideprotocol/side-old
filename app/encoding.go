@@ -13,11 +13,8 @@ import (
 // makeEncodingConfig creates an EncodingConfig for an amino based test configuration.
 func makeEncodingConfig() params.EncodingConfig {
 	amino := codec.NewLegacyAmino()
-	//bitcoincdc.RegisterCrypto(amino)
-	//cryptocodec.RegisterCrypto(amino)
 
 	interfaceRegistry := types.NewInterfaceRegistry()
-	//bitcoincdc.RegisterInterfaces(interfaceRegistry)
 	cryptocodec.RegisterInterfaces(interfaceRegistry)
 
 	marshaler := codec.NewProtoCodec(interfaceRegistry)
@@ -34,8 +31,6 @@ func makeEncodingConfig() params.EncodingConfig {
 // MakeEncodingConfig creates an EncodingConfig for testing
 func MakeEncodingConfig() params.EncodingConfig {
 	encodingConfig := makeEncodingConfig()
-	//bitcoincdc.RegisterCrypto(encodingConfig.Amino)
-	//bitcoincdc.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 	std.RegisterLegacyAminoCodec(encodingConfig.Amino)
 	std.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 	ModuleBasics.RegisterLegacyAminoCodec(encodingConfig.Amino)
