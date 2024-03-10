@@ -3,7 +3,7 @@
 KEYS=("dev0" "dev1" "dev2")
 CHAINID="side-devnet-1"
 MONIKER="freebird"
-BINARY="./build/sided"
+BINARY="$HOME/go/bin/sided"
 DENOMS=("uside" "uusdc")
 INITIAL_SUPPLY="100000000000000000000"
 BLOCK_GAS=10000000

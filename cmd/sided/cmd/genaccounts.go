@@ -16,7 +16,6 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
-	sidekr "github.com/sideprotocol/side/bitcoin/keyring"
 	"github.com/spf13/cobra"
 )
 
@@ -62,7 +61,7 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 				// attempt to lookup address from Keybase if no address was provided
 				//registry := codectypes.NewInterfaceRegistry()
 				//codec.NewProtoCodec(registry)
-				kb, err := keyring.New(sdk.KeyringServiceName(), keyringBackend, clientCtx.HomeDir, inBuf, cdc, sidekr.Option())
+				kb, err := keyring.New(sdk.KeyringServiceName(), keyringBackend, clientCtx.HomeDir, inBuf, cdc)
 				if err != nil {
 					return err
 				}

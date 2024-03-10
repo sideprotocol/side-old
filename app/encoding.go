@@ -8,17 +8,16 @@ import (
 
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	"github.com/sideprotocol/side/app/params"
-	bitcoincdc "github.com/sideprotocol/side/bitcoin/codec"
 )
 
 // makeEncodingConfig creates an EncodingConfig for an amino based test configuration.
 func makeEncodingConfig() params.EncodingConfig {
 	amino := codec.NewLegacyAmino()
-	bitcoincdc.RegisterCrypto(amino)
+	//bitcoincdc.RegisterCrypto(amino)
 	//cryptocodec.RegisterCrypto(amino)
 
 	interfaceRegistry := types.NewInterfaceRegistry()
-	bitcoincdc.RegisterInterfaces(interfaceRegistry)
+	//bitcoincdc.RegisterInterfaces(interfaceRegistry)
 	cryptocodec.RegisterInterfaces(interfaceRegistry)
 
 	marshaler := codec.NewProtoCodec(interfaceRegistry)
