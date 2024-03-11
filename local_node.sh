@@ -13,7 +13,7 @@ MAX_GAS=10000000000
 # otherwise your balance will be wiped quickly
 # The keyring test does not require private key to steal tokens from you
 KEYRING="test"
-KEYALGO="secp256k1"
+KEYALGO="segwit"
 LOGLEVEL="info"
 # Set dedicated home directory for the $BINARY instance
 HOMEDIR="$HOME/.side"
