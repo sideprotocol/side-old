@@ -80,7 +80,7 @@ import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
-	"github.com/sideprotocol/packet-forward-middleware/v7/packetforward"
+	// "github.com/sideprotocol/packet-forward-middleware/v7/packetforward"
 	packetforwardkeeper "github.com/sideprotocol/packet-forward-middleware/v7/packetforward/keeper"
 	packetforwardtypes "github.com/sideprotocol/packet-forward-middleware/v7/packetforward/types"
 )
@@ -437,15 +437,15 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 	// wire up x/wasm to IBC
 	// Create static IBC router, add transfer route, then set and seal it
 
-	var ics101WasmStack ibcporttypes.IBCModule
-	ics101WasmStack = wasm.NewIBCHandler(appKeepers.WasmKeeper, appKeepers.IBCKeeper.ChannelKeeper, appKeepers.IBCKeeper.ChannelKeeper)
-	ics101WasmStack = packetforward.NewIBCMiddleware(
-		ics101WasmStack,
-		appKeepers.PacketForwardKeeper,
-		0, // retries on timeout
-		packetforwardkeeper.DefaultForwardTransferPacketTimeoutTimestamp, // forward timeout
-		packetforwardkeeper.DefaultRefundTransferPacketTimeoutTimestamp,  // refund timeout
-	)
+	//var ics101WasmStack ibcporttypes.IBCModule
+	ics101WasmStack := wasm.NewIBCHandler(appKeepers.WasmKeeper, appKeepers.IBCKeeper.ChannelKeeper, appKeepers.IBCKeeper.ChannelKeeper)
+	// ics101WasmStack = packetforward.NewIBCMiddleware(
+	// 	ics101WasmStack,
+	// 	appKeepers.PacketForwardKeeper,
+	// 	0, // retries on timeout
+	// 	packetforwardkeeper.DefaultForwardTransferPacketTimeoutTimestamp, // forward timeout
+	// 	packetforwardkeeper.DefaultRefundTransferPacketTimeoutTimestamp,  // refund timeout
+	// )
 
 	ibcRouter := ibcporttypes.NewRouter()
 	ibcRouter.AddRoute(icahosttypes.SubModuleName, icaHostIBCModule).
