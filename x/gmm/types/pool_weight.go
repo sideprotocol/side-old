@@ -2,7 +2,6 @@ package types
 
 import (
 	fmt "fmt"
-	math "math"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -29,11 +28,8 @@ func (p *Pool) estimateShareWithSingleLiquidityInWeightPool(coin sdk.Coin) (sdk.
 	decAsset := sdk.NewDecCoinFromCoin(asset.Token)
 	weight := sdk.NewDecFromInt(*asset.Weight).Quo(sdk.NewDec(100)) // divide by 100
 	ratio := decToken.Amount.Quo(decAsset.Amount).Add(sdk.NewDec(1))
-	exponent := (math.Pow(ratio.MustFloat64(), weight.MustFloat64()) - 1) * Multiplier
-	factor, err := sdk.NewDecFromStr(fmt.Sprintf("%f", exponent/Multiplier))
-	if err != nil {
-		return sdk.Coin{}, err
-	}
+
+	factor := (ApproximatePow(ratio, weight, 100).Sub(sdk.OneDec()))
 	issueAmount := p.TotalShares.Amount.Mul(factor.RoundInt()).Quo(sdk.NewInt(1e10))
 	outputToken := sdk.Coin{
 		Amount: issueAmount,
@@ -105,12 +101,22 @@ func (p *Pool) estimateSwapInWeightPool(amountIn sdk.Coin, denomOut string) (sdk
 	oneMinusRatio := sdk.NewDec(1).Sub(ratio)
 
 	power := weightIn.Quo(weightOut)
-	factor := math.Pow(oneMinusRatio.MustFloat64(), power.MustFloat64()) * Multiplier
-	finalFactor := factor / 1e8
-
-	amountOut := balanceOut.Mul(sdk.MustNewDecFromStr(fmt.Sprintf("%f", finalFactor))).Quo(sdk.NewDec(1e10))
+	factor := ApproximatePow(oneMinusRatio, power, 100) // 100 iterations for example
+	amountOut := balanceOut.Mul(factor)
 	return sdk.Coin{
 		Amount: amountOut.RoundInt(),
 		Denom:  denomOut,
 	}, nil
+}
+
+// ApproximatePow approximates (base ^ exponent) using a series expansion.
+// Here's a simple approximation; you might need a more accurate one depending on your needs.
+func ApproximatePow(base sdk.Dec, exponent sdk.Dec, iterations int) sdk.Dec {
+	result := sdk.OneDec() // Start with 1 as the initial result
+	term := sdk.OneDec()   // The current term starts at 1 (base^0)
+	for n := 1; n <= iterations; n++ {
+		term = term.Mul(base).Mul(exponent).QuoInt64(int64(n)) // term *= base * exponent / n
+		result = result.Sub(term)
+	}
+	return result
 }
