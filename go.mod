@@ -160,7 +160,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.42.0 // indirect
-	github.com/prometheus/procfs v0.9.0 // indirect
+	github.com/prometheus/procfs v0.10.1 // indirect
 	github.com/rakyll/statik v0.1.7 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
@@ -211,13 +211,13 @@ require (
 require (
 	cosmossdk.io/errors v1.0.1
 	cosmossdk.io/math v1.3.0
-	github.com/CosmWasm/wasmd v0.40.1
-	github.com/CosmWasm/wasmvm v1.2.4
+	github.com/CosmWasm/wasmd v0.45.0
+	github.com/CosmWasm/wasmvm v1.5.2
 	github.com/Stride-Labs/stride/v16 v16.0.0
 	github.com/bufbuild/buf v1.7.0
 	github.com/cosmos/cosmos-proto v1.0.0-beta.4
 	github.com/cosmos/ics23/go v0.10.0
-	github.com/prometheus/client_golang v1.15.0
+	github.com/prometheus/client_golang v1.16.0
 	github.com/sideprotocol/packet-forward-middleware/v7 v7.0.0-20240301130023-4ffe7ac5619b
 	golang.org/x/tools v0.12.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20231212172506-995d672761c0
