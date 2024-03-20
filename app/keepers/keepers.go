@@ -80,9 +80,6 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-
-	packetforwardkeeper "github.com/sideprotocol/packet-forward-middleware/v7/packetforward/keeper"
-	packetforwardtypes "github.com/sideprotocol/packet-forward-middleware/v7/packetforward/types"
 )
 
 const (
@@ -132,8 +129,6 @@ type AppKeepers struct {
 	GmmKeeper gmmmodulekeeper.Keeper
 
 	YieldKeeper yieldmodulekeeper.Keeper
-
-	PacketForwardKeeper *packetforwardkeeper.Keeper
 
 	// keys to access the substores
 	keys    map[string]*storetypes.KVStoreKey
@@ -327,19 +322,6 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		scopedICAControllerKeeper, bApp.MsgServiceRouter(),
 	)
 
-	// Initialize the packet forward middleware Keeper
-	// It's important to note that the PFM Keeper must be initialized before the Transfer Keeper
-	appKeepers.PacketForwardKeeper = packetforwardkeeper.NewKeeper(
-		appCodec,
-		appKeepers.keys[packetforwardtypes.StoreKey],
-		nil, // will be zero-value here, reference is set later on with SetTransferKeeper.
-		appKeepers.IBCKeeper.ChannelKeeper,
-		appKeepers.DistrKeeper,
-		appKeepers.BankKeeper,
-		appKeepers.IBCKeeper.ChannelKeeper,
-		govAuthor,
-	)
-
 	// Create Transfer Keepers
 	appKeepers.TransferKeeper = ibctransferkeeper.NewKeeper(
 		appCodec,
@@ -479,8 +461,6 @@ func (appKeepers *AppKeepers) initParamsKeeper(appCodec codec.BinaryCodec, legac
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(gmmmoduletypes.ModuleName)
 	paramsKeeper.Subspace(yieldmoduletypes.ModuleName)
-	paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
-	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper
 }
@@ -513,7 +493,6 @@ func KVStoreKeys() []string {
 		ibcfeetypes.StoreKey,
 		gmmmoduletypes.StoreKey,
 		yieldmoduletypes.StoreKey,
-		packetforwardtypes.StoreKey,
 	}
 }
 
