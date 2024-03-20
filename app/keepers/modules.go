@@ -43,7 +43,6 @@ import (
 	// wasmd module integrate
 	"github.com/CosmWasm/wasmd/x/wasm"
 	// upgrades
-	"github.com/sideprotocol/packet-forward-middleware/v7/packetforward"
 )
 
 // AppModuleBasics returns ModuleBasics for the module BasicManager.
@@ -75,7 +74,6 @@ var AppModuleBasics = module.NewBasicManager(
 	wasm.AppModuleBasic{},
 	gmmmodule.AppModuleBasic{},
 	yieldmodule.AppModuleBasic{},
-	packetforward.AppModuleBasic{},
 )
 
 func getGovProposalHandlers() []govclient.ProposalHandler {
