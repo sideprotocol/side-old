@@ -154,8 +154,6 @@ func New(
 	interfaceRegistry := encodingConfig.InterfaceRegistry
 	txConfig := encodingConfig.TxConfig
 
-	//bitcoincdc.RegisterInterfaces(interfaceRegistry)
-	//bitcoincdc.RegisterCrypto(cdc)
 	bApp := baseapp.NewBaseApp(
 		Name,
 		logger,
@@ -461,8 +459,8 @@ func (app *App) ModuleManager() *module.Manager {
 	return app.mm
 }
 
-func GetWasmOpts(appOpts servertypes.AppOptions) []wasm.Option {
-	var wasmOpts []wasm.Option
+func GetWasmOpts(appOpts servertypes.AppOptions) []wasmkeeper.Option {
+	var wasmOpts []wasmkeeper.Option
 	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
 		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
 	}

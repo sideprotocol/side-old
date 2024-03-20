@@ -89,7 +89,7 @@ var moduleAccountPermissions = map[string][]string{
 	govtypes.ModuleName:            {authtypes.Burner},
 	ibcfeetypes.ModuleName:         nil,
 	ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
-	wasm.ModuleName:                {authtypes.Burner},
+	wasmTypes.ModuleName:           {authtypes.Burner},
 	gmmmoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 	yieldmoduletypes.ModuleName:    {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 }

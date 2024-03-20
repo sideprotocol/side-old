@@ -50,7 +50,6 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 			}
 
 			addr, err := sdk.AccAddressFromBech32(args[0])
-
 			if err != nil {
 				inBuf := bufio.NewReader(cmd.InOrStdin())
 				keyringBackend, err := cmd.Flags().GetString(flags.FlagKeyringBackend)
@@ -58,9 +57,6 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 					return err
 				}
 
-				// attempt to lookup address from Keybase if no address was provided
-				//registry := codectypes.NewInterfaceRegistry()
-				//codec.NewProtoCodec(registry)
 				kb, err := keyring.New(sdk.KeyringServiceName(), keyringBackend, clientCtx.HomeDir, inBuf, cdc)
 				if err != nil {
 					return err
