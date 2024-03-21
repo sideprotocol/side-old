@@ -19,6 +19,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/debug"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
+	"github.com/cosmos/cosmos-sdk/client/pruning"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
 	"github.com/cosmos/cosmos-sdk/server"
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
@@ -39,7 +40,6 @@ import (
 	"github.com/spf13/pflag"
 
 	// this line is used by starport scaffolding # root/moduleImport
-
 	"github.com/sideprotocol/side/app"
 	appparams "github.com/sideprotocol/side/app/params"
 )
@@ -108,6 +108,9 @@ func initRootCmd(
 ) {
 	// Set config
 	initSDKConfig()
+	a := appCreator{
+		encodingConfig,
+	}
 
 	gentxModule := app.ModuleBasics[genutiltypes.ModuleName].(genutil.AppModuleBasic)
 	rootCmd.AddCommand(
@@ -125,12 +128,9 @@ func initRootCmd(
 		tmcli.NewCompletionCmd(rootCmd, true),
 		debug.Cmd(),
 		config.Cmd(),
+		pruning.PruningCmd(a.newApp),
 		// this line is used by starport scaffolding # root/commands
 	)
-
-	a := appCreator{
-		encodingConfig,
-	}
 
 	// add server commands
 	server.AddCommands(
