@@ -20,8 +20,12 @@ func (p *Pool) estimateShareInStablePool(coins sdk.Coins) (sdk.Coin, error) {
 	for _, asset := range coins {
 		currentWeight := sdkmath.LegacyDec(asset.Amount).Quo(sdkmath.LegacyNewDecFromInt(sum))
 
-		balanceRatiosWithFee[asset.Denom] = sdkmath.LegacyDec(asset.Amount.Add(p.Assets[asset.Denom].Token.Amount)).Quo(
-			sdkmath.LegacyNewDecFromInt(p.Assets[asset.Denom].Token.Amount),
+		assetInPool, _, exist := p.GetAssetByDenom(asset.Denom)
+		if !exist {
+			continue
+		}
+		balanceRatiosWithFee[asset.Denom] = sdkmath.LegacyDec(asset.Amount.Add(assetInPool.Token.Amount)).Quo(
+			sdkmath.LegacyNewDecFromInt(assetInPool.Token.Amount),
 		)
 
 		invariantRatioWithFees = invariantRatioWithFees.Add(
@@ -33,7 +37,10 @@ func (p *Pool) estimateShareInStablePool(coins sdk.Coins) (sdk.Coin, error) {
 
 	newBalances := sdk.NewCoins()
 	for _, amountIn := range coins {
-		asset := p.Assets[amountIn.Denom]
+		asset, _, exist := p.GetAssetByDenom(amountIn.Denom)
+		if !exist {
+			continue
+		}
 		var amountInWithoutFee sdkmath.Int
 		// Check if the balance ratio is greater than the ideal ratio to charge fees or not
 		if balanceRatiosWithFee[asset.Token.Denom].GT(invariantRatioWithFees) {
@@ -89,18 +96,21 @@ func (p *Pool) estimateSwapInStablePool(tokenIn sdk.Coin, denomOut string) (sdk.
 	inv := calculateInvariantInStablePool(*p.PoolParams.Amp, p.GetLiquidity())
 
 	assets := p.Assets
-
-	balance := assets[tokenIn.Denom].Token.Amount.Add(tokenInDec.RoundInt())
-	assets[tokenIn.Denom] = PoolAsset{
+	asset, index, exist := p.GetAssetByDenom(tokenIn.Denom)
+	if !exist {
+		return sdk.Coin{}, ErrNotFoundAssetInPool
+	}
+	balance := asset.Token.Amount.Add(tokenInDec.RoundInt())
+	assets[index] = PoolAsset{
 		Token:   sdk.NewCoin(tokenIn.Denom, balance),
-		Weight:  assets[tokenIn.Denom].Weight,
-		Decimal: assets[tokenIn.Denom].Decimal,
+		Weight:  assets[index].Weight,
+		Decimal: assets[index].Decimal,
 	}
 
 	finalBalanceOut, err := getTokenBalanceGivenInvariantAndAllOtherBalances(
-		*p.PoolParams.Amp, inv, assets, tokenIn.Denom,
+		*p.PoolParams.Amp, inv, assets, tokenIn.Amount,
 	)
-	out := p.Assets[denomOut].Token.Amount.Sub(finalBalanceOut).Sub(sdkmath.OneInt())
+	out := p.Assets[index].Token.Amount.Sub(finalBalanceOut).Sub(sdkmath.OneInt())
 	return sdk.NewCoin(denomOut, out), err
 }
 
@@ -191,25 +201,25 @@ func calculateInvariantInStablePool(
 func getTokenBalanceGivenInvariantAndAllOtherBalances(
 	amp sdkmath.Int,
 	inv sdkmath.Int,
-	assets map[string]PoolAsset,
-	tokenInDenom string,
+	assets []PoolAsset,
+	tokenInAmount sdkmath.Int,
 ) (sdkmath.Int, error) {
 	numTokens := sdkmath.NewInt(int64(len(assets)))
 	ampTimeTotal := amp.Mul(numTokens)
 	sum := sdkmath.NewInt(0)
 
-	PD := numTokens.Mul(assets[tokenInDenom].Token.Amount)
+	PD := numTokens.Mul(tokenInAmount)
 
 	for _, asset := range assets {
 		PD = PD.Mul(asset.Token.Amount).Mul(numTokens).Quo(inv)
 		sum = sum.Add(asset.Token.Amount)
 	}
 
-	sum = sum.Sub(assets[tokenInDenom].Token.Amount)
+	sum = sum.Sub(tokenInAmount)
 
 	inv2 := inv.Mul(inv)
 
-	c := inv2.Quo(ampTimeTotal.Mul(PD)).Mul(AmpPrecision).Mul(assets[tokenInDenom].Token.Amount)
+	c := inv2.Quo(ampTimeTotal.Mul(PD)).Mul(AmpPrecision).Mul(tokenInAmount)
 	b := sum.Add(inv.Quo(ampTimeTotal).Mul(AmpPrecision))
 
 	tokenBalance := (inv2.Add(c)).Quo(inv.Add(b))

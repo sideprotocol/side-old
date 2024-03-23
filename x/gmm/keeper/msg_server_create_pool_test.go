@@ -228,12 +228,12 @@ func (suite *KeeperTestSuite) createNewStablePool() string {
 		},
 		[]types.PoolAsset{
 			{
-				Token:   sdk.NewCoin(simapp.WDAI, sdkmath.NewInt(100)),
+				Token:   sdk.NewCoin(simapp.WDAI, sdkmath.NewInt(100000)),
 				Weight:  &weight,
 				Decimal: sdk.NewInt(6),
 			},
 			{
-				Token:   sdk.NewCoin(simapp.WUSDT, sdkmath.NewInt(100)),
+				Token:   sdk.NewCoin(simapp.WUSDT, sdkmath.NewInt(100000)),
 				Weight:  &weight,
 				Decimal: sdk.NewInt(6),
 			},
