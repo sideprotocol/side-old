@@ -40,9 +40,11 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/bgentry/speakeasy v0.1.1-0.20220910012023-760eaf8b6816 // indirect
-	github.com/btcsuite/btcd v0.20.1-beta // indirect
+	github.com/btcsuite/btcd v0.24.1-0.20240318151728-2fc99e0496d2 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.3.2 // indirect
-	github.com/btcsuite/btcutil v1.0.2 // indirect
+	github.com/btcsuite/btcd/btcutil v1.1.5 // indirect
+	github.com/btcsuite/btcd/chaincfg/chainhash v1.1.0 // indirect
+	github.com/btcsuite/btclog v0.0.0-20170628155309-84c8d2346e9f // indirect
 	github.com/bufbuild/connect-go v1.0.0 // indirect
 	github.com/bufbuild/protocompile v0.8.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
@@ -68,7 +70,8 @@ require (
 	github.com/creachadair/taskgroup v0.4.2 // indirect
 	github.com/danieljoos/wincred v1.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.1.0 // indirect
+	github.com/decred/dcrd/crypto/blake256 v1.0.1 // indirect
+	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.2.0 // indirect
 	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f // indirect
 	github.com/dgraph-io/badger/v2 v2.2007.4 // indirect
 	github.com/dgraph-io/ristretto v0.1.1 // indirect
@@ -187,14 +190,14 @@ require (
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	go.uber.org/zap v1.23.0 // indirect
-	golang.org/x/crypto v0.16.0 // indirect
+	golang.org/x/crypto v0.21.0 // indirect
 	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1 // indirect
 	golang.org/x/mod v0.12.0 // indirect
-	golang.org/x/net v0.19.0 // indirect
+	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/oauth2 v0.13.0 // indirect
 	golang.org/x/sync v0.5.0 // indirect
-	golang.org/x/sys v0.16.0 // indirect
-	golang.org/x/term v0.15.0 // indirect
+	golang.org/x/sys v0.18.0 // indirect
+	golang.org/x/term v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	google.golang.org/api v0.149.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
@@ -227,8 +230,8 @@ require (
 )
 
 replace (
-	github.com/cosmos/cosmos-sdk => github.com/sideprotocol/cosmos-sdk v0.47.111
-	// github.com/cosmos/cosmos-sdk => ../cosmos-sdk
+	github.com/cosmos/cosmos-sdk => github.com/sideprotocol/cosmos-sdk v0.47.112
+	//github.com/cosmos/cosmos-sdk => ../cosmos-sdk
 	github.com/cosmos/interchain-security/v3 => github.com/Stride-Labs/interchain-security/v3 v3.1.0-remove-validation-bug-7d3d9d
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
