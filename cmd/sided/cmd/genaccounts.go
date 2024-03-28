@@ -68,7 +68,6 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 				}
 
 				addr, err = info.GetAddress()
-				fmt.Println("addrress:", addr)
 				if err != nil {
 					return fmt.Errorf("failed to get address from Keybase: %w", err)
 				}

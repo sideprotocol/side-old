@@ -230,7 +230,7 @@ require (
 )
 
 replace (
-	github.com/cosmos/cosmos-sdk => github.com/sideprotocol/cosmos-sdk v0.47.112
+	github.com/cosmos/cosmos-sdk => github.com/sideprotocol/cosmos-sdk v0.47.115
 	//github.com/cosmos/cosmos-sdk => ../cosmos-sdk
 	github.com/cosmos/interchain-security/v3 => github.com/Stride-Labs/interchain-security/v3 v3.1.0-remove-validation-bug-7d3d9d
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
