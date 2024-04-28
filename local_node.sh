@@ -2,11 +2,18 @@
 
 KEYS=("dev0" "dev1" "dev2")
 CHAINID="taproot-1"
-MONIKER="freebird"
+MONIKER="Side Labs"
 BINARY="$HOME/go/bin/sided"
-DENOM_STR="uside,uatom,ubtc.ueth,uusdc,uusdt"
+DENOM_STR="uside,uatom,ubtc,ueth,uusdc,uusdt"
 # DENOMS=$(echo $DENOM_STR | tr "," "\n")
-DENOMS=(${DENOM_STR//,/ })
+# DENOMS=(${DENOM_STR//,/ })
+
+set -f
+IFS=,
+DENOMS=($DENOM_STR)
+
+IFS=";"
+
 
 INITIAL_SUPPLY="100000000000000000000"
 BLOCK_GAS=10000000
@@ -16,7 +23,8 @@ MAX_GAS=10000000000
 # otherwise your balance will be wiped quickly
 # The keyring test does not require private key to steal tokens from you
 KEYRING="test"
-KEYALGO="secp256k1"
+#KEYALGO="secp256k1"
+KEYALGO="segwit"
 LOGLEVEL="info"
 # Set dedicated home directory for the $BINARY instance
 HOMEDIR="$HOME/.side"
@@ -88,19 +96,11 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	# Allocate genesis accounts (cosmos formatted addresses)
 	for KEY in "${KEYS[@]}"; do
 	    BALANCES=""
-	    for DENOM in $DENOMS; do
-	        BALANCES+=",${INITIAL_SUPPLY}$DENOM"
+	    for key in "${!DENOMS[@]}"; do
+	        BALANCES+=",${INITIAL_SUPPLY}${DENOMS[$key]}"
 	    done
-	    # echo $BALANCES
+	    echo ${BALANCES:1}
 	    $BINARY add-genesis-account "$KEY" ${BALANCES:1} --keyring-backend $KEYRING --home "$HOMEDIR"
-	done
-
-	# Adjust total supply
-	for DENOM in $DENOMS; do
-	    total_supply=$(echo "${#KEYS[@]} * $INITIAL_SUPPLY" | bc)
-	    if ! jq -e --arg denom "$DENOM" '.app_state["bank"]["supply"] | any(.denom == $denom)' "$GENESIS" >/dev/null; then
-	        jq -r --arg total_supply "$total_supply" --arg denom "$DENOM" '.app_state["bank"]["supply"] += [{"denom": $denom, "amount": $total_supply}]' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	    fi
 	done
 
 	# Sign genesis transaction
