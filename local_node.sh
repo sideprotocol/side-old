@@ -1,12 +1,10 @@
 #!/bin/bash
 
-KEYS=("dev0" "dev1" "dev2")
-CHAINID="taproot-1"
+KEYS=("dev0" "dev1")
+CHAINID="S2-testnet-1"
 MONIKER="Side Labs"
 BINARY="$HOME/go/bin/sided"
-DENOM_STR="uside,uatom,ubtc,ueth,uusdc,uusdt"
-# DENOMS=$(echo $DENOM_STR | tr "," "\n")
-# DENOMS=(${DENOM_STR//,/ })
+DENOM_STR="uside,ubtct,uusdc,uusdc.axl,uusdc.noble,uusdt,uusdt.kava,uusdt.axl,uwbtc.axl,uwbtc.osmo,uwbtc"
 
 set -f
 IFS=,
@@ -15,7 +13,7 @@ DENOMS=($DENOM_STR)
 IFS=";"
 
 
-INITIAL_SUPPLY="100000000000000000000"
+INITIAL_SUPPLY="500000000000000"
 BLOCK_GAS=10000000
 MAX_GAS=10000000000
 
@@ -79,8 +77,10 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	$BINARY init $MONIKER -o --chain-id $CHAINID --home "$HOMEDIR"
 
 	jq --arg denom "${DENOMS[0]}" '.app_state["staking"]["params"]["bond_denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	jq --arg denom "${DENOMS[0]}" '.app_state["mint"]["params"]["mint_denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 	jq --arg denom "${DENOMS[0]}" '.app_state["crisis"]["constant_fee"]["denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 	jq --arg denom "${DENOMS[0]}" '.app_state["gov"]["deposit_params"]["min_deposit"][0]["denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	jq --arg denom "${DENOMS[0]}" '.app_state["gov"]["params"]["min_deposit"][0]["denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 	jq --arg gas "$BLOCK_GAS" '.app_state["feemarket"]["block_gas"]=$gas' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 	# Set gas limit in genesis
 	jq --arg max_gas "$MAX_GAS" '.consensus_params["block"]["max_gas"]=$max_gas' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
