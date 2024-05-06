@@ -105,7 +105,7 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 
 	# Sign genesis transaction
 	echo $INITIAL_SUPPLY${DENOMS[0]}
-	$BINARY gentx "${KEYS[0]}" $INITIAL_SUPPLY${DENOMS[0]} --keyring-backend $KEYRING --chain-id $CHAINID --home "$HOMEDIR"
+	$BINARY gentx "${KEYS[0]}" $INITIAL_SUPPLY${DENOMS[0]} --keyring-backend $KEYRING --chain-id $CHAINID --identity "666AC57CC678BEC4" --website="https://side.one" --home "$HOMEDIR"
 
 	## In case you want to create multiple validators at genesis
 	## 1. Back to `$BINARY keys add` step, init more keys
