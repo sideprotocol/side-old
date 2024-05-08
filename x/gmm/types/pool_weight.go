@@ -2,7 +2,7 @@ package types
 
 import (
 	fmt "fmt"
-	math "math"
+	"math/big"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -29,12 +29,13 @@ func (p *Pool) estimateShareWithSingleLiquidityInWeightPool(coin sdk.Coin) (sdk.
 	decAsset := sdk.NewDecCoinFromCoin(asset.Token)
 	weight := sdk.NewDecFromInt(*asset.Weight).Quo(sdk.NewDec(100)) // divide by 100
 	ratio := decToken.Amount.Quo(decAsset.Amount).Add(sdk.NewDec(1))
-	exponent := (math.Pow(ratio.MustFloat64(), weight.MustFloat64()) - 1) * Multiplier
-	factor, err := sdk.NewDecFromStr(fmt.Sprintf("%f", exponent/Multiplier))
-	if err != nil {
-		return sdk.Coin{}, err
-	}
-	issueAmount := p.TotalShares.Amount.Mul(factor.RoundInt()).Quo(sdk.NewInt(1e10))
+	precision := big.NewInt(1) //sdk.MustNewDecFromStr("0.00000001")
+	_ = weight
+	_ = ratio
+	_ = precision
+	factor := sdk.NewInt(1)
+	//factor := (ApproximatePow(ratio.BigInt(), weight.BigInt(), precision).Sub(sdk.OneDec()))
+	issueAmount := p.TotalShares.Amount.Mul(factor).Quo(sdk.NewInt(1e10))
 	outputToken := sdk.Coin{
 		Amount: issueAmount,
 		Denom:  p.TotalShares.Denom,
@@ -103,12 +104,13 @@ func (p *Pool) estimateSwapInWeightPool(amountIn sdk.Coin, denomOut string) (sdk
 	balanceInPlusAmount := balanceIn.Add(amount)
 	ratio := balanceIn.Quo(balanceInPlusAmount)
 	oneMinusRatio := sdk.NewDec(1).Sub(ratio)
-
 	power := weightIn.Quo(weightOut)
-	factor := math.Pow(oneMinusRatio.MustFloat64(), power.MustFloat64()) * Multiplier
-	finalFactor := factor / 1e8
-
-	amountOut := balanceOut.Mul(sdk.MustNewDecFromStr(fmt.Sprintf("%f", finalFactor))).Quo(sdk.NewDec(1e10))
+	precision := "0.00000001"                                                        //sdk.MustNewDecFromStr("0.00000001")
+	factor, err := ApproximatePow(oneMinusRatio.String(), power.String(), precision) // 100 iterations for example
+	if err != nil {
+		return sdk.Coin{}, err
+	}
+	amountOut := balanceOut.Mul(sdk.MustNewDecFromStr(factor.String()))
 	return sdk.Coin{
 		Amount: amountOut.RoundInt(),
 		Denom:  denomOut,

@@ -5,14 +5,14 @@ import (
 )
 
 func (p *PoolI) ToPool() Pool {
-	assets := make(map[string]PoolAsset)
+	assets := []PoolAsset{} //make(map[PoolAsset])
 	for _, asset := range p.Assets {
 		weight := sdkmath.NewIntFromUint64(uint64(asset.Weight))
-		assets[asset.Balance.Denom] = PoolAsset{
+		assets = append(assets, PoolAsset{
 			Token:   *asset.Balance,
 			Weight:  &weight,
 			Decimal: sdkmath.NewIntFromUint64(uint64(asset.Decimal)),
-		}
+		})
 	}
 	return Pool{
 		PoolId: p.Id,

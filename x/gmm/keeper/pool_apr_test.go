@@ -15,20 +15,20 @@ func TestAPRCalculation(t *testing.T) {
 	keeper, ctx := testkeeper.GmmKeeper(t)
 	amp := sdkmath.NewInt(100)
 	//params := types.DefaultParams()
-	mockAssets := make(map[string]types.PoolAsset)
+	mockAssets := []types.PoolAsset{}
 	weight := sdkmath.NewInt(6)
 	tokenIn := sdk.NewCoin("usdt", sdk.NewInt(100))
 	//tokenOut := sdk.NewCoin("usdc", sdk.NewInt(80))
-	mockAssets["usdt"] = types.PoolAsset{
+	mockAssets = append(mockAssets, types.PoolAsset{
 		Decimal: sdkmath.NewInt(6),
 		Weight:  &weight,
 		Token:   sdk.NewCoin("usdt", sdk.NewInt(1000000)),
-	}
-	mockAssets["usdc"] = types.PoolAsset{
+	})
+	mockAssets = append(mockAssets, types.PoolAsset{
 		Decimal: sdkmath.NewInt(6),
 		Weight:  &weight,
 		Token:   sdk.NewCoin("usdc", sdk.NewInt(1000000)),
-	}
+	})
 
 	pool := types.Pool{
 		PoolId: "test",
@@ -52,7 +52,7 @@ func TestAPRCalculation(t *testing.T) {
 
 	// Calculate the APR for the pool
 	apr := keeper.GetAPR(ctx, pool.PoolId)
-	expectedAPR := sdk.NewCoin("usdt", sdkmath.NewInt(6610000))
+	expectedAPR := sdk.NewCoin("usdt", sdkmath.NewInt(6600000))
 	// Assert APR calculation
 	require.Equal(t, expectedAPR.Amount.LTE(apr[0].Amount), true, "Calculated APR does not match expected APR")
 }

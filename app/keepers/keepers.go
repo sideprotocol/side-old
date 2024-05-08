@@ -35,6 +35,7 @@ import (
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	paramproposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
+
 	swasm "github.com/sideprotocol/side/wasmbinding"
 
 	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
@@ -80,14 +81,15 @@ import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
-	// "github.com/sideprotocol/packet-forward-middleware/v7/packetforward"
-	packetforwardkeeper "github.com/sideprotocol/packet-forward-middleware/v7/packetforward/keeper"
-	packetforwardtypes "github.com/sideprotocol/packet-forward-middleware/v7/packetforward/types"
 )
 
 const (
-	AccountAddressPrefix = "osmo"
+	AccountAddressPrefix = "side"
 )
+
+// var (
+// 	govAuthor = "bc1qjs3uxh3w8n6qhlegzjymyq9xn4jp8jam2qgy7x" //govAuthor// authtypes.NewModuleAddress(govtypes.ModuleName).String()
+// )
 
 type AppKeepers struct {
 	// keepers
@@ -115,7 +117,7 @@ type AppKeepers struct {
 	FeeGrantKeeper        feegrantkeeper.Keeper
 	GroupKeeper           groupkeeper.Keeper
 	ConsensusParamsKeeper consensusparamkeeper.Keeper
-	WasmKeeper            wasm.Keeper
+	WasmKeeper            wasmkeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper   capabilitykeeper.ScopedKeeper
@@ -128,8 +130,6 @@ type AppKeepers struct {
 	GmmKeeper gmmmodulekeeper.Keeper
 
 	YieldKeeper yieldmodulekeeper.Keeper
-
-	PacketForwardKeeper *packetforwardkeeper.Keeper
 
 	// keys to access the substores
 	keys    map[string]*storetypes.KVStoreKey
@@ -150,9 +150,11 @@ func (appKeepers *AppKeepers) InitSpecialKeepers(
 	paramsKeeper := appKeepers.initParamsKeeper(appCodec, cdc, appKeepers.keys[paramstypes.StoreKey], appKeepers.tkeys[paramstypes.TStoreKey])
 	appKeepers.ParamsKeeper = paramsKeeper
 
+	govAuthor := authtypes.NewModuleAddress(govtypes.ModuleName).String()
+
 	// set the BaseApp's parameter store
 	consensusParamsKeeper := consensusparamkeeper.NewKeeper(
-		appCodec, appKeepers.keys[consensusparamtypes.StoreKey], authtypes.NewModuleAddress(govtypes.ModuleName).String())
+		appCodec, appKeepers.keys[consensusparamtypes.StoreKey], govAuthor)
 	appKeepers.ConsensusParamsKeeper = consensusParamsKeeper
 	bApp.SetParamStore(&appKeepers.ConsensusParamsKeeper)
 
@@ -162,7 +164,7 @@ func (appKeepers *AppKeepers) InitSpecialKeepers(
 		appCodec,
 		homePath,
 		bApp,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		govAuthor,
 	)
 	appKeepers.UpgradeKeeper = upgradeKeeper
 
@@ -171,12 +173,12 @@ func (appKeepers *AppKeepers) InitSpecialKeepers(
 	appKeepers.ScopedIBCKeeper = appKeepers.CapabilityKeeper.ScopeToModule(ibcexported.ModuleName)
 	appKeepers.ScopedICAHostKeeper = appKeepers.CapabilityKeeper.ScopeToModule(icahosttypes.SubModuleName)
 	appKeepers.ScopedTransferKeeper = appKeepers.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
-	appKeepers.scopedWasmKeeper = appKeepers.CapabilityKeeper.ScopeToModule(wasm.ModuleName)
+	appKeepers.scopedWasmKeeper = appKeepers.CapabilityKeeper.ScopeToModule(wasmtypes.ModuleName)
 
 	// TODO: Make a SetInvCheckPeriod fn on CrisisKeeper.
 	// IMO, its bad design atm that it requires this in state machine initialization
 	crisisKeeper := crisiskeeper.NewKeeper(
-		appCodec, appKeepers.keys[crisistypes.StoreKey], invCheckPeriod, appKeepers.BankKeeper, authtypes.FeeCollectorName, authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		appCodec, appKeepers.keys[crisistypes.StoreKey], invCheckPeriod, appKeepers.BankKeeper, authtypes.FeeCollectorName, govAuthor,
 	)
 	appKeepers.CrisisKeeper = crisisKeeper
 }
@@ -194,13 +196,14 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 ) {
 	legacyAmino := encodingConfig.Amino
 	// add keepers
+	govAuthor := authtypes.NewModuleAddress(govtypes.ModuleName).String()
 	appKeepers.AccountKeeper = authkeeper.NewAccountKeeper(
 		appCodec,
 		appKeepers.keys[authtypes.StoreKey],
 		authtypes.ProtoBaseAccount,
 		maccPerms,
 		sdk.Bech32PrefixAccAddr,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		govAuthor,
 	)
 
 	appKeepers.AuthzKeeper = authzkeeper.NewKeeper(
@@ -215,7 +218,7 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		appKeepers.keys[banktypes.StoreKey],
 		appKeepers.AccountKeeper,
 		blockedAddress,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		govAuthor,
 	)
 
 	appKeepers.StakingKeeper = stakingkeeper.NewKeeper(
@@ -223,7 +226,7 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		appKeepers.keys[stakingtypes.StoreKey],
 		appKeepers.AccountKeeper,
 		appKeepers.BankKeeper,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		govAuthor,
 	)
 
 	appKeepers.FeeGrantKeeper = feegrantkeeper.NewKeeper(
@@ -239,7 +242,7 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		appKeepers.AccountKeeper,
 		appKeepers.BankKeeper,
 		authtypes.FeeCollectorName,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		govAuthor,
 	)
 
 	appKeepers.DistrKeeper = distrkeeper.NewKeeper(
@@ -249,7 +252,7 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		appKeepers.BankKeeper,
 		appKeepers.StakingKeeper,
 		authtypes.FeeCollectorName,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		govAuthor,
 	)
 
 	slashingKeeper := slashingkeeper.NewKeeper(
@@ -257,7 +260,7 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		legacyAmino,
 		appKeepers.keys[slashingtypes.StoreKey],
 		appKeepers.StakingKeeper,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		govAuthor,
 	)
 
 	appKeepers.SlashingKeeper = slashingKeeper
@@ -320,19 +323,6 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		scopedICAControllerKeeper, bApp.MsgServiceRouter(),
 	)
 
-	// Initialize the packet forward middleware Keeper
-	// It's important to note that the PFM Keeper must be initialized before the Transfer Keeper
-	appKeepers.PacketForwardKeeper = packetforwardkeeper.NewKeeper(
-		appCodec,
-		appKeepers.keys[packetforwardtypes.StoreKey],
-		nil, // will be zero-value here, reference is set later on with SetTransferKeeper.
-		appKeepers.IBCKeeper.ChannelKeeper,
-		appKeepers.DistrKeeper,
-		appKeepers.BankKeeper,
-		appKeepers.IBCKeeper.ChannelKeeper,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
-	)
-
 	// Create Transfer Keepers
 	appKeepers.TransferKeeper = ibctransferkeeper.NewKeeper(
 		appCodec,
@@ -366,7 +356,7 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		appKeepers.StakingKeeper,
 		bApp.MsgServiceRouter(),
 		govConfig,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		govAuthor,
 	)
 	appKeepers.GovKeeper = govKeeper
 
@@ -426,7 +416,7 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		wasmDir,
 		wasmConfig,
 		supportedFeatures,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		govAuthor,
 		wasmOpts...,
 	)
 
@@ -437,7 +427,10 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 	// wire up x/wasm to IBC
 	// Create static IBC router, add transfer route, then set and seal it
 
+<<<<<<< HEAD
 	//var ics101WasmStack ibcporttypes.IBCModule
+=======
+>>>>>>> main
 	ics101WasmStack := wasm.NewIBCHandler(appKeepers.WasmKeeper, appKeepers.IBCKeeper.ChannelKeeper, appKeepers.IBCKeeper.ChannelKeeper)
 	// ics101WasmStack = packetforward.NewIBCMiddleware(
 	// 	ics101WasmStack,
@@ -450,7 +443,7 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 	ibcRouter := ibcporttypes.NewRouter()
 	ibcRouter.AddRoute(icahosttypes.SubModuleName, icaHostIBCModule).
 		AddRoute(ibctransfertypes.ModuleName, transferIBCModule)
-	ibcRouter.AddRoute(wasm.ModuleName, ics101WasmStack)
+	ibcRouter.AddRoute(wasmtypes.ModuleName, ics101WasmStack)
 	// this line is used by starport scaffolding # ibc/app/router
 	appKeepers.IBCKeeper.SetRouter(ibcRouter)
 }
@@ -473,8 +466,6 @@ func (appKeepers *AppKeepers) initParamsKeeper(appCodec codec.BinaryCodec, legac
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(gmmmoduletypes.ModuleName)
 	paramsKeeper.Subspace(yieldmoduletypes.ModuleName)
-	paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
-	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper
 }
@@ -503,10 +494,10 @@ func KVStoreKeys() []string {
 		crisistypes.StoreKey, minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibcexported.StoreKey, upgradetypes.StoreKey,
 		feegrant.StoreKey, evidencetypes.StoreKey, ibctransfertypes.StoreKey, icahosttypes.StoreKey,
-		capabilitytypes.StoreKey, group.StoreKey, icacontrollertypes.StoreKey, consensusparamtypes.StoreKey, wasmtypes.StoreKey, ibcfeetypes.StoreKey,
+		capabilitytypes.StoreKey, group.StoreKey, icacontrollertypes.StoreKey, consensusparamtypes.StoreKey, wasmtypes.StoreKey,
+		ibcfeetypes.StoreKey,
 		gmmmoduletypes.StoreKey,
 		yieldmoduletypes.StoreKey,
-		packetforwardtypes.StoreKey,
 	}
 }
 

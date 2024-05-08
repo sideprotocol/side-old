@@ -27,7 +27,7 @@ func (suite *KeeperTestSuite) TestMsgSwap() {
 			"swap in stable pool",
 			types.PoolType_STABLE,
 			func(msg *types.MsgSwap, poolID string) {
-				msg.TokenIn = sdk.NewCoin(simapp.WDAI, sdk.NewInt(100))
+				msg.TokenIn = sdk.NewCoin(simapp.WDAI, sdk.NewInt(50))
 				msg.TokenOut = sdk.NewCoin(simapp.WUSDT, sdk.NewInt(0))
 			},
 		},
@@ -57,7 +57,8 @@ func (suite *KeeperTestSuite) TestMsgSwap() {
 			suite.Require().NoError(err)
 
 			pool := queryResBeforeSwap.Pool.ToPool()
-			outAssetBeforeSwap := pool.Assets[msg.TokenOut.Denom]
+			outAssetBeforeSwap, _, exist := pool.GetAssetByDenom(msg.TokenOut.Denom)
+			suite.Require().Equal(exist, true)
 			estimatedOut, err := pool.EstimateSwap(msg.TokenIn, msg.TokenOut.Denom)
 			suite.Require().NoError(err)
 			msg.TokenOut = estimatedOut
@@ -75,7 +76,8 @@ func (suite *KeeperTestSuite) TestMsgSwap() {
 			})
 			suite.Require().NoError(err)
 			pool = queryResAfterSwap.Pool.ToPool()
-			outAssetAfterSwap := pool.Assets[msg.TokenOut.Denom]
+			outAssetAfterSwap, _, exist := pool.GetAssetByDenom(msg.TokenOut.Denom)
+			suite.Require().Equal(exist, true)
 			out := outAssetBeforeSwap.Token.Sub(outAssetAfterSwap.Token)
 			suite.Require().Equal(out, estimatedOut)
 		})

@@ -1,6 +1,8 @@
 package types
 
 import (
+	"sort"
+
 	sdkerrors "cosmossdk.io/errors"
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -101,27 +103,38 @@ func (msg *MsgCreatePool) GetAssetDenoms() []string {
 	return denoms
 }
 
-// Return denom list of liquidity
 func (msg *MsgCreatePool) CreatePool() Pool {
 	// Extract denom list from Liquidity
 	denoms := msg.GetAssetDenoms()
 
-	assets := make(map[string]PoolAsset)
+	// Sort denoms in alphabetical order
+	sort.Strings(denoms) // This ensures the denoms are in a deterministic order
+
+	assets := make([]PoolAsset, len(msg.Liquidity)) // Change this to a slice to maintain order
 	totalShares := sdk.NewInt(0)
-	for _, liquidity := range msg.Liquidity {
-		assets[liquidity.Token.Denom] = liquidity
-		totalShares = totalShares.Add(liquidity.Token.Amount)
+
+	// Fill the assets slice in a deterministic manner
+	for i, denom := range denoms {
+		for _, liquidity := range msg.Liquidity {
+			if liquidity.Token.Denom == denom {
+				assets[i] = liquidity // Assigning by sorted index
+				totalShares = totalShares.Add(liquidity.Token.Amount)
+				break // Move to next denom after finding and assigning
+			}
+		}
 	}
 
-	// Generate new PoolId
-	newPoolID := GetPoolID(denoms)
+	// Generate new PoolId using sorted denoms
+	newPoolID := GetPoolID(denoms) // Assuming this is already implemented to be deterministic
 	poolShareBaseDenom := GetPoolShareDenom(newPoolID)
+
 	pool := Pool{
 		PoolId:      newPoolID,
 		Sender:      msg.Sender,
 		PoolParams:  *msg.Params,
-		Assets:      assets,
+		Assets:      assets, // Now a slice, maintaining the order
 		TotalShares: sdk.NewCoin(poolShareBaseDenom, totalShares),
 	}
+
 	return pool
 }

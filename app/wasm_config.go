@@ -1,7 +1,7 @@
 package app
 
 import (
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
 const (
@@ -12,16 +12,16 @@ const (
 )
 
 // MunGasRegisterConfig is defaults plus a custom compile amount
-func GasRegisterConfig() wasmkeeper.WasmGasRegisterConfig {
-	gasConfig := wasmkeeper.DefaultGasRegisterConfig()
+func GasRegisterConfig() wasmtypes.WasmGasRegisterConfig {
+	gasConfig := wasmtypes.DefaultGasRegisterConfig()
 	gasConfig.InstanceCost = DefaultInstanceCost
 	gasConfig.CompileCost = DefaultCompileCost
 
 	return gasConfig
 }
 
-func NewSideWasmGasRegister() wasmkeeper.WasmGasRegister {
-	return wasmkeeper.NewWasmGasRegister(GasRegisterConfig())
+func NewSideWasmGasRegister() wasmtypes.WasmGasRegister {
+	return wasmtypes.NewWasmGasRegister(GasRegisterConfig())
 }
 
 func AllCapabilities() []string {

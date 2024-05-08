@@ -56,6 +56,7 @@ import (
 
 	ibctransfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
+
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cast"
 
@@ -79,10 +80,11 @@ import (
 	v1 "github.com/sideprotocol/side/app/upgrades/v1"
 	v2 "github.com/sideprotocol/side/app/upgrades/v2"
 	// packet forward module
+	// bitcoincdc "github.com/sideprotocol/side/bitcoin/codec"
 )
 
 const (
-	AccountAddressPrefix = "side"
+	AccountAddressPrefix = "bc"
 	Name                 = "side"
 )
 
@@ -457,8 +459,8 @@ func (app *App) ModuleManager() *module.Manager {
 	return app.mm
 }
 
-func GetWasmOpts(appOpts servertypes.AppOptions) []wasm.Option {
-	var wasmOpts []wasm.Option
+func GetWasmOpts(appOpts servertypes.AppOptions) []wasmkeeper.Option {
+	var wasmOpts []wasmkeeper.Option
 	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
 		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
 	}

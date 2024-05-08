@@ -82,13 +82,13 @@ func (p *Pool) DecreaseShare(amt sdkmath.Int) {
 // IncreaseLiquidity adds xx amount liquidity to assets in pool
 func (p *Pool) IncreaseLiquidity(coins []sdk.Coin) error {
 	for _, coin := range coins {
-		asset, exists := p.Assets[coin.Denom]
+		asset, index, exists := p.GetAssetByDenom(coin.Denom) //Assets[coin.Denom]
 		if !exists {
 			return ErrNotFoundAssetInPool
 		}
 		// Add liquidity logic here
 		asset.Token.Amount = asset.Token.Amount.Add(coin.Amount)
-		p.Assets[coin.Denom] = asset
+		p.Assets[index] = asset
 	}
 	// Update TotalShares or other fields if necessary
 	return nil
@@ -97,16 +97,25 @@ func (p *Pool) IncreaseLiquidity(coins []sdk.Coin) error {
 // DecreaseLiquidity subtracts xx amount liquidity from assets in pool
 func (p *Pool) DecreaseLiquidity(coins []sdk.Coin) error {
 	for _, coin := range coins {
-		asset, exists := p.Assets[coin.Denom]
+		asset, index, exists := p.GetAssetByDenom(coin.Denom)
 		if !exists {
 			return ErrNotFoundAssetInPool
 		}
 		// Add liquidity logic here
 		asset.Token.Amount = asset.Token.Amount.Sub(coin.Amount)
-		p.Assets[coin.Denom] = asset
+		p.Assets[index] = asset
 	}
 	// Update TotalShares or other fields if necessary
 	return nil
+}
+
+func (p *Pool) GetAssetByDenom(denom string) (PoolAsset, int, bool) {
+	for index, asset := range p.Assets {
+		if asset.Token.Denom == denom {
+			return asset, index, true
+		}
+	}
+	return PoolAsset{}, 0, false
 }
 
 // findAssetByDenom finds pool asset by denom
@@ -161,4 +170,13 @@ func (p *Pool) Sum() sdkmath.Int {
 		return sum
 	}
 	return sdk.ZeroInt()
+}
+
+func FindAsset(assets []PoolAsset, denom string) (PoolAsset, bool) {
+	for _, asset := range assets {
+		if asset.Token.Denom == denom {
+			return asset, true
+		}
+	}
+	return PoolAsset{}, false
 }

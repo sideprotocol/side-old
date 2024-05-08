@@ -1,11 +1,19 @@
 #!/bin/bash
 
-KEYS=("dev0" "dev1" "dev2")
-CHAINID="side-testnet-1"
-MONIKER="freebird"
-BINARY="sided"
-DENOMS=("uside" "uusdc")
-INITIAL_SUPPLY="100000000000000000000"
+KEYS=("dev0" "dev1")
+CHAINID="S2-testnet-1"
+MONIKER="Side Labs"
+BINARY="$HOME/go/bin/sided"
+DENOM_STR="uside,ubtct,uusdc,uusdc.axl,uusdc.noble,uusdt,uusdt.kava,uusdt.axl,uwbtc.axl,uwbtc.osmo,uwbtc"
+
+set -f
+IFS=,
+DENOMS=($DENOM_STR)
+
+IFS=";"
+
+
+INITIAL_SUPPLY="500000000000000"
 BLOCK_GAS=10000000
 MAX_GAS=10000000000
 
@@ -13,7 +21,8 @@ MAX_GAS=10000000000
 # otherwise your balance will be wiped quickly
 # The keyring test does not require private key to steal tokens from you
 KEYRING="test"
-KEYALGO="secp256k1"
+#KEYALGO="secp256k1"
+KEYALGO="segwit"
 LOGLEVEL="info"
 # Set dedicated home directory for the $BINARY instance
 HOMEDIR="$HOME/.side"
@@ -59,13 +68,19 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	for KEY in "${KEYS[@]}"; do
 		$BINARY keys add "$KEY" --keyring-backend $KEYRING --algo $KEYALGO --home "$HOMEDIR"
 	done
+	# for KEY in "${KEYS[@]}"; do
+    # # Add the --recover flag to initiate recovery mode
+    # 	$BINARY keys add "$KEY" --keyring-backend $KEYRING --algo $KEYALGO --recover --home "$HOMEDIR"
+	# done
 
 	# Set moniker and chain-id for Cascadia (Moniker can be anything, chain-id must be an integer)
 	$BINARY init $MONIKER -o --chain-id $CHAINID --home "$HOMEDIR"
 
 	jq --arg denom "${DENOMS[0]}" '.app_state["staking"]["params"]["bond_denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	jq --arg denom "${DENOMS[0]}" '.app_state["mint"]["params"]["mint_denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 	jq --arg denom "${DENOMS[0]}" '.app_state["crisis"]["constant_fee"]["denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 	jq --arg denom "${DENOMS[0]}" '.app_state["gov"]["deposit_params"]["min_deposit"][0]["denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	jq --arg denom "${DENOMS[0]}" '.app_state["gov"]["params"]["min_deposit"][0]["denom"]=$denom' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 	jq --arg gas "$BLOCK_GAS" '.app_state["feemarket"]["block_gas"]=$gas' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 	# Set gas limit in genesis
 	jq --arg max_gas "$MAX_GAS" '.consensus_params["block"]["max_gas"]=$max_gas' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
@@ -81,22 +96,16 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	# Allocate genesis accounts (cosmos formatted addresses)
 	for KEY in "${KEYS[@]}"; do
 	    BALANCES=""
-	    for DENOM in "${DENOMS[@]}"; do
-	        BALANCES+=",${INITIAL_SUPPLY}$DENOM"
+	    for key in "${!DENOMS[@]}"; do
+	        BALANCES+=",${INITIAL_SUPPLY}${DENOMS[$key]}"
 	    done
+	    echo ${BALANCES:1}
 	    $BINARY add-genesis-account "$KEY" ${BALANCES:1} --keyring-backend $KEYRING --home "$HOMEDIR"
 	done
 
-	# Adjust total supply
-	for DENOM in "${DENOMS[@]}"; do
-	    total_supply=$(echo "${#KEYS[@]} * $INITIAL_SUPPLY" | bc)
-	    if ! jq -e --arg denom "$DENOM" '.app_state["bank"]["supply"] | any(.denom == $denom)' "$GENESIS" >/dev/null; then
-	        jq -r --arg total_supply "$total_supply" --arg denom "$DENOM" '.app_state["bank"]["supply"] += [{"denom": $denom, "amount": $total_supply}]' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	    fi
-	done
-	
 	# Sign genesis transaction
-	$BINARY gentx "${KEYS[0]}" ${INITIAL_SUPPLY}${DENOMS[0]} --keyring-backend $KEYRING --chain-id $CHAINID --home "$HOMEDIR"
+	echo $INITIAL_SUPPLY${DENOMS[0]}
+	$BINARY gentx "${KEYS[0]}" $INITIAL_SUPPLY${DENOMS[0]} --keyring-backend $KEYRING --chain-id $CHAINID --identity "666AC57CC678BEC4" --website="https://side.one" --home "$HOMEDIR"
 
 	## In case you want to create multiple validators at genesis
 	## 1. Back to `$BINARY keys add` step, init more keys
@@ -118,4 +127,4 @@ fi
 
 
 # Start the node (remove the --pruning=nothing flag if historical queries are not needed)
-$BINARY start --log_level info --minimum-gas-prices=0.0001${DENOMS[0]} 
+$BINARY start --log_level info --minimum-gas-prices=0.0001${DENOMS[0]}
