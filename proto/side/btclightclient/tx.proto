@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package side.btclightclient;
+
+import "gogoproto/gogo.proto";
+import "side/btclightclient/params.proto";
+
+option go_package = "github.com/sideprotocol/side/x/btclightclient/types";
+
+// Msg defines the Msg service.
+service Msg {
+  // SubmitBlockHeaders submits bitcoin block headers to the side chain.
+  rpc SubmitBlockHeaders (MsgBlockHeaderRequest) returns (MsgSubmitBlockHeadersResponse);
+  // UpdateSenders updates the senders of the side chain.
+  rpc UpdateSenders (MsgUpdateSenderRequest) returns (MsgUpdateSendersResponse);
+}
+
+// MsgBlockHeaderRequest defines the Msg/SubmitBlockHeaders request type.
+message MsgBlockHeaderRequest {
+  string sender = 1;
+  repeated BlockHeader block_headers = 2;
+}
+
+// MsgSubmitBlockHeadersResponse defines the Msg/SubmitBlockHeaders response type.
+message MsgSubmitBlockHeadersResponse {
+}
+
+// Msg defines the MsgUpdateSender service.
+message MsgUpdateSenderRequest {
+  string sender = 1;
+  // update senders who can send block headers to the side chain
+  repeated string senders = 2;
+}
+
+// MsgUpdateSenderResponse defines the Msg/UpdateSender response type.
+message MsgUpdateSendersResponse {
+}
+
+
+

@@ -1,0 +1,24 @@
+syntax = "proto3";
+package side.btclightclient;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/sideprotocol/side/x/btclightclient/types";
+
+// Params defines the parameters for the module.
+message Params {
+  // Only accept blocks sending from these addresses
+  repeated string senders = 1;
+}
+
+// Bitcoin Block Header
+message BlockHeader {
+  string hash = 1;
+  uint64 height = 2;
+  string previous_block_hash = 3;
+  string merkle_root = 4;
+  uint64 nonce = 5;
+  string bits = 6;
+  uint64 time = 7;
+  uint64 ntx = 8;
+}

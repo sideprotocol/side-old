@@ -80,7 +80,6 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-
 )
 
 const (
@@ -427,10 +426,6 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 	// wire up x/wasm to IBC
 	// Create static IBC router, add transfer route, then set and seal it
 
-<<<<<<< HEAD
-	//var ics101WasmStack ibcporttypes.IBCModule
-=======
->>>>>>> main
 	ics101WasmStack := wasm.NewIBCHandler(appKeepers.WasmKeeper, appKeepers.IBCKeeper.ChannelKeeper, appKeepers.IBCKeeper.ChannelKeeper)
 	// ics101WasmStack = packetforward.NewIBCMiddleware(
 	// 	ics101WasmStack,
