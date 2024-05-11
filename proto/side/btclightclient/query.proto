@@ -11,19 +11,19 @@ option go_package = "github.com/sideprotocol/side/x/btclightclient/types";
 // Query defines the gRPC querier service.
 service Query {
   // Parameters queries the parameters of the module.
-  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+  rpc QueryParams(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/sideprotocol/side/btclightclient/params";
   }
   // ChainTip queries the chain tip of the module.
-  rpc GetChainTip(QueryChainTipRequest) returns (GetChainTipResponse) {
+  rpc QueryChainTip(QueryChainTipRequest) returns (QueryChainTipResponse) {
     option (google.api.http).get = "/sideprotocol/side/btclightclient/tip";
   }
   // BlockHeaderByHeight queries the block header by height.
-  rpc GetBlockHeaderByHeight(QueryBlockHeaderByHeightRequest) returns (GetBlockHeaderByHeightResponse) {
+  rpc QueryBlockHeaderByHeight(QueryBlockHeaderByHeightRequest) returns (QueryBlockHeaderByHeightResponse) {
     option (google.api.http).get = "/sideprotocol/side/btclightclient/height/{height}";
   }
   // BlockHeaderByHash queries the block header by hash.
-  rpc GetBlockHeaderByHash(QueryBlockHeaderByHashRequest) returns (GetBlockHeaderByHashResponse) {
+  rpc QueryBlockHeaderByHash(QueryBlockHeaderByHashRequest) returns (QueryBlockHeaderByHashResponse) {
     option (google.api.http).get = "/sideprotocol/side/btclightclient/hash/{hash}";
   }
 }
@@ -37,22 +37,22 @@ message QueryParamsResponse {
   Params params = 1 [(gogoproto.nullable) = false];
 }
 
-// QueryChainTipRequest is request type for the Query/GetChainTip RPC method.
+// QueryChainTipRequest is request type for the Query/ChainTip RPC method.
 message QueryChainTipRequest {}
 
-// QueryChainTipResponse is response type for the Query/GetChainTip RPC method.
-message GetChainTipResponse {
+// QueryChainTipResponse is response type for the Query/ChainTip RPC method.
+message QueryChainTipResponse {
   string hash = 1;
-  int64 height = 2;
+  uint64 height = 2;
 }
 
 // QueryBlockHeaderByHeightRequest is the request type for the Query/BlockHeaderByHeight RPC method.
 message QueryBlockHeaderByHeightRequest {
-  int64 height = 1;
+  uint64 height = 1;
 }
 
-// GetBlockHeaderByHeightResponse is the response type for the Query/BlockHeaderByHeight RPC method.
-message GetBlockHeaderByHeightResponse {
+// QueryBlockHeaderByHeightResponse is the response type for the Query/BlockHeaderByHeight RPC method.
+message QueryBlockHeaderByHeightResponse {
   BlockHeader block_header = 1;
 }
 
@@ -61,7 +61,7 @@ message QueryBlockHeaderByHashRequest {
   string hash = 1;
 }
 
-// GetBlockHeaderByHashResponse is the response type for the Query/BlockHeaderByHash RPC method.
-message GetBlockHeaderByHashResponse {
+// QueryBlockHeaderByHashResponse is the response type for the Query/BlockHeaderByHash RPC method.
+message QueryBlockHeaderByHashResponse {
   BlockHeader block_header = 1;
 }

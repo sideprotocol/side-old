@@ -113,7 +113,7 @@ func (m *QueryParamsResponse) GetParams() Params {
 	return Params{}
 }
 
-// QueryChainTipRequest is request type for the Query/GetChainTip RPC method.
+// QueryChainTipRequest is request type for the Query/ChainTip RPC method.
 type QueryChainTipRequest struct {
 }
 
@@ -150,24 +150,24 @@ func (m *QueryChainTipRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryChainTipRequest proto.InternalMessageInfo
 
-// QueryChainTipResponse is response type for the Query/GetChainTip RPC method.
-type GetChainTipResponse struct {
+// QueryChainTipResponse is response type for the Query/ChainTip RPC method.
+type QueryChainTipResponse struct {
 	Hash   string `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
-	Height int64  `protobuf:"varint,2,opt,name=height,proto3" json:"height,omitempty"`
+	Height uint64 `protobuf:"varint,2,opt,name=height,proto3" json:"height,omitempty"`
 }
 
-func (m *GetChainTipResponse) Reset()         { *m = GetChainTipResponse{} }
-func (m *GetChainTipResponse) String() string { return proto.CompactTextString(m) }
-func (*GetChainTipResponse) ProtoMessage()    {}
-func (*GetChainTipResponse) Descriptor() ([]byte, []int) {
+func (m *QueryChainTipResponse) Reset()         { *m = QueryChainTipResponse{} }
+func (m *QueryChainTipResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryChainTipResponse) ProtoMessage()    {}
+func (*QueryChainTipResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_f299b49d16182dbc, []int{3}
 }
-func (m *GetChainTipResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryChainTipResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *GetChainTipResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryChainTipResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_GetChainTipResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryChainTipResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -177,26 +177,26 @@ func (m *GetChainTipResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte,
 		return b[:n], nil
 	}
 }
-func (m *GetChainTipResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetChainTipResponse.Merge(m, src)
+func (m *QueryChainTipResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryChainTipResponse.Merge(m, src)
 }
-func (m *GetChainTipResponse) XXX_Size() int {
+func (m *QueryChainTipResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *GetChainTipResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetChainTipResponse.DiscardUnknown(m)
+func (m *QueryChainTipResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryChainTipResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_GetChainTipResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryChainTipResponse proto.InternalMessageInfo
 
-func (m *GetChainTipResponse) GetHash() string {
+func (m *QueryChainTipResponse) GetHash() string {
 	if m != nil {
 		return m.Hash
 	}
 	return ""
 }
 
-func (m *GetChainTipResponse) GetHeight() int64 {
+func (m *QueryChainTipResponse) GetHeight() uint64 {
 	if m != nil {
 		return m.Height
 	}
@@ -205,7 +205,7 @@ func (m *GetChainTipResponse) GetHeight() int64 {
 
 // QueryBlockHeaderByHeightRequest is the request type for the Query/BlockHeaderByHeight RPC method.
 type QueryBlockHeaderByHeightRequest struct {
-	Height int64 `protobuf:"varint,1,opt,name=height,proto3" json:"height,omitempty"`
+	Height uint64 `protobuf:"varint,1,opt,name=height,proto3" json:"height,omitempty"`
 }
 
 func (m *QueryBlockHeaderByHeightRequest) Reset()         { *m = QueryBlockHeaderByHeightRequest{} }
@@ -241,30 +241,30 @@ func (m *QueryBlockHeaderByHeightRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryBlockHeaderByHeightRequest proto.InternalMessageInfo
 
-func (m *QueryBlockHeaderByHeightRequest) GetHeight() int64 {
+func (m *QueryBlockHeaderByHeightRequest) GetHeight() uint64 {
 	if m != nil {
 		return m.Height
 	}
 	return 0
 }
 
-// GetBlockHeaderByHeightResponse is the response type for the Query/BlockHeaderByHeight RPC method.
-type GetBlockHeaderByHeightResponse struct {
+// QueryBlockHeaderByHeightResponse is the response type for the Query/BlockHeaderByHeight RPC method.
+type QueryBlockHeaderByHeightResponse struct {
 	BlockHeader *BlockHeader `protobuf:"bytes,1,opt,name=block_header,json=blockHeader,proto3" json:"block_header,omitempty"`
 }
 
-func (m *GetBlockHeaderByHeightResponse) Reset()         { *m = GetBlockHeaderByHeightResponse{} }
-func (m *GetBlockHeaderByHeightResponse) String() string { return proto.CompactTextString(m) }
-func (*GetBlockHeaderByHeightResponse) ProtoMessage()    {}
-func (*GetBlockHeaderByHeightResponse) Descriptor() ([]byte, []int) {
+func (m *QueryBlockHeaderByHeightResponse) Reset()         { *m = QueryBlockHeaderByHeightResponse{} }
+func (m *QueryBlockHeaderByHeightResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryBlockHeaderByHeightResponse) ProtoMessage()    {}
+func (*QueryBlockHeaderByHeightResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_f299b49d16182dbc, []int{5}
 }
-func (m *GetBlockHeaderByHeightResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryBlockHeaderByHeightResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *GetBlockHeaderByHeightResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryBlockHeaderByHeightResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_GetBlockHeaderByHeightResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryBlockHeaderByHeightResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -274,19 +274,19 @@ func (m *GetBlockHeaderByHeightResponse) XXX_Marshal(b []byte, deterministic boo
 		return b[:n], nil
 	}
 }
-func (m *GetBlockHeaderByHeightResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetBlockHeaderByHeightResponse.Merge(m, src)
+func (m *QueryBlockHeaderByHeightResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryBlockHeaderByHeightResponse.Merge(m, src)
 }
-func (m *GetBlockHeaderByHeightResponse) XXX_Size() int {
+func (m *QueryBlockHeaderByHeightResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *GetBlockHeaderByHeightResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetBlockHeaderByHeightResponse.DiscardUnknown(m)
+func (m *QueryBlockHeaderByHeightResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryBlockHeaderByHeightResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_GetBlockHeaderByHeightResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryBlockHeaderByHeightResponse proto.InternalMessageInfo
 
-func (m *GetBlockHeaderByHeightResponse) GetBlockHeader() *BlockHeader {
+func (m *QueryBlockHeaderByHeightResponse) GetBlockHeader() *BlockHeader {
 	if m != nil {
 		return m.BlockHeader
 	}
@@ -338,23 +338,23 @@ func (m *QueryBlockHeaderByHashRequest) GetHash() string {
 	return ""
 }
 
-// GetBlockHeaderByHashResponse is the response type for the Query/BlockHeaderByHash RPC method.
-type GetBlockHeaderByHashResponse struct {
+// QueryBlockHeaderByHashResponse is the response type for the Query/BlockHeaderByHash RPC method.
+type QueryBlockHeaderByHashResponse struct {
 	BlockHeader *BlockHeader `protobuf:"bytes,1,opt,name=block_header,json=blockHeader,proto3" json:"block_header,omitempty"`
 }
 
-func (m *GetBlockHeaderByHashResponse) Reset()         { *m = GetBlockHeaderByHashResponse{} }
-func (m *GetBlockHeaderByHashResponse) String() string { return proto.CompactTextString(m) }
-func (*GetBlockHeaderByHashResponse) ProtoMessage()    {}
-func (*GetBlockHeaderByHashResponse) Descriptor() ([]byte, []int) {
+func (m *QueryBlockHeaderByHashResponse) Reset()         { *m = QueryBlockHeaderByHashResponse{} }
+func (m *QueryBlockHeaderByHashResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryBlockHeaderByHashResponse) ProtoMessage()    {}
+func (*QueryBlockHeaderByHashResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_f299b49d16182dbc, []int{7}
 }
-func (m *GetBlockHeaderByHashResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryBlockHeaderByHashResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *GetBlockHeaderByHashResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryBlockHeaderByHashResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_GetBlockHeaderByHashResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryBlockHeaderByHashResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -364,19 +364,19 @@ func (m *GetBlockHeaderByHashResponse) XXX_Marshal(b []byte, deterministic bool)
 		return b[:n], nil
 	}
 }
-func (m *GetBlockHeaderByHashResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetBlockHeaderByHashResponse.Merge(m, src)
+func (m *QueryBlockHeaderByHashResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryBlockHeaderByHashResponse.Merge(m, src)
 }
-func (m *GetBlockHeaderByHashResponse) XXX_Size() int {
+func (m *QueryBlockHeaderByHashResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *GetBlockHeaderByHashResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetBlockHeaderByHashResponse.DiscardUnknown(m)
+func (m *QueryBlockHeaderByHashResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryBlockHeaderByHashResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_GetBlockHeaderByHashResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryBlockHeaderByHashResponse proto.InternalMessageInfo
 
-func (m *GetBlockHeaderByHashResponse) GetBlockHeader() *BlockHeader {
+func (m *QueryBlockHeaderByHashResponse) GetBlockHeader() *BlockHeader {
 	if m != nil {
 		return m.BlockHeader
 	}
@@ -387,51 +387,51 @@ func init() {
 	proto.RegisterType((*QueryParamsRequest)(nil), "side.btclightclient.QueryParamsRequest")
 	proto.RegisterType((*QueryParamsResponse)(nil), "side.btclightclient.QueryParamsResponse")
 	proto.RegisterType((*QueryChainTipRequest)(nil), "side.btclightclient.QueryChainTipRequest")
-	proto.RegisterType((*GetChainTipResponse)(nil), "side.btclightclient.GetChainTipResponse")
+	proto.RegisterType((*QueryChainTipResponse)(nil), "side.btclightclient.QueryChainTipResponse")
 	proto.RegisterType((*QueryBlockHeaderByHeightRequest)(nil), "side.btclightclient.QueryBlockHeaderByHeightRequest")
-	proto.RegisterType((*GetBlockHeaderByHeightResponse)(nil), "side.btclightclient.GetBlockHeaderByHeightResponse")
+	proto.RegisterType((*QueryBlockHeaderByHeightResponse)(nil), "side.btclightclient.QueryBlockHeaderByHeightResponse")
 	proto.RegisterType((*QueryBlockHeaderByHashRequest)(nil), "side.btclightclient.QueryBlockHeaderByHashRequest")
-	proto.RegisterType((*GetBlockHeaderByHashResponse)(nil), "side.btclightclient.GetBlockHeaderByHashResponse")
+	proto.RegisterType((*QueryBlockHeaderByHashResponse)(nil), "side.btclightclient.QueryBlockHeaderByHashResponse")
 }
 
 func init() { proto.RegisterFile("side/btclightclient/query.proto", fileDescriptor_f299b49d16182dbc) }
 
 var fileDescriptor_f299b49d16182dbc = []byte{
-	// 540 bytes of a gzipped FileDescriptorProto
+	// 531 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x92, 0x3f, 0x6f, 0xd3, 0x40,
-	0x18, 0xc6, 0x73, 0xa5, 0x8d, 0xc4, 0x5b, 0xa6, 0x4b, 0x14, 0x55, 0xa6, 0x38, 0xd1, 0x49, 0xa8,
-	0xa1, 0x52, 0x7d, 0x24, 0x86, 0x21, 0x23, 0xe9, 0xd0, 0x2e, 0x48, 0xc5, 0x62, 0x62, 0x41, 0x67,
-	0xf7, 0x64, 0x5b, 0x24, 0x3e, 0x37, 0x77, 0x41, 0x44, 0x55, 0x17, 0x76, 0x24, 0x10, 0x1f, 0x81,
-	0xaf, 0xc0, 0xcc, 0xdc, 0xb1, 0x12, 0x0b, 0x13, 0x42, 0x09, 0x1f, 0x04, 0xf9, 0xec, 0x2a, 0x09,
-	0x39, 0x93, 0x0c, 0x2c, 0xfe, 0x73, 0xef, 0xfb, 0xbc, 0xcf, 0xef, 0xd5, 0x3d, 0xd0, 0x94, 0xf1,
-	0x39, 0xa7, 0xbe, 0x0a, 0x06, 0x71, 0x18, 0x65, 0x4f, 0x9e, 0x28, 0x7a, 0x31, 0xe6, 0xa3, 0x89,
-	0x93, 0x8e, 0x84, 0x12, 0xb8, 0x96, 0x35, 0x38, 0xcb, 0x0d, 0x56, 0x3d, 0x14, 0xa1, 0xd0, 0x75,
-	0x9a, 0x7d, 0xe5, 0xad, 0xd6, 0x7e, 0x28, 0x44, 0x38, 0xe0, 0x94, 0xa5, 0x31, 0x65, 0x49, 0x22,
-	0x14, 0x53, 0xb1, 0x48, 0x64, 0x51, 0x3d, 0x0c, 0x84, 0x1c, 0x0a, 0x49, 0x7d, 0x26, 0x79, 0xee,
-	0x40, 0xdf, 0x76, 0x7c, 0xae, 0x58, 0x87, 0xa6, 0x2c, 0x8c, 0x13, 0xdd, 0x5c, 0xf4, 0xb6, 0x4c,
-	0x54, 0x29, 0x1b, 0xb1, 0x61, 0x31, 0x8d, 0xd4, 0x01, 0xbf, 0xc8, 0x66, 0x9c, 0xe9, 0x43, 0x8f,
-	0x5f, 0x8c, 0xb9, 0x54, 0xe4, 0x0c, 0x6a, 0x4b, 0xa7, 0x32, 0x15, 0x89, 0xe4, 0xb8, 0x07, 0xd5,
-	0x5c, 0xbc, 0x87, 0x5a, 0xa8, 0xbd, 0xdb, 0xbd, 0xef, 0x18, 0x96, 0x72, 0x72, 0x51, 0x7f, 0xfb,
-	0xfa, 0x67, 0xb3, 0xe2, 0x15, 0x02, 0xd2, 0x80, 0xba, 0x9e, 0x78, 0x1c, 0xb1, 0x38, 0x79, 0x19,
-	0xa7, 0xb7, 0x4e, 0xcf, 0xa0, 0x76, 0xc2, 0xd5, 0xfc, 0xb4, 0x70, 0xc2, 0xb0, 0x1d, 0x31, 0x19,
-	0x69, 0x9f, 0xbb, 0x9e, 0xfe, 0xc6, 0x0d, 0xa8, 0x46, 0x3c, 0xf3, 0xd9, 0xdb, 0x6a, 0xa1, 0xf6,
-	0x1d, 0xaf, 0xf8, 0x23, 0x3d, 0x68, 0xea, 0xd1, 0xfd, 0x81, 0x08, 0xde, 0x9c, 0x72, 0x76, 0xce,
-	0x47, 0xfd, 0xc9, 0xa9, 0xae, 0x15, 0x2e, 0x0b, 0x52, 0xb4, 0x24, 0xe5, 0x60, 0x9f, 0x70, 0x65,
-	0x14, 0x16, 0x20, 0xc7, 0x70, 0xcf, 0xcf, 0xca, 0xaf, 0x23, 0x5d, 0x2f, 0x16, 0x6f, 0x19, 0x17,
-	0x5f, 0x98, 0xe3, 0xed, 0xfa, 0xf3, 0x1f, 0xe2, 0xc2, 0x03, 0x03, 0x21, 0x93, 0xd1, 0x2d, 0x9f,
-	0x61, 0x5d, 0x12, 0xc0, 0xfe, 0x0a, 0x9b, 0x96, 0xfc, 0x47, 0xb2, 0xee, 0x97, 0x1d, 0xd8, 0xd1,
-	0x68, 0xf8, 0x03, 0x82, 0x6a, 0x7e, 0x73, 0xf8, 0xc0, 0x38, 0x63, 0x35, 0x26, 0x56, 0x7b, 0x7d,
-	0x63, 0x0e, 0x4b, 0x1e, 0xbf, 0xff, 0xfe, 0xfb, 0xf3, 0xd6, 0x21, 0x6e, 0xd3, 0x4c, 0xa1, 0xa3,
-	0x17, 0x88, 0x01, 0x2d, 0x8f, 0x27, 0xfe, 0x84, 0x60, 0x77, 0x21, 0x19, 0xf8, 0x51, 0xb9, 0xd7,
-	0x5f, 0x99, 0x2a, 0xc1, 0x32, 0xc4, 0x8c, 0x1c, 0x69, 0xac, 0x03, 0xfc, 0x70, 0x3d, 0x96, 0x8a,
-	0x53, 0xfc, 0x0d, 0x41, 0xc3, 0x9c, 0x17, 0xfc, 0xa4, 0x1c, 0xaf, 0x3c, 0x97, 0x96, 0x5b, 0x46,
-	0xfa, 0x8f, 0x48, 0x92, 0x9e, 0x86, 0x76, 0x71, 0x67, 0x3d, 0x74, 0x1e, 0x73, 0x7a, 0x99, 0xbf,
-	0xaf, 0xf0, 0x57, 0x04, 0x75, 0x53, 0xa8, 0x70, 0x77, 0x53, 0xfc, 0x79, 0x68, 0xad, 0xce, 0x66,
-	0xf0, 0x0b, 0x99, 0x25, 0x4f, 0x35, 0x3a, 0xc5, 0x47, 0x1b, 0xa0, 0x33, 0x19, 0xd1, 0xcb, 0xec,
-	0x79, 0xd5, 0x7f, 0x7e, 0x3d, 0xb5, 0xd1, 0xcd, 0xd4, 0x46, 0xbf, 0xa6, 0x36, 0xfa, 0x38, 0xb3,
-	0x2b, 0x37, 0x33, 0xbb, 0xf2, 0x63, 0x66, 0x57, 0x5e, 0xb9, 0x61, 0xac, 0xa2, 0xb1, 0xef, 0x04,
-	0x62, 0x68, 0x18, 0xf9, 0x6e, 0xe5, 0x12, 0x27, 0x29, 0x97, 0x7e, 0x55, 0x77, 0xb9, 0x7f, 0x02,
-	0x00, 0x00, 0xff, 0xff, 0x41, 0xdf, 0x19, 0xc1, 0xb4, 0x05, 0x00, 0x00,
+	0x18, 0xc6, 0x73, 0x55, 0x1a, 0x89, 0x37, 0xb0, 0x5c, 0x43, 0x14, 0x19, 0x70, 0x2c, 0x4b, 0xa8,
+	0x21, 0x52, 0x7d, 0x24, 0xa6, 0x43, 0xd6, 0x64, 0xe9, 0x82, 0x54, 0x2c, 0x26, 0x16, 0x74, 0x76,
+	0x4f, 0xb6, 0x45, 0xe2, 0x73, 0x73, 0x17, 0x44, 0x54, 0x75, 0xe1, 0x13, 0x20, 0x10, 0xdf, 0x84,
+	0x81, 0x99, 0xa9, 0x63, 0x25, 0x16, 0x26, 0x84, 0x12, 0x3e, 0x08, 0xf2, 0xf9, 0xaa, 0x26, 0xad,
+	0xad, 0xa4, 0x12, 0x8b, 0xff, 0xdc, 0xfb, 0x3e, 0xef, 0xf3, 0x7b, 0x75, 0x0f, 0xb4, 0x45, 0x7c,
+	0xc2, 0x88, 0x2f, 0x83, 0x71, 0x1c, 0x46, 0xd9, 0x93, 0x25, 0x92, 0x9c, 0xce, 0xd8, 0x74, 0xee,
+	0xa4, 0x53, 0x2e, 0x39, 0xde, 0xcb, 0x1a, 0x9c, 0xf5, 0x06, 0xa3, 0x11, 0xf2, 0x90, 0xab, 0x3a,
+	0xc9, 0xbe, 0xf2, 0x56, 0xe3, 0x71, 0xc8, 0x79, 0x38, 0x66, 0x84, 0xa6, 0x31, 0xa1, 0x49, 0xc2,
+	0x25, 0x95, 0x31, 0x4f, 0x84, 0xae, 0x76, 0x03, 0x2e, 0x26, 0x5c, 0x10, 0x9f, 0x0a, 0x96, 0x3b,
+	0x90, 0xf7, 0x3d, 0x9f, 0x49, 0xda, 0x23, 0x29, 0x0d, 0xe3, 0x44, 0x35, 0xeb, 0x5e, 0xab, 0x88,
+	0x2a, 0xa5, 0x53, 0x3a, 0xd1, 0xd3, 0xec, 0x06, 0xe0, 0x57, 0xd9, 0x8c, 0x63, 0x75, 0xe8, 0xb1,
+	0xd3, 0x19, 0x13, 0xd2, 0x3e, 0x86, 0xbd, 0xb5, 0x53, 0x91, 0xf2, 0x44, 0x30, 0x3c, 0x80, 0x5a,
+	0x2e, 0x6e, 0x21, 0x0b, 0x75, 0xea, 0xfd, 0x47, 0x4e, 0xc1, 0x52, 0x4e, 0x2e, 0x1a, 0x56, 0x2f,
+	0x7e, 0xb7, 0x2b, 0x9e, 0x16, 0xd8, 0x4d, 0x68, 0xa8, 0x89, 0xa3, 0x88, 0xc6, 0xc9, 0xeb, 0x38,
+	0xbd, 0x72, 0x1a, 0xc1, 0xc3, 0x1b, 0xe7, 0xda, 0x0b, 0x43, 0x35, 0xa2, 0x22, 0x52, 0x4e, 0xf7,
+	0x3c, 0xf5, 0x8d, 0x9b, 0x50, 0x8b, 0x58, 0xe6, 0xd4, 0xda, 0xb1, 0x50, 0xa7, 0xea, 0xe9, 0x3f,
+	0x7b, 0x00, 0x6d, 0x35, 0x64, 0x38, 0xe6, 0xc1, 0xbb, 0x23, 0x46, 0x4f, 0xd8, 0x74, 0x38, 0x3f,
+	0x52, 0x35, 0xed, 0xb3, 0x22, 0x45, 0x6b, 0xd2, 0x10, 0xac, 0x72, 0xa9, 0x46, 0x19, 0xc1, 0x7d,
+	0x3f, 0x2b, 0xbf, 0x8d, 0x54, 0x5d, 0x2f, 0x6f, 0x15, 0x2e, 0xbf, 0x32, 0xc7, 0xab, 0xfb, 0xd7,
+	0x3f, 0xb6, 0x0b, 0x4f, 0x0a, 0x8c, 0xa8, 0x88, 0xae, 0x08, 0x0b, 0x16, 0xb6, 0x19, 0x98, 0x65,
+	0xa2, 0xff, 0xc8, 0xd6, 0xff, 0xb6, 0x0b, 0xbb, 0xca, 0x07, 0x7f, 0x46, 0x50, 0x5f, 0xb9, 0x79,
+	0xbc, 0x5f, 0x38, 0xe8, 0x76, 0x62, 0x8c, 0xce, 0xe6, 0xc6, 0x9c, 0xd8, 0x7e, 0xfe, 0xf1, 0xe7,
+	0xdf, 0x2f, 0x3b, 0x5d, 0xdc, 0x21, 0x99, 0x42, 0xa5, 0x30, 0xe0, 0x63, 0x52, 0x9e, 0x54, 0xfc,
+	0x15, 0xc1, 0x83, 0xb5, 0x90, 0xe0, 0x67, 0xe5, 0x6e, 0x37, 0x02, 0x66, 0x74, 0xb7, 0x69, 0xd5,
+	0x68, 0x07, 0x0a, 0x6d, 0x1f, 0x3f, 0xdd, 0x8c, 0x26, 0xe3, 0x14, 0xff, 0x40, 0xd0, 0x2a, 0x0b,
+	0x0f, 0x7e, 0x51, 0xee, 0x5b, 0x1e, 0x53, 0xe3, 0xf0, 0x8e, 0x2a, 0x0d, 0x3e, 0x50, 0xe0, 0x2e,
+	0xee, 0x6d, 0x06, 0xcf, 0x73, 0x4f, 0xce, 0xf2, 0xf7, 0x39, 0xfe, 0x8e, 0xa0, 0x59, 0x9c, 0x31,
+	0xdc, 0xdf, 0x16, 0xe6, 0x3a, 0xc5, 0x86, 0x7b, 0x27, 0x8d, 0xc6, 0x3f, 0x54, 0xf8, 0x04, 0x1f,
+	0x6c, 0x81, 0x4f, 0x45, 0x44, 0xce, 0xb2, 0xe7, 0xf9, 0xf0, 0xe5, 0xc5, 0xc2, 0x44, 0x97, 0x0b,
+	0x13, 0xfd, 0x59, 0x98, 0xe8, 0xd3, 0xd2, 0xac, 0x5c, 0x2e, 0xcd, 0xca, 0xaf, 0xa5, 0x59, 0x79,
+	0xe3, 0x86, 0xb1, 0x8c, 0x66, 0xbe, 0x13, 0xf0, 0x49, 0xc1, 0xc8, 0x0f, 0xb7, 0x2e, 0x73, 0x9e,
+	0x32, 0xe1, 0xd7, 0x54, 0x97, 0xfb, 0x2f, 0x00, 0x00, 0xff, 0xff, 0xd4, 0xa0, 0x84, 0x5a, 0xcb,
+	0x05, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -447,13 +447,13 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
 	// Parameters queries the parameters of the module.
-	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
+	QueryParams(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
 	// ChainTip queries the chain tip of the module.
-	GetChainTip(ctx context.Context, in *QueryChainTipRequest, opts ...grpc.CallOption) (*GetChainTipResponse, error)
+	QueryChainTip(ctx context.Context, in *QueryChainTipRequest, opts ...grpc.CallOption) (*QueryChainTipResponse, error)
 	// BlockHeaderByHeight queries the block header by height.
-	GetBlockHeaderByHeight(ctx context.Context, in *QueryBlockHeaderByHeightRequest, opts ...grpc.CallOption) (*GetBlockHeaderByHeightResponse, error)
+	QueryBlockHeaderByHeight(ctx context.Context, in *QueryBlockHeaderByHeightRequest, opts ...grpc.CallOption) (*QueryBlockHeaderByHeightResponse, error)
 	// BlockHeaderByHash queries the block header by hash.
-	GetBlockHeaderByHash(ctx context.Context, in *QueryBlockHeaderByHashRequest, opts ...grpc.CallOption) (*GetBlockHeaderByHashResponse, error)
+	QueryBlockHeaderByHash(ctx context.Context, in *QueryBlockHeaderByHashRequest, opts ...grpc.CallOption) (*QueryBlockHeaderByHashResponse, error)
 }
 
 type queryClient struct {
@@ -464,36 +464,36 @@ func NewQueryClient(cc grpc1.ClientConn) QueryClient {
 	return &queryClient{cc}
 }
 
-func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error) {
+func (c *queryClient) QueryParams(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error) {
 	out := new(QueryParamsResponse)
-	err := c.cc.Invoke(ctx, "/side.btclightclient.Query/Params", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/side.btclightclient.Query/QueryParams", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *queryClient) GetChainTip(ctx context.Context, in *QueryChainTipRequest, opts ...grpc.CallOption) (*GetChainTipResponse, error) {
-	out := new(GetChainTipResponse)
-	err := c.cc.Invoke(ctx, "/side.btclightclient.Query/GetChainTip", in, out, opts...)
+func (c *queryClient) QueryChainTip(ctx context.Context, in *QueryChainTipRequest, opts ...grpc.CallOption) (*QueryChainTipResponse, error) {
+	out := new(QueryChainTipResponse)
+	err := c.cc.Invoke(ctx, "/side.btclightclient.Query/QueryChainTip", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *queryClient) GetBlockHeaderByHeight(ctx context.Context, in *QueryBlockHeaderByHeightRequest, opts ...grpc.CallOption) (*GetBlockHeaderByHeightResponse, error) {
-	out := new(GetBlockHeaderByHeightResponse)
-	err := c.cc.Invoke(ctx, "/side.btclightclient.Query/GetBlockHeaderByHeight", in, out, opts...)
+func (c *queryClient) QueryBlockHeaderByHeight(ctx context.Context, in *QueryBlockHeaderByHeightRequest, opts ...grpc.CallOption) (*QueryBlockHeaderByHeightResponse, error) {
+	out := new(QueryBlockHeaderByHeightResponse)
+	err := c.cc.Invoke(ctx, "/side.btclightclient.Query/QueryBlockHeaderByHeight", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *queryClient) GetBlockHeaderByHash(ctx context.Context, in *QueryBlockHeaderByHashRequest, opts ...grpc.CallOption) (*GetBlockHeaderByHashResponse, error) {
-	out := new(GetBlockHeaderByHashResponse)
-	err := c.cc.Invoke(ctx, "/side.btclightclient.Query/GetBlockHeaderByHash", in, out, opts...)
+func (c *queryClient) QueryBlockHeaderByHash(ctx context.Context, in *QueryBlockHeaderByHashRequest, opts ...grpc.CallOption) (*QueryBlockHeaderByHashResponse, error) {
+	out := new(QueryBlockHeaderByHashResponse)
+	err := c.cc.Invoke(ctx, "/side.btclightclient.Query/QueryBlockHeaderByHash", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -503,104 +503,104 @@ func (c *queryClient) GetBlockHeaderByHash(ctx context.Context, in *QueryBlockHe
 // QueryServer is the server API for Query service.
 type QueryServer interface {
 	// Parameters queries the parameters of the module.
-	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
+	QueryParams(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
 	// ChainTip queries the chain tip of the module.
-	GetChainTip(context.Context, *QueryChainTipRequest) (*GetChainTipResponse, error)
+	QueryChainTip(context.Context, *QueryChainTipRequest) (*QueryChainTipResponse, error)
 	// BlockHeaderByHeight queries the block header by height.
-	GetBlockHeaderByHeight(context.Context, *QueryBlockHeaderByHeightRequest) (*GetBlockHeaderByHeightResponse, error)
+	QueryBlockHeaderByHeight(context.Context, *QueryBlockHeaderByHeightRequest) (*QueryBlockHeaderByHeightResponse, error)
 	// BlockHeaderByHash queries the block header by hash.
-	GetBlockHeaderByHash(context.Context, *QueryBlockHeaderByHashRequest) (*GetBlockHeaderByHashResponse, error)
+	QueryBlockHeaderByHash(context.Context, *QueryBlockHeaderByHashRequest) (*QueryBlockHeaderByHashResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
 type UnimplementedQueryServer struct {
 }
 
-func (*UnimplementedQueryServer) Params(ctx context.Context, req *QueryParamsRequest) (*QueryParamsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Params not implemented")
+func (*UnimplementedQueryServer) QueryParams(ctx context.Context, req *QueryParamsRequest) (*QueryParamsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryParams not implemented")
 }
-func (*UnimplementedQueryServer) GetChainTip(ctx context.Context, req *QueryChainTipRequest) (*GetChainTipResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetChainTip not implemented")
+func (*UnimplementedQueryServer) QueryChainTip(ctx context.Context, req *QueryChainTipRequest) (*QueryChainTipResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryChainTip not implemented")
 }
-func (*UnimplementedQueryServer) GetBlockHeaderByHeight(ctx context.Context, req *QueryBlockHeaderByHeightRequest) (*GetBlockHeaderByHeightResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBlockHeaderByHeight not implemented")
+func (*UnimplementedQueryServer) QueryBlockHeaderByHeight(ctx context.Context, req *QueryBlockHeaderByHeightRequest) (*QueryBlockHeaderByHeightResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryBlockHeaderByHeight not implemented")
 }
-func (*UnimplementedQueryServer) GetBlockHeaderByHash(ctx context.Context, req *QueryBlockHeaderByHashRequest) (*GetBlockHeaderByHashResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBlockHeaderByHash not implemented")
+func (*UnimplementedQueryServer) QueryBlockHeaderByHash(ctx context.Context, req *QueryBlockHeaderByHashRequest) (*QueryBlockHeaderByHashResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryBlockHeaderByHash not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
 	s.RegisterService(&_Query_serviceDesc, srv)
 }
 
-func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Query_QueryParams_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryParamsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).Params(ctx, in)
+		return srv.(QueryServer).QueryParams(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/side.btclightclient.Query/Params",
+		FullMethod: "/side.btclightclient.Query/QueryParams",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).Params(ctx, req.(*QueryParamsRequest))
+		return srv.(QueryServer).QueryParams(ctx, req.(*QueryParamsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_GetChainTip_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Query_QueryChainTip_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryChainTipRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).GetChainTip(ctx, in)
+		return srv.(QueryServer).QueryChainTip(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/side.btclightclient.Query/GetChainTip",
+		FullMethod: "/side.btclightclient.Query/QueryChainTip",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).GetChainTip(ctx, req.(*QueryChainTipRequest))
+		return srv.(QueryServer).QueryChainTip(ctx, req.(*QueryChainTipRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_GetBlockHeaderByHeight_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Query_QueryBlockHeaderByHeight_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryBlockHeaderByHeightRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).GetBlockHeaderByHeight(ctx, in)
+		return srv.(QueryServer).QueryBlockHeaderByHeight(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/side.btclightclient.Query/GetBlockHeaderByHeight",
+		FullMethod: "/side.btclightclient.Query/QueryBlockHeaderByHeight",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).GetBlockHeaderByHeight(ctx, req.(*QueryBlockHeaderByHeightRequest))
+		return srv.(QueryServer).QueryBlockHeaderByHeight(ctx, req.(*QueryBlockHeaderByHeightRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_GetBlockHeaderByHash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Query_QueryBlockHeaderByHash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryBlockHeaderByHashRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).GetBlockHeaderByHash(ctx, in)
+		return srv.(QueryServer).QueryBlockHeaderByHash(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/side.btclightclient.Query/GetBlockHeaderByHash",
+		FullMethod: "/side.btclightclient.Query/QueryBlockHeaderByHash",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).GetBlockHeaderByHash(ctx, req.(*QueryBlockHeaderByHashRequest))
+		return srv.(QueryServer).QueryBlockHeaderByHash(ctx, req.(*QueryBlockHeaderByHashRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -610,20 +610,20 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*QueryServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Params",
-			Handler:    _Query_Params_Handler,
+			MethodName: "QueryParams",
+			Handler:    _Query_QueryParams_Handler,
 		},
 		{
-			MethodName: "GetChainTip",
-			Handler:    _Query_GetChainTip_Handler,
+			MethodName: "QueryChainTip",
+			Handler:    _Query_QueryChainTip_Handler,
 		},
 		{
-			MethodName: "GetBlockHeaderByHeight",
-			Handler:    _Query_GetBlockHeaderByHeight_Handler,
+			MethodName: "QueryBlockHeaderByHeight",
+			Handler:    _Query_QueryBlockHeaderByHeight_Handler,
 		},
 		{
-			MethodName: "GetBlockHeaderByHash",
-			Handler:    _Query_GetBlockHeaderByHash_Handler,
+			MethodName: "QueryBlockHeaderByHash",
+			Handler:    _Query_QueryBlockHeaderByHash_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -709,7 +709,7 @@ func (m *QueryChainTipRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *GetChainTipResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryChainTipResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -719,12 +719,12 @@ func (m *GetChainTipResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *GetChainTipResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryChainTipResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *GetChainTipResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryChainTipResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -772,7 +772,7 @@ func (m *QueryBlockHeaderByHeightRequest) MarshalToSizedBuffer(dAtA []byte) (int
 	return len(dAtA) - i, nil
 }
 
-func (m *GetBlockHeaderByHeightResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryBlockHeaderByHeightResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -782,12 +782,12 @@ func (m *GetBlockHeaderByHeightResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *GetBlockHeaderByHeightResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryBlockHeaderByHeightResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *GetBlockHeaderByHeightResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryBlockHeaderByHeightResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -837,7 +837,7 @@ func (m *QueryBlockHeaderByHashRequest) MarshalToSizedBuffer(dAtA []byte) (int, 
 	return len(dAtA) - i, nil
 }
 
-func (m *GetBlockHeaderByHashResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryBlockHeaderByHashResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -847,12 +847,12 @@ func (m *GetBlockHeaderByHashResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *GetBlockHeaderByHashResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryBlockHeaderByHashResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *GetBlockHeaderByHashResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryBlockHeaderByHashResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -912,7 +912,7 @@ func (m *QueryChainTipRequest) Size() (n int) {
 	return n
 }
 
-func (m *GetChainTipResponse) Size() (n int) {
+func (m *QueryChainTipResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -940,7 +940,7 @@ func (m *QueryBlockHeaderByHeightRequest) Size() (n int) {
 	return n
 }
 
-func (m *GetBlockHeaderByHeightResponse) Size() (n int) {
+func (m *QueryBlockHeaderByHeightResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -966,7 +966,7 @@ func (m *QueryBlockHeaderByHashRequest) Size() (n int) {
 	return n
 }
 
-func (m *GetBlockHeaderByHashResponse) Size() (n int) {
+func (m *QueryBlockHeaderByHashResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1168,7 +1168,7 @@ func (m *QueryChainTipRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *GetChainTipResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryChainTipResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1191,10 +1191,10 @@ func (m *GetChainTipResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: GetChainTipResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryChainTipResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: GetChainTipResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryChainTipResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1243,7 +1243,7 @@ func (m *GetChainTipResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Height |= int64(b&0x7F) << shift
+				m.Height |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1312,7 +1312,7 @@ func (m *QueryBlockHeaderByHeightRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Height |= int64(b&0x7F) << shift
+				m.Height |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1338,7 +1338,7 @@ func (m *QueryBlockHeaderByHeightRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *GetBlockHeaderByHeightResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryBlockHeaderByHeightResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1361,10 +1361,10 @@ func (m *GetBlockHeaderByHeightResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: GetBlockHeaderByHeightResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryBlockHeaderByHeightResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: GetBlockHeaderByHeightResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryBlockHeaderByHeightResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1506,7 +1506,7 @@ func (m *QueryBlockHeaderByHashRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *GetBlockHeaderByHashResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryBlockHeaderByHashResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1529,10 +1529,10 @@ func (m *GetBlockHeaderByHashResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: GetBlockHeaderByHashResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryBlockHeaderByHashResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: GetBlockHeaderByHashResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryBlockHeaderByHashResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:

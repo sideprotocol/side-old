@@ -29,23 +29,23 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // MsgBlockHeaderRequest defines the Msg/SubmitBlockHeaders request type.
-type MsgBlockHeaderRequest struct {
+type MsgSubmitBlockHeaderRequest struct {
 	Sender       string         `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
 	BlockHeaders []*BlockHeader `protobuf:"bytes,2,rep,name=block_headers,json=blockHeaders,proto3" json:"block_headers,omitempty"`
 }
 
-func (m *MsgBlockHeaderRequest) Reset()         { *m = MsgBlockHeaderRequest{} }
-func (m *MsgBlockHeaderRequest) String() string { return proto.CompactTextString(m) }
-func (*MsgBlockHeaderRequest) ProtoMessage()    {}
-func (*MsgBlockHeaderRequest) Descriptor() ([]byte, []int) {
+func (m *MsgSubmitBlockHeaderRequest) Reset()         { *m = MsgSubmitBlockHeaderRequest{} }
+func (m *MsgSubmitBlockHeaderRequest) String() string { return proto.CompactTextString(m) }
+func (*MsgSubmitBlockHeaderRequest) ProtoMessage()    {}
+func (*MsgSubmitBlockHeaderRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_4df07798138ba91c, []int{0}
 }
-func (m *MsgBlockHeaderRequest) XXX_Unmarshal(b []byte) error {
+func (m *MsgSubmitBlockHeaderRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgBlockHeaderRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgSubmitBlockHeaderRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgBlockHeaderRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgSubmitBlockHeaderRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -55,26 +55,26 @@ func (m *MsgBlockHeaderRequest) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return b[:n], nil
 	}
 }
-func (m *MsgBlockHeaderRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgBlockHeaderRequest.Merge(m, src)
+func (m *MsgSubmitBlockHeaderRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSubmitBlockHeaderRequest.Merge(m, src)
 }
-func (m *MsgBlockHeaderRequest) XXX_Size() int {
+func (m *MsgSubmitBlockHeaderRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgBlockHeaderRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgBlockHeaderRequest.DiscardUnknown(m)
+func (m *MsgSubmitBlockHeaderRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSubmitBlockHeaderRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgBlockHeaderRequest proto.InternalMessageInfo
+var xxx_messageInfo_MsgSubmitBlockHeaderRequest proto.InternalMessageInfo
 
-func (m *MsgBlockHeaderRequest) GetSender() string {
+func (m *MsgSubmitBlockHeaderRequest) GetSender() string {
 	if m != nil {
 		return m.Sender
 	}
 	return ""
 }
 
-func (m *MsgBlockHeaderRequest) GetBlockHeaders() []*BlockHeader {
+func (m *MsgSubmitBlockHeaderRequest) GetBlockHeaders() []*BlockHeader {
 	if m != nil {
 		return m.BlockHeaders
 	}
@@ -119,24 +119,24 @@ func (m *MsgSubmitBlockHeadersResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_MsgSubmitBlockHeadersResponse proto.InternalMessageInfo
 
 // Msg defines the MsgUpdateSender service.
-type MsgUpdateSenderRequest struct {
+type MsgUpdateSendersRequest struct {
 	Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
 	// update senders who can send block headers to the side chain
 	Senders []string `protobuf:"bytes,2,rep,name=senders,proto3" json:"senders,omitempty"`
 }
 
-func (m *MsgUpdateSenderRequest) Reset()         { *m = MsgUpdateSenderRequest{} }
-func (m *MsgUpdateSenderRequest) String() string { return proto.CompactTextString(m) }
-func (*MsgUpdateSenderRequest) ProtoMessage()    {}
-func (*MsgUpdateSenderRequest) Descriptor() ([]byte, []int) {
+func (m *MsgUpdateSendersRequest) Reset()         { *m = MsgUpdateSendersRequest{} }
+func (m *MsgUpdateSendersRequest) String() string { return proto.CompactTextString(m) }
+func (*MsgUpdateSendersRequest) ProtoMessage()    {}
+func (*MsgUpdateSendersRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_4df07798138ba91c, []int{2}
 }
-func (m *MsgUpdateSenderRequest) XXX_Unmarshal(b []byte) error {
+func (m *MsgUpdateSendersRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgUpdateSenderRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgUpdateSendersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgUpdateSenderRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgUpdateSendersRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -146,26 +146,26 @@ func (m *MsgUpdateSenderRequest) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return b[:n], nil
 	}
 }
-func (m *MsgUpdateSenderRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgUpdateSenderRequest.Merge(m, src)
+func (m *MsgUpdateSendersRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUpdateSendersRequest.Merge(m, src)
 }
-func (m *MsgUpdateSenderRequest) XXX_Size() int {
+func (m *MsgUpdateSendersRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgUpdateSenderRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgUpdateSenderRequest.DiscardUnknown(m)
+func (m *MsgUpdateSendersRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUpdateSendersRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgUpdateSenderRequest proto.InternalMessageInfo
+var xxx_messageInfo_MsgUpdateSendersRequest proto.InternalMessageInfo
 
-func (m *MsgUpdateSenderRequest) GetSender() string {
+func (m *MsgUpdateSendersRequest) GetSender() string {
 	if m != nil {
 		return m.Sender
 	}
 	return ""
 }
 
-func (m *MsgUpdateSenderRequest) GetSenders() []string {
+func (m *MsgUpdateSendersRequest) GetSenders() []string {
 	if m != nil {
 		return m.Senders
 	}
@@ -210,37 +210,37 @@ func (m *MsgUpdateSendersResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_MsgUpdateSendersResponse proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*MsgBlockHeaderRequest)(nil), "side.btclightclient.MsgBlockHeaderRequest")
+	proto.RegisterType((*MsgSubmitBlockHeaderRequest)(nil), "side.btclightclient.MsgSubmitBlockHeaderRequest")
 	proto.RegisterType((*MsgSubmitBlockHeadersResponse)(nil), "side.btclightclient.MsgSubmitBlockHeadersResponse")
-	proto.RegisterType((*MsgUpdateSenderRequest)(nil), "side.btclightclient.MsgUpdateSenderRequest")
+	proto.RegisterType((*MsgUpdateSendersRequest)(nil), "side.btclightclient.MsgUpdateSendersRequest")
 	proto.RegisterType((*MsgUpdateSendersResponse)(nil), "side.btclightclient.MsgUpdateSendersResponse")
 }
 
 func init() { proto.RegisterFile("side/btclightclient/tx.proto", fileDescriptor_4df07798138ba91c) }
 
 var fileDescriptor_4df07798138ba91c = []byte{
-	// 330 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x92, 0xcf, 0x4a, 0xc3, 0x40,
-	0x10, 0xc6, 0x1b, 0x0b, 0x95, 0xae, 0xf6, 0xb2, 0x6a, 0x09, 0x41, 0xd7, 0x90, 0x53, 0x51, 0x4c,
-	0xa0, 0x7d, 0x83, 0x82, 0x20, 0x42, 0x2e, 0x29, 0x5e, 0xbc, 0x48, 0x36, 0x19, 0xb6, 0xa1, 0x7f,
-	0x36, 0x66, 0xb6, 0x52, 0xdf, 0xc2, 0xc7, 0xf2, 0xd8, 0xa3, 0x47, 0x69, 0x2f, 0x3e, 0x86, 0x64,
-	0xa3, 0xb5, 0xb5, 0x09, 0x7a, 0x59, 0xf6, 0x63, 0x7e, 0x7c, 0xf3, 0xcd, 0x30, 0xe4, 0x14, 0x93,
-	0x18, 0x3c, 0xae, 0xa2, 0x71, 0x22, 0x86, 0xf9, 0x0b, 0x53, 0xe5, 0xa9, 0xb9, 0x9b, 0x66, 0x52,
-	0x49, 0x7a, 0x94, 0x57, 0xdd, 0xed, 0xaa, 0x75, 0x2c, 0xa4, 0x90, 0xba, 0xee, 0xe5, 0xbf, 0x02,
-	0xb5, 0xec, 0x32, 0xa3, 0x34, 0xcc, 0xc2, 0x09, 0x16, 0x84, 0xf3, 0x44, 0x4e, 0x7c, 0x14, 0xfd,
-	0xb1, 0x8c, 0x46, 0x37, 0x10, 0xc6, 0x90, 0x05, 0xf0, 0x38, 0x03, 0x54, 0xb4, 0x4d, 0x1a, 0x08,
-	0xd3, 0x18, 0x32, 0xd3, 0xb0, 0x8d, 0x4e, 0x33, 0xf8, 0x52, 0xf4, 0x9a, 0xb4, 0x78, 0x4e, 0x3f,
-	0x0c, 0x35, 0x8e, 0xe6, 0x9e, 0x5d, 0xef, 0x1c, 0x74, 0x6d, 0xb7, 0x24, 0x95, 0xbb, 0xe9, 0x7b,
-	0xc8, 0x7f, 0x04, 0x3a, 0xe7, 0xe4, 0xcc, 0x47, 0x31, 0x98, 0xf1, 0x49, 0xa2, 0x36, 0x28, 0x0c,
-	0x00, 0x53, 0x39, 0x45, 0x70, 0x6e, 0x49, 0xdb, 0x47, 0x71, 0x97, 0xc6, 0xa1, 0x82, 0x81, 0x6e,
-	0xfd, 0x57, 0x32, 0x93, 0xec, 0x17, 0xbf, 0x22, 0x53, 0x33, 0xf8, 0x96, 0x8e, 0x45, 0xcc, 0x5f,
-	0x5e, 0xeb, 0x3e, 0xdd, 0x0f, 0x83, 0xd4, 0x7d, 0x14, 0x54, 0x11, 0xba, 0x9b, 0x86, 0x5e, 0x94,
-	0x8e, 0x55, 0xba, 0x31, 0xab, 0x5b, 0xc5, 0x56, 0x4f, 0x49, 0x47, 0xa4, 0xb5, 0x15, 0x8b, 0x5e,
-	0x56, 0x99, 0x94, 0x6c, 0xc2, 0xba, 0xfa, 0x0f, 0xbc, 0x6e, 0xd6, 0xf7, 0x5f, 0x97, 0xcc, 0x58,
-	0x2c, 0x99, 0xf1, 0xbe, 0x64, 0xc6, 0xcb, 0x8a, 0xd5, 0x16, 0x2b, 0x56, 0x7b, 0x5b, 0xb1, 0xda,
-	0x7d, 0x4f, 0x24, 0x6a, 0x38, 0xe3, 0x6e, 0x24, 0x27, 0x5e, 0x6e, 0xa9, 0x6f, 0x23, 0x92, 0x63,
-	0x2d, 0xbc, 0xf9, 0xce, 0x29, 0x3e, 0xa7, 0x80, 0xbc, 0xa1, 0xa9, 0xde, 0x67, 0x00, 0x00, 0x00,
-	0xff, 0xff, 0xe7, 0x2a, 0x56, 0x30, 0xae, 0x02, 0x00, 0x00,
+	// 329 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x52, 0xcd, 0x4a, 0xc3, 0x40,
+	0x18, 0x6c, 0x2c, 0x54, 0xba, 0xda, 0xcb, 0x2a, 0x1a, 0xa2, 0xc6, 0x90, 0x53, 0x0f, 0x9a, 0x48,
+	0xfb, 0x06, 0x05, 0x41, 0x90, 0x5c, 0x52, 0xbc, 0x78, 0x91, 0x6c, 0xf2, 0xb1, 0x0d, 0xa6, 0xdd,
+	0x98, 0x6f, 0x0b, 0x55, 0x7c, 0x08, 0x1f, 0xcb, 0x63, 0x8f, 0x1e, 0xa5, 0x7d, 0x00, 0x5f, 0x41,
+	0xb2, 0xeb, 0x5f, 0x49, 0xd4, 0x5e, 0xc2, 0x37, 0xcc, 0x64, 0x66, 0xf6, 0xe3, 0x23, 0x87, 0x98,
+	0x26, 0xe0, 0x33, 0x19, 0x67, 0x29, 0x1f, 0x95, 0x5f, 0x98, 0x48, 0x5f, 0xce, 0xbc, 0xbc, 0x10,
+	0x52, 0xd0, 0x9d, 0x92, 0xf5, 0x56, 0x59, 0x6b, 0x97, 0x0b, 0x2e, 0x14, 0xef, 0x97, 0x93, 0x96,
+	0x5a, 0x4e, 0x9d, 0x51, 0x1e, 0x15, 0xd1, 0x18, 0xb5, 0xc2, 0x7d, 0x24, 0x07, 0x01, 0xf2, 0xe1,
+	0x94, 0x8d, 0x53, 0x39, 0xc8, 0x44, 0x7c, 0x7b, 0x01, 0x51, 0x02, 0x45, 0x08, 0x77, 0x53, 0x40,
+	0x49, 0xf7, 0x48, 0x0b, 0x61, 0x92, 0x40, 0x61, 0x1a, 0x8e, 0xd1, 0x6d, 0x87, 0x1f, 0x88, 0x9e,
+	0x93, 0x0e, 0x2b, 0xd5, 0x37, 0x23, 0x25, 0x47, 0x73, 0xc3, 0x69, 0x76, 0xb7, 0x7a, 0x8e, 0x57,
+	0xd3, 0xcd, 0xfb, 0xe9, 0xbb, 0xcd, 0xbe, 0x01, 0xba, 0xc7, 0xe4, 0xa8, 0x2e, 0x1d, 0x43, 0xc0,
+	0x5c, 0x4c, 0x10, 0xdc, 0x4b, 0xb2, 0x1f, 0x20, 0xbf, 0xca, 0x93, 0x48, 0xc2, 0x50, 0x45, 0xe3,
+	0x7f, 0xd5, 0x4c, 0xb2, 0xa9, 0x27, 0x5d, 0xaa, 0x1d, 0x7e, 0x42, 0xd7, 0x22, 0x66, 0xd5, 0x4c,
+	0x07, 0xf5, 0xde, 0x0c, 0xd2, 0x0c, 0x90, 0xd3, 0x07, 0x42, 0xab, 0x75, 0xe8, 0x59, 0xed, 0xbb,
+	0xfe, 0x58, 0x9c, 0xd5, 0x5b, 0xfb, 0x8f, 0xaf, 0x0e, 0x34, 0x23, 0x9d, 0x95, 0x72, 0xf4, 0xe4,
+	0x37, 0x93, 0xba, 0x85, 0x58, 0xa7, 0x6b, 0xaa, 0x75, 0xda, 0x20, 0x78, 0x5e, 0xd8, 0xc6, 0x7c,
+	0x61, 0x1b, 0xaf, 0x0b, 0xdb, 0x78, 0x5a, 0xda, 0x8d, 0xf9, 0xd2, 0x6e, 0xbc, 0x2c, 0xed, 0xc6,
+	0x75, 0x9f, 0xa7, 0x72, 0x34, 0x65, 0x5e, 0x2c, 0xc6, 0x7e, 0x69, 0xa9, 0x2e, 0x25, 0x16, 0x99,
+	0x02, 0xfe, 0xac, 0x72, 0x98, 0xf7, 0x39, 0x20, 0x6b, 0x29, 0x55, 0xff, 0x3d, 0x00, 0x00, 0xff,
+	0xff, 0x52, 0x8a, 0xda, 0x6b, 0xbc, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -256,9 +256,9 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
 	// SubmitBlockHeaders submits bitcoin block headers to the side chain.
-	SubmitBlockHeaders(ctx context.Context, in *MsgBlockHeaderRequest, opts ...grpc.CallOption) (*MsgSubmitBlockHeadersResponse, error)
+	SubmitBlockHeaders(ctx context.Context, in *MsgSubmitBlockHeaderRequest, opts ...grpc.CallOption) (*MsgSubmitBlockHeadersResponse, error)
 	// UpdateSenders updates the senders of the side chain.
-	UpdateSenders(ctx context.Context, in *MsgUpdateSenderRequest, opts ...grpc.CallOption) (*MsgUpdateSendersResponse, error)
+	UpdateSenders(ctx context.Context, in *MsgUpdateSendersRequest, opts ...grpc.CallOption) (*MsgUpdateSendersResponse, error)
 }
 
 type msgClient struct {
@@ -269,7 +269,7 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 	return &msgClient{cc}
 }
 
-func (c *msgClient) SubmitBlockHeaders(ctx context.Context, in *MsgBlockHeaderRequest, opts ...grpc.CallOption) (*MsgSubmitBlockHeadersResponse, error) {
+func (c *msgClient) SubmitBlockHeaders(ctx context.Context, in *MsgSubmitBlockHeaderRequest, opts ...grpc.CallOption) (*MsgSubmitBlockHeadersResponse, error) {
 	out := new(MsgSubmitBlockHeadersResponse)
 	err := c.cc.Invoke(ctx, "/side.btclightclient.Msg/SubmitBlockHeaders", in, out, opts...)
 	if err != nil {
@@ -278,7 +278,7 @@ func (c *msgClient) SubmitBlockHeaders(ctx context.Context, in *MsgBlockHeaderRe
 	return out, nil
 }
 
-func (c *msgClient) UpdateSenders(ctx context.Context, in *MsgUpdateSenderRequest, opts ...grpc.CallOption) (*MsgUpdateSendersResponse, error) {
+func (c *msgClient) UpdateSenders(ctx context.Context, in *MsgUpdateSendersRequest, opts ...grpc.CallOption) (*MsgUpdateSendersResponse, error) {
 	out := new(MsgUpdateSendersResponse)
 	err := c.cc.Invoke(ctx, "/side.btclightclient.Msg/UpdateSenders", in, out, opts...)
 	if err != nil {
@@ -290,19 +290,19 @@ func (c *msgClient) UpdateSenders(ctx context.Context, in *MsgUpdateSenderReques
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	// SubmitBlockHeaders submits bitcoin block headers to the side chain.
-	SubmitBlockHeaders(context.Context, *MsgBlockHeaderRequest) (*MsgSubmitBlockHeadersResponse, error)
+	SubmitBlockHeaders(context.Context, *MsgSubmitBlockHeaderRequest) (*MsgSubmitBlockHeadersResponse, error)
 	// UpdateSenders updates the senders of the side chain.
-	UpdateSenders(context.Context, *MsgUpdateSenderRequest) (*MsgUpdateSendersResponse, error)
+	UpdateSenders(context.Context, *MsgUpdateSendersRequest) (*MsgUpdateSendersResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
 type UnimplementedMsgServer struct {
 }
 
-func (*UnimplementedMsgServer) SubmitBlockHeaders(ctx context.Context, req *MsgBlockHeaderRequest) (*MsgSubmitBlockHeadersResponse, error) {
+func (*UnimplementedMsgServer) SubmitBlockHeaders(ctx context.Context, req *MsgSubmitBlockHeaderRequest) (*MsgSubmitBlockHeadersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SubmitBlockHeaders not implemented")
 }
-func (*UnimplementedMsgServer) UpdateSenders(ctx context.Context, req *MsgUpdateSenderRequest) (*MsgUpdateSendersResponse, error) {
+func (*UnimplementedMsgServer) UpdateSenders(ctx context.Context, req *MsgUpdateSendersRequest) (*MsgUpdateSendersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateSenders not implemented")
 }
 
@@ -311,7 +311,7 @@ func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
 }
 
 func _Msg_SubmitBlockHeaders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgBlockHeaderRequest)
+	in := new(MsgSubmitBlockHeaderRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -323,13 +323,13 @@ func _Msg_SubmitBlockHeaders_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/side.btclightclient.Msg/SubmitBlockHeaders",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).SubmitBlockHeaders(ctx, req.(*MsgBlockHeaderRequest))
+		return srv.(MsgServer).SubmitBlockHeaders(ctx, req.(*MsgSubmitBlockHeaderRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Msg_UpdateSenders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgUpdateSenderRequest)
+	in := new(MsgUpdateSendersRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -341,7 +341,7 @@ func _Msg_UpdateSenders_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: "/side.btclightclient.Msg/UpdateSenders",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).UpdateSenders(ctx, req.(*MsgUpdateSenderRequest))
+		return srv.(MsgServer).UpdateSenders(ctx, req.(*MsgUpdateSendersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -363,7 +363,7 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 	Metadata: "side/btclightclient/tx.proto",
 }
 
-func (m *MsgBlockHeaderRequest) Marshal() (dAtA []byte, err error) {
+func (m *MsgSubmitBlockHeaderRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -373,12 +373,12 @@ func (m *MsgBlockHeaderRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgBlockHeaderRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgSubmitBlockHeaderRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgBlockHeaderRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgSubmitBlockHeaderRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -430,7 +430,7 @@ func (m *MsgSubmitBlockHeadersResponse) MarshalToSizedBuffer(dAtA []byte) (int, 
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgUpdateSenderRequest) Marshal() (dAtA []byte, err error) {
+func (m *MsgUpdateSendersRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -440,12 +440,12 @@ func (m *MsgUpdateSenderRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgUpdateSenderRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgUpdateSendersRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgUpdateSenderRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgUpdateSendersRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -503,7 +503,7 @@ func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *MsgBlockHeaderRequest) Size() (n int) {
+func (m *MsgSubmitBlockHeaderRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -531,7 +531,7 @@ func (m *MsgSubmitBlockHeadersResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgUpdateSenderRequest) Size() (n int) {
+func (m *MsgUpdateSendersRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -565,7 +565,7 @@ func sovTx(x uint64) (n int) {
 func sozTx(x uint64) (n int) {
 	return sovTx(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *MsgBlockHeaderRequest) Unmarshal(dAtA []byte) error {
+func (m *MsgSubmitBlockHeaderRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -588,10 +588,10 @@ func (m *MsgBlockHeaderRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgBlockHeaderRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgSubmitBlockHeaderRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgBlockHeaderRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgSubmitBlockHeaderRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -731,7 +731,7 @@ func (m *MsgSubmitBlockHeadersResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgUpdateSenderRequest) Unmarshal(dAtA []byte) error {
+func (m *MsgUpdateSendersRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -754,10 +754,10 @@ func (m *MsgUpdateSenderRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgUpdateSenderRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgUpdateSendersRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgUpdateSenderRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgUpdateSendersRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
