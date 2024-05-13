@@ -38,6 +38,7 @@ import (
 
 	yieldmodule "github.com/sideprotocol/side/x/yield"
 
+	btcmodule "github.com/sideprotocol/side/x/btclightclient"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	// wasmd module integrate
@@ -74,6 +75,7 @@ var AppModuleBasics = module.NewBasicManager(
 	wasm.AppModuleBasic{},
 	gmmmodule.AppModuleBasic{},
 	yieldmodule.AppModuleBasic{},
+	btcmodule.AppModuleBasic{},
 )
 
 func getGovProposalHandlers() []govclient.ProposalHandler {

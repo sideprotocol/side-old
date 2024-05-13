@@ -67,6 +67,9 @@ import (
 	yieldmodule "github.com/sideprotocol/side/x/yield"
 	yieldmoduletypes "github.com/sideprotocol/side/x/yield/types"
 
+	"github.com/sideprotocol/side/x/btclightclient"
+	btclightclienttypes "github.com/sideprotocol/side/x/btclightclient/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "github.com/sideprotocol/side/app/params"
@@ -138,6 +141,7 @@ func appModules(
 		icaModule,
 		gmmModule,
 		yieldModule,
+		btclightclient.NewAppModule(appCodec, app.BtcLightClientKeeper),
 		// this line is used by starport scaffolding # stargate/app/appModule
 
 		crisis.NewAppModule(app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)), // always be last to make sure that it checks for all invariants and not only part of them
@@ -173,6 +177,7 @@ func orderBeginBlockers() []string {
 		wasmTypes.ModuleName,
 		gmmmoduletypes.ModuleName,
 		yieldmoduletypes.ModuleName,
+		btclightclienttypes.ModuleName,
 	}
 	return ord
 }
@@ -205,6 +210,7 @@ func OrderEndBlockers() []string {
 		wasmTypes.ModuleName,
 		gmmmoduletypes.ModuleName,
 		yieldmoduletypes.ModuleName,
+		btclightclienttypes.ModuleName,
 	}
 	return ord
 }
@@ -242,6 +248,7 @@ func OrderInitGenesis() []string {
 		wasmTypes.ModuleName,
 		gmmmoduletypes.ModuleName,
 		yieldmoduletypes.ModuleName,
+		btclightclienttypes.ModuleName,
 	}
 }
 

@@ -60,6 +60,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cast"
 
+	btclightclienttypes "github.com/sideprotocol/side/x/btclightclient/types"
 	gmmmoduletypes "github.com/sideprotocol/side/x/gmm/types"
 
 	yieldmoduletypes "github.com/sideprotocol/side/x/yield/types"
@@ -270,6 +271,7 @@ func New(
 		wasmTypes.ModuleName,
 		gmmmoduletypes.ModuleName,
 		yieldmoduletypes.ModuleName,
+		btclightclienttypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	}
 	app.mm.SetOrderInitGenesis(OrderInitGenesis()...)

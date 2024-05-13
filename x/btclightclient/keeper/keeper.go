@@ -52,10 +52,10 @@ func (k Keeper) GetParams(ctx sdk.Context) types.Params {
 
 func (k Keeper) GetBestBlockHeader(ctx sdk.Context) *types.BlockHeader {
 	store := ctx.KVStore(k.storeKey)
-	var blockHeader *types.BlockHeader
+	var blockHeader types.BlockHeader
 	bz := store.Get(types.BtcBestBlockHeaderKey)
-	k.cdc.MustUnmarshal(bz, blockHeader)
-	return blockHeader
+	k.cdc.MustUnmarshal(bz, &blockHeader)
+	return &blockHeader
 }
 
 func (k Keeper) SetBestBlockHeader(ctx sdk.Context, header *types.BlockHeader) {

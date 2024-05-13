@@ -11,7 +11,7 @@ func NewParams(senders []string) Params {
 
 // DefaultParams returns a default set of parameters
 func DefaultParams() Params {
-	return NewParams([]string{"bc1quq8hw0763rkqqeuarznh9nd6esrnl4684apaqr"})
+	return NewParams([]string{"bc1qtxqfntu4340j3vhasnrrnm8tvf2t3z7gu9dysz"})
 }
 
 // Validate validates the set of params
