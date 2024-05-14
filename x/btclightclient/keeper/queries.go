@@ -28,10 +28,6 @@ func (k Keeper) QueryChainTip(goCtx context.Context, req *types.QueryChainTipReq
 
 	best := k.GetBestBlockHeader(ctx)
 
-	println("============================================")
-	println("best", best)
-	println("============================================")
-
 	return &types.QueryChainTipResponse{
 		Hash:   best.Hash,
 		Height: best.Height,
