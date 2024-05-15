@@ -9,6 +9,12 @@ option go_package = "github.com/sideprotocol/side/x/btclightclient/types";
 message Params {
   // Only accept blocks sending from these addresses
   repeated string senders = 1;
+  // The minimum number of confirmations required for a block to be accepted
+  int32 confirmations = 2;
+  // Indicates the maximum depth or distance from the latest block up to which transactions are considered for acceptance.
+  uint64 max_acceptable_block_depth = 3;
+  // the denomanation of the voucher
+  string btc_voucher_denom = 4;
 }
 
 // Bitcoin Block Header
