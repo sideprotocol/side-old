@@ -15,7 +15,7 @@ func HeaderConvert(header *types.BlockHeader) *wire.BlockHeader {
 	n := new(big.Int)
 	n.SetString(header.Bits, 16)
 	return &wire.BlockHeader{
-		Version:    0,
+		Version:    int32(header.Version),
 		PrevBlock:  *prehash,
 		MerkleRoot: *root,
 		Timestamp:  time.Unix(int64(header.Time), 0),
