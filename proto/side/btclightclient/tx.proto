@@ -11,6 +11,8 @@ option go_package = "github.com/sideprotocol/side/x/btclightclient/types";
 service Msg {
   // SubmitBlockHeaders submits bitcoin block headers to the side chain.
   rpc SubmitBlockHeaders (MsgSubmitBlockHeaderRequest) returns (MsgSubmitBlockHeadersResponse);
+  // SubmitTransaction submits bitcoin transaction to the side chain.
+  rpc SubmitTransaction (MsgSubmitTransactionRequest) returns (MsgSubmitTransactionResponse);
   // UpdateSenders updates the senders of the side chain.
   rpc UpdateSenders (MsgUpdateSendersRequest) returns (MsgUpdateSendersResponse);
 }
@@ -23,6 +25,17 @@ message MsgSubmitBlockHeaderRequest {
 
 // MsgSubmitBlockHeadersResponse defines the Msg/SubmitBlockHeaders response type.
 message MsgSubmitBlockHeadersResponse {
+}
+
+// MsgSubmitTransactionRequest defines the Msg/SubmitTransaction request type.
+message MsgSubmitTransactionRequest {
+  string sender = 1;
+  string tx = 2;
+  string proof = 3;
+}
+
+// MsgSubmitTransactionResponse defines the Msg/SubmitTransaction response type.
+message MsgSubmitTransactionResponse {
 }
 
 // Msg defines the MsgUpdateSender service.

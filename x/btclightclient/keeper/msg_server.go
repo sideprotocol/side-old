@@ -42,6 +42,27 @@ func (m msgServer) SubmitBlockHeaders(goCtx context.Context, msg *types.MsgSubmi
 	return &types.MsgSubmitBlockHeadersResponse{}, nil
 }
 
+// SubmitBtcTransaction implements types.MsgServer.
+// No Permission check required for this message
+// Since everyone can submit a transaction to mint voucher tokens
+// This message is usually sent by relayers
+func (m msgServer) SubmitBtcTransaction(goCtx context.Context, msg *types.MsgSubmitTransactionRequest) (*types.MsgSubmitTransactionResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
+	if err := m.ProcessBitcoinTransaction(ctx, msg.Tx, msg.Proof); err != nil {
+		return nil, err
+	}
+
+	// Emit Events
+
+	return &types.MsgSubmitTransactionResponse{}, nil
+
+}
+
 // UpdateSenders implements types.MsgServer.
 func (m msgServer) UpdateSenders(goCtx context.Context, msg *types.MsgUpdateSendersRequest) (*types.MsgUpdateSendersResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)

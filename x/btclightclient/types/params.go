@@ -5,7 +5,10 @@ import sdk "github.com/cosmos/cosmos-sdk/types"
 // NewParams creates a new Params instance
 func NewParams(senders []string) Params {
 	return Params{
-		Senders: senders,
+		Senders:                 senders,
+		Confirmations:           2,
+		MaxAcceptableBlockDepth: 100,
+		BtcVoucherDenom:         "sat",
 	}
 }
 

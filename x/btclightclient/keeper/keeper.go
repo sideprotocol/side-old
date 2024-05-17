@@ -1,10 +1,13 @@
 package keeper
 
 import (
+	"bytes"
+	"encoding/hex"
 	"fmt"
 
 	"github.com/btcsuite/btcd/blockchain"
 	"github.com/btcsuite/btcd/chaincfg"
+	"github.com/btcsuite/btcd/wire"
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
@@ -120,6 +123,41 @@ func (k Keeper) SetBlockHeaders(ctx sdk.Context, blockHeader []*types.BlockHeade
 		// set the best block header
 		k.SetBestBlockHeader(ctx, best)
 	}
+
+	return nil
+}
+
+// Process Bitcoin Transaction
+func (k Keeper) ProcessBitcoinTransaction(ctx sdk.Context, txHexByte, proof string) error {
+
+	// Decode the hexadecimal transaction
+	txBytes, err := hex.DecodeString(txHexByte)
+	if err != nil {
+		fmt.Println("Error decoding hex:", err)
+		return err
+	}
+
+	// Create a new transaction
+	var tx wire.MsgTx
+	err = tx.Deserialize(bytes.NewReader(txBytes))
+	if err != nil {
+		fmt.Println("Error deserializing transaction:", err)
+		return err
+	}
+
+	// Validate the transaction
+	// cfg := &chaincfg.MainNetParams // Use MainNetParams or TestNet3Params as per your network
+	if err := blockchain.CheckTransactionSanity(&tx); err != nil {
+		fmt.Println("Transaction is not valid:", err)
+		return err
+	}
+	if err != nil {
+		return err
+	}
+
+	ctx.Logger().Debug("Processing Transaction", tx)
+
+	// transaction.MsgTx().
 
 	return nil
 }

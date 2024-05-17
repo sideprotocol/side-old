@@ -14,4 +14,8 @@ var (
 	ErrForkedBlockHeader          = errorsmod.Register(ModuleName, 1102, "Invalid forked block header")
 
 	ErrInvalidSenders = errorsmod.Register(ModuleName, 2100, "invalid allowed senders")
+
+	ErrInvalidBtcTransaction    = errorsmod.Register(ModuleName, 3100, "invalid bitcoin transaction")
+	ErrNotConfirmed             = errorsmod.Register(ModuleName, 3200, "transaction not confirmed")
+	ErrExceedMaxAcceptanceDepth = errorsmod.Register(ModuleName, 3201, "exceed max acceptance block depth")
 )
