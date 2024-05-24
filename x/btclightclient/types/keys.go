@@ -2,6 +2,8 @@ package types
 
 import (
 	"math/big"
+
+	"github.com/btcsuite/btcd/chaincfg"
 )
 
 const (
@@ -26,6 +28,7 @@ var (
 	BtcBlockHeaderHeightPrefix = []byte{0x12} // prefix for each key to a block hash, for a height
 	BtcBestBlockHeaderKey      = []byte{0x13} // key for the best block height
 
+	ChainCfg = &chaincfg.MainNetParams
 )
 
 func Int64ToBytes(number uint64) []byte {

@@ -16,6 +16,8 @@ var (
 	ErrInvalidSenders = errorsmod.Register(ModuleName, 2100, "invalid allowed senders")
 
 	ErrInvalidBtcTransaction    = errorsmod.Register(ModuleName, 3100, "invalid bitcoin transaction")
+	ErrBlockNotFound            = errorsmod.Register(ModuleName, 3101, "block not found")
+	ErrTransactionNotIncluded   = errorsmod.Register(ModuleName, 3101, "transaction not included in block")
 	ErrNotConfirmed             = errorsmod.Register(ModuleName, 3200, "transaction not confirmed")
 	ErrExceedMaxAcceptanceDepth = errorsmod.Register(ModuleName, 3201, "exceed max acceptance block depth")
 )

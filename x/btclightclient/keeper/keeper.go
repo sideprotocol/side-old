@@ -2,11 +2,15 @@ package keeper
 
 import (
 	"bytes"
-	"encoding/hex"
+	"encoding/base64"
 	"fmt"
+	"slices"
 
 	"github.com/btcsuite/btcd/blockchain"
+	"github.com/btcsuite/btcd/btcutil"
 	"github.com/btcsuite/btcd/chaincfg"
+	"github.com/btcsuite/btcd/chaincfg/chainhash"
+	"github.com/btcsuite/btcd/txscript"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -20,6 +24,8 @@ type (
 		cdc      codec.BinaryCodec
 		storeKey storetypes.StoreKey
 		memKey   storetypes.StoreKey
+
+		bankKeeper types.BankKeeper
 	}
 )
 
@@ -27,11 +33,14 @@ func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeKey,
 	memKey storetypes.StoreKey,
+
+	bankKeeper types.BankKeeper,
 ) *Keeper {
 	return &Keeper{
-		cdc:      cdc,
-		storeKey: storeKey,
-		memKey:   memKey,
+		cdc:        cdc,
+		storeKey:   storeKey,
+		memKey:     memKey,
+		bankKeeper: bankKeeper,
 	}
 }
 
@@ -127,13 +136,32 @@ func (k Keeper) SetBlockHeaders(ctx sdk.Context, blockHeader []*types.BlockHeade
 	return nil
 }
 
-// Process Bitcoin Transaction
-func (k Keeper) ProcessBitcoinTransaction(ctx sdk.Context, txHexByte, proof string) error {
+// Process Bitcoin Deposit Transaction
+func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.MsgSubmitTransactionRequest) error {
 
-	// Decode the hexadecimal transaction
-	txBytes, err := hex.DecodeString(txHexByte)
+	ctx.Logger().Debug("Processing Transaction in block: ", msg.Blockhash)
+
+	param := k.GetParams(ctx)
+	header := k.GetBlockHeader(ctx, msg.Blockhash)
+	// Check if block confirmed
+	if header == nil {
+		return types.ErrBlockNotFound
+	}
+
+	best := k.GetBestBlockHeader(ctx)
+	// Check if the block is confirmed
+	if best.Height-header.Height < uint64(param.Confirmations) {
+		return types.ErrNotConfirmed
+	}
+	// Check if the block is within the acceptable depth
+	if best.Height-header.Height > param.MaxAcceptableBlockDepth {
+		return types.ErrExceedMaxAcceptanceDepth
+	}
+
+	// Decode the base64 transaction
+	txBytes, err := base64.StdEncoding.DecodeString(msg.TxBytes)
 	if err != nil {
-		fmt.Println("Error decoding hex:", err)
+		fmt.Println("Error decoding transaction from base64:", err)
 		return err
 	}
 
@@ -144,20 +172,88 @@ func (k Keeper) ProcessBitcoinTransaction(ctx sdk.Context, txHexByte, proof stri
 		fmt.Println("Error deserializing transaction:", err)
 		return err
 	}
+	uTx := btcutil.NewTx(&tx)
+	if len(uTx.MsgTx().TxIn) < 1 {
+		return types.ErrInvalidBtcTransaction
+	}
 
 	// Validate the transaction
-	// cfg := &chaincfg.MainNetParams // Use MainNetParams or TestNet3Params as per your network
-	if err := blockchain.CheckTransactionSanity(&tx); err != nil {
+	if err := blockchain.CheckTransactionSanity(uTx); err != nil {
 		fmt.Println("Transaction is not valid:", err)
 		return err
 	}
+
+	// extract senders from the previous transaction
+	prevTxBytes, err := base64.StdEncoding.DecodeString(msg.PrevTxBytes)
+	if err != nil {
+		fmt.Println("Error decoding transaction from base64:", err)
+		return err
+	}
+
+	// Create a new transaction
+	var prevMsgTx wire.MsgTx
+	err = prevMsgTx.Deserialize(bytes.NewReader(prevTxBytes))
+	if err != nil {
+		fmt.Println("Error deserializing transaction:", err)
+		return err
+	}
+
+	prevTx := btcutil.NewTx(&prevMsgTx)
+	if len(prevTx.MsgTx().TxOut) < 1 {
+		return types.ErrInvalidBtcTransaction
+	}
+	// Validate the transaction
+	if err := blockchain.CheckTransactionSanity(prevTx); err != nil {
+		fmt.Println("Transaction is not valid:", err)
+		return err
+	}
+
+	// check if the output is a valid address
+	// if there are multiple inputs, then the first input is considered as the sender
+	// assumpe all inputs are from the same sender
+	out := prevTx.MsgTx().TxOut[tx.TxIn[0].PreviousOutPoint.Index]
+	// check if the output is a valid address
+	pk, err := txscript.ParsePkScript(out.PkScript)
+	if err != nil {
+		return err
+	}
+	sender, err := pk.Address(types.ChainCfg)
 	if err != nil {
 		return err
 	}
 
-	ctx.Logger().Debug("Processing Transaction", tx)
+	// check if the proof is valid
+	root, err := chainhash.NewHashFromStr(header.MerkleRoot)
+	if err != nil {
+		return err
+	}
+	if !types.VerifyMerkleProof(msg.Proof, uTx.Hash(), root) {
+		return types.ErrTransactionNotIncluded
+	}
 
-	// transaction.MsgTx().
+	for _, out := range uTx.MsgTx().TxOut {
+		// check if the output is a valid address
+		pk, err := txscript.ParsePkScript(out.PkScript)
+		if err != nil {
+			return err
+		}
+		addr, err := pk.Address(types.ChainCfg)
+		if err != nil {
+			return err
+		}
+
+		if slices.Contains(param.BtcVoucherAddress, addr.EncodeAddress()) {
+			// mint the voucher token
+			coins := sdk.NewCoins(sdk.NewCoin(param.BtcVoucherDenom, sdk.NewInt(int64(out.Value))))
+			senderAddr, err := sdk.AccAddressFromBech32(sender.EncodeAddress())
+			if err != nil {
+				return err
+			}
+			k.bankKeeper.MintCoins(ctx, types.ModuleName, coins)
+			k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, senderAddr, coins)
+		}
+
+	}
 
 	return nil
 }

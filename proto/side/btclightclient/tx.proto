@@ -30,8 +30,13 @@ message MsgSubmitBlockHeadersResponse {
 // MsgSubmitTransactionRequest defines the Msg/SubmitTransaction request type.
 message MsgSubmitTransactionRequest {
   string sender = 1;
-  string tx = 2;
-  string proof = 3;
+  string blockhash = 2;
+  // the tx bytes in base64 format
+  // used for parsing the sender of the transaction
+  string prev_tx_bytes = 3;
+  // the tx bytes in base64 format
+  string tx_bytes = 4;
+  repeated string proof = 5;
 }
 
 // MsgSubmitTransactionResponse defines the Msg/SubmitTransaction response type.

@@ -8,15 +8,15 @@ import (
 
 func initSDKConfig() {
 	// Set prefixes
-	accountPubKeyPrefix := app.AccountAddressPrefix + "pub"
-	validatorAddressPrefix := app.AccountAddressPrefix + "valoper"
-	validatorPubKeyPrefix := app.AccountAddressPrefix + "valoperpub"
-	consNodeAddressPrefix := app.AccountAddressPrefix + "valcons"
-	consNodePubKeyPrefix := app.AccountAddressPrefix + "valconspub"
+	accountPubKeyPrefix := app.BitcoinChainCfg.Bech32HRPSegwit + "pub"
+	validatorAddressPrefix := app.BitcoinChainCfg.Bech32HRPSegwit + "valoper"
+	validatorPubKeyPrefix := app.BitcoinChainCfg.Bech32HRPSegwit + "valoperpub"
+	consNodeAddressPrefix := app.BitcoinChainCfg.Bech32HRPSegwit + "valcons"
+	consNodePubKeyPrefix := app.BitcoinChainCfg.Bech32HRPSegwit + "valconspub"
 
 	// Set and seal config
 	config := sdk.GetConfig()
-	config.SetBech32PrefixForAccount(app.AccountAddressPrefix, accountPubKeyPrefix)
+	config.SetBech32PrefixForAccount(app.BitcoinChainCfg.Bech32HRPSegwit, accountPubKeyPrefix)
 	config.SetBech32PrefixForValidator(validatorAddressPrefix, validatorPubKeyPrefix)
 	config.SetBech32PrefixForConsensusNode(consNodeAddressPrefix, consNodePubKeyPrefix)
 

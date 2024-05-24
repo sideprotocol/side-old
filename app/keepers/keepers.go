@@ -397,6 +397,7 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		appCodec,
 		appKeepers.keys[btclightclienttypes.StoreKey],
 		appKeepers.keys[btclightclienttypes.StoreKey],
+		appKeepers.BankKeeper,
 	)
 
 	// The last arguments can contain custom message handlers, and custom query handlers,

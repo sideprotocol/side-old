@@ -9,13 +9,15 @@ const TypeMsgSubmitTransaction = "submit_transaction"
 
 func NewMsgSubmitTransactionRequest(
 	sender string,
+	blockhash string,
 	transaction string,
-	proof string,
+	proof []string,
 ) *MsgSubmitTransactionRequest {
 	return &MsgSubmitTransactionRequest{
-		Sender: sender,
-		Tx:     transaction,
-		Proof:  proof,
+		Sender:    sender,
+		Blockhash: blockhash,
+		TxBytes:   transaction,
+		Proof:     proof,
 	}
 }
 
@@ -46,7 +48,15 @@ func (msg *MsgSubmitTransactionRequest) ValidateBasic() error {
 		return sdkerrors.Wrapf(err, "invalid Sender address (%s)", err)
 	}
 
-	if len(msg.Tx) == 0 {
+	if len(msg.Blockhash) == 0 {
+		return sdkerrors.Wrap(ErrInvalidBtcTransaction, "blockhash cannot be empty")
+	}
+
+	if len(msg.PrevTxBytes) == 0 {
+		return sdkerrors.Wrap(ErrInvalidBtcTransaction, "transaction cannot be empty")
+	}
+
+	if len(msg.TxBytes) == 0 {
 		return sdkerrors.Wrap(ErrInvalidBtcTransaction, "transaction cannot be empty")
 	}
 

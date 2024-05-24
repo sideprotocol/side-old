@@ -5,13 +5,13 @@ CHAINID="S2-testnet-1"
 MONIKER="Side Labs"
 BINARY="$HOME/go/bin/sided"
 DENOM_STR="uside,ubtct,uusdc,uusdc.axl,uusdc.noble,uusdt,uusdt.kava,uusdt.axl,uwbtc.axl,uwbtc.osmo,uwbtc"
-
+INITIAL_ACCOUNT_STR="bc1q4h88d5xg2cxxcm2kaej32lx6gkdfrxslfaxm8n"
 set -f
 IFS=,
 DENOMS=($DENOM_STR)
+INITIAL_ACCOUNTS=($INITIAL_ACCOUNT_STR)
 
 IFS=";"
-
 
 INITIAL_SUPPLY="500000000000000"
 BLOCK_GAS=10000000
@@ -102,6 +102,18 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	    echo ${BALANCES:1}
 	    $BINARY add-genesis-account "$KEY" ${BALANCES:1} --keyring-backend $KEYRING --home "$HOMEDIR"
 	done
+
+	# Allocate genesis accounts (cosmos formatted addresses)
+	for ADDR in "${INITIAL_ACCOUNTS[@]}"; do
+	    BALANCES=""
+	    for key in "${!DENOMS[@]}"; do
+	        BALANCES+=",${INITIAL_SUPPLY}${DENOMS[$key]}"
+	    done
+	    echo ${BALANCES:1}
+	    $BINARY add-genesis-account "$ADDR" ${BALANCES:1} --home "$HOMEDIR"
+	done
+
+
 
 	# Sign genesis transaction
 	echo $INITIAL_SUPPLY${DENOMS[0]}
