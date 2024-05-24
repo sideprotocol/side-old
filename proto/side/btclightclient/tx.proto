@@ -15,6 +15,10 @@ service Msg {
   rpc SubmitTransaction (MsgSubmitTransactionRequest) returns (MsgSubmitTransactionResponse);
   // UpdateSenders updates the senders of the side chain.
   rpc UpdateSenders (MsgUpdateSendersRequest) returns (MsgUpdateSendersResponse);
+  // WithdrawBitcoin withdraws the bitcoin from the side chain.
+  rpc WithdrawBitcoin (MsgWithdrawBitcoinRequest) returns (MsgWithdrawBitcoinResponse);
+  // SubmitWithdrawSignatures submits the signatures of the withdraw transaction.
+  rpc SubmitWithdrawSignatures (MsgSubmitWithdrawSignaturesRequest) returns (MsgSubmitWithdrawSignaturesResponse);
 }
 
 // MsgBlockHeaderRequest defines the Msg/SubmitBlockHeaders request type.
@@ -54,5 +58,24 @@ message MsgUpdateSendersRequest {
 message MsgUpdateSendersResponse {
 }
 
+// MsgWithdrawBitcoinRequest defines the Msg/WithdrawBitcoin request type.
+message MsgWithdrawBitcoinRequest {
+  string sender = 1;
+  uint64 amount = 2;
+}
 
+// MsgWithdrawBitcoinResponse defines the Msg/WithdrawBitcoin response type.
+message MsgWithdrawBitcoinResponse {
+}
+
+// MsgSubmitWithdrawSignaturesRequest defines the Msg/SubmitWithdrawSignatures request type.
+message MsgSubmitWithdrawSignaturesRequest {
+  string sender = 1;
+  string txid = 2;
+  repeated string signatures = 3;
+}
+
+// MsgSubmitWithdrawSignaturesResponse defines the Msg/SubmitWithdrawSignatures response type.
+message MsgSubmitWithdrawSignaturesResponse {
+}
 
