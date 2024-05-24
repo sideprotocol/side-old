@@ -95,6 +95,7 @@ var moduleAccountPermissions = map[string][]string{
 	wasmTypes.ModuleName:           {authtypes.Burner},
 	gmmmoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 	yieldmoduletypes.ModuleName:    {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+	btclightclienttypes.ModuleName: {authtypes.Minter, authtypes.Burner},
 }
 
 // appModules return modules to initialize module manager.

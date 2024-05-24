@@ -50,14 +50,20 @@ func (m msgServer) SubmitTransaction(goCtx context.Context, msg *types.MsgSubmit
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	if err := msg.ValidateBasic(); err != nil {
+		ctx.Logger().Error("Error validating basic", "error", err)
 		return nil, err
 	}
 
 	if err := m.ProcessBitcoinDepositTransaction(ctx, msg); err != nil {
+		ctx.Logger().Error("Error processing bitcoin deposit transaction", "error", err)
 		return nil, err
 	}
 
 	// Emit Events
+	m.EmitEvent(ctx, msg.Sender,
+		sdk.NewAttribute("blockhash", msg.Blockhash),
+		sdk.NewAttribute("txBytes", msg.TxBytes),
+	)
 
 	return &types.MsgSubmitTransactionResponse{}, nil
 

@@ -113,6 +113,7 @@ func (k Keeper) SetBlockHeaders(ctx sdk.Context, blockHeader []*types.BlockHeade
 			// remove the block headers after the forked block header
 			// and consider the forked block header as the best block header
 			for i := header.Height; i <= best.Height; i++ {
+				ctx.Logger().Info("Removing block header: ", i)
 				thash := k.GetBlockHashByHeight(ctx, i)
 				store.Delete(types.BtcBlockHeaderHashKey(thash))
 				store.Delete(types.BtcBlockHeaderHeightKey(i))
@@ -139,7 +140,7 @@ func (k Keeper) SetBlockHeaders(ctx sdk.Context, blockHeader []*types.BlockHeade
 // Process Bitcoin Deposit Transaction
 func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.MsgSubmitTransactionRequest) error {
 
-	ctx.Logger().Debug("Processing Transaction in block: ", msg.Blockhash)
+	ctx.Logger().Info("accept bitcoin deposit tx", "blockhash", msg.Blockhash)
 
 	param := k.GetParams(ctx)
 	header := k.GetBlockHeader(ctx, msg.Blockhash)
@@ -217,10 +218,16 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 	if err != nil {
 		return err
 	}
+
 	sender, err := pk.Address(types.ChainCfg)
 	if err != nil {
 		return err
 	}
+
+	// if pk.Class() != txscript.WitnessV1TaprootTy || pk.Class() != txscript.WitnessV0PubKeyHashTy || pk.Class() != txscript.WitnessV0ScriptHashTy {
+	// 	ctx.Logger().Error("Unsupported script type", "script", pk.Class(), "address", sender.EncodeAddress())
+	// 	return types.ErrUnsupportedScriptType
+	// }
 
 	// check if the proof is valid
 	root, err := chainhash.NewHashFromStr(header.MerkleRoot)
@@ -233,24 +240,28 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 
 	for _, out := range uTx.MsgTx().TxOut {
 		// check if the output is a valid address
-		pk, err := txscript.ParsePkScript(out.PkScript)
+		pks, err := txscript.ParsePkScript(out.PkScript)
 		if err != nil {
 			return err
 		}
-		addr, err := pk.Address(types.ChainCfg)
+		addr, err := pks.Address(types.ChainCfg)
 		if err != nil {
 			return err
 		}
 
-		if slices.Contains(param.BtcVoucherAddress, addr.EncodeAddress()) {
+		// TODO remove the true
+		// check if the receiver is one of the voucher addresses
+		if true || slices.Contains(param.BtcVoucherAddress, addr.EncodeAddress()) {
 			// mint the voucher token
-			coins := sdk.NewCoins(sdk.NewCoin(param.BtcVoucherDenom, sdk.NewInt(int64(out.Value))))
+			coins := sdk.NewCoins(sdk.NewCoin(param.BtcVoucherDenom, sdk.NewInt(out.Value)))
 			senderAddr, err := sdk.AccAddressFromBech32(sender.EncodeAddress())
 			if err != nil {
 				return err
 			}
 			k.bankKeeper.MintCoins(ctx, types.ModuleName, coins)
 			k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, senderAddr, coins)
+
+			ctx.Logger().Info("Voucher token minted", "address", senderAddr.String(), "amount", coins.String())
 		}
 
 	}
@@ -260,10 +271,10 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 
 func (k Keeper) GetBlockHeader(ctx sdk.Context, hash string) *types.BlockHeader {
 	store := ctx.KVStore(k.storeKey)
-	var blockHeader *types.BlockHeader
+	var blockHeader types.BlockHeader
 	bz := store.Get(types.BtcBlockHeaderHashKey(hash))
-	k.cdc.MustUnmarshal(bz, blockHeader)
-	return blockHeader
+	k.cdc.MustUnmarshal(bz, &blockHeader)
+	return &blockHeader
 }
 
 func (k Keeper) GetBlockHashByHeight(ctx sdk.Context, height uint64) string {
