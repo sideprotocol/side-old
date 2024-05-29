@@ -111,6 +111,8 @@ func (m msgServer) WithdrawBitcoin(goCtx context.Context, msg *types.MsgWithdraw
 
 	m.bankKeeper.SendCoinsFromAccountToModule(ctx, sender, types.ModuleName, sdk.NewCoins(coin))
 
+	//request := types.BitcoinSigningRequest(sender, coin)
+
 	// Emit events
 	m.EmitEvent(ctx, msg.Sender,
 		sdk.NewAttribute("withdraw", msg.Amount),
