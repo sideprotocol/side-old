@@ -90,6 +90,51 @@ func (m msgServer) UpdateSenders(goCtx context.Context, msg *types.MsgUpdateSend
 	return &types.MsgUpdateSendersResponse{}, nil
 }
 
+func (m msgServer) WithdrawBitcoin(goCtx context.Context, msg *types.MsgWithdrawBitcoinRequest) (*types.MsgWithdrawBitcoinResponse, error) {
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	sender := sdk.AccAddress(msg.Sender)
+
+	coin, err := sdk.ParseCoinNormalized(msg.Amount)
+	if err != nil {
+		return nil, err
+	}
+
+	balance := m.bankKeeper.GetBalance(ctx, sender, coin.Denom)
+
+	if balance.Amount.LT(coin.Amount) {
+		return nil, types.ErrInsufficientBalance
+	}
+
+	m.bankKeeper.SendCoinsFromAccountToModule(ctx, sender, types.ModuleName, sdk.NewCoins(coin))
+
+	// Emit events
+	m.EmitEvent(ctx, msg.Sender,
+		sdk.NewAttribute("withdraw", msg.Amount),
+	)
+
+	return &types.MsgWithdrawBitcoinResponse{}, nil
+}
+
+// SubmitWithdrawSignatures submits the signatures of the withdraw transaction.
+func (m msgServer) SubmitWithdrawSignatures(goCtx context.Context, msg *types.MsgSubmitWithdrawSignaturesRequest) (*types.MsgSubmitWithdrawSignaturesResponse, error) {
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	request := m.GetSigningRequest(ctx, msg.Txid)
+	// request.
+	if ok := request.ValidateSignatures(msg.Signatures); !ok {
+		return nil, types.ErrInvalidSignatures
+
+	}
+	return &types.MsgSubmitWithdrawSignaturesResponse{}, nil
+
+}
+
 // NewMsgServerImpl returns an implementation of the MsgServer interface
 // for the provided Keeper.
 func NewMsgServerImpl(keeper Keeper) types.MsgServer {

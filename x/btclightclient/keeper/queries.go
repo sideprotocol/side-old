@@ -62,3 +62,19 @@ func (k Keeper) QueryBlockHeaderByHeight(goCtx context.Context, req *types.Query
 
 	return &types.QueryBlockHeaderByHeightResponse{BlockHeader: header}, nil
 }
+
+func (k Keeper) QuerySigningRequest(goCtx context.Context, req *types.QuerySigningRequestRequest) (*types.QuerySigningRequestResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	if req.Status == types.SigningStatus_SIGNING_STATUS_UNSPECIFIED {
+		return nil, status.Error(codes.InvalidArgument, "invalid status")
+	}
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	requests := k.FilterSigningRequestsByStatus(ctx, req)
+
+	return &types.QuerySigningRequestResponse{Requests: requests}, nil
+
+}

@@ -23,10 +23,13 @@ func KeyPrefix(p string) []byte {
 
 var (
 	ParamsStoreKey = []byte{0x1}
+	SequenceKey    = []byte{0x2}
+
 	// Host chain keys prefix the HostChain structs
 	BtcBlockHeaderHashPrefix   = []byte{0x11} // prefix for each key to a block header, for a hash
 	BtcBlockHeaderHeightPrefix = []byte{0x12} // prefix for each key to a block hash, for a height
 	BtcBestBlockHeaderKey      = []byte{0x13} // key for the best block height
+	BtcSigningRequestPrefix    = []byte{0x14} // prefix for each key to a signing request
 
 	ChainCfg = &chaincfg.MainNetParams
 )
@@ -43,4 +46,8 @@ func BtcBlockHeaderHashKey(hash string) []byte {
 
 func BtcBlockHeaderHeightKey(height uint64) []byte {
 	return append(BtcBlockHeaderHashPrefix, Int64ToBytes(height)...)
+}
+
+func BtcSigningRequestKey(hash string) []byte {
+	return append(BtcBlockHeaderHashPrefix, []byte(hash)...)
 }

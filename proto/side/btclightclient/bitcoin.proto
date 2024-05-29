@@ -1,0 +1,47 @@
+syntax = "proto3";
+package side.btclightclient;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/sideprotocol/side/x/btclightclient/types";
+
+// Bitcoin Block Header
+message BlockHeader {
+  uint64 version = 1;
+  string hash = 2;
+  uint64 height = 3;
+  string previous_block_hash = 4;
+  string merkle_root = 5;
+  uint64 nonce = 6;
+  string bits = 7;
+  uint64 time = 8;
+  uint64 ntx = 9;
+}
+
+// Bitcoin Signing Status
+enum SigningStatus {
+  // SIGNING_STATUS_UNSPECIFIED - Default value, should not be used
+  SIGNING_STATUS_UNSPECIFIED = 0;
+  // SIGNING_STATUS_CREATED - The signing request is created
+  SIGNING_STATUS_CREATED = 1;
+  // SIGNING_STATUS_SIGNED - The signing request is signed
+  SIGNING_STATUS_SIGNED = 2;
+  // SIGNING_STATUS_BROADCASTED - The signing request is broadcasted
+  SIGNING_STATUS_BROADCASTED = 3;
+  // SIGNING_STATUS_CONFIRMED - The signing request is confirmed
+  SIGNING_STATUS_CONFIRMED = 4;
+  // SIGNING_STATUS_REJECTED - The signing request is rejected
+  SIGNING_STATUS_REJECTED = 5;
+}
+
+// Bitcoin Signing Request
+message BitcoinSigningRequest {
+  string address = 1;
+  string tx_bytes = 2;
+  SigningStatus status = 3;
+  uint64 sequence = 4;
+
+  // The vault address that the request is associated with
+  string vault_address = 5;
+}
+

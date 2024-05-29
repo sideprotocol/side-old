@@ -5,6 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "side/btclightclient/params.proto";
+import "side/btclightclient/bitcoin.proto";
 
 option go_package = "github.com/sideprotocol/side/x/btclightclient/types";
 
@@ -26,6 +27,23 @@ service Query {
   rpc QueryBlockHeaderByHash(QueryBlockHeaderByHashRequest) returns (QueryBlockHeaderByHashResponse) {
     option (google.api.http).get = "/sideprotocol/side/btclightclient/hash/{hash}";
   }
+  // QuerySigningRequest queries the request to sign.
+  rpc QuerySigningRequest(QuerySigningRequestRequest) returns (QuerySigningRequestResponse) {
+    option (google.api.http).get = "/sideprotocol/side/btclightclient/signing/request";
+  }
+
+}
+
+// QuerySigningRequestRequest is request type for the Query/SigningRequest RPC method.
+message QuerySigningRequestRequest {
+  SigningStatus status = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination            = 2;
+}
+
+// QuerySigningRequestResponse is response type for the Query/SigningRequest RPC method.
+message QuerySigningRequestResponse {
+  repeated BitcoinSigningRequest requests = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination            = 2;
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.

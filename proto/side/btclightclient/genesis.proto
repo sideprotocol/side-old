@@ -3,6 +3,7 @@ package side.btclightclient;
 
 import "gogoproto/gogo.proto";
 import "side/btclightclient/params.proto";
+import "side/btclightclient/bitcoin.proto";
 
 option go_package = "github.com/sideprotocol/side/x/btclightclient/types";
 

@@ -4,6 +4,7 @@ package side.btclightclient;
 
 import "gogoproto/gogo.proto";
 import "side/btclightclient/params.proto";
+import "side/btclightclient/bitcoin.proto";
 
 option go_package = "github.com/sideprotocol/side/x/btclightclient/types";
 
@@ -61,7 +62,8 @@ message MsgUpdateSendersResponse {
 // MsgWithdrawBitcoinRequest defines the Msg/WithdrawBitcoin request type.
 message MsgWithdrawBitcoinRequest {
   string sender = 1;
-  uint64 amount = 2;
+  // withdraw amount in satoshi, etc: 100000000sat = 1btc
+  string amount = 2;
 }
 
 // MsgWithdrawBitcoinResponse defines the Msg/WithdrawBitcoin response type.

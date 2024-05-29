@@ -21,4 +21,7 @@ var (
 	ErrNotConfirmed             = errorsmod.Register(ModuleName, 3200, "transaction not confirmed")
 	ErrExceedMaxAcceptanceDepth = errorsmod.Register(ModuleName, 3201, "exceed max acceptance block depth")
 	ErrUnsupportedScriptType    = errorsmod.Register(ModuleName, 3202, "unsupported script type")
+
+	ErrInvalidSignatures   = errorsmod.Register(ModuleName, 4200, "invalid signatures")
+	ErrInsufficientBalance = errorsmod.Register(ModuleName, 4201, "insufficient balance")
 )
