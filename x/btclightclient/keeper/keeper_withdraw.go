@@ -24,13 +24,29 @@ func (k Keeper) IncrementRequestSequence(ctx sdk.Context) uint64 {
 }
 
 // New signing request
-func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, txBytes string) *types.BitcoinSigningRequest {
+// sender: the address of the sender
+// txBytes: the transaction bytes
+// vault: the address of the vault, default is empty.
+// If empty, the vault will be Bitcoin vault, otherwise it will be Ordinals or Runes vault
+func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin, vault string) *types.BitcoinSigningRequest {
+
+	// create a new bitcoin transaction
+	// tx := wire.NewMsgTx(wire.TxVersion)
+
+	// outScript, err := txscript.PayToAddrScript(sender)
+
 	signingRequest := &types.BitcoinSigningRequest{
-		Address:  sender,
-		TxBytes:  txBytes,
-		Status:   types.SigningStatus_SIGNING_STATUS_CREATED,
-		Sequence: k.IncrementRequestSequence(ctx),
+		Address:      sender,
+		TxBytes:      "",
+		Status:       types.SigningStatus_SIGNING_STATUS_CREATED,
+		Sequence:     k.IncrementRequestSequence(ctx),
+		VaultAddress: vault,
 	}
+
+	store := ctx.KVStore(k.storeKey)
+	bz := k.cdc.MustMarshal(signingRequest)
+	store.Set(types.BtcSigningRequestKey(signingRequest.Sequence), bz)
+
 	return signingRequest
 }
 
@@ -38,7 +54,8 @@ func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, txBytes string
 func (k Keeper) GetSigningRequest(ctx sdk.Context, hash string) *types.BitcoinSigningRequest {
 	store := ctx.KVStore(k.storeKey)
 	var signingRequest types.BitcoinSigningRequest
-	bz := store.Get(types.BtcBlockHeaderHashKey(hash))
+	// TODO replace the key with the hash
+	bz := store.Get(types.BtcSigningRequestKey(1))
 	k.cdc.MustUnmarshal(bz, &signingRequest)
 	return &signingRequest
 }
@@ -47,7 +64,8 @@ func (k Keeper) GetSigningRequest(ctx sdk.Context, hash string) *types.BitcoinSi
 func (k Keeper) SetSigningRequest(ctx sdk.Context, txHash string, signingRequest *types.BitcoinSigningRequest) {
 	store := ctx.KVStore(k.storeKey)
 	bz := k.cdc.MustMarshal(signingRequest)
-	store.Set(types.BtcSigningRequestKey(txHash), bz)
+	// TODO replace the key with the hash
+	store.Set(types.BtcSigningRequestKey(1), bz)
 }
 
 // IterateSigningRequests iterates through all signing requests

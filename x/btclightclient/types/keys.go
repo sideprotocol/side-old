@@ -30,6 +30,7 @@ var (
 	BtcBlockHeaderHeightPrefix = []byte{0x12} // prefix for each key to a block hash, for a height
 	BtcBestBlockHeaderKey      = []byte{0x13} // key for the best block height
 	BtcSigningRequestPrefix    = []byte{0x14} // prefix for each key to a signing request
+	BtcUtxoKeyPrefix           = []byte{0x15} // prefix for each key to a utxo
 
 	ChainCfg = &chaincfg.MainNetParams
 )
@@ -40,6 +41,10 @@ func Int64ToBytes(number uint64) []byte {
 	return big.Bytes()
 }
 
+func BtcUtxoKey(hash string, vout uint64) []byte {
+	return append(BtcBlockHeaderHashPrefix, []byte(hash)...)
+}
+
 func BtcBlockHeaderHashKey(hash string) []byte {
 	return append(BtcBlockHeaderHashPrefix, []byte(hash)...)
 }
@@ -48,6 +53,6 @@ func BtcBlockHeaderHeightKey(height uint64) []byte {
 	return append(BtcBlockHeaderHashPrefix, Int64ToBytes(height)...)
 }
 
-func BtcSigningRequestKey(hash string) []byte {
-	return append(BtcBlockHeaderHashPrefix, []byte(hash)...)
+func BtcSigningRequestKey(sequence uint64) []byte {
+	return append(BtcSigningRequestPrefix, Int64ToBytes(sequence)...)
 }

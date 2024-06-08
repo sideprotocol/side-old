@@ -37,11 +37,25 @@ enum SigningStatus {
 // Bitcoin Signing Request
 message BitcoinSigningRequest {
   string address = 1;
-  string tx_bytes = 2;
-  SigningStatus status = 3;
-  uint64 sequence = 4;
+  string txid = 2;
+  string tx_bytes = 3;
+  SigningStatus status = 4;
+  uint64 sequence = 5;
 
   // The vault address that the request is associated with
-  string vault_address = 5;
+  string vault_address = 6;
+}
+
+// Bitcoin UTXO
+message UTXO {
+  string txid = 1;
+  uint64 vout = 2;
+  string address = 3;
+  uint64 amount = 4;
+  // height is used for calculating confirmations
+  uint64 height = 5;
+  bytes pub_key_script = 6;
+  bool is_coinbase = 7;
+  bool is_locked = 8;
 }
 

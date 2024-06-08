@@ -238,7 +238,7 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 		return types.ErrTransactionNotIncluded
 	}
 
-	for _, out := range uTx.MsgTx().TxOut {
+	for i, out := range uTx.MsgTx().TxOut {
 		// check if the output is a valid address
 		pks, err := txscript.ParsePkScript(out.PkScript)
 		if err != nil {
@@ -261,12 +261,32 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 			k.bankKeeper.MintCoins(ctx, types.ModuleName, coins)
 			k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, senderAddr, coins)
 
-			ctx.Logger().Info("Voucher token minted", "address", senderAddr.String(), "amount", coins.String())
+			utxo := types.UTXO{
+				Txid:         uTx.Hash().String(),
+				Vout:         uint64(i),
+				Amount:       uint64(out.Value),
+				PubKeyScript: out.PkScript,
+				Height:       header.Height,
+				Address:      addr.EncodeAddress(),
+				IsCoinbase:   false,
+				IsLocked:     false,
+			}
+
+			println("save utxo", utxo.Txid, utxo.Vout)
+
+			ctx.Logger().Info("Minted Bitcoin Voucher", "index", i, "address", addr.EncodeAddress(), "amount", out.Value, "sender", sender.EncodeAddress(), "senderAddr", senderAddr.String(), "coins", coins.String())
+
 		}
 
 	}
 
 	return nil
+}
+
+func (k Keeper) SetUtxo(ctx sdk.Context, utxo types.UTXO) {
+	store := ctx.KVStore(k.storeKey)
+	bz := k.cdc.MustMarshal(&utxo)
+	store.Set(types.BtcUtxoKey(utxo.Txid, utxo.Vout), bz)
 }
 
 func (k Keeper) GetBlockHeader(ctx sdk.Context, hash string) *types.BlockHeader {
