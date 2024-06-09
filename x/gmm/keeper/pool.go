@@ -110,7 +110,7 @@ func GetPoolKey(count uint64) []byte {
 	return []byte(fmt.Sprintf("%020d", count))
 }
 
-// GetAllInterchainLiquidityPool returns all interchainLiquidityPool
+// GetAllPool returns all pool
 func (k Keeper) GetAllPool(ctx sdk.Context) (list []types.Pool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(string(types.KeyPoolsPrefix)))
 
