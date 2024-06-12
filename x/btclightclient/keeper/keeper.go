@@ -272,7 +272,8 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 				IsLocked:     false,
 			}
 
-			println("save utxo", utxo.Txid, utxo.Vout)
+			k.SetUtxo(ctx, utxo)
+			k.SetOwnerUtxo(ctx, utxo)
 
 			ctx.Logger().Info("Minted Bitcoin Voucher", "index", i, "address", addr.EncodeAddress(), "amount", out.Value, "sender", sender.EncodeAddress(), "senderAddr", senderAddr.String(), "coins", coins.String())
 
@@ -287,6 +288,11 @@ func (k Keeper) SetUtxo(ctx sdk.Context, utxo types.UTXO) {
 	store := ctx.KVStore(k.storeKey)
 	bz := k.cdc.MustMarshal(&utxo)
 	store.Set(types.BtcUtxoKey(utxo.Txid, utxo.Vout), bz)
+}
+
+func (k Keeper) SetOwnerUtxo(ctx sdk.Context, utxo types.UTXO) {
+	store := ctx.KVStore(k.storeKey)
+	store.Set(types.BtcOwnerUtxoKey(utxo.Address, utxo.Txid, utxo.Vout), nil)
 }
 
 func (k Keeper) GetBlockHeader(ctx sdk.Context, hash string) *types.BlockHeader {
