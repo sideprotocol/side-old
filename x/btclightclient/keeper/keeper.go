@@ -21,6 +21,8 @@ import (
 
 type (
 	Keeper struct {
+		BaseUTXOKeeper
+
 		cdc      codec.BinaryCodec
 		storeKey storetypes.StoreKey
 		memKey   storetypes.StoreKey
@@ -37,10 +39,11 @@ func NewKeeper(
 	bankKeeper types.BankKeeper,
 ) *Keeper {
 	return &Keeper{
-		cdc:        cdc,
-		storeKey:   storeKey,
-		memKey:     memKey,
-		bankKeeper: bankKeeper,
+		cdc:            cdc,
+		storeKey:       storeKey,
+		memKey:         memKey,
+		bankKeeper:     bankKeeper,
+		BaseUTXOKeeper: *NewBaseUTXOKeeper(cdc, storeKey),
 	}
 }
 
@@ -272,8 +275,8 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 				IsLocked:     false,
 			}
 
-			k.SetUtxo(ctx, utxo)
-			k.SetOwnerUtxo(ctx, utxo)
+			k.SetUTXO(ctx, &utxo)
+			k.SetOwnerUTXO(ctx, &utxo)
 
 			ctx.Logger().Info("Minted Bitcoin Voucher", "index", i, "address", addr.EncodeAddress(), "amount", out.Value, "sender", sender.EncodeAddress(), "senderAddr", senderAddr.String(), "coins", coins.String())
 
@@ -282,17 +285,6 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 	}
 
 	return nil
-}
-
-func (k Keeper) SetUtxo(ctx sdk.Context, utxo types.UTXO) {
-	store := ctx.KVStore(k.storeKey)
-	bz := k.cdc.MustMarshal(&utxo)
-	store.Set(types.BtcUtxoKey(utxo.Txid, utxo.Vout), bz)
-}
-
-func (k Keeper) SetOwnerUtxo(ctx sdk.Context, utxo types.UTXO) {
-	store := ctx.KVStore(k.storeKey)
-	store.Set(types.BtcOwnerUtxoKey(utxo.Address, utxo.Txid, utxo.Vout), nil)
 }
 
 func (k Keeper) GetBlockHeader(ctx sdk.Context, hash string) *types.BlockHeader {

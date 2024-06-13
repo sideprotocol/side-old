@@ -22,10 +22,6 @@ func KeyPrefix(p string) []byte {
 }
 
 var (
-	// key separator
-	// only used when the separated keys do not contain the separator
-	KeySeparator = []byte{0x0}
-
 	ParamsStoreKey = []byte{0x1}
 	SequenceKey    = []byte{0x2}
 
@@ -53,7 +49,6 @@ func BtcUtxoKey(hash string, vout uint64) []byte {
 
 func BtcOwnerUtxoKey(owner string, hash string, vout uint64) []byte {
 	key := append(BtcOwnerUtxoKeyPrefix, []byte(owner)...)
-	key = append(key, KeySeparator...)
 	key = append(key, []byte(hash)...)
 
 	return append(key, Int64ToBytes(vout)...)
