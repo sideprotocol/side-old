@@ -9,7 +9,6 @@ import (
 
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
-	"github.com/btcsuite/btcd/chaincfg"
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/libs/log"
@@ -102,8 +101,6 @@ var (
 	// non-dependant module elements, such as codec registration
 	// and genesis verification.
 	ModuleBasics = keepers.AppModuleBasics
-
-	BitcoinChainCfg = chaincfg.MainNetParams
 
 	// module account permissions
 )
