@@ -14,7 +14,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 
 	// "github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/sideprotocol/side/x/btclightclient/types"
+	"github.com/sideprotocol/side/x/btcbridge/types"
 )
 
 var DefaultRelativePacketTimeoutTimestamp = uint64((time.Duration(10) * time.Minute).Nanoseconds())

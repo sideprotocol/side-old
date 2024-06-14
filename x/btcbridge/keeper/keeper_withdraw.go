@@ -2,7 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/sideprotocol/side/x/btclightclient/types"
+	"github.com/sideprotocol/side/x/btcbridge/types"
 )
 
 // GetRequestSeqence returns the request sequence
@@ -37,7 +37,7 @@ func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin,
 
 	signingRequest := &types.BitcoinSigningRequest{
 		Address:      sender,
-		TxBytes:      "",
+		Psbt:         "",
 		Status:       types.SigningStatus_SIGNING_STATUS_CREATED,
 		Sequence:     k.IncrementRequestSequence(ctx),
 		VaultAddress: vault,

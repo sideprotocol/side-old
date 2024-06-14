@@ -2,7 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/sideprotocol/side/x/btclightclient/types"
+	"github.com/sideprotocol/side/x/btcbridge/types"
 )
 
 func (k Keeper) EmitEvent(ctx sdk.Context, sender string, attr ...sdk.Attribute) {

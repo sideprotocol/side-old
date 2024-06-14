@@ -73,8 +73,8 @@ import (
 	yieldmodulekeeper "github.com/sideprotocol/side/x/yield/keeper"
 	yieldmoduletypes "github.com/sideprotocol/side/x/yield/types"
 
-	btclightclientkeeper "github.com/sideprotocol/side/x/btclightclient/keeper"
-	btclightclienttypes "github.com/sideprotocol/side/x/btclightclient/types"
+	btclightclientkeeper "github.com/sideprotocol/side/x/btcbridge/keeper"
+	btclightclienttypes "github.com/sideprotocol/side/x/btcbridge/types"
 
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 

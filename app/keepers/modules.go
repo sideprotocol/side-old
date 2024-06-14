@@ -38,7 +38,7 @@ import (
 
 	yieldmodule "github.com/sideprotocol/side/x/yield"
 
-	btcmodule "github.com/sideprotocol/side/x/btclightclient"
+	btcmodule "github.com/sideprotocol/side/x/btcbridge"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	// wasmd module integrate

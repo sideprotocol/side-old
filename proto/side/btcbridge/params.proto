@@ -1,9 +1,9 @@
 syntax = "proto3";
-package side.btclightclient;
+package side.btcbridge;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/sideprotocol/side/x/btclightclient/types";
+option go_package = "github.com/sideprotocol/side/x/btcbridge/types";
 
 // Params defines the parameters for the module.
 message Params {
