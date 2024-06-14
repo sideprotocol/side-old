@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/btcsuite/btcd/chaincfg"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -19,7 +18,7 @@ func initSDKConfig() {
 	config.SetBech32PrefixForAccount(bech32Prefix, accountPubKeyPrefix)
 	config.SetBech32PrefixForValidator(validatorAddressPrefix, validatorPubKeyPrefix)
 	config.SetBech32PrefixForConsensusNode(consNodeAddressPrefix, consNodePubKeyPrefix)
-	config.SetBtcChainCfg(&chaincfg.SigNetParams)
+	// config.SetBtcChainCfg(&chaincfg.SigNetParams)
 
 	config.Seal()
 }
