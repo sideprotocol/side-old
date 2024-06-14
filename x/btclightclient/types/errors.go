@@ -28,4 +28,10 @@ var (
 	ErrUTXODoesNotExist = errorsmod.Register(ModuleName, 5100, "utxo does not exist")
 	ErrUTXOLocked       = errorsmod.Register(ModuleName, 5101, "utxo locked")
 	ErrUTXOUnlocked     = errorsmod.Register(ModuleName, 5102, "utxo unlocked")
+
+	ErrInvalidFeeRate         = errorsmod.Register(ModuleName, 6100, "invalid fee rate")
+	ErrDustOutput             = errorsmod.Register(ModuleName, 6101, "dust output value")
+	ErrInsufficientUTXOs      = errorsmod.Register(ModuleName, 6102, "insufficient utxos")
+	ErrFailToBuildTransaction = errorsmod.Register(ModuleName, 6103, "failed to build transaction")
+	ErrFailToSerializePsbt    = errorsmod.Register(ModuleName, 6104, "failed to serialize psbt")
 )

@@ -10,10 +10,12 @@ const TypeMsgWithdrawBitcoin = "withdraw_bitcoin"
 func NewMsgWithdrawBitcoinRequest(
 	sender string,
 	amount string,
+	feeRate int64,
 ) *MsgWithdrawBitcoinRequest {
 	return &MsgWithdrawBitcoinRequest{
-		Sender: sender,
-		Amount: amount,
+		Sender:  sender,
+		Amount:  amount,
+		FeeRate: feeRate,
 	}
 }
 
@@ -46,6 +48,10 @@ func (msg *MsgWithdrawBitcoinRequest) ValidateBasic() error {
 
 	if len(msg.Amount) == 0 {
 		return sdkerrors.Wrap(sdk.ErrInvalidLengthCoin, "amount cannot be empty")
+	}
+
+	if msg.FeeRate <= 0 {
+		return sdkerrors.Wrap(ErrInvalidFeeRate, "fee rate must be greater than zero")
 	}
 
 	return nil
