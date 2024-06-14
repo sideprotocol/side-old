@@ -1,0 +1,11 @@
+"best_block_header": {
+        "version": "667459584",
+        "hash": "0000000000000009fb68da72e8994f014fafb455c72978233b94580b12af778c",
+        "height": "2815023",
+        "previous_block_hash": "0000000000000004a29c20eb32532718de8072665620edb4c657b22b4d463967",
+        "merkle_root": "9e219423eadce80e882cdff04b3026c9bbc994fd08a774f34a705ca3e710a332",
+        "nonce": "3913166971",
+        "bits": "191881b8",
+        "time": "1715566066",
+        "ntx": "6236"
+      }

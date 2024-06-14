@@ -38,7 +38,7 @@ enum SigningStatus {
 message BitcoinSigningRequest {
   string address = 1;
   string txid = 2;
-  string tx_bytes = 3;
+  string psbt = 3;
   SigningStatus status = 4;
   uint64 sequence = 5;
 
