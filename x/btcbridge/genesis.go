@@ -2,8 +2,8 @@ package btclightclient
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/sideprotocol/side/x/btclightclient/keeper"
-	"github.com/sideprotocol/side/x/btclightclient/types"
+	"github.com/sideprotocol/side/x/btcbridge/keeper"
+	"github.com/sideprotocol/side/x/btcbridge/types"
 )
 
 // InitGenesis initializes the module's state from a provided genesis state.

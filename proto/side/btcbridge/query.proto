@@ -1,35 +1,35 @@
 syntax = "proto3";
-package side.btclightclient;
+package side.btcbridge;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
-import "side/btclightclient/params.proto";
-import "side/btclightclient/bitcoin.proto";
+import "side/btcbridge/params.proto";
+import "side/btcbridge/bitcoin.proto";
 
-option go_package = "github.com/sideprotocol/side/x/btclightclient/types";
+option go_package = "github.com/sideprotocol/side/x/btcbridge/types";
 
 // Query defines the gRPC querier service.
 service Query {
   // Parameters queries the parameters of the module.
   rpc QueryParams(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/sideprotocol/side/btclightclient/params";
+    option (google.api.http).get = "/sideprotocol/side/btcbridge/params";
   }
   // ChainTip queries the chain tip of the module.
   rpc QueryChainTip(QueryChainTipRequest) returns (QueryChainTipResponse) {
-    option (google.api.http).get = "/sideprotocol/side/btclightclient/tip";
+    option (google.api.http).get = "/sideprotocol/side/btcbridge/tip";
   }
   // BlockHeaderByHeight queries the block header by height.
   rpc QueryBlockHeaderByHeight(QueryBlockHeaderByHeightRequest) returns (QueryBlockHeaderByHeightResponse) {
-    option (google.api.http).get = "/sideprotocol/side/btclightclient/height/{height}";
+    option (google.api.http).get = "/sideprotocol/side/btcbridge/height/{height}";
   }
   // BlockHeaderByHash queries the block header by hash.
   rpc QueryBlockHeaderByHash(QueryBlockHeaderByHashRequest) returns (QueryBlockHeaderByHashResponse) {
-    option (google.api.http).get = "/sideprotocol/side/btclightclient/hash/{hash}";
+    option (google.api.http).get = "/sideprotocol/side/btcbridge/hash/{hash}";
   }
   // QuerySigningRequest queries the request to sign.
   rpc QuerySigningRequest(QuerySigningRequestRequest) returns (QuerySigningRequestResponse) {
-    option (google.api.http).get = "/sideprotocol/side/btclightclient/signing/request";
+    option (google.api.http).get = "/sideprotocol/side/btcbridge/signing/request";
   }
 
 }

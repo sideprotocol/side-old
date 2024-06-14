@@ -1,9 +1,9 @@
 syntax = "proto3";
-package side.btclightclient;
+package side.btcbridge;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/sideprotocol/side/x/btclightclient/types";
+option go_package = "github.com/sideprotocol/side/x/btcbridge/types";
 
 // Bitcoin Block Header
 message BlockHeader {
@@ -38,7 +38,7 @@ enum SigningStatus {
 message BitcoinSigningRequest {
   string address = 1;
   string txid = 2;
-  string tx_bytes = 3;
+  string psbt = 3;
   SigningStatus status = 4;
   uint64 sequence = 5;
 

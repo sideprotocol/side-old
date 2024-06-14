@@ -1,11 +1,11 @@
 syntax = "proto3";
-package side.btclightclient;
+package side.btcbridge;
 
 import "gogoproto/gogo.proto";
-import "side/btclightclient/params.proto";
-import "side/btclightclient/bitcoin.proto";
+import "side/btcbridge/params.proto";
+import "side/btcbridge/bitcoin.proto";
 
-option go_package = "github.com/sideprotocol/side/x/btclightclient/types";
+option go_package = "github.com/sideprotocol/side/x/btcbridge/types";
 
 // GenesisState defines the btc light client module's genesis state.
 message GenesisState {

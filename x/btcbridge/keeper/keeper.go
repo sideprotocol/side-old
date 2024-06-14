@@ -16,7 +16,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/sideprotocol/side/x/btclightclient/types"
+	"github.com/sideprotocol/side/x/btcbridge/types"
 )
 
 type (

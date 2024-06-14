@@ -27,7 +27,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-const Bech32Prefix = "cosmos"
+const bech32Prefix = "cosmos"
 
 func init() {
 	SetupConfig()
@@ -37,8 +37,8 @@ func SetupConfig() {
 	config := sdk.GetConfig()
 	valoper := sdk.PrefixValidator + sdk.PrefixOperator
 	valoperpub := sdk.PrefixValidator + sdk.PrefixOperator + sdk.PrefixPublic
-	config.SetBech32PrefixForAccount(Bech32Prefix, Bech32Prefix+sdk.PrefixPublic)
-	config.SetBech32PrefixForValidator(Bech32Prefix+valoper, Bech32Prefix+valoperpub)
+	config.SetBech32PrefixForAccount(bech32Prefix, bech32Prefix+sdk.PrefixPublic)
+	config.SetBech32PrefixForValidator(bech32Prefix+valoper, bech32Prefix+valoperpub)
 
 	config.SetCoinType(84) // use the same coin type as bitcoin
 

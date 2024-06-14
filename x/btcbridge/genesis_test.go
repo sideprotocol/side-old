@@ -11,8 +11,8 @@ import (
 	"github.com/btcsuite/btcd/wire"
 	keepertest "github.com/sideprotocol/side/testutil/keeper"
 	"github.com/sideprotocol/side/testutil/nullify"
-	"github.com/sideprotocol/side/x/btclightclient"
-	"github.com/sideprotocol/side/x/btclightclient/types"
+	btclightclient "github.com/sideprotocol/side/x/btcbridge"
+	"github.com/sideprotocol/side/x/btcbridge/types"
 	"github.com/stretchr/testify/require"
 )
 

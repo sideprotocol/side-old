@@ -9,7 +9,6 @@ import (
 
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
-	"github.com/btcsuite/btcd/chaincfg"
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/libs/log"
@@ -61,7 +60,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cast"
 
-	btclightclienttypes "github.com/sideprotocol/side/x/btclightclient/types"
+	btcbridgetypes "github.com/sideprotocol/side/x/btcbridge/types"
 	gmmmoduletypes "github.com/sideprotocol/side/x/gmm/types"
 
 	yieldmoduletypes "github.com/sideprotocol/side/x/yield/types"
@@ -102,8 +101,6 @@ var (
 	// non-dependant module elements, such as codec registration
 	// and genesis verification.
 	ModuleBasics = keepers.AppModuleBasics
-
-	BitcoinChainCfg = chaincfg.MainNetParams
 
 	// module account permissions
 )
@@ -274,7 +271,7 @@ func New(
 		wasmTypes.ModuleName,
 		gmmmoduletypes.ModuleName,
 		yieldmoduletypes.ModuleName,
-		btclightclienttypes.ModuleName,
+		btcbridgetypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	}
 	app.mm.SetOrderInitGenesis(OrderInitGenesis()...)
