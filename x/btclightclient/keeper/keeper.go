@@ -241,6 +241,7 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 		return types.ErrTransactionNotIncluded
 	}
 
+	// mint voucher token and save utxo if the receiver is a vault address
 	for i, out := range uTx.MsgTx().TxOut {
 		// check if the output is a valid address
 		pks, err := txscript.ParsePkScript(out.PkScript)
@@ -252,9 +253,8 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 			return err
 		}
 
-		// TODO remove the true
 		// check if the receiver is one of the voucher addresses
-		if true || slices.Contains(param.BtcVoucherAddress, addr.EncodeAddress()) {
+		if slices.Contains(param.BtcVoucherAddress, addr.EncodeAddress()) {
 			// mint the voucher token
 			coins := sdk.NewCoins(sdk.NewCoin(param.BtcVoucherDenom, sdk.NewInt(out.Value)))
 			senderAddr, err := sdk.AccAddressFromBech32(sender.EncodeAddress())
@@ -279,9 +279,17 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 			k.SetOwnerUTXO(ctx, &utxo)
 
 			ctx.Logger().Info("Minted Bitcoin Voucher", "index", i, "address", addr.EncodeAddress(), "amount", out.Value, "sender", sender.EncodeAddress(), "senderAddr", senderAddr.String(), "coins", coins.String())
-
 		}
+	}
 
+	// spend locked utxos
+	for _, in := range uTx.MsgTx().TxIn {
+		hash := in.PreviousOutPoint.Hash.String()
+		vout := in.PreviousOutPoint.Index
+
+		if k.IsUTXOLocked(ctx, hash, uint64(vout)) {
+			k.SpendUTXO(ctx, hash, uint64(vout))
+		}
 	}
 
 	return nil

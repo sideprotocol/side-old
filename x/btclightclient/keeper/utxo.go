@@ -13,7 +13,7 @@ import (
 
 type UTXOViewKeeper interface {
 	HasUTXO(ctx sdk.Context, hash string, vout uint64) bool
-	IsUTXOLocked(ctx sdk.Context, hash string, vout uint64) (bool, error)
+	IsUTXOLocked(ctx sdk.Context, hash string, vout uint64) bool
 
 	GetUTXO(ctx sdk.Context, hash string, vout uint64) *types.UTXO
 	GetAllUTXOs(ctx sdk.Context) []*types.UTXO
@@ -58,14 +58,16 @@ func (bvk *BaseUTXOViewKeeper) HasUTXO(ctx sdk.Context, hash string, vout uint64
 	return store.Has(types.BtcUtxoKey(hash, vout))
 }
 
-func (bvk *BaseUTXOViewKeeper) IsUTXOLocked(ctx sdk.Context, hash string, vout uint64) (bool, error) {
+// IsUTXOLocked returns true if the given utxo is locked, false otherwise.
+// Note: it returns false if the given utxo does not exist.
+func (bvk *BaseUTXOViewKeeper) IsUTXOLocked(ctx sdk.Context, hash string, vout uint64) bool {
 	if !bvk.HasUTXO(ctx, hash, vout) {
-		return false, types.ErrUTXODoesNotExist
+		return false
 	}
 
 	utxo := bvk.GetUTXO(ctx, hash, vout)
 
-	return utxo.IsLocked, nil
+	return utxo.IsLocked
 }
 
 func (bvk *BaseUTXOViewKeeper) GetUTXO(ctx sdk.Context, hash string, vout uint64) *types.UTXO {
@@ -126,7 +128,7 @@ func (bvk *BaseUTXOViewKeeper) GetOrderedUTXOsByAddr(ctx sdk.Context, addr strin
 		return false
 	})
 
-	// sort utoxs in the descending order
+	// sort utxos in the descending order
 	sort.SliceStable(utxos, func(i int, j int) bool {
 		return utxos[i].Amount > utxos[j].Amount
 	})
