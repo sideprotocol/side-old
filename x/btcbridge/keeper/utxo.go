@@ -272,8 +272,11 @@ func (bk *BaseUTXOKeeper) SpendUTXOs(ctx sdk.Context, utxos []*types.UTXO) error
 	return nil
 }
 
+// removeUTXO deletes the given utxo which is assumed to exist.
 func (bk *BaseUTXOKeeper) removeUTXO(ctx sdk.Context, hash string, vout uint64) {
 	store := ctx.KVStore(bk.storeKey)
+	utxo := bk.GetUTXO(ctx, hash, vout)
 
 	store.Delete(types.BtcUtxoKey(hash, vout))
+	store.Delete(types.BtcOwnerUtxoKey(utxo.Address, hash, vout))
 }

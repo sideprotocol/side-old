@@ -282,13 +282,15 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 		}
 	}
 
-	// spend locked utxos
-	for _, in := range uTx.MsgTx().TxIn {
-		hash := in.PreviousOutPoint.Hash.String()
-		vout := in.PreviousOutPoint.Index
-
-		if k.IsUTXOLocked(ctx, hash, uint64(vout)) {
-			k.SpendUTXO(ctx, hash, uint64(vout))
+	// spend locked utxos if the sender is a vault address
+	if slices.Contains(param.BtcVoucherAddress, sender.EncodeAddress()) {
+		for _, in := range uTx.MsgTx().TxIn {
+			hash := in.PreviousOutPoint.Hash.String()
+			vout := in.PreviousOutPoint.Index
+	
+			if k.IsUTXOLocked(ctx, hash, uint64(vout)) {
+				k.SpendUTXO(ctx, hash, uint64(vout))
+			}
 		}
 	}
 
