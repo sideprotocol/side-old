@@ -21,6 +21,8 @@ import (
 
 type (
 	Keeper struct {
+		BaseUTXOKeeper
+
 		cdc      codec.BinaryCodec
 		storeKey storetypes.StoreKey
 		memKey   storetypes.StoreKey
@@ -37,10 +39,11 @@ func NewKeeper(
 	bankKeeper types.BankKeeper,
 ) *Keeper {
 	return &Keeper{
-		cdc:        cdc,
-		storeKey:   storeKey,
-		memKey:     memKey,
-		bankKeeper: bankKeeper,
+		cdc:            cdc,
+		storeKey:       storeKey,
+		memKey:         memKey,
+		bankKeeper:     bankKeeper,
+		BaseUTXOKeeper: *NewBaseUTXOKeeper(cdc, storeKey),
 	}
 }
 
@@ -238,6 +241,7 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 		return types.ErrTransactionNotIncluded
 	}
 
+	// mint voucher token and save utxo if the receiver is a vault address
 	for i, out := range uTx.MsgTx().TxOut {
 		// check if the output is a valid address
 		pks, err := txscript.ParsePkScript(out.PkScript)
@@ -249,9 +253,8 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 			return err
 		}
 
-		// TODO remove the true
 		// check if the receiver is one of the voucher addresses
-		if true || slices.Contains(param.BtcVoucherAddress, addr.EncodeAddress()) {
+		if slices.Contains(param.BtcVoucherAddress, addr.EncodeAddress()) {
 			// mint the voucher token
 			coins := sdk.NewCoins(sdk.NewCoin(param.BtcVoucherDenom, sdk.NewInt(out.Value)))
 			senderAddr, err := sdk.AccAddressFromBech32(sender.EncodeAddress())
@@ -272,21 +275,26 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 				IsLocked:     false,
 			}
 
-			println("save utxo", utxo.Txid, utxo.Vout)
+			k.SetUTXO(ctx, &utxo)
+			k.SetOwnerUTXO(ctx, &utxo)
 
 			ctx.Logger().Info("Minted Bitcoin Voucher", "index", i, "address", addr.EncodeAddress(), "amount", out.Value, "sender", sender.EncodeAddress(), "senderAddr", senderAddr.String(), "coins", coins.String())
-
 		}
+	}
 
+	// spend locked utxos if the sender is a vault address
+	if slices.Contains(param.BtcVoucherAddress, sender.EncodeAddress()) {
+		for _, in := range uTx.MsgTx().TxIn {
+			hash := in.PreviousOutPoint.Hash.String()
+			vout := in.PreviousOutPoint.Index
+	
+			if k.IsUTXOLocked(ctx, hash, uint64(vout)) {
+				k.SpendUTXO(ctx, hash, uint64(vout))
+			}
+		}
 	}
 
 	return nil
-}
-
-func (k Keeper) SetUtxo(ctx sdk.Context, utxo types.UTXO) {
-	store := ctx.KVStore(k.storeKey)
-	bz := k.cdc.MustMarshal(&utxo)
-	store.Set(types.BtcUtxoKey(utxo.Txid, utxo.Vout), bz)
 }
 
 func (k Keeper) GetBlockHeader(ctx sdk.Context, hash string) *types.BlockHeader {

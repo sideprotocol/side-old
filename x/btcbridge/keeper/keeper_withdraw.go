@@ -28,16 +28,35 @@ func (k Keeper) IncrementRequestSequence(ctx sdk.Context) uint64 {
 // txBytes: the transaction bytes
 // vault: the address of the vault, default is empty.
 // If empty, the vault will be Bitcoin vault, otherwise it will be Ordinals or Runes vault
-func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin, vault string) *types.BitcoinSigningRequest {
+func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin, feeRate int64, vault string) (*types.BitcoinSigningRequest, error) {
+	if len(vault) == 0 {
+		// default to the first vault in the params for now
+		// TODO: select an appropriate vault according to the utxos
+		vault = k.GetParams(ctx).Senders[0]
+	}
 
-	// create a new bitcoin transaction
-	// tx := wire.NewMsgTx(wire.TxVersion)
+	utxos := k.GetOrderedUTXOsByAddr(ctx, vault)
+	if len(utxos) == 0 {
+		return nil, types.ErrInsufficientUTXOs
+	}
 
-	// outScript, err := txscript.PayToAddrScript(sender)
+	psbt, selectedUTXOs, err := types.BuildPsbt(utxos, sender, coin.Amount.Int64(), feeRate, vault)
+	if err != nil {
+		return nil, types.ErrFailToBuildTransaction
+	}
+
+	psbtB64, err := psbt.B64Encode()
+	if err != nil {
+		return nil, types.ErrFailToSerializePsbt
+	}
+
+	// lock the selected utxos
+	k.LockUTXOs(ctx, selectedUTXOs)
 
 	signingRequest := &types.BitcoinSigningRequest{
 		Address:      sender,
-		Psbt:         "",
+		Txid:         psbt.UnsignedTx.TxHash().String(),
+		Psbt:         psbtB64,
 		Status:       types.SigningStatus_SIGNING_STATUS_CREATED,
 		Sequence:     k.IncrementRequestSequence(ctx),
 		VaultAddress: vault,
@@ -47,7 +66,7 @@ func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin,
 	bz := k.cdc.MustMarshal(signingRequest)
 	store.Set(types.BtcSigningRequestKey(signingRequest.Sequence), bz)
 
-	return signingRequest
+	return signingRequest, nil
 }
 
 // GetSigningRequest returns the signing request
