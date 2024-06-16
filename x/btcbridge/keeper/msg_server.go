@@ -1,8 +1,11 @@
 package keeper
 
 import (
+	"bytes"
 	"context"
+	"encoding/base64"
 
+	"github.com/btcsuite/btcd/btcutil/psbt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/sideprotocol/side/x/btcbridge/types"
 )
@@ -130,12 +133,33 @@ func (m msgServer) SubmitWithdrawSignatures(goCtx context.Context, msg *types.Ms
 		return nil, err
 	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	request := m.GetSigningRequest(ctx, msg.Txid)
-	// request.
-	if ok := request.ValidateSignatures(msg.Signatures); !ok {
-		return nil, types.ErrInvalidSignatures
-
+	exist := m.HasSigningRequest(ctx, msg.Txid)
+	if !exist {
+		return nil, types.ErrSigningRequestNotExist
 	}
+
+	b, err := base64.StdEncoding.DecodeString(msg.Psbt)
+	if err != nil {
+		return nil, types.ErrInvalidSignatures
+	}
+
+	packet, err := psbt.NewFromRawBytes(bytes.NewReader(b), false)
+	if err != nil {
+		return nil, err
+	}
+	if err = packet.SanityCheck(); err != nil {
+		return nil, err
+	}
+	if !packet.IsComplete() {
+		return nil, types.ErrInvalidSignatures
+	}
+
+	// Set the signing request status to signed
+	request := m.GetSigningRequest(ctx, msg.Txid)
+	request.Psbt = msg.Psbt
+	request.Status = types.SigningStatus_SIGNING_STATUS_SIGNED
+	m.SetSigningRequest(ctx, request)
+
 	return &types.MsgSubmitWithdrawSignaturesResponse{}, nil
 
 }

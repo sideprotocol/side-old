@@ -76,7 +76,7 @@ message MsgWithdrawBitcoinResponse {
 message MsgSubmitWithdrawSignaturesRequest {
   string sender = 1;
   string txid = 2;
-  repeated string signatures = 3;
+  string psbt = 3;
 }
 
 // MsgSubmitWithdrawSignaturesResponse defines the Msg/SubmitWithdrawSignatures response type.

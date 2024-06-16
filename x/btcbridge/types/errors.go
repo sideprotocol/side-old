@@ -22,8 +22,9 @@ var (
 	ErrExceedMaxAcceptanceDepth = errorsmod.Register(ModuleName, 3201, "exceed max acceptance block depth")
 	ErrUnsupportedScriptType    = errorsmod.Register(ModuleName, 3202, "unsupported script type")
 
-	ErrInvalidSignatures   = errorsmod.Register(ModuleName, 4200, "invalid signatures")
-	ErrInsufficientBalance = errorsmod.Register(ModuleName, 4201, "insufficient balance")
+	ErrInvalidSignatures      = errorsmod.Register(ModuleName, 4200, "invalid signatures")
+	ErrInsufficientBalance    = errorsmod.Register(ModuleName, 4201, "insufficient balance")
+	ErrSigningRequestNotExist = errorsmod.Register(ModuleName, 4202, "signing request does not exist")
 
 	ErrUTXODoesNotExist = errorsmod.Register(ModuleName, 5100, "utxo does not exist")
 	ErrUTXOLocked       = errorsmod.Register(ModuleName, 5101, "utxo locked")

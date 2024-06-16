@@ -70,21 +70,27 @@ func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin,
 }
 
 // GetSigningRequest returns the signing request
+func (k Keeper) HasSigningRequest(ctx sdk.Context, hash string) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(types.BtcSigningRequestHashKey(hash))
+}
+
+// GetSigningRequest returns the signing request
 func (k Keeper) GetSigningRequest(ctx sdk.Context, hash string) *types.BitcoinSigningRequest {
 	store := ctx.KVStore(k.storeKey)
 	var signingRequest types.BitcoinSigningRequest
 	// TODO replace the key with the hash
-	bz := store.Get(types.BtcSigningRequestKey(1))
+	bz := store.Get(types.BtcSigningRequestHashKey(hash))
 	k.cdc.MustUnmarshal(bz, &signingRequest)
 	return &signingRequest
 }
 
 // SetSigningRequest sets the signing request
-func (k Keeper) SetSigningRequest(ctx sdk.Context, txHash string, signingRequest *types.BitcoinSigningRequest) {
+func (k Keeper) SetSigningRequest(ctx sdk.Context, signingRequest *types.BitcoinSigningRequest) {
 	store := ctx.KVStore(k.storeKey)
 	bz := k.cdc.MustMarshal(signingRequest)
 	// TODO replace the key with the hash
-	store.Set(types.BtcSigningRequestKey(1), bz)
+	store.Set(types.BtcSigningRequestHashKey(signingRequest.Txid), bz)
 }
 
 // IterateSigningRequests iterates through all signing requests

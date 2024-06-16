@@ -62,6 +62,11 @@ func BtcBlockHeaderHeightKey(height uint64) []byte {
 	return append(BtcBlockHeaderHeightPrefix, Int64ToBytes(height)...)
 }
 
+// @deprecated, use BtcSigningRequestHashKey instead
 func BtcSigningRequestKey(sequence uint64) []byte {
 	return append(BtcSigningRequestPrefix, Int64ToBytes(sequence)...)
+}
+
+func BtcSigningRequestHashKey(txid string) []byte {
+	return append(BtcSigningRequestPrefix, []byte(txid)...)
 }

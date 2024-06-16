@@ -10,12 +10,12 @@ const TypeMsgSubmitSignature = "submit_signature"
 func NewMsgSubmitWithdrawSignaturesRequest(
 	sender string,
 	txid string,
-	signatures []string,
+	pbst string,
 ) *MsgSubmitWithdrawSignaturesRequest {
 	return &MsgSubmitWithdrawSignaturesRequest{
-		Sender:     sender,
-		Txid:       txid,
-		Signatures: signatures,
+		Sender: sender,
+		Txid:   txid,
+		Psbt:   pbst,
 	}
 }
 
@@ -50,15 +50,8 @@ func (msg *MsgSubmitWithdrawSignaturesRequest) ValidateBasic() error {
 		return sdkerrors.Wrap(ErrInvalidSignatures, "txid cannot be empty")
 	}
 
-	if len(msg.Signatures) == 0 {
+	if len(msg.Psbt) == 0 {
 		return sdkerrors.Wrap(ErrInvalidSignatures, "sigatures cannot be empty")
-	}
-
-	for _, signature := range msg.Signatures {
-		if len(signature) == 0 {
-			return sdkerrors.Wrap(ErrInvalidSignatures, "signature cannot be empty")
-
-		}
 	}
 
 	return nil
