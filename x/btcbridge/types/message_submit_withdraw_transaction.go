@@ -52,10 +52,6 @@ func (msg *MsgSubmitWithdrawTransactionRequest) ValidateBasic() error {
 		return sdkerrors.Wrap(ErrInvalidBtcTransaction, "blockhash cannot be empty")
 	}
 
-	if len(msg.PrevTxBytes) == 0 {
-		return sdkerrors.Wrap(ErrInvalidBtcTransaction, "transaction cannot be empty")
-	}
-
 	if len(msg.TxBytes) == 0 {
 		return sdkerrors.Wrap(ErrInvalidBtcTransaction, "transaction cannot be empty")
 	}
