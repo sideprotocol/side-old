@@ -3,6 +3,7 @@ package keeper
 import (
 	"bytes"
 	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 
 	"github.com/btcsuite/btcd/blockchain"
@@ -183,5 +184,31 @@ func (k Keeper) ProcessBitcoinWithdrawTransaction(ctx sdk.Context, msg *types.Ms
 		return err
 	}
 
+	if len(uTx.MsgTx().TxIn[0].Witness) != 2 {
+		return types.ErrInvalidSenders
+	}
+
+	senderPubKey := uTx.MsgTx().TxIn[0].Witness[1]
+
+	// check if the first sender is one of the vault addresses
+	vault := types.SelectVaultByPubKey(param.Vaults, hex.EncodeToString(senderPubKey))
+	if vault == nil {
+		return types.ErrInvalidSenders
+	}
+
+	k.spendUTXOs(ctx, uTx)
+
 	return nil
+}
+
+// spendUTXOs spends locked utxos
+func (k Keeper) spendUTXOs(ctx sdk.Context, uTx *btcutil.Tx) {
+	for _, in := range uTx.MsgTx().TxIn {
+		hash := in.PreviousOutPoint.Hash.String()
+		vout := in.PreviousOutPoint.Index
+
+		if k.IsUTXOLocked(ctx, hash, uint64(vout)) {
+			k.SpendUTXO(ctx, hash, uint64(vout))
+		}
+	}
 }

@@ -51,3 +51,15 @@ func SelectVaultByBitcoinAddress(vaults []*Vault, address string) *Vault {
 	}
 	return nil
 }
+
+// SelectVaultByPubKey returns the vault if the public key is found
+// returns the vault if the public key is found
+func SelectVaultByPubKey(vaults []*Vault, pubKey string) *Vault {
+	for _, v := range vaults {
+		if v.PubKey == pubKey {
+			return v
+		}
+	}
+
+	return nil
+}
