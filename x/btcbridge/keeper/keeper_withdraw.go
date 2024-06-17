@@ -183,34 +183,5 @@ func (k Keeper) ProcessBitcoinWithdrawTransaction(ctx sdk.Context, msg *types.Ms
 		return err
 	}
 
-	// extract senders from the previous transaction
-	prevTxBytes, err := base64.StdEncoding.DecodeString(msg.PrevTxBytes)
-	if err != nil {
-		fmt.Println("Error decoding transaction from base64:", err)
-		return err
-	}
-
-	// Create a new transaction
-	var prevMsgTx wire.MsgTx
-	err = prevMsgTx.Deserialize(bytes.NewReader(prevTxBytes))
-	if err != nil {
-		fmt.Println("Error deserializing transaction:", err)
-		return err
-	}
-
-	prevTx := btcutil.NewTx(&prevMsgTx)
-	if len(prevTx.MsgTx().TxOut) < 1 {
-		return types.ErrInvalidBtcTransaction
-	}
-	// Validate the transaction
-	if err := blockchain.CheckTransactionSanity(prevTx); err != nil {
-		fmt.Println("Transaction is not valid:", err)
-		return err
-	}
-
-	if uTx.MsgTx().TxIn[0].PreviousOutPoint.Hash.String() != prevTx.Hash().String() {
-		return types.ErrInvalidBtcTransaction
-	}
-
 	return nil
 }
