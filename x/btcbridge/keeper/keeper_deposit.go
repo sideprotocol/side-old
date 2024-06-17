@@ -141,9 +141,8 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 		switch vault.AssetType {
 		case types.AssetType_ASSET_TYPE_BTC:
 			k.mintBTC(ctx, uTx, header.Height, sender.EncodeAddress(), vault, out, i, param.BtcVoucherDenom)
-			break
 		case types.AssetType_ASSET_TYPE_RUNE:
-
+			k.mintRUNE(ctx, uTx, header.Height, sender.EncodeAddress(), vault, out, i, "rune")
 		}
 	}
 
@@ -151,6 +150,14 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 }
 
 func (k Keeper) mintBTC(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender string, vault *types.Vault, out *wire.TxOut, vout int, denom string) {
+
+	// save the hash of the transaction to prevent double minting
+	// hash := uTx.Hash().String()
+	// if k.hasMintedTxHash(ctx, hash) {
+	// 	return
+	// }
+	// k.saveMintedTxHash(ctx, hash)
+
 	// mint the voucher token
 	coins := sdk.NewCoins(sdk.NewCoin(denom, sdk.NewInt(out.Value)))
 
@@ -175,4 +182,7 @@ func (k Keeper) mintBTC(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender 
 
 	k.SetUTXO(ctx, &utxo)
 	k.SetOwnerUTXO(ctx, &utxo)
+}
+
+func (k Keeper) mintRUNE(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender string, vault *types.Vault, out *wire.TxOut, vout int, denom string) {
 }
