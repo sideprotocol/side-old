@@ -13,4 +13,5 @@ message GenesisState {
   // the chain tip of the bitcoin chain
   BlockHeader best_block_header = 2;
   repeated BlockHeader block_headers = 3;
+  repeated UTXO utxos = 4;
 }
