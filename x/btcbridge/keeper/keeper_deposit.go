@@ -149,12 +149,12 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 	return nil
 }
 
-func (k Keeper) mintBTC(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender string, vault *types.Vault, out *wire.TxOut, vout int, denom string) {
+func (k Keeper) mintBTC(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender string, vault *types.Vault, out *wire.TxOut, vout int, denom string) error {
 
 	// save the hash of the transaction to prevent double minting
 	hash := uTx.Hash().String()
 	if k.hasMintedTxHash(ctx, hash) {
-		return
+		return types.ErrTransactionAlreadyMinted
 	}
 	k.saveMintedTxHash(ctx, hash)
 
@@ -163,7 +163,7 @@ func (k Keeper) mintBTC(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender 
 
 	receipient, err := sdk.AccAddressFromBech32(sender)
 	if err != nil {
-		return
+		return err
 	}
 
 	k.bankKeeper.MintCoins(ctx, types.ModuleName, coins)
@@ -182,6 +182,8 @@ func (k Keeper) mintBTC(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender 
 
 	k.SetUTXO(ctx, &utxo)
 	k.SetOwnerUTXO(ctx, &utxo)
+
+	return nil
 }
 
 func (k Keeper) mintRUNE(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender string, vault *types.Vault, out *wire.TxOut, vout int, denom string) {
