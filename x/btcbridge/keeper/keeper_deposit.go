@@ -152,11 +152,11 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 func (k Keeper) mintBTC(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender string, vault *types.Vault, out *wire.TxOut, vout int, denom string) {
 
 	// save the hash of the transaction to prevent double minting
-	// hash := uTx.Hash().String()
-	// if k.hasMintedTxHash(ctx, hash) {
-	// 	return
-	// }
-	// k.saveMintedTxHash(ctx, hash)
+	hash := uTx.Hash().String()
+	if k.hasMintedTxHash(ctx, hash) {
+		return
+	}
+	k.saveMintedTxHash(ctx, hash)
 
 	// mint the voucher token
 	coins := sdk.NewCoins(sdk.NewCoin(denom, sdk.NewInt(out.Value)))
@@ -185,4 +185,16 @@ func (k Keeper) mintBTC(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender 
 }
 
 func (k Keeper) mintRUNE(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender string, vault *types.Vault, out *wire.TxOut, vout int, denom string) {
+}
+
+func (k Keeper) hasMintedTxHash(ctx sdk.Context, txHash string) bool {
+	store := ctx.KVStore(k.storeKey)
+
+	return store.Has(types.BtcMintedTxHashKey(txHash))
+}
+
+func (k Keeper) saveMintedTxHash(ctx sdk.Context, txHash string) {
+	store := ctx.KVStore(k.storeKey)
+
+	store.Set(types.BtcMintedTxHashKey(txHash), nil)
 }

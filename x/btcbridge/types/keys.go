@@ -34,6 +34,8 @@ var (
 	BtcUtxoKeyPrefix      = []byte{0x15} // prefix for each key to a utxo
 	BtcOwnerUtxoKeyPrefix = []byte{0x16} // prefix for each key to an owned utxo
 
+	BtcMintedTxHashKeyPrefix = []byte{0x17} // prefix for each key to a minted tx hash
+
 	ChainCfg = &chaincfg.MainNetParams
 )
 
@@ -69,4 +71,8 @@ func BtcSigningRequestKey(sequence uint64) []byte {
 
 func BtcSigningRequestHashKey(txid string) []byte {
 	return append(BtcSigningRequestPrefix, []byte(txid)...)
+}
+
+func BtcMintedTxHashKey(hash string) []byte {
+	return append(BtcMintedTxHashKeyPrefix, []byte(hash)...)
 }
