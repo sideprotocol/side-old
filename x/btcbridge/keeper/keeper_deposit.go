@@ -140,7 +140,7 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 		// skip if the asset type of the sender address is unspecified
 		switch vault.AssetType {
 		case types.AssetType_ASSET_TYPE_BTC:
-			k.minBTC(ctx, uTx, header.Height, sender.EncodeAddress(), vault, out, i, param.BtcVoucherDenom)
+			k.mintBTC(ctx, uTx, header.Height, sender.EncodeAddress(), vault, out, i, param.BtcVoucherDenom)
 			break
 		case types.AssetType_ASSET_TYPE_RUNE:
 
@@ -150,7 +150,7 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 	return nil
 }
 
-func (k Keeper) minBTC(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender string, vault *types.Vault, out *wire.TxOut, vout int, denom string) {
+func (k Keeper) mintBTC(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender string, vault *types.Vault, out *wire.TxOut, vout int, denom string) {
 	// mint the voucher token
 	coins := sdk.NewCoins(sdk.NewCoin(denom, sdk.NewInt(out.Value)))
 
