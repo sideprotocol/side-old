@@ -1,6 +1,13 @@
 package keeper
 
 import (
+	"bytes"
+	"encoding/base64"
+	"fmt"
+
+	"github.com/btcsuite/btcd/blockchain"
+	"github.com/btcsuite/btcd/btcutil"
+	"github.com/btcsuite/btcd/wire"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/sideprotocol/side/x/btcbridge/types"
 )
@@ -32,7 +39,13 @@ func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin,
 	if len(vault) == 0 {
 		// default to the first vault in the params for now
 		// TODO: select an appropriate vault according to the utxos
-		vault = k.GetParams(ctx).Senders[0]
+		p := k.GetParams(ctx)
+		for i, v := range p.Vaults {
+			if v.AssetType == types.AssetType_ASSET_TYPE_BTC {
+				vault = p.Vaults[i].AddressOnBitcoin
+				break
+			}
+		}
 	}
 
 	utxos := k.GetOrderedUTXOsByAddr(ctx, vault)
@@ -121,4 +134,83 @@ func (k Keeper) FilterSigningRequestsByStatus(ctx sdk.Context, req *types.QueryS
 		return false
 	})
 	return signingRequests
+}
+
+// Process Bitcoin Withdraw Transaction
+func (k Keeper) ProcessBitcoinWithdrawTransaction(ctx sdk.Context, msg *types.MsgSubmitWithdrawTransactionRequest) error {
+
+	ctx.Logger().Info("accept bitcoin deposit tx", "blockhash", msg.Blockhash)
+
+	param := k.GetParams(ctx)
+	header := k.GetBlockHeader(ctx, msg.Blockhash)
+	// Check if block confirmed
+	if header == nil {
+		return types.ErrBlockNotFound
+	}
+
+	best := k.GetBestBlockHeader(ctx)
+	// Check if the block is confirmed
+	if best.Height-header.Height < uint64(param.Confirmations) {
+		return types.ErrNotConfirmed
+	}
+	// Check if the block is within the acceptable depth
+	if best.Height-header.Height > param.MaxAcceptableBlockDepth {
+		return types.ErrExceedMaxAcceptanceDepth
+	}
+
+	// Decode the base64 transaction
+	txBytes, err := base64.StdEncoding.DecodeString(msg.TxBytes)
+	if err != nil {
+		fmt.Println("Error decoding transaction from base64:", err)
+		return err
+	}
+
+	// Create a new transaction
+	var tx wire.MsgTx
+	err = tx.Deserialize(bytes.NewReader(txBytes))
+	if err != nil {
+		fmt.Println("Error deserializing transaction:", err)
+		return err
+	}
+	uTx := btcutil.NewTx(&tx)
+	if len(uTx.MsgTx().TxIn) < 1 {
+		return types.ErrInvalidBtcTransaction
+	}
+
+	// Validate the transaction
+	if err := blockchain.CheckTransactionSanity(uTx); err != nil {
+		fmt.Println("Transaction is not valid:", err)
+		return err
+	}
+
+	// extract senders from the previous transaction
+	prevTxBytes, err := base64.StdEncoding.DecodeString(msg.PrevTxBytes)
+	if err != nil {
+		fmt.Println("Error decoding transaction from base64:", err)
+		return err
+	}
+
+	// Create a new transaction
+	var prevMsgTx wire.MsgTx
+	err = prevMsgTx.Deserialize(bytes.NewReader(prevTxBytes))
+	if err != nil {
+		fmt.Println("Error deserializing transaction:", err)
+		return err
+	}
+
+	prevTx := btcutil.NewTx(&prevMsgTx)
+	if len(prevTx.MsgTx().TxOut) < 1 {
+		return types.ErrInvalidBtcTransaction
+	}
+	// Validate the transaction
+	if err := blockchain.CheckTransactionSanity(prevTx); err != nil {
+		fmt.Println("Transaction is not valid:", err)
+		return err
+	}
+
+	if uTx.MsgTx().TxIn[0].PreviousOutPoint.Hash.String() != prevTx.Hash().String() {
+		return types.ErrInvalidBtcTransaction
+	}
+
+	return nil
 }

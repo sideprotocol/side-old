@@ -5,15 +5,15 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-const TypeMsgSubmitTransaction = "submit_transaction"
+const TypeMsgSubmitWithdrawTransaction = "submit_withdraw_transaction"
 
-func NewMsgSubmitTransactionRequest(
+func NewMsgSubmitWithdrawTransactionRequest(
 	sender string,
 	blockhash string,
 	transaction string,
 	proof []string,
-) *MsgSubmitTransactionRequest {
-	return &MsgSubmitTransactionRequest{
+) *MsgSubmitWithdrawTransactionRequest {
+	return &MsgSubmitWithdrawTransactionRequest{
 		Sender:    sender,
 		Blockhash: blockhash,
 		TxBytes:   transaction,
@@ -21,15 +21,15 @@ func NewMsgSubmitTransactionRequest(
 	}
 }
 
-func (msg *MsgSubmitTransactionRequest) Route() string {
+func (msg *MsgSubmitWithdrawTransactionRequest) Route() string {
 	return RouterKey
 }
 
-func (msg *MsgSubmitTransactionRequest) Type() string {
-	return TypeMsgSubmitTransaction
+func (msg *MsgSubmitWithdrawTransactionRequest) Type() string {
+	return TypeMsgSubmitDepositTransaction
 }
 
-func (msg *MsgSubmitTransactionRequest) GetSigners() []sdk.AccAddress {
+func (msg *MsgSubmitWithdrawTransactionRequest) GetSigners() []sdk.AccAddress {
 	Sender, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		panic(err)
@@ -37,12 +37,12 @@ func (msg *MsgSubmitTransactionRequest) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{Sender}
 }
 
-func (msg *MsgSubmitTransactionRequest) GetSignBytes() []byte {
+func (msg *MsgSubmitWithdrawTransactionRequest) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgSubmitTransactionRequest) ValidateBasic() error {
+func (msg *MsgSubmitWithdrawTransactionRequest) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		return sdkerrors.Wrapf(err, "invalid Sender address (%s)", err)

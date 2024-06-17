@@ -12,14 +12,17 @@ option go_package = "github.com/sideprotocol/side/x/btcbridge/types";
 service Msg {
   // SubmitBlockHeaders submits bitcoin block headers to the side chain.
   rpc SubmitBlockHeaders (MsgSubmitBlockHeaderRequest) returns (MsgSubmitBlockHeadersResponse);
-  // SubmitTransaction submits bitcoin transaction to the side chain.
-  rpc SubmitTransaction (MsgSubmitTransactionRequest) returns (MsgSubmitTransactionResponse);
+  // SubmitDepositTransaction submits bitcoin transaction to the side chain.
+  rpc SubmitDepositTransaction (MsgSubmitDepositTransactionRequest) returns (MsgSubmitDepositTransactionResponse);
+  // SubmitWithdrawalTransaction submits bitcoin transaction to the side chain.
+  rpc SubmitWithdrawTransaction (MsgSubmitWithdrawTransactionRequest) returns (MsgSubmitWithdrawTransactionResponse);
   // UpdateSenders updates the senders of the side chain.
-  rpc UpdateSenders (MsgUpdateSendersRequest) returns (MsgUpdateSendersResponse);
+  rpc UpdateQualifiedRelayers (MsgUpdateQualifiedRelayersRequest) returns (MsgUpdateQualifiedRelayersResponse);
   // WithdrawBitcoin withdraws the bitcoin from the side chain.
   rpc WithdrawBitcoin (MsgWithdrawBitcoinRequest) returns (MsgWithdrawBitcoinResponse);
   // SubmitWithdrawSignatures submits the signatures of the withdraw transaction.
   rpc SubmitWithdrawSignatures (MsgSubmitWithdrawSignaturesRequest) returns (MsgSubmitWithdrawSignaturesResponse);
+
 }
 
 // MsgBlockHeaderRequest defines the Msg/SubmitBlockHeaders request type.
@@ -33,7 +36,7 @@ message MsgSubmitBlockHeadersResponse {
 }
 
 // MsgSubmitTransactionRequest defines the Msg/SubmitTransaction request type.
-message MsgSubmitTransactionRequest {
+message MsgSubmitDepositTransactionRequest {
   string sender = 1;
   string blockhash = 2;
   // the tx bytes in base64 format
@@ -45,18 +48,34 @@ message MsgSubmitTransactionRequest {
 }
 
 // MsgSubmitTransactionResponse defines the Msg/SubmitTransaction response type.
-message MsgSubmitTransactionResponse {
+message MsgSubmitDepositTransactionResponse {
+}
+
+// MsgSubmitTransactionRequest defines the Msg/SubmitTransaction request type.
+message MsgSubmitWithdrawTransactionRequest {
+  string sender = 1;
+  string blockhash = 2;
+  // the tx bytes in base64 format
+  // used for parsing the sender of the transaction
+  string prev_tx_bytes = 3;
+  // the tx bytes in base64 format
+  string tx_bytes = 4;
+  repeated string proof = 5;
+}
+
+// MsgSubmitTransactionResponse defines the Msg/SubmitTransaction response type.
+message MsgSubmitWithdrawTransactionResponse {
 }
 
 // Msg defines the MsgUpdateSender service.
-message MsgUpdateSendersRequest {
+message MsgUpdateQualifiedRelayersRequest {
   string sender = 1;
   // update senders who can send block headers to the side chain
-  repeated string senders = 2;
+  repeated string relayers = 2;
 }
 
 // MsgUpdateSenderResponse defines the Msg/UpdateSender response type.
-message MsgUpdateSendersResponse {
+message MsgUpdateQualifiedRelayersResponse {
 }
 
 // MsgWithdrawBitcoinRequest defines the Msg/WithdrawBitcoin request type.

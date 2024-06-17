@@ -49,7 +49,7 @@ func (m msgServer) SubmitBlockHeaders(goCtx context.Context, msg *types.MsgSubmi
 // No Permission check required for this message
 // Since everyone can submit a transaction to mint voucher tokens
 // This message is usually sent by relayers
-func (m msgServer) SubmitTransaction(goCtx context.Context, msg *types.MsgSubmitTransactionRequest) (*types.MsgSubmitTransactionResponse, error) {
+func (m msgServer) SubmitDepositTransaction(goCtx context.Context, msg *types.MsgSubmitDepositTransactionRequest) (*types.MsgSubmitDepositTransactionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	if err := msg.ValidateBasic(); err != nil {
@@ -68,12 +68,39 @@ func (m msgServer) SubmitTransaction(goCtx context.Context, msg *types.MsgSubmit
 		sdk.NewAttribute("txBytes", msg.TxBytes),
 	)
 
-	return &types.MsgSubmitTransactionResponse{}, nil
+	return &types.MsgSubmitDepositTransactionResponse{}, nil
+
+}
+
+// SubmitTransaction implements types.MsgServer.
+// No Permission check required for this message
+// Since everyone can submit a transaction to mint voucher tokens
+// This message is usually sent by relayers
+func (m msgServer) SubmitWithdrawTransaction(goCtx context.Context, msg *types.MsgSubmitWithdrawTransactionRequest) (*types.MsgSubmitWithdrawTransactionResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if err := msg.ValidateBasic(); err != nil {
+		ctx.Logger().Error("Error validating basic", "error", err)
+		return nil, err
+	}
+
+	if err := m.ProcessBitcoinWithdrawTransaction(ctx, msg); err != nil {
+		ctx.Logger().Error("Error processing bitcoin deposit transaction", "error", err)
+		return nil, err
+	}
+
+	// Emit Events
+	m.EmitEvent(ctx, msg.Sender,
+		sdk.NewAttribute("blockhash", msg.Blockhash),
+		sdk.NewAttribute("txBytes", msg.TxBytes),
+	)
+
+	return &types.MsgSubmitWithdrawTransactionResponse{}, nil
 
 }
 
 // UpdateSenders implements types.MsgServer.
-func (m msgServer) UpdateSenders(goCtx context.Context, msg *types.MsgUpdateSendersRequest) (*types.MsgUpdateSendersResponse, error) {
+func (m msgServer) UpdateQualifiedRelayers(goCtx context.Context, msg *types.MsgUpdateQualifiedRelayersRequest) (*types.MsgUpdateQualifiedRelayersResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	if err := msg.ValidateBasic(); err != nil {
 		return nil, err
@@ -86,11 +113,11 @@ func (m msgServer) UpdateSenders(goCtx context.Context, msg *types.MsgUpdateSend
 	}
 
 	// Set block headers
-	m.SetParams(ctx, types.NewParams(msg.Senders))
+	m.SetParams(ctx, types.NewParams(msg.Relayers))
 
 	// Emit events
 
-	return &types.MsgUpdateSendersResponse{}, nil
+	return &types.MsgUpdateQualifiedRelayersResponse{}, nil
 }
 
 func (m msgServer) WithdrawBitcoin(goCtx context.Context, msg *types.MsgWithdrawBitcoinRequest) (*types.MsgWithdrawBitcoinResponse, error) {

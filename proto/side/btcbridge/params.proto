@@ -8,14 +8,34 @@ option go_package = "github.com/sideprotocol/side/x/btcbridge/types";
 // Params defines the parameters for the module.
 message Params {
   // Only accept blocks sending from these addresses
-  repeated string senders = 1;
+  repeated string qualified_relayers = 1;
   // The minimum number of confirmations required for a block to be accepted
   int32 confirmations = 2;
   // Indicates the maximum depth or distance from the latest block up to which transactions are considered for acceptance.
   uint64 max_acceptable_block_depth = 3;
   // the denomanation of the voucher
   string btc_voucher_denom = 4;
+  repeated Vault vaults = 5;
+}
+
+// AssetType defines the type of asset
+enum AssetType {
+  // Unspecified asset type
+  ASSET_TYPE_UNSPECIFIED = 0;
+  // BTC
+  ASSET_TYPE_BTC = 1;
+  // BRC20: ordi, sats
+  ASSET_TYPE_BRC20 = 2;
+  // RUNE, dog*go*to*the*moon
+  ASSET_TYPE_RUNE = 3;
+}
+
+// Vault defines the parameters for the module.
+message Vault {
+  // the depositor should send their btc to this address
+  string address_on_bitcoin = 1;
   // the address to which the voucher is sent
-  repeated string btc_voucher_address = 5;
+  AssetType asset_type = 2;
+
 }
 

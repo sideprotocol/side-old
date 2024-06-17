@@ -5,10 +5,13 @@ import sdk "github.com/cosmos/cosmos-sdk/types"
 // NewParams creates a new Params instance
 func NewParams(senders []string) Params {
 	return Params{
-		Senders:                 senders,
+		QualifiedRelayers:       senders,
 		Confirmations:           2,
 		MaxAcceptableBlockDepth: 100,
-		BtcVoucherDenom:         "sat",
+		Vaults: []*Vault{{
+			AddressOnBitcoin: "",
+			AssetType:        AssetType_ASSET_TYPE_BTC,
+		}},
 	}
 }
 
@@ -19,7 +22,7 @@ func DefaultParams() Params {
 
 // Validate validates the set of params
 func (p Params) Validate() error {
-	for _, sender := range p.Senders {
+	for _, sender := range p.QualifiedRelayers {
 		_, err := sdk.AccAddressFromBech32(sender)
 		if err != nil {
 			return err
@@ -30,10 +33,21 @@ func (p Params) Validate() error {
 
 // checks if the given address is an authorized sender
 func (p Params) IsAuthorizedSender(sender string) bool {
-	for _, s := range p.Senders {
+	for _, s := range p.QualifiedRelayers {
 		if s == sender {
 			return true
 		}
 	}
 	return false
+}
+
+// SelectVaultByBitcoinAddress returns the vault if the address is found
+// returns the vault if the address is found
+func SelectVaultByBitcoinAddress(vaults []*Vault, address string) *Vault {
+	for _, v := range vaults {
+		if v.AddressOnBitcoin == address {
+			return v
+		}
+	}
+	return nil
 }

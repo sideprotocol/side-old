@@ -41,7 +41,6 @@ message BitcoinSigningRequest {
   string psbt = 3;
   SigningStatus status = 4;
   uint64 sequence = 5;
-
   // The vault address that the request is associated with
   string vault_address = 6;
 }

@@ -5,27 +5,27 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-const TypeMsgUpdateSenders = "update_senders"
+const TypeMsgUpdateSenders = "update_qualifed_relayers"
 
 func NewMsgUpdateSendersRequest(
 	sender string,
-	senders []string,
-) *MsgUpdateSendersRequest {
-	return &MsgUpdateSendersRequest{
-		Sender:  sender,
-		Senders: senders,
+	relayers []string,
+) *MsgUpdateQualifiedRelayersRequest {
+	return &MsgUpdateQualifiedRelayersRequest{
+		Sender:   sender,
+		Relayers: relayers,
 	}
 }
 
-func (msg *MsgUpdateSendersRequest) Route() string {
+func (msg *MsgUpdateQualifiedRelayersRequest) Route() string {
 	return RouterKey
 }
 
-func (msg *MsgUpdateSendersRequest) Type() string {
+func (msg *MsgUpdateQualifiedRelayersRequest) Type() string {
 	return TypeMsgUpdateSenders
 }
 
-func (msg *MsgUpdateSendersRequest) GetSigners() []sdk.AccAddress {
+func (msg *MsgUpdateQualifiedRelayersRequest) GetSigners() []sdk.AccAddress {
 	Sender, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		panic(err)
@@ -33,22 +33,22 @@ func (msg *MsgUpdateSendersRequest) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{Sender}
 }
 
-func (msg *MsgUpdateSendersRequest) GetSignBytes() []byte {
+func (msg *MsgUpdateQualifiedRelayersRequest) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgUpdateSendersRequest) ValidateBasic() error {
+func (msg *MsgUpdateQualifiedRelayersRequest) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
-		return sdkerrors.Wrapf(err, "invalid Sender address (%s)", err)
+		return sdkerrors.Wrapf(err, "invalid sender address (%s)", err)
 	}
 
-	if len(msg.Senders) == 0 {
-		return sdkerrors.Wrap(ErrInvalidSenders, "senders cannot be empty")
+	if len(msg.Relayers) == 0 {
+		return sdkerrors.Wrap(ErrInvalidSenders, "relayers cannot be empty")
 	}
 
-	for _, sender := range msg.Senders {
+	for _, sender := range msg.Relayers {
 		_, err := sdk.AccAddressFromBech32(sender)
 		if err != nil {
 			return sdkerrors.Wrapf(ErrInvalidSenders, "address (%s) is invalid", sender)
