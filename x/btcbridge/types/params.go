@@ -12,6 +12,10 @@ func NewParams(relayers []string) Params {
 			AddressOnBitcoin: "",
 			PubKey:           "",
 			AssetType:        AssetType_ASSET_TYPE_BTC,
+		}, {
+			AddressOnBitcoin: "",
+			PubKey:           "",
+			AssetType:        AssetType_ASSET_TYPE_RUNE,
 		}},
 	}
 }
