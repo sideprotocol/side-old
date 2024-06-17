@@ -153,10 +153,10 @@ func (k Keeper) mintBTC(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender 
 
 	// save the hash of the transaction to prevent double minting
 	hash := uTx.Hash().String()
-	if k.hasMintedTxHash(ctx, hash) {
+	if k.existsInHistory(ctx, hash) {
 		return types.ErrTransactionAlreadyMinted
 	}
-	k.saveMintedTxHash(ctx, hash)
+	k.addToMintHistory(ctx, hash)
 
 	// mint the voucher token
 	coins := sdk.NewCoins(sdk.NewCoin(denom, sdk.NewInt(out.Value)))
@@ -189,14 +189,16 @@ func (k Keeper) mintBTC(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender 
 func (k Keeper) mintRUNE(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender string, vault *types.Vault, out *wire.TxOut, vout int, denom string) {
 }
 
-func (k Keeper) hasMintedTxHash(ctx sdk.Context, txHash string) bool {
+func (k Keeper) existsInHistory(ctx sdk.Context, txHash string) bool {
 	store := ctx.KVStore(k.storeKey)
 
 	return store.Has(types.BtcMintedTxHashKey(txHash))
 }
 
-func (k Keeper) saveMintedTxHash(ctx sdk.Context, txHash string) {
+func (k Keeper) addToMintHistory(ctx sdk.Context, txHash string) {
 	store := ctx.KVStore(k.storeKey)
 
 	store.Set(types.BtcMintedTxHashKey(txHash), nil)
 }
+
+// need a query all history for exporting

@@ -3,13 +3,14 @@ package types
 import sdk "github.com/cosmos/cosmos-sdk/types"
 
 // NewParams creates a new Params instance
-func NewParams(senders []string) Params {
+func NewParams(relayers []string) Params {
 	return Params{
-		QualifiedRelayers:       senders,
+		AuthorizedRelayers:      relayers,
 		Confirmations:           2,
 		MaxAcceptableBlockDepth: 100,
 		Vaults: []*Vault{{
 			AddressOnBitcoin: "",
+			PubKey:           "",
 			AssetType:        AssetType_ASSET_TYPE_BTC,
 		}},
 	}
@@ -22,7 +23,7 @@ func DefaultParams() Params {
 
 // Validate validates the set of params
 func (p Params) Validate() error {
-	for _, sender := range p.QualifiedRelayers {
+	for _, sender := range p.AuthorizedRelayers {
 		_, err := sdk.AccAddressFromBech32(sender)
 		if err != nil {
 			return err
@@ -33,7 +34,7 @@ func (p Params) Validate() error {
 
 // checks if the given address is an authorized sender
 func (p Params) IsAuthorizedSender(sender string) bool {
-	for _, s := range p.QualifiedRelayers {
+	for _, s := range p.AuthorizedRelayers {
 		if s == sender {
 			return true
 		}

@@ -8,7 +8,7 @@ option go_package = "github.com/sideprotocol/side/x/btcbridge/types";
 // Params defines the parameters for the module.
 message Params {
   // Only accept blocks sending from these addresses
-  repeated string qualified_relayers = 1;
+  repeated string authorized_relayers = 1;
   // The minimum number of confirmations required for a block to be accepted
   int32 confirmations = 2;
   // Indicates the maximum depth or distance from the latest block up to which transactions are considered for acceptance.
