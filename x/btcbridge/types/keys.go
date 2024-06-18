@@ -8,7 +8,7 @@ import (
 
 const (
 	// ModuleName defines the module name
-	ModuleName = "btclightclient"
+	ModuleName = "btcbridge"
 
 	// StoreKey defines the primary module store key
 	StoreKey = ModuleName
