@@ -1,7 +1,7 @@
 #!/bin/bash
 
 KEYS=("dev0" "dev1")
-CHAINID="S2-testnet-1"
+CHAINID="devnet"
 MONIKER="Side Labs"
 BINARY="$HOME/go/bin/sided"
 DENOM_STR="uside"
@@ -74,7 +74,7 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	# done
 
 	echo ""
-	echo "☝️ Copy the above mnemonic phrases and import them to relayer! Press any key to continue..."
+	echo "☝️ Copy the above mnemonic phrases and import them to relayer! Press [Enter] to continue..."
 	read -r continue
 
 	# Set moniker and chain-id for Cascadia (Moniker can be anything, chain-id must be an integer)
