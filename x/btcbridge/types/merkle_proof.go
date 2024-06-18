@@ -8,8 +8,8 @@ import (
 )
 
 // VerifyMerkleProof verifies a Merkle proof
-func VerifyMerkleProof(proofs []string, hn, root *chainhash.Hash) bool {
-	current := hn
+func VerifyMerkleProof(proofs []string, txHash, root *chainhash.Hash) bool {
+	current := txHash
 	for _, proof := range proofs {
 
 		bytes, err := base64.StdEncoding.DecodeString(proof)

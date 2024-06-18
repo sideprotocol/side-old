@@ -22,13 +22,13 @@ func DefaultSignetBestBlockHeader() *BlockHeader {
 	// testnet3 block 2815023
 	return &BlockHeader{
 		Version:           536870912,
-		Hash:              "000000a7e90dc93d4671819d34bce273f65b7f911f335d829b6a6e181cda01c8",
-		Height:            3236,
-		PreviousBlockHash: "0000011e57524f2abb7054ac10833926470caefda7139059a255d25aaa306343",
-		MerkleRoot:        "c7edd2424b9fe2776c7cacb766efa4a308c68cb45838db185dfcf817613d92a4",
-		Time:              1718665272,
+		Hash:              "0000017317a7dfa637773406765d308e93cb5a8e5e266bb21687e120bf0e13d3",
+		Height:            1,
+		PreviousBlockHash: "00000008819873e925422c1ff0f99f7cc9bbb232af63a077a480a3633bee1ef6",
+		MerkleRoot:        "f1192075c6416b02df1487f1f302d925a875bec7e37cf38079e00b1cd831898a",
+		Time:              1718707794,
 		Bits:              "1e0377ae",
-		Nonce:             6997531,
+		Nonce:             13603325,
 		Ntx:               1,
 	}
 }

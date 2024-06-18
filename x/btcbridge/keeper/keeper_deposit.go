@@ -22,7 +22,7 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 	param := k.GetParams(ctx)
 	header := k.GetBlockHeader(ctx, msg.Blockhash)
 	// Check if block confirmed
-	if header == nil {
+	if header == nil || header.Height == 0 {
 		return types.ErrBlockNotFound
 	}
 
@@ -32,9 +32,9 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 		return types.ErrNotConfirmed
 	}
 	// Check if the block is within the acceptable depth
-	if best.Height-header.Height > param.MaxAcceptableBlockDepth {
-		return types.ErrExceedMaxAcceptanceDepth
-	}
+	// if best.Height-header.Height > param.MaxAcceptableBlockDepth {
+	// 	return types.ErrExceedMaxAcceptanceDepth
+	// }
 
 	// Decode the base64 transaction
 	txBytes, err := base64.StdEncoding.DecodeString(msg.TxBytes)
@@ -115,7 +115,10 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 	if err != nil {
 		return err
 	}
-	if !types.VerifyMerkleProof(msg.Proof, uTx.Hash(), root) {
+
+	txhash := uTx.MsgTx().TxHash()
+	if !types.VerifyMerkleProof(msg.Proof, &txhash, root) {
+		k.Logger(ctx).Error("Invalid merkle proof", "txhash", tx, "root", root, "proof", msg.Proof)
 		return types.ErrTransactionNotIncluded
 	}
 
