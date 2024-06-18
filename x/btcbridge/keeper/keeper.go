@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/btcsuite/btcd/blockchain"
-	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
@@ -81,7 +80,7 @@ func (k Keeper) SetBlockHeaders(ctx sdk.Context, blockHeader []*types.BlockHeade
 		// check the block header sanity
 		err := blockchain.CheckBlockHeaderSanity(
 			HeaderConvert(header),
-			chaincfg.MainNetParams.PowLimit,
+			sdk.GetConfig().GetBtcChainCfg().PowLimit,
 			blockchain.NewMedianTime(),
 			blockchain.BFNone,
 		)
