@@ -93,7 +93,7 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	jq --arg relayer "$RELAYER" '.app_state["btcbridge"]["params"]["authorized_relayers"][0]=$relayer' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 	jq --arg relayer "$RELAYER" '.app_state["btcbridge"]["params"]["vaults"][0]["address"]=$relayer' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 	PUKEY=$($BINARY keys show "${KEYS[1]}" --pubkey --keyring-backend $KEYRING --home "$HOMEDIR")
-	jq --arg pubkey "$RELAYER" '.app_state["btcbridge"]["params"]["vaults"][0]["pubkey"]=$pubkey' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	jq --arg pubkey "$RELAYER" '.app_state["btcbridge"]["params"]["vaults"][0]["pub_key"]=$pubkey' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
 	# set custom pruning settings
 	sed -i.bak 's/pruning = "default"/pruning = "custom"/g' "$APP_TOML"
