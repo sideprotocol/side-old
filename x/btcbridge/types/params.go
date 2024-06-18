@@ -1,6 +1,12 @@
 package types
 
-import sdk "github.com/cosmos/cosmos-sdk/types"
+import (
+	"encoding/hex"
+	"encoding/json"
+
+	"github.com/cosmos/cosmos-sdk/crypto/keys/segwit"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
 
 // NewParams creates a new Params instance
 func NewParams(relayers []string) Params {
@@ -61,10 +67,30 @@ func SelectVaultByBitcoinAddress(vaults []*Vault, address string) *Vault {
 // returns the vault if the public key is found
 func SelectVaultByPubKey(vaults []*Vault, pubKey string) *Vault {
 	for _, v := range vaults {
-		if v.PubKey == pubKey {
+		if GetVaultPubKey(v) == pubKey {
 			return v
 		}
 	}
 
 	return nil
+}
+
+// GetVaultPubKey gets the public key from the given vault
+// Note: return empty if any error occured
+func GetVaultPubKey(vault *Vault) string {
+	pubKey := vault.PubKey
+
+	_, err := hex.DecodeString(pubKey)
+	if err == nil {
+		// pub key is hex encoded
+		return pubKey
+	}
+
+	var pk segwit.PubKey
+	err = json.Unmarshal([]byte(pubKey), &pk)
+	if err != nil {
+		return ""
+	}
+
+	return hex.EncodeToString(pk.Bytes())
 }
