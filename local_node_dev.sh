@@ -73,6 +73,10 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
     # 	$BINARY keys add "$KEY" --keyring-backend $KEYRING --algo $KEYALGO --recover --home "$HOMEDIR"
 	# done
 
+	echo ""
+	echo "☝️ Copy the above mnemonic phrases and import them to relayer! Press any key to continue..."
+	read -r continue
+
 	# Set moniker and chain-id for Cascadia (Moniker can be anything, chain-id must be an integer)
 	$BINARY init $MONIKER -o --chain-id $CHAINID --home "$HOMEDIR"
 
@@ -84,8 +88,12 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	jq --arg gas "$BLOCK_GAS" '.app_state["feemarket"]["block_gas"]=$gas' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 	# Set gas limit in genesis
 	jq --arg max_gas "$MAX_GAS" '.consensus_params["block"]["max_gas"]=$max_gas' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-
-
+	# setup relayers
+	RELAYER=$($BINARY keys show "${KEYS[1]}" -a --keyring-backend $KEYRING --home "$HOMEDIR")
+	jq --arg relayer "$RELAYER" '.app_state["btcbridge"]["params"]["authorized_relayers"][0]=$relayer' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	jq --arg relayer "$RELAYER" '.app_state["btcbridge"]["params"]["vaults"][0]["address"]=$relayer' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	PUKEY=$($BINARY keys show "${KEYS[1]}" --pubkey --keyring-backend $KEYRING --home "$HOMEDIR")
+	jq --arg pubkey "$RELAYER" '.app_state["btcbridge"]["params"]["vaults"][0]["pubkey"]=$pubkey' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
 	# set custom pruning settings
 	sed -i.bak 's/pruning = "default"/pruning = "custom"/g' "$APP_TOML"

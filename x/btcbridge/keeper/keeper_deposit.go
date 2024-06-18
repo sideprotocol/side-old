@@ -175,7 +175,7 @@ func (k Keeper) mintBTC(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender 
 		Amount:       uint64(out.Value),
 		PubKeyScript: out.PkScript,
 		Height:       height,
-		Address:      vault.GetAddressOnBitcoin(),
+		Address:      vault.Address,
 		IsCoinbase:   false,
 		IsLocked:     false,
 	}

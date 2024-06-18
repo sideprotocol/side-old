@@ -43,7 +43,7 @@ func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin,
 		p := k.GetParams(ctx)
 		for i, v := range p.Vaults {
 			if v.AssetType == types.AssetType_ASSET_TYPE_BTC {
-				vault = p.Vaults[i].AddressOnBitcoin
+				vault = p.Vaults[i].Address
 				break
 			}
 		}

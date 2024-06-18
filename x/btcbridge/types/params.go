@@ -9,13 +9,13 @@ func NewParams(relayers []string) Params {
 		Confirmations:           2,
 		MaxAcceptableBlockDepth: 100,
 		Vaults: []*Vault{{
-			AddressOnBitcoin: "",
-			PubKey:           "",
-			AssetType:        AssetType_ASSET_TYPE_BTC,
+			Address:   "",
+			PubKey:    "",
+			AssetType: AssetType_ASSET_TYPE_BTC,
 		}, {
-			AddressOnBitcoin: "",
-			PubKey:           "",
-			AssetType:        AssetType_ASSET_TYPE_RUNE,
+			Address:   "",
+			PubKey:    "",
+			AssetType: AssetType_ASSET_TYPE_RUNE,
 		}},
 	}
 }
@@ -50,7 +50,7 @@ func (p Params) IsAuthorizedSender(sender string) bool {
 // returns the vault if the address is found
 func SelectVaultByBitcoinAddress(vaults []*Vault, address string) *Vault {
 	for _, v := range vaults {
-		if v.AddressOnBitcoin == address {
+		if v.Address == address {
 			return v
 		}
 	}
