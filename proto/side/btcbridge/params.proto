@@ -36,8 +36,6 @@ message Vault {
   string address = 1;
   // the pub key to which the voucher is sent
   string pub_key = 2;
-  // the hex encoded pub key to which the voucher is sent
-  string pub_key_hex = 3;
   // the address to which the voucher is sent
   AssetType asset_type = 4;
 
