@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	// "github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/sideprotocol/side/x/btcbridge/types"
@@ -37,6 +39,8 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdSubmitBlocks())
 	cmd.AddCommand(CmdUpdateSenders())
 	// this line is used by starport scaffolding # 1
+
+	cmd.AddCommand(CmdWithdrawBitcoin())
 
 	return cmd
 }
@@ -100,6 +104,47 @@ func CmdUpdateSenders() *cobra.Command {
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// Withdraw Bitcoin
+func CmdWithdrawBitcoin() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "withdraw-bitcoin [sender] [amount] [fee-rate]",
+		Short: "Withdraw bitcoin to the given sender",
+		Args:  cobra.ExactArgs(3),
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			_, err = sdk.ParseCoinsNormalized(args[1])
+			if err != nil {
+				return fmt.Errorf("invalid amount")
+			}
+
+			feeRate, err := strconv.ParseInt(args[2], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid fee rate")
+			}
+
+			msg := types.NewMsgWithdrawBitcoinRequest(
+				args[0],
+				args[1],
+				feeRate,
+			)
+
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
