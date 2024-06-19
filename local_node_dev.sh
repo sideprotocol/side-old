@@ -4,7 +4,7 @@ KEYS=("dev0" "dev1")
 CHAINID="devnet"
 MONIKER="Side Labs"
 BINARY="$HOME/go/bin/sided"
-DENOM_STR="uside"
+DENOM_STR="uside;sat"
 INITIAL_ACCOUNT_STR=""
 set -f
 IFS=,
