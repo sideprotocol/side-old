@@ -126,20 +126,16 @@ func (m msgServer) WithdrawBitcoin(goCtx context.Context, msg *types.MsgWithdraw
 	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	sender := sdk.AccAddress(msg.Sender)
+	sender := sdk.MustAccAddressFromBech32(msg.Sender)
 
 	coin, err := sdk.ParseCoinNormalized(msg.Amount)
 	if err != nil {
 		return nil, err
 	}
 
-	balance := m.bankKeeper.GetBalance(ctx, sender, coin.Denom)
-
-	if balance.Amount.LT(coin.Amount) {
-		return nil, types.ErrInsufficientBalance
+	if err = m.bankKeeper.SendCoinsFromAccountToModule(ctx, sender, types.ModuleName, sdk.NewCoins(coin)); err != nil {
+		return nil, err
 	}
-
-	m.bankKeeper.SendCoinsFromAccountToModule(ctx, sender, types.ModuleName, sdk.NewCoins(coin))
 
 	_, err = m.Keeper.NewSigningRequest(ctx, msg.Sender, coin, msg.FeeRate, "")
 	if err != nil {
