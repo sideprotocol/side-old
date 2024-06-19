@@ -31,7 +31,14 @@ service Query {
   rpc QuerySigningRequest(QuerySigningRequestRequest) returns (QuerySigningRequestResponse) {
     option (google.api.http).get = "/sideprotocol/side/btcbridge/signing/request";
   }
-
+  // UTXOs queries all utxos.
+  rpc QueryUTXOs(QueryUTXOsRequest) returns (QueryUTXOsResponse) {
+    option (google.api.http).get = "/sideprotocol/side/btcbridge/utxos";
+  }
+  // UTXOsByAddress queries the utxos of the given address.
+  rpc QueryUTXOsByAddress(QueryUTXOsByAddressRequest) returns (QueryUTXOsByAddressResponse) {
+    option (google.api.http).get = "/sideprotocol/side/btcbridge/utxos/{address}";
+  }
 }
 
 // QuerySigningRequestRequest is request type for the Query/SigningRequest RPC method.
@@ -82,4 +89,22 @@ message QueryBlockHeaderByHashRequest {
 // QueryBlockHeaderByHashResponse is the response type for the Query/BlockHeaderByHash RPC method.
 message QueryBlockHeaderByHashResponse {
   BlockHeader block_header = 1;
+}
+
+// QueryUTXOsRequest is the request type for the Query/UTXOs RPC method.
+message QueryUTXOsRequest {}
+
+// QueryUTXOsResponse is the response type for the Query/UTXOs RPC method.
+message QueryUTXOsResponse {
+  repeated UTXO utxos = 1;
+}
+
+// QueryUTXOsByAddressRequest is the request type for the Query/UTXOsByAddress RPC method.
+message QueryUTXOsByAddressRequest {
+  string address = 1;
+}
+
+// QueryUTXOsByAddressResponse is the response type for the Query/UTXOsByAddress RPC method.
+message QueryUTXOsByAddressResponse {
+  repeated UTXO utxos = 1;
 }
