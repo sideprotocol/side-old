@@ -73,8 +73,8 @@ import (
 	yieldmodulekeeper "github.com/sideprotocol/side/x/yield/keeper"
 	yieldmoduletypes "github.com/sideprotocol/side/x/yield/types"
 
-	btclightclientkeeper "github.com/sideprotocol/side/x/btcbridge/keeper"
-	btclightclienttypes "github.com/sideprotocol/side/x/btcbridge/types"
+	btcbridgekeeper "github.com/sideprotocol/side/x/btcbridge/keeper"
+	btcbridgetypes "github.com/sideprotocol/side/x/btcbridge/types"
 
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
@@ -129,10 +129,9 @@ type AppKeepers struct {
 	ScopedICAHostKeeper  capabilitykeeper.ScopedKeeper
 	scopedWasmKeeper     capabilitykeeper.ScopedKeeper
 
-	GmmKeeper gmmmodulekeeper.Keeper
-
-	YieldKeeper          yieldmodulekeeper.Keeper
-	BtcLightClientKeeper btclightclientkeeper.Keeper
+	GmmKeeper       gmmmodulekeeper.Keeper
+	YieldKeeper     yieldmodulekeeper.Keeper
+	BtcBridgeKeeper btcbridgekeeper.Keeper
 
 	// keys to access the substores
 	keys    map[string]*storetypes.KVStoreKey
@@ -393,10 +392,10 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		appKeepers.IcacallbacksKeeper,
 	)
 
-	appKeepers.BtcLightClientKeeper = *btclightclientkeeper.NewKeeper(
+	appKeepers.BtcBridgeKeeper = *btcbridgekeeper.NewKeeper(
 		appCodec,
-		appKeepers.keys[btclightclienttypes.StoreKey],
-		appKeepers.keys[btclightclienttypes.StoreKey],
+		appKeepers.keys[btcbridgetypes.StoreKey],
+		appKeepers.keys[btcbridgetypes.StoreKey],
 		appKeepers.BankKeeper,
 	)
 
@@ -504,7 +503,7 @@ func KVStoreKeys() []string {
 		ibcfeetypes.StoreKey,
 		gmmmoduletypes.StoreKey,
 		yieldmoduletypes.StoreKey,
-		btclightclienttypes.StoreKey,
+		btcbridgetypes.StoreKey,
 	}
 }
 

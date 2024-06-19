@@ -67,8 +67,8 @@ import (
 	yieldmodule "github.com/sideprotocol/side/x/yield"
 	yieldmoduletypes "github.com/sideprotocol/side/x/yield/types"
 
-	btclightclient "github.com/sideprotocol/side/x/btcbridge"
-	btclightclienttypes "github.com/sideprotocol/side/x/btcbridge/types"
+	btcbridge "github.com/sideprotocol/side/x/btcbridge"
+	btcbridgetypes "github.com/sideprotocol/side/x/btcbridge/types"
 
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
@@ -95,7 +95,7 @@ var moduleAccountPermissions = map[string][]string{
 	wasmTypes.ModuleName:           {authtypes.Burner},
 	gmmmoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 	yieldmoduletypes.ModuleName:    {authtypes.Minter, authtypes.Burner, authtypes.Staking},
-	btclightclienttypes.ModuleName: {authtypes.Minter, authtypes.Burner},
+	btcbridgetypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
 }
 
 // appModules return modules to initialize module manager.
@@ -142,7 +142,7 @@ func appModules(
 		icaModule,
 		gmmModule,
 		yieldModule,
-		btclightclient.NewAppModule(appCodec, app.BtcLightClientKeeper),
+		btcbridge.NewAppModule(appCodec, app.BtcBridgeKeeper),
 		// this line is used by starport scaffolding # stargate/app/appModule
 
 		crisis.NewAppModule(app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)), // always be last to make sure that it checks for all invariants and not only part of them
@@ -178,7 +178,7 @@ func orderBeginBlockers() []string {
 		wasmTypes.ModuleName,
 		gmmmoduletypes.ModuleName,
 		yieldmoduletypes.ModuleName,
-		btclightclienttypes.ModuleName,
+		btcbridgetypes.ModuleName,
 	}
 	return ord
 }
@@ -211,7 +211,7 @@ func OrderEndBlockers() []string {
 		wasmTypes.ModuleName,
 		gmmmoduletypes.ModuleName,
 		yieldmoduletypes.ModuleName,
-		btclightclienttypes.ModuleName,
+		btcbridgetypes.ModuleName,
 	}
 	return ord
 }
@@ -249,7 +249,7 @@ func OrderInitGenesis() []string {
 		wasmTypes.ModuleName,
 		gmmmoduletypes.ModuleName,
 		yieldmoduletypes.ModuleName,
-		btclightclienttypes.ModuleName,
+		btcbridgetypes.ModuleName,
 	}
 }
 
