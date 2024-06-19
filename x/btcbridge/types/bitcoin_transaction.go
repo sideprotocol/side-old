@@ -7,6 +7,7 @@ import (
 	"github.com/btcsuite/btcd/mempool"
 	"github.com/btcsuite/btcd/txscript"
 	"github.com/btcsuite/btcd/wire"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 const (
@@ -20,7 +21,8 @@ const (
 // BuildPsbt builds a bitcoin psbt from the given params.
 // Assume that the utxo script type is witness.
 func BuildPsbt(utxos []*UTXO, recipient string, amount int64, feeRate int64, change string) (*psbt.Packet, []*UTXO, error) {
-	recipientAddr, err := btcutil.DecodeAddress(recipient, ChainCfg)
+	chaincfg := sdk.GetConfig().GetBtcChainCfg()
+	recipientAddr, err := btcutil.DecodeAddress(recipient, chaincfg)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -30,7 +32,7 @@ func BuildPsbt(utxos []*UTXO, recipient string, amount int64, feeRate int64, cha
 		return nil, nil, err
 	}
 
-	changeAddr, err := btcutil.DecodeAddress(change, ChainCfg)
+	changeAddr, err := btcutil.DecodeAddress(change, chaincfg)
 	if err != nil {
 		return nil, nil, err
 	}

@@ -100,7 +100,9 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 		return err
 	}
 
-	sender, err := pk.Address(types.ChainCfg)
+	chainCfg := sdk.GetConfig().GetBtcChainCfg()
+
+	sender, err := pk.Address(chainCfg)
 	if err != nil {
 		return err
 	}
@@ -129,7 +131,7 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 		if err != nil {
 			return err
 		}
-		addr, err := pks.Address(types.ChainCfg)
+		addr, err := pks.Address(chainCfg)
 		if err != nil {
 			return err
 		}
@@ -143,7 +145,10 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 		// skip if the asset type of the sender address is unspecified
 		switch vault.AssetType {
 		case types.AssetType_ASSET_TYPE_BTC:
-			k.mintBTC(ctx, uTx, header.Height, sender.EncodeAddress(), vault, out, i, param.BtcVoucherDenom)
+			err := k.mintBTC(ctx, uTx, header.Height, sender.EncodeAddress(), vault, out, i, param.BtcVoucherDenom)
+			if err != nil {
+				return err
+			}
 		case types.AssetType_ASSET_TYPE_RUNE:
 			k.mintRUNE(ctx, uTx, header.Height, sender.EncodeAddress(), vault, out, i, "rune")
 		}
@@ -162,6 +167,9 @@ func (k Keeper) mintBTC(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender 
 	k.addToMintHistory(ctx, hash)
 
 	// mint the voucher token
+	if len(denom) == 0 {
+		denom = "sat"
+	}
 	coins := sdk.NewCoins(sdk.NewCoin(denom, sdk.NewInt(out.Value)))
 
 	receipient, err := sdk.AccAddressFromBech32(sender)
@@ -169,8 +177,13 @@ func (k Keeper) mintBTC(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender 
 		return err
 	}
 
-	k.bankKeeper.MintCoins(ctx, types.ModuleName, coins)
-	k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, receipient, coins)
+	if err := k.bankKeeper.MintCoins(ctx, types.ModuleName, coins); err != nil {
+		return err
+	}
+
+	if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, receipient, coins); err != nil {
+		return err
+	}
 
 	utxo := types.UTXO{
 		Txid:         uTx.Hash().String(),
@@ -201,7 +214,7 @@ func (k Keeper) existsInHistory(ctx sdk.Context, txHash string) bool {
 func (k Keeper) addToMintHistory(ctx sdk.Context, txHash string) {
 	store := ctx.KVStore(k.storeKey)
 
-	store.Set(types.BtcMintedTxHashKey(txHash), nil)
+	store.Set(types.BtcMintedTxHashKey(txHash), []byte{1})
 }
 
 // need a query all history for exporting

@@ -2,8 +2,6 @@ package types
 
 import (
 	"math/big"
-
-	"github.com/btcsuite/btcd/chaincfg"
 )
 
 const (
@@ -36,7 +34,6 @@ var (
 
 	BtcMintedTxHashKeyPrefix = []byte{0x17} // prefix for each key to a minted tx hash
 
-	ChainCfg = &chaincfg.MainNetParams
 )
 
 func Int64ToBytes(number uint64) []byte {

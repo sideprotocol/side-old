@@ -197,7 +197,7 @@ func (bk *BaseUTXOKeeper) SetUTXO(ctx sdk.Context, utxo *types.UTXO) {
 func (bk *BaseUTXOKeeper) SetOwnerUTXO(ctx sdk.Context, utxo *types.UTXO) {
 	store := ctx.KVStore(bk.storeKey)
 
-	store.Set(types.BtcOwnerUtxoKey(utxo.Address, utxo.Txid, utxo.Vout), nil)
+	store.Set(types.BtcOwnerUtxoKey(utxo.Address, utxo.Txid, utxo.Vout), []byte{1})
 }
 
 func (bk *BaseUTXOKeeper) LockUTXO(ctx sdk.Context, hash string, vout uint64) error {

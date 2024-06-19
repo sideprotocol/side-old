@@ -8,6 +8,7 @@ func NewParams(relayers []string) Params {
 		AuthorizedRelayers:      relayers,
 		Confirmations:           2,
 		MaxAcceptableBlockDepth: 100,
+		BtcVoucherDenom:         "sat",
 		Vaults: []*Vault{{
 			Address:   "",
 			PubKey:    "",
