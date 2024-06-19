@@ -30,6 +30,8 @@ func GetQueryCmd(_ string) *cobra.Command {
 	cmd.AddCommand(CmdBestBlock())
 	cmd.AddCommand(CmdQueryBlock())
 	cmd.AddCommand(CmdQueryUTXOs())
+	cmd.AddCommand(CmdQuerySigningRequest())
+
 	// this line is used by starport scaffolding # 1
 
 	return cmd
