@@ -79,9 +79,7 @@ func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin,
 		VaultAddress: vault,
 	}
 
-	store := ctx.KVStore(k.storeKey)
-	bz := k.cdc.MustMarshal(signingRequest)
-	store.Set(types.BtcSigningRequestKey(signingRequest.Sequence), bz)
+	k.SetSigningRequest(ctx, signingRequest)
 
 	return signingRequest, nil
 }
