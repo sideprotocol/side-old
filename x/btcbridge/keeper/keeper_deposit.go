@@ -61,7 +61,7 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 		return err
 	}
 
-	// extract senders from the previous transaction
+	// Decode the previous transaction
 	prevTxBytes, err := base64.StdEncoding.DecodeString(msg.PrevTxBytes)
 	if err != nil {
 		fmt.Println("Error decoding transaction from base64:", err)
@@ -90,19 +90,10 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 		return types.ErrInvalidBtcTransaction
 	}
 
-	// check if the output is a valid address
-	// if there are multiple inputs, then the first input is considered as the sender
-	// assumpe all inputs are from the same sender
-	out := prevTx.MsgTx().TxOut[tx.TxIn[0].PreviousOutPoint.Index]
-	// check if the output is a valid address
-	pk, err := txscript.ParsePkScript(out.PkScript)
-	if err != nil {
-		return err
-	}
-
 	chainCfg := sdk.GetConfig().GetBtcChainCfg()
 
-	sender, err := pk.Address(chainCfg)
+	// Extract the recipient address
+	recipient, err := types.ExtractRecipientAddr(&tx, &prevMsgTx, param.Vaults, chainCfg)
 	if err != nil {
 		return err
 	}
@@ -145,12 +136,12 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 		// skip if the asset type of the sender address is unspecified
 		switch vault.AssetType {
 		case types.AssetType_ASSET_TYPE_BTC:
-			err := k.mintBTC(ctx, uTx, header.Height, sender.EncodeAddress(), vault, out, i, param.BtcVoucherDenom)
+			err := k.mintBTC(ctx, uTx, header.Height, recipient.EncodeAddress(), vault, out, i, param.BtcVoucherDenom)
 			if err != nil {
 				return err
 			}
 		case types.AssetType_ASSET_TYPE_RUNE:
-			k.mintRUNE(ctx, uTx, header.Height, sender.EncodeAddress(), vault, out, i, "rune")
+			k.mintRUNE(ctx, uTx, header.Height, recipient.EncodeAddress(), vault, out, i, "rune")
 		}
 	}
 
@@ -196,8 +187,7 @@ func (k Keeper) mintBTC(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender 
 		IsLocked:     false,
 	}
 
-	k.SetUTXO(ctx, &utxo)
-	k.SetOwnerUTXO(ctx, &utxo)
+	k.saveUTXO(ctx, &utxo)
 
 	return nil
 }

@@ -15,13 +15,14 @@ var (
 
 	ErrInvalidSenders = errorsmod.Register(ModuleName, 2100, "invalid allowed senders")
 
-	ErrInvalidBtcTransaction    = errorsmod.Register(ModuleName, 3100, "invalid bitcoin transaction")
-	ErrBlockNotFound            = errorsmod.Register(ModuleName, 3101, "block not found")
-	ErrTransactionNotIncluded   = errorsmod.Register(ModuleName, 3102, "transaction not included in block")
-	ErrNotConfirmed             = errorsmod.Register(ModuleName, 3200, "transaction not confirmed")
-	ErrExceedMaxAcceptanceDepth = errorsmod.Register(ModuleName, 3201, "exceed max acceptance block depth")
-	ErrUnsupportedScriptType    = errorsmod.Register(ModuleName, 3202, "unsupported script type")
-	ErrTransactionAlreadyMinted = errorsmod.Register(ModuleName, 3203, "transaction already minted")
+	ErrInvalidBtcTransaction     = errorsmod.Register(ModuleName, 3100, "invalid bitcoin transaction")
+	ErrBlockNotFound             = errorsmod.Register(ModuleName, 3101, "block not found")
+	ErrTransactionNotIncluded    = errorsmod.Register(ModuleName, 3102, "transaction not included in block")
+	ErrNotConfirmed              = errorsmod.Register(ModuleName, 3200, "transaction not confirmed")
+	ErrExceedMaxAcceptanceDepth  = errorsmod.Register(ModuleName, 3201, "exceed max acceptance block depth")
+	ErrUnsupportedScriptType     = errorsmod.Register(ModuleName, 3202, "unsupported script type")
+	ErrTransactionAlreadyMinted  = errorsmod.Register(ModuleName, 3203, "transaction already minted")
+	ErrInvalidDepositTransaction = errorsmod.Register(ModuleName, 3204, "invalid deposit transaction")
 
 	ErrInvalidSignatures      = errorsmod.Register(ModuleName, 4200, "invalid signatures")
 	ErrInsufficientBalance    = errorsmod.Register(ModuleName, 4201, "insufficient balance")

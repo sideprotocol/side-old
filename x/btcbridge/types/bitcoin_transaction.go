@@ -7,6 +7,7 @@ import (
 	"github.com/btcsuite/btcd/mempool"
 	"github.com/btcsuite/btcd/txscript"
 	"github.com/btcsuite/btcd/wire"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -19,35 +20,35 @@ const (
 )
 
 // BuildPsbt builds a bitcoin psbt from the given params.
-// Assume that the utxo script type is witness.
-func BuildPsbt(utxos []*UTXO, recipient string, amount int64, feeRate int64, change string) (*psbt.Packet, []*UTXO, error) {
+// Assume that the utxo script type is native segwit.
+func BuildPsbt(utxos []*UTXO, recipient string, amount int64, feeRate int64, change string) (*psbt.Packet, []*UTXO, *UTXO, error) {
 	chaincfg := sdk.GetConfig().GetBtcChainCfg()
 	recipientAddr, err := btcutil.DecodeAddress(recipient, chaincfg)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	recipientPkScript, err := txscript.PayToAddrScript(recipientAddr)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	changeAddr, err := btcutil.DecodeAddress(change, chaincfg)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	txOuts := make([]*wire.TxOut, 0)
 	txOuts = append(txOuts, wire.NewTxOut(amount, recipientPkScript))
 
-	unsignedTx, selectedUTXOs, err := BuildUnsignedTransaction(utxos, txOuts, feeRate, changeAddr)
+	unsignedTx, selectedUTXOs, changeUTXO, err := BuildUnsignedTransaction(utxos, txOuts, feeRate, changeAddr)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	p, err := psbt.NewFromUnsignedTx(unsignedTx)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	for i, utxo := range selectedUTXOs {
@@ -55,17 +56,17 @@ func BuildPsbt(utxos []*UTXO, recipient string, amount int64, feeRate int64, cha
 		p.Inputs[i].WitnessUtxo = wire.NewTxOut(int64(utxo.Amount), utxo.PubKeyScript)
 	}
 
-	return p, selectedUTXOs, nil
+	return p, selectedUTXOs, changeUTXO, nil
 }
 
 // BuildUnsignedTransaction builds an unsigned tx from the given params.
-func BuildUnsignedTransaction(utxos []*UTXO, txOuts []*wire.TxOut, feeRate int64, change btcutil.Address) (*wire.MsgTx, []*UTXO, error) {
+func BuildUnsignedTransaction(utxos []*UTXO, txOuts []*wire.TxOut, feeRate int64, change btcutil.Address) (*wire.MsgTx, []*UTXO, *UTXO, error) {
 	tx := wire.NewMsgTx(TxVersion)
 
 	outAmount := int64(0)
 	for _, txOut := range txOuts {
 		if mempool.IsDust(txOut, MinRelayFee) {
-			return nil, nil, ErrDustOutput
+			return nil, nil, nil, ErrDustOutput
 		}
 
 		tx.AddTxOut(txOut)
@@ -74,17 +75,29 @@ func BuildUnsignedTransaction(utxos []*UTXO, txOuts []*wire.TxOut, feeRate int64
 
 	changePkScript, err := txscript.PayToAddrScript(change)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	changeOut := wire.NewTxOut(0, changePkScript)
 
 	selectedUTXOs, err := AddUTXOsToTx(tx, utxos, outAmount, changeOut, feeRate)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
-	return tx, selectedUTXOs, nil
+	var changeUTXO *UTXO
+	if len(tx.TxOut) > len(txOuts) {
+		changeOut := tx.TxOut[len(tx.TxOut)-1]
+		changeUTXO = &UTXO{
+			Txid:         tx.TxHash().String(),
+			Vout:         uint64(len(tx.TxOut) - 1),
+			Address:      change.EncodeAddress(),
+			Amount:       uint64(changeOut.Value),
+			PubKeyScript: changeOut.PkScript,
+		}
+	}
+
+	return tx, selectedUTXOs, changeUTXO, nil
 }
 
 // AddUTXOsToTx adds the given utxos to the tx.

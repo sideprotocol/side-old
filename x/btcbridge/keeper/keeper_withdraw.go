@@ -54,7 +54,7 @@ func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin,
 		return nil, types.ErrInsufficientUTXOs
 	}
 
-	psbt, selectedUTXOs, err := types.BuildPsbt(utxos, sender, coin.Amount.Int64(), feeRate, vault)
+	psbt, selectedUTXOs, changeUTXO, err := types.BuildPsbt(utxos, sender, coin.Amount.Int64(), feeRate, vault)
 	if err != nil {
 		return nil, types.ErrFailToBuildTransaction
 	}
@@ -66,6 +66,9 @@ func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin,
 
 	// lock the selected utxos
 	k.LockUTXOs(ctx, selectedUTXOs)
+
+	// save the change utxo
+	k.saveUTXO(ctx, changeUTXO)
 
 	signingRequest := &types.BitcoinSigningRequest{
 		Address:      sender,

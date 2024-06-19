@@ -272,6 +272,16 @@ func (bk *BaseUTXOKeeper) SpendUTXOs(ctx sdk.Context, utxos []*types.UTXO) error
 	return nil
 }
 
+// saveUTXO saves the given utxo
+func (bk *BaseUTXOKeeper) saveUTXO(ctx sdk.Context, utxo *types.UTXO) {
+	if bk.HasUTXO(ctx, utxo.Txid, utxo.Vout) {
+		return
+	}
+
+	bk.SetUTXO(ctx, utxo)
+	bk.SetOwnerUTXO(ctx, utxo)
+}
+
 // removeUTXO deletes the given utxo which is assumed to exist.
 func (bk *BaseUTXOKeeper) removeUTXO(ctx sdk.Context, hash string, vout uint64) {
 	store := ctx.KVStore(bk.storeKey)
