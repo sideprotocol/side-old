@@ -1,10 +1,10 @@
 #!/bin/bash
 
-KEYS=("dev0" "dev1")
+KEYS=("dev0" "dev1" "dev2")
 CHAINID="devnet"
 MONIKER="Side Labs"
 BINARY="$HOME/go/bin/sided"
-DENOM_STR="uside;sat"
+DENOM_STR="uside,sat"
 INITIAL_ACCOUNT_STR=""
 set -f
 IFS=,
