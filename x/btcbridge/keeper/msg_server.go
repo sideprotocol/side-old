@@ -177,6 +177,8 @@ func (m msgServer) SubmitWithdrawSignatures(goCtx context.Context, msg *types.Ms
 		return nil, types.ErrInvalidSignatures
 	}
 
+	// verify the signatures
+
 	// Set the signing request status to signed
 	request := m.GetSigningRequest(ctx, msg.Txid)
 	request.Psbt = msg.Psbt
