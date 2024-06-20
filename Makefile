@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 PACKAGES_NOSIMULATION=$(shell go list ./... | grep -v '/simulation')
-VERSION ?= $(shell echo $(shell git describe --tags --always) | sed 's/^v//')
+VERSION ?= $(shell echo $(shell git tag --sort=creatordate | tail -1) | sed 's/^v//')
 TMVERSION := $(shell go list -m github.com/cometbft/cometbft  | sed 's:.* ::')
 COMMIT := $(shell git log -1 --format='%H')
 LEDGER_ENABLED ?= true
