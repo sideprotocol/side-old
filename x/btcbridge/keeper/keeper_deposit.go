@@ -20,6 +20,11 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 	ctx.Logger().Info("accept bitcoin deposit tx", "blockhash", msg.Blockhash)
 
 	param := k.GetParams(ctx)
+
+	if !param.IsAuthorizedSender(msg.Sender) {
+		return types.ErrSenderAddressNotAuthorized
+	}
+
 	header := k.GetBlockHeader(ctx, msg.Blockhash)
 	// Check if block confirmed
 	if header == nil || header.Height == 0 {

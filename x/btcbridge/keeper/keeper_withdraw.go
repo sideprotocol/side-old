@@ -147,6 +147,11 @@ func (k Keeper) ProcessBitcoinWithdrawTransaction(ctx sdk.Context, msg *types.Ms
 	ctx.Logger().Info("accept bitcoin withdraw tx", "blockhash", msg.Blockhash)
 
 	param := k.GetParams(ctx)
+
+	if !param.IsAuthorizedSender(msg.Sender) {
+		return types.ErrSenderAddressNotAuthorized
+	}
+
 	header := k.GetBlockHeader(ctx, msg.Blockhash)
 	// Check if block confirmed
 	if header == nil {

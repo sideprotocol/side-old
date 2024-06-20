@@ -191,6 +191,10 @@ func (m msgServer) SubmitWithdrawStatus(goCtx context.Context, msg *types.MsgSub
 	if err := msg.ValidateBasic(); err != nil {
 		return nil, err
 	}
+	param := m.GetParams(sdk.UnwrapSDKContext(goCtx))
+	if !param.IsAuthorizedSender(msg.Sender) {
+		return nil, types.ErrSenderAddressNotAuthorized
+	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	exist := m.HasSigningRequest(ctx, msg.Txid)
 	if !exist {
