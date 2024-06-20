@@ -187,6 +187,23 @@ func (m msgServer) SubmitWithdrawSignatures(goCtx context.Context, msg *types.Ms
 
 }
 
+func (m msgServer) SubmitWithdrawStatus(goCtx context.Context, msg *types.MsgSubmitWithdrawStatusRequest) (*types.MsgSubmitWithdrawStatusResponse, error) {
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	exist := m.HasSigningRequest(ctx, msg.Txid)
+	if !exist {
+		return nil, types.ErrSigningRequestNotExist
+	}
+
+	request := m.GetSigningRequest(ctx, msg.Txid)
+	request.Status = msg.Status
+	m.SetSigningRequest(ctx, request)
+
+	return &types.MsgSubmitWithdrawStatusResponse{}, nil
+}
+
 // NewMsgServerImpl returns an implementation of the MsgServer interface
 // for the provided Keeper.
 func NewMsgServerImpl(keeper Keeper) types.MsgServer {
