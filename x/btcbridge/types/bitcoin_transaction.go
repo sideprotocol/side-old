@@ -182,3 +182,22 @@ func GetTxVirtualSize(tx *wire.MsgTx, utxos []*UTXO) int64 {
 
 	return mempool.GetTxVirtualSize(btcutil.NewTx(newTx))
 }
+
+// CheckOutput checks the given output
+func CheckOutput(address string, amount int64) error {
+	addr, err := btcutil.DecodeAddress(address, sdk.GetConfig().GetBtcChainCfg())
+	if err != nil {
+		return err
+	}
+
+	pkScript, err := txscript.PayToAddrScript(addr)
+	if err != nil {
+		return err
+	}
+
+	if mempool.IsDust(&wire.TxOut{Value: amount, PkScript: pkScript}, MinRelayFee) {
+		return ErrDustOutput
+	}
+
+	return nil
+}
