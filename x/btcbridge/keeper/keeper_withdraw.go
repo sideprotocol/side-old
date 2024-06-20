@@ -144,7 +144,7 @@ func (k Keeper) FilterSigningRequestsByStatus(ctx sdk.Context, req *types.QueryS
 // Process Bitcoin Withdraw Transaction
 func (k Keeper) ProcessBitcoinWithdrawTransaction(ctx sdk.Context, msg *types.MsgSubmitWithdrawTransactionRequest) error {
 
-	ctx.Logger().Info("accept bitcoin deposit tx", "blockhash", msg.Blockhash)
+	ctx.Logger().Info("accept bitcoin withdraw tx", "blockhash", msg.Blockhash)
 
 	param := k.GetParams(ctx)
 	header := k.GetBlockHeader(ctx, msg.Blockhash)
@@ -181,6 +181,17 @@ func (k Keeper) ProcessBitcoinWithdrawTransaction(ctx sdk.Context, msg *types.Ms
 	if len(uTx.MsgTx().TxIn) < 1 {
 		return types.ErrInvalidBtcTransaction
 	}
+
+	if !k.HasSigningRequest(ctx, uTx.MsgTx().TxHash().String()) {
+		return types.ErrSigningRequestNotExist
+	}
+
+	signingRequest := k.GetSigningRequest(ctx, uTx.MsgTx().TxHash().String())
+	if signingRequest.Status != types.SigningStatus_SIGNING_STATUS_SIGNED {
+		return types.ErrInvalidStatus
+	}
+	signingRequest.Status = types.SigningStatus_SIGNING_STATUS_CONFIRMED
+	k.SetSigningRequest(ctx, signingRequest)
 
 	// Validate the transaction
 	if err := blockchain.CheckTransactionSanity(uTx); err != nil {
