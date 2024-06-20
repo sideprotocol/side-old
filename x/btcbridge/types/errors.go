@@ -26,6 +26,7 @@ var (
 	ErrInvalidSignatures      = errorsmod.Register(ModuleName, 4200, "invalid signatures")
 	ErrInsufficientBalance    = errorsmod.Register(ModuleName, 4201, "insufficient balance")
 	ErrSigningRequestNotExist = errorsmod.Register(ModuleName, 4202, "signing request does not exist")
+	ErrInvalidStatus          = errorsmod.Register(ModuleName, 4203, "invalid status")
 
 	ErrUTXODoesNotExist = errorsmod.Register(ModuleName, 5100, "utxo does not exist")
 	ErrUTXOLocked       = errorsmod.Register(ModuleName, 5101, "utxo locked")

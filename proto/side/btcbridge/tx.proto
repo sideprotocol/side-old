@@ -22,7 +22,20 @@ service Msg {
   rpc WithdrawBitcoin (MsgWithdrawBitcoinRequest) returns (MsgWithdrawBitcoinResponse);
   // SubmitWithdrawSignatures submits the signatures of the withdraw transaction.
   rpc SubmitWithdrawSignatures (MsgSubmitWithdrawSignaturesRequest) returns (MsgSubmitWithdrawSignaturesResponse);
+  // SubmitWithdrawStatus submits the status of the withdraw transaction.
+  rpc SubmitWithdrawStatus (MsgSubmitWithdrawStatusRequest) returns (MsgSubmitWithdrawStatusResponse);
 
+}
+
+// MsgSubmitWithdrawStatusRequest defines the Msg/SubmitWithdrawStatus request type.
+message MsgSubmitWithdrawStatusRequest {
+  string sender = 1;
+  string txid = 2;
+  SigningStatus status = 3;
+}
+
+// MsgSubmitWithdrawStatusResponse defines the Msg/SubmitWithdrawStatus response type.
+message MsgSubmitWithdrawStatusResponse {
 }
 
 // MsgBlockHeaderRequest defines the Msg/SubmitBlockHeaders request type.
