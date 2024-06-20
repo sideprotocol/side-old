@@ -187,9 +187,9 @@ func (k Keeper) ProcessBitcoinWithdrawTransaction(ctx sdk.Context, msg *types.Ms
 	}
 
 	signingRequest := k.GetSigningRequest(ctx, uTx.MsgTx().TxHash().String())
-	if signingRequest.Status != types.SigningStatus_SIGNING_STATUS_SIGNED {
-		return types.ErrInvalidStatus
-	}
+	// if signingRequest.Status != types.SigningStatus_SIGNING_STATUS_BROADCASTED || signingRequest.Status != types.SigningStatus_SIGNING_STATUS_SIGNED {
+	// 	return types.ErrInvalidStatus
+	// }
 	signingRequest.Status = types.SigningStatus_SIGNING_STATUS_CONFIRMED
 	k.SetSigningRequest(ctx, signingRequest)
 
