@@ -9,7 +9,9 @@ import (
 	"github.com/btcsuite/btcd/blockchain"
 	"github.com/btcsuite/btcd/btcutil"
 	"github.com/btcsuite/btcd/wire"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/sideprotocol/side/x/btcbridge/types"
 )
 
@@ -54,9 +56,9 @@ func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin,
 		return nil, types.ErrInsufficientUTXOs
 	}
 
-	psbt, selectedUTXOs, err := types.BuildPsbt(utxos, sender, coin.Amount.Int64(), feeRate, vault)
+	psbt, selectedUTXOs, changeUTXO, err := types.BuildPsbt(utxos, sender, coin.Amount.Int64(), feeRate, vault)
 	if err != nil {
-		return nil, types.ErrFailToBuildTransaction
+		return nil, err
 	}
 
 	psbtB64, err := psbt.B64Encode()
@@ -66,6 +68,10 @@ func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin,
 
 	// lock the selected utxos
 	k.LockUTXOs(ctx, selectedUTXOs)
+
+	// save the change utxo and mark minted
+	k.saveUTXO(ctx, changeUTXO)
+	k.addToMintHistory(ctx, psbt.UnsignedTx.TxHash().String())
 
 	signingRequest := &types.BitcoinSigningRequest{
 		Address:      sender,
