@@ -170,6 +170,11 @@ func (m msgServer) SubmitWithdrawSignatures(goCtx context.Context, msg *types.Ms
 	if err != nil {
 		return nil, err
 	}
+
+	if packet.UnsignedTx.TxHash().String() != msg.Txid {
+		return nil, types.ErrInvalidSignatures
+	}
+
 	if err = packet.SanityCheck(); err != nil {
 		return nil, err
 	}
