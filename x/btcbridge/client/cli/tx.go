@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
@@ -130,15 +129,15 @@ func CmdWithdrawBitcoin() *cobra.Command {
 				return fmt.Errorf("invalid amount")
 			}
 
-			feeRate, err := strconv.ParseInt(args[1], 10, 64)
-			if err != nil {
-				return fmt.Errorf("invalid fee rate")
-			}
+			// feeRate, err := strconv.ParseInt(args[1], 10, 64)
+			// if err != nil {
+			// 	return fmt.Errorf("invalid fee rate")
+			// }
 
 			msg := types.NewMsgWithdrawBitcoinRequest(
 				clientCtx.GetFromAddress().String(),
 				args[0],
-				feeRate,
+				args[1],
 			)
 
 			if err := msg.ValidateBasic(); err != nil {
