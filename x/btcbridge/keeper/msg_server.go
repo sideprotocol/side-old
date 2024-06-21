@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
+	"strconv"
 
 	"github.com/btcsuite/btcd/btcutil/psbt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -137,7 +138,11 @@ func (m msgServer) WithdrawBitcoin(goCtx context.Context, msg *types.MsgWithdraw
 		return nil, err
 	}
 
-	_, err = m.Keeper.NewSigningRequest(ctx, msg.Sender, coin, msg.FeeRate, "")
+	feeRate, err := strconv.ParseInt(msg.FeeRate, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+	_, err = m.Keeper.NewSigningRequest(ctx, msg.Sender, coin, feeRate, "")
 	if err != nil {
 		return nil, err
 	}
@@ -170,6 +175,11 @@ func (m msgServer) SubmitWithdrawSignatures(goCtx context.Context, msg *types.Ms
 	if err != nil {
 		return nil, err
 	}
+
+	if packet.UnsignedTx.TxHash().String() != msg.Txid {
+		return nil, types.ErrInvalidSignatures
+	}
+
 	if err = packet.SanityCheck(); err != nil {
 		return nil, err
 	}

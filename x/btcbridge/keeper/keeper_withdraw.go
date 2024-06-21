@@ -70,8 +70,10 @@ func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin,
 	k.LockUTXOs(ctx, selectedUTXOs)
 
 	// save the change utxo and mark minted
-	k.saveUTXO(ctx, changeUTXO)
-	k.addToMintHistory(ctx, psbt.UnsignedTx.TxHash().String())
+	if changeUTXO != nil {
+		k.saveUTXO(ctx, changeUTXO)
+		k.addToMintHistory(ctx, psbt.UnsignedTx.TxHash().String())
+	}
 
 	signingRequest := &types.BitcoinSigningRequest{
 		Address:      sender,
