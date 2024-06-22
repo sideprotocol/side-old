@@ -8,8 +8,14 @@ import (
 )
 
 // VerifyPsbtSignatures verifies the signatures of the given psbt
-// Note: assume that the psbt is valid and all inputs are native segwit
+// Note: assume that the psbt is finalized and all inputs are native segwit
 func VerifyPsbtSignatures(p *psbt.Packet) bool {
+	// extract signed tx
+	signedTx, err := psbt.Extract(p)
+	if err != nil {
+		return false
+	}
+
 	// build previous output fetcher
 	prevOutputFetcher := txscript.NewMultiPrevOutFetcher(nil)
 
@@ -25,21 +31,16 @@ func VerifyPsbtSignatures(p *psbt.Packet) bool {
 	// verify signatures
 	for i := range p.Inputs {
 		output := p.Inputs[i].WitnessUtxo
-		hashType := p.Inputs[i].SighashType
 
-		witness := p.Inputs[i].FinalScriptWitness
-		if len(witness) < 72+33 {
+		witness := signedTx.TxIn[i].Witness
+		if len(witness) != 2 {
 			return false
 		}
 
-		sigBytes := witness[0 : len(witness)-33]
-		pkBytes := witness[len(witness)-33:]
+		sigBytes := witness[0]
+		pkBytes := witness[1]
 
-		if sigBytes[len(sigBytes)-1] != byte(hashType) {
-			return false
-		}
-
-		sig, err := ecdsa.ParseDERSignature(sigBytes[0 : len(sigBytes)-1])
+		sig, err := ecdsa.ParseDERSignature(sigBytes)
 		if err != nil {
 			return false
 		}
@@ -49,8 +50,12 @@ func VerifyPsbtSignatures(p *psbt.Packet) bool {
 			return false
 		}
 
+		if sigBytes[len(sigBytes)-1] != byte(SigHashType) {
+			return false
+		}
+
 		sigHash, err := txscript.CalcWitnessSigHash(output.PkScript, txscript.NewTxSigHashes(p.UnsignedTx, prevOutputFetcher),
-			hashType, p.UnsignedTx, i, output.Value)
+			SigHashType, p.UnsignedTx, i, output.Value)
 		if err != nil {
 			return false
 		}

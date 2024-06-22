@@ -17,6 +17,9 @@ const (
 
 	// default minimum relay fee
 	MinRelayFee = 1000
+
+	// default hash type for signature
+	SigHashType = txscript.SigHashAll
 )
 
 // BuildPsbt builds a bitcoin psbt from the given params.
@@ -161,17 +164,17 @@ func GetTxVirtualSize(tx *wire.MsgTx, utxos []*UTXO) int64 {
 
 		switch txscript.GetScriptClass(utxos[i].PubKeyScript) {
 		case txscript.WitnessV1TaprootTy:
-			dummyWitness = make([]byte, 64)
+			dummyWitness = make([]byte, 65)
 
 		case txscript.WitnessV0PubKeyHashTy:
-			dummyWitness = make([]byte, 72+33)
+			dummyWitness = make([]byte, 73+33)
 
 		case txscript.ScriptHashTy:
 			dummySigScript = make([]byte, 1+1+1+20)
-			dummyWitness = make([]byte, 72+33)
+			dummyWitness = make([]byte, 73+33)
 
 		case txscript.PubKeyHashTy:
-			dummySigScript = make([]byte, 1+72+1+33)
+			dummySigScript = make([]byte, 1+73+1+33)
 
 		default:
 		}
