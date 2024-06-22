@@ -131,12 +131,9 @@ func (p *Pool) findAssetByDenom(denom string) (PoolAsset, error) {
 func (p *Pool) GetAssetList() []PoolAsset {
 	assets := make([]PoolAsset, 0)
 	if p != nil {
-		for _, asset := range p.Assets {
-			assets = append(assets, asset)
-		}
-		return assets
+		assets = append(assets, p.Assets...)
 	}
-	return nil
+	return assets
 }
 
 func (p *Pool) GetTokens() []sdk.Coin {

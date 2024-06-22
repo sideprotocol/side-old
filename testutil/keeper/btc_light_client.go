@@ -21,7 +21,7 @@ func BtcLightClientKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	app := app.InitSideTestApp(false)
 
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
-	memStoreKey := storetypes.NewMemoryStoreKey(types.ModuleName)
+	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 
 	db := tmdb.NewMemDB()
 	stateStore := store.NewCommitMultiStore(db)

@@ -13,6 +13,9 @@ const (
 
 	// RouterKey defines the module's message routing key
 	RouterKey = ModuleName
+
+	// MemStoreKey defines the in-memory store key
+	MemStoreKey = "mem_btcbridge"
 )
 
 func KeyPrefix(p string) []byte {
@@ -47,8 +50,7 @@ func BtcUtxoKey(hash string, vout uint64) []byte {
 }
 
 func BtcOwnerUtxoKey(owner string, hash string, vout uint64) []byte {
-	key := append(BtcOwnerUtxoKeyPrefix, []byte(owner)...)
-	key = append(key, []byte(hash)...)
+	key := append(append(BtcOwnerUtxoKeyPrefix, []byte(owner)...), []byte(hash)...)
 	key = append(key, Int64ToBytes(vout)...)
 
 	return key
