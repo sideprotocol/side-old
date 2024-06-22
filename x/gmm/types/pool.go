@@ -82,7 +82,7 @@ func (p *Pool) DecreaseShare(amt sdkmath.Int) {
 // IncreaseLiquidity adds xx amount liquidity to assets in pool
 func (p *Pool) IncreaseLiquidity(coins []sdk.Coin) error {
 	for _, coin := range coins {
-		asset, index, exists := p.GetAssetByDenom(coin.Denom) //Assets[coin.Denom]
+		asset, index, exists := p.GetAssetByDenom(coin.Denom) // Assets[coin.Denom]
 		if !exists {
 			return ErrNotFoundAssetInPool
 		}

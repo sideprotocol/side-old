@@ -134,18 +134,18 @@ func AddUTXOsToTx(tx *wire.MsgTx, utxos []*UTXO, outAmount int64, changeOut *wir
 			}
 
 			return selectedUTXOs, nil
-		} else {
-			tx.TxOut = tx.TxOut[0 : len(tx.TxOut)-1]
+		}
 
-			if changeValue == 0 {
+		tx.TxOut = tx.TxOut[0 : len(tx.TxOut)-1]
+
+		if changeValue == 0 {
+			return selectedUTXOs, nil
+		}
+
+		if changeValue < 0 {
+			feeWithoutChange := GetTxVirtualSize(tx, selectedUTXOs) * feeRate
+			if inputAmount-outAmount-feeWithoutChange >= 0 {
 				return selectedUTXOs, nil
-			}
-
-			if changeValue < 0 {
-				feeWithoutChange := GetTxVirtualSize(tx, selectedUTXOs) * feeRate
-				if inputAmount-outAmount-feeWithoutChange >= 0 {
-					return selectedUTXOs, nil
-				}
 			}
 		}
 	}

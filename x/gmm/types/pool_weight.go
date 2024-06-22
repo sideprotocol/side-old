@@ -29,12 +29,12 @@ func (p *Pool) estimateShareWithSingleLiquidityInWeightPool(coin sdk.Coin) (sdk.
 	decAsset := sdk.NewDecCoinFromCoin(asset.Token)
 	weight := sdk.NewDecFromInt(*asset.Weight).Quo(sdk.NewDec(100)) // divide by 100
 	ratio := decToken.Amount.Quo(decAsset.Amount).Add(sdk.NewDec(1))
-	precision := big.NewInt(1) //sdk.MustNewDecFromStr("0.00000001")
+	precision := big.NewInt(1) // sdk.MustNewDecFromStr("0.00000001")
 	_ = weight
 	_ = ratio
 	_ = precision
 	factor := sdk.NewInt(1)
-	//factor := (ApproximatePow(ratio.BigInt(), weight.BigInt(), precision).Sub(sdk.OneDec()))
+	// factor := (ApproximatePow(ratio.BigInt(), weight.BigInt(), precision).Sub(sdk.OneDec()))
 	issueAmount := p.TotalShares.Amount.Mul(factor).Quo(sdk.NewInt(1e10))
 	outputToken := sdk.Coin{
 		Amount: issueAmount,
@@ -105,7 +105,7 @@ func (p *Pool) estimateSwapInWeightPool(amountIn sdk.Coin, denomOut string) (sdk
 	ratio := balanceIn.Quo(balanceInPlusAmount)
 	oneMinusRatio := sdk.NewDec(1).Sub(ratio)
 	power := weightIn.Quo(weightOut)
-	precision := "0.00000001"                                                        //sdk.MustNewDecFromStr("0.00000001")
+	precision := "0.00000001"                                                        // sdk.MustNewDecFromStr("0.00000001")
 	factor, err := ApproximatePow(oneMinusRatio.String(), power.String(), precision) // 100 iterations for example
 	if err != nil {
 		return sdk.Coin{}, err

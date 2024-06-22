@@ -67,7 +67,7 @@ func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin,
 	}
 
 	// lock the selected utxos
-	k.LockUTXOs(ctx, selectedUTXOs)
+	_ = k.LockUTXOs(ctx, selectedUTXOs)
 
 	// save the change utxo and mark minted
 	if changeUTXO != nil {
@@ -230,7 +230,7 @@ func (k Keeper) spendUTXOs(ctx sdk.Context, uTx *btcutil.Tx) {
 		vout := in.PreviousOutPoint.Index
 
 		if k.IsUTXOLocked(ctx, hash, uint64(vout)) {
-			k.SpendUTXO(ctx, hash, uint64(vout))
+			_ = k.SpendUTXO(ctx, hash, uint64(vout))
 		}
 	}
 }
