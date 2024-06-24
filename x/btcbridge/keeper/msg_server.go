@@ -69,7 +69,6 @@ func (m msgServer) SubmitDepositTransaction(goCtx context.Context, msg *types.Ms
 	)
 
 	return &types.MsgSubmitDepositTransactionResponse{}, nil
-
 }
 
 // SubmitTransaction implements types.MsgServer.
@@ -96,7 +95,6 @@ func (m msgServer) SubmitWithdrawTransaction(goCtx context.Context, msg *types.M
 	)
 
 	return &types.MsgSubmitWithdrawTransactionResponse{}, nil
-
 }
 
 // UpdateSenders implements types.MsgServer.
@@ -194,7 +192,6 @@ func (m msgServer) SubmitWithdrawSignatures(goCtx context.Context, msg *types.Ms
 	m.SetSigningRequest(ctx, request)
 
 	return &types.MsgSubmitWithdrawSignaturesResponse{}, nil
-
 }
 
 func (m msgServer) SubmitWithdrawStatus(goCtx context.Context, msg *types.MsgSubmitWithdrawStatusRequest) (*types.MsgSubmitWithdrawStatusResponse, error) {

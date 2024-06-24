@@ -14,11 +14,11 @@ import (
 func TestAPRCalculation(t *testing.T) {
 	keeper, ctx := testkeeper.GmmKeeper(t)
 	amp := sdkmath.NewInt(100)
-	//params := types.DefaultParams()
+	// params := types.DefaultParams()
 	mockAssets := []types.PoolAsset{}
 	weight := sdkmath.NewInt(6)
 	tokenIn := sdk.NewCoin("usdt", sdk.NewInt(100))
-	//tokenOut := sdk.NewCoin("usdc", sdk.NewInt(80))
+	// tokenOut := sdk.NewCoin("usdc", sdk.NewInt(80))
 	mockAssets = append(mockAssets, types.PoolAsset{
 		Decimal: sdkmath.NewInt(6),
 		Weight:  &weight,

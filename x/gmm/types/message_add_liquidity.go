@@ -62,5 +62,3 @@ func (msg *MsgAddLiquidity) ValidateBasic() error {
 	}
 	return nil
 }
-
-

@@ -16,7 +16,6 @@ import (
 
 // Process Bitcoin Deposit Transaction
 func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.MsgSubmitDepositTransactionRequest) error {
-
 	ctx.Logger().Info("accept bitcoin deposit tx", "blockhash", msg.Blockhash)
 
 	param := k.GetParams(ctx)
@@ -154,7 +153,6 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 }
 
 func (k Keeper) mintBTC(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender string, vault *types.Vault, out *wire.TxOut, vout int, denom string) error {
-
 	// save the hash of the transaction to prevent double minting
 	hash := uTx.Hash().String()
 	if k.existsInHistory(ctx, hash) {

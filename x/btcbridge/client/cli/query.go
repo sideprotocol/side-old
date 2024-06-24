@@ -105,7 +105,6 @@ func CmdQueryBlock() *cobra.Command {
 			queryClient := types.NewQueryClient(clientCtx)
 
 			height, err := strconv.ParseUint(args[0], 10, 64)
-
 			if err != nil {
 				res, err := queryClient.QueryBlockHeaderByHash(cmd.Context(), &types.QueryBlockHeaderByHashRequest{Hash: args[0]})
 				if err != nil {

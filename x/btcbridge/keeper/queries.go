@@ -76,7 +76,6 @@ func (k Keeper) QuerySigningRequest(goCtx context.Context, req *types.QuerySigni
 	requests := k.FilterSigningRequestsByStatus(ctx, req)
 
 	return &types.QuerySigningRequestResponse{Requests: requests}, nil
-
 }
 
 func (k Keeper) QueryUTXOs(goCtx context.Context, req *types.QueryUTXOsRequest) (*types.QueryUTXOsResponse, error) {
