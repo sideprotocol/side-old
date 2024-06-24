@@ -17,6 +17,9 @@ const (
 
 	// default minimum relay fee
 	MinRelayFee = 1000
+
+	// default hash type for signature
+	SigHashType = txscript.SigHashAll
 )
 
 // BuildPsbt builds a bitcoin psbt from the given params.
@@ -131,18 +134,18 @@ func AddUTXOsToTx(tx *wire.MsgTx, utxos []*UTXO, outAmount int64, changeOut *wir
 			}
 
 			return selectedUTXOs, nil
-		} else {
-			tx.TxOut = tx.TxOut[0 : len(tx.TxOut)-1]
+		}
 
-			if changeValue == 0 {
+		tx.TxOut = tx.TxOut[0 : len(tx.TxOut)-1]
+
+		if changeValue == 0 {
+			return selectedUTXOs, nil
+		}
+
+		if changeValue < 0 {
+			feeWithoutChange := GetTxVirtualSize(tx, selectedUTXOs) * feeRate
+			if inputAmount-outAmount-feeWithoutChange >= 0 {
 				return selectedUTXOs, nil
-			}
-
-			if changeValue < 0 {
-				feeWithoutChange := GetTxVirtualSize(tx, selectedUTXOs) * feeRate
-				if inputAmount-outAmount-feeWithoutChange >= 0 {
-					return selectedUTXOs, nil
-				}
 			}
 		}
 	}
@@ -161,17 +164,17 @@ func GetTxVirtualSize(tx *wire.MsgTx, utxos []*UTXO) int64 {
 
 		switch txscript.GetScriptClass(utxos[i].PubKeyScript) {
 		case txscript.WitnessV1TaprootTy:
-			dummyWitness = make([]byte, 64)
+			dummyWitness = make([]byte, 65)
 
 		case txscript.WitnessV0PubKeyHashTy:
-			dummyWitness = make([]byte, 72+33)
+			dummyWitness = make([]byte, 73+33)
 
 		case txscript.ScriptHashTy:
 			dummySigScript = make([]byte, 1+1+1+20)
-			dummyWitness = make([]byte, 72+33)
+			dummyWitness = make([]byte, 73+33)
 
 		case txscript.PubKeyHashTy:
-			dummySigScript = make([]byte, 1+72+1+33)
+			dummySigScript = make([]byte, 1+73+1+33)
 
 		default:
 		}

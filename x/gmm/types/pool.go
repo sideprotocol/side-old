@@ -82,7 +82,7 @@ func (p *Pool) DecreaseShare(amt sdkmath.Int) {
 // IncreaseLiquidity adds xx amount liquidity to assets in pool
 func (p *Pool) IncreaseLiquidity(coins []sdk.Coin) error {
 	for _, coin := range coins {
-		asset, index, exists := p.GetAssetByDenom(coin.Denom) //Assets[coin.Denom]
+		asset, index, exists := p.GetAssetByDenom(coin.Denom) // Assets[coin.Denom]
 		if !exists {
 			return ErrNotFoundAssetInPool
 		}
@@ -131,12 +131,9 @@ func (p *Pool) findAssetByDenom(denom string) (PoolAsset, error) {
 func (p *Pool) GetAssetList() []PoolAsset {
 	assets := make([]PoolAsset, 0)
 	if p != nil {
-		for _, asset := range p.Assets {
-			assets = append(assets, asset)
-		}
-		return assets
+		assets = append(assets, p.Assets...)
 	}
-	return nil
+	return assets
 }
 
 func (p *Pool) GetTokens() []sdk.Coin {

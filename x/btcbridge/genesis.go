@@ -12,7 +12,10 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	k.SetParams(ctx, genState.Params)
 	k.SetBestBlockHeader(ctx, genState.BestBlockHeader)
 	if len(genState.BlockHeaders) > 0 {
-		k.SetBlockHeaders(ctx, genState.BlockHeaders)
+		err := k.SetBlockHeaders(ctx, genState.BlockHeaders)
+		if err != nil {
+			panic(err)
+		}
 	}
 	// import utxos
 	for _, utxo := range genState.Utxos {

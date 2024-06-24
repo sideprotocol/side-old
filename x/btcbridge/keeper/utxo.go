@@ -155,8 +155,7 @@ func (bvk *BaseUTXOViewKeeper) IterateAllUTXOs(ctx sdk.Context, cb func(utxo *ty
 func (bvk *BaseUTXOViewKeeper) IterateUTXOsByAddr(ctx sdk.Context, addr string, cb func(addr string, utxo *types.UTXO) (stop bool)) {
 	store := ctx.KVStore(bvk.storeKey)
 
-	keyPrefix := append(types.BtcOwnerUtxoKeyPrefix, []byte(addr)...)
-	iterator := sdk.KVStorePrefixIterator(store, keyPrefix)
+	iterator := sdk.KVStorePrefixIterator(store, append(types.BtcOwnerUtxoKeyPrefix, []byte(addr)...))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {

@@ -5,7 +5,7 @@ import (
 )
 
 func (p *PoolI) ToPool() Pool {
-	assets := []PoolAsset{} //make(map[PoolAsset])
+	assets := []PoolAsset{} // make(map[PoolAsset])
 	for _, asset := range p.Assets {
 		weight := sdkmath.NewIntFromUint64(uint64(asset.Weight))
 		assets = append(assets, PoolAsset{

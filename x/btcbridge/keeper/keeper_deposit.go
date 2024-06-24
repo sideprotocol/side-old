@@ -198,6 +198,16 @@ func (k Keeper) mintBTC(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender 
 }
 
 func (k Keeper) mintRUNE(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender string, vault *types.Vault, out *wire.TxOut, vout int, denom string) {
+	// TODO
+
+	_ = ctx
+	_ = uTx
+	_ = height
+	_ = sender
+	_ = vault
+	_ = out
+	_ = vout
+	_ = denom
 }
 
 func (k Keeper) existsInHistory(ctx sdk.Context, txHash string) bool {

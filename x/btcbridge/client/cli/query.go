@@ -174,10 +174,10 @@ func CmdQueryUTXOs() *cobra.Command {
 			}
 
 			if len(args) == 0 {
-				return queryUTXOs(&clientCtx, cmd.Context())
+				return queryUTXOs(cmd.Context(), &clientCtx)
 			}
 
-			return queryUTXOsByAddr(&clientCtx, cmd.Context(), args[0])
+			return queryUTXOsByAddr(cmd.Context(), &clientCtx, args[0])
 		},
 	}
 
@@ -186,7 +186,7 @@ func CmdQueryUTXOs() *cobra.Command {
 	return cmd
 }
 
-func queryUTXOs(clientCtx *client.Context, cmdCtx context.Context) error {
+func queryUTXOs(cmdCtx context.Context, clientCtx *client.Context) error {
 	queryClient := types.NewQueryClient(clientCtx)
 
 	res, err := queryClient.QueryUTXOs(cmdCtx, &types.QueryUTXOsRequest{})
@@ -197,7 +197,7 @@ func queryUTXOs(clientCtx *client.Context, cmdCtx context.Context) error {
 	return clientCtx.PrintProto(res)
 }
 
-func queryUTXOsByAddr(clientCtx *client.Context, cmdCtx context.Context, addr string) error {
+func queryUTXOsByAddr(cmdCtx context.Context, clientCtx *client.Context, addr string) error {
 	queryClient := types.NewQueryClient(clientCtx)
 
 	_, err := sdk.AccAddressFromBech32(addr)
