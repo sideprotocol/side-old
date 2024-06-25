@@ -66,6 +66,7 @@ func (m msgServer) SubmitDepositTransaction(goCtx context.Context, msg *types.Ms
 	m.EmitEvent(ctx, msg.Sender,
 		sdk.NewAttribute("blockhash", msg.Blockhash),
 		sdk.NewAttribute("txBytes", msg.TxBytes),
+		sdk.NewAttribute("txid", MustGetTxId(msg.TxBytes)),
 	)
 
 	return &types.MsgSubmitDepositTransactionResponse{}, nil
@@ -85,7 +86,7 @@ func (m msgServer) SubmitWithdrawTransaction(goCtx context.Context, msg *types.M
 	}
 
 	if err := m.ProcessBitcoinWithdrawTransaction(ctx, msg); err != nil {
-		ctx.Logger().Error("Error processing bitcoin deposit transaction", "error", err)
+		ctx.Logger().Error("Error processing bitcoin withdraw transaction", "error", err)
 		return nil, err
 	}
 
@@ -93,6 +94,7 @@ func (m msgServer) SubmitWithdrawTransaction(goCtx context.Context, msg *types.M
 	m.EmitEvent(ctx, msg.Sender,
 		sdk.NewAttribute("blockhash", msg.Blockhash),
 		sdk.NewAttribute("txBytes", msg.TxBytes),
+		sdk.NewAttribute("txid", MustGetTxId(msg.TxBytes)),
 	)
 
 	return &types.MsgSubmitWithdrawTransactionResponse{}, nil
@@ -137,14 +139,15 @@ func (m msgServer) WithdrawBitcoin(goCtx context.Context, msg *types.MsgWithdraw
 		return nil, err
 	}
 
-	_, err = m.Keeper.NewSigningRequest(ctx, msg.Sender, coin, msg.FeeRate, "")
+	req, err := m.Keeper.NewSigningRequest(ctx, msg.Sender, coin, msg.FeeRate, "")
 	if err != nil {
 		return nil, err
 	}
 
 	// Emit events
 	m.EmitEvent(ctx, msg.Sender,
-		sdk.NewAttribute("withdraw", msg.Amount),
+		sdk.NewAttribute("amount", msg.Amount),
+		sdk.NewAttribute("txid", req.Txid),
 	)
 
 	return &types.MsgWithdrawBitcoinResponse{}, nil
