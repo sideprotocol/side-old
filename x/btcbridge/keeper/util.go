@@ -1,8 +1,6 @@
 package keeper
 
 import (
-	"bytes"
-	"encoding/base64"
 	"math/big"
 	"time"
 
@@ -34,21 +32,4 @@ func BitsToTarget(bits string) *big.Int {
 
 func BitsToTargetUint32(bits string) uint32 {
 	return uint32(BitsToTarget(bits).Uint64())
-}
-
-// MustGetTxId returns the tx id of the given tx
-// Panic if any error occured
-func MustGetTxId(rawTxStr string) string {
-	txBytes, err := base64.StdEncoding.DecodeString(rawTxStr)
-	if err != nil {
-		panic(err)
-	}
-
-	var tx wire.MsgTx
-	err = tx.Deserialize(bytes.NewReader(txBytes))
-	if err != nil {
-		panic(err)
-	}
-
-	return tx.TxHash().String()
 }
