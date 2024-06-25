@@ -8,6 +8,7 @@ import (
 
 	"github.com/btcsuite/btcd/blockchain"
 	"github.com/btcsuite/btcd/btcutil"
+	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/wire"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -160,37 +161,37 @@ func (k Keeper) FilterSigningRequestsByAddr(ctx sdk.Context, req *types.QuerySig
 }
 
 // Process Bitcoin Withdraw Transaction
-func (k Keeper) ProcessBitcoinWithdrawTransaction(ctx sdk.Context, msg *types.MsgSubmitWithdrawTransactionRequest) error {
+func (k Keeper) ProcessBitcoinWithdrawTransaction(ctx sdk.Context, msg *types.MsgSubmitWithdrawTransactionRequest) (*chainhash.Hash, error) {
 
 	ctx.Logger().Info("accept bitcoin withdraw tx", "blockhash", msg.Blockhash)
 
 	param := k.GetParams(ctx)
 
 	if !param.IsAuthorizedSender(msg.Sender) {
-		return types.ErrSenderAddressNotAuthorized
+		return nil, types.ErrSenderAddressNotAuthorized
 	}
 
 	header := k.GetBlockHeader(ctx, msg.Blockhash)
 	// Check if block confirmed
 	if header == nil {
-		return types.ErrBlockNotFound
+		return nil, types.ErrBlockNotFound
 	}
 
 	best := k.GetBestBlockHeader(ctx)
 	// Check if the block is confirmed
 	if best.Height-header.Height < uint64(param.Confirmations) {
-		return types.ErrNotConfirmed
+		return nil, types.ErrNotConfirmed
 	}
 	// Check if the block is within the acceptable depth
 	if best.Height-header.Height > param.MaxAcceptableBlockDepth {
-		return types.ErrExceedMaxAcceptanceDepth
+		return nil, types.ErrExceedMaxAcceptanceDepth
 	}
 
 	// Decode the base64 transaction
 	txBytes, err := base64.StdEncoding.DecodeString(msg.TxBytes)
 	if err != nil {
 		fmt.Println("Error decoding transaction from base64:", err)
-		return err
+		return nil, err
 	}
 
 	// Create a new transaction
@@ -198,18 +199,21 @@ func (k Keeper) ProcessBitcoinWithdrawTransaction(ctx sdk.Context, msg *types.Ms
 	err = tx.Deserialize(bytes.NewReader(txBytes))
 	if err != nil {
 		fmt.Println("Error deserializing transaction:", err)
-		return err
+		return nil, err
 	}
+
 	uTx := btcutil.NewTx(&tx)
 	if len(uTx.MsgTx().TxIn) < 1 {
-		return types.ErrInvalidBtcTransaction
+		return nil, types.ErrInvalidBtcTransaction
 	}
 
-	if !k.HasSigningRequest(ctx, uTx.MsgTx().TxHash().String()) {
-		return types.ErrSigningRequestNotExist
+	txHash := uTx.MsgTx().TxHash()
+
+	if !k.HasSigningRequest(ctx, txHash.String()) {
+		return nil, types.ErrSigningRequestNotExist
 	}
 
-	signingRequest := k.GetSigningRequest(ctx, uTx.MsgTx().TxHash().String())
+	signingRequest := k.GetSigningRequest(ctx, txHash.String())
 	// if signingRequest.Status != types.SigningStatus_SIGNING_STATUS_BROADCASTED || signingRequest.Status != types.SigningStatus_SIGNING_STATUS_SIGNED {
 	// 	return types.ErrInvalidStatus
 	// }
@@ -219,11 +223,11 @@ func (k Keeper) ProcessBitcoinWithdrawTransaction(ctx sdk.Context, msg *types.Ms
 	// Validate the transaction
 	if err := blockchain.CheckTransactionSanity(uTx); err != nil {
 		fmt.Println("Transaction is not valid:", err)
-		return err
+		return nil, err
 	}
 
 	if len(uTx.MsgTx().TxIn[0].Witness) != 2 {
-		return types.ErrInvalidSenders
+		return nil, types.ErrInvalidSenders
 	}
 
 	senderPubKey := uTx.MsgTx().TxIn[0].Witness[1]
@@ -231,12 +235,12 @@ func (k Keeper) ProcessBitcoinWithdrawTransaction(ctx sdk.Context, msg *types.Ms
 	// check if the first sender is one of the vault addresses
 	vault := types.SelectVaultByPubKey(param.Vaults, hex.EncodeToString(senderPubKey))
 	if vault == nil {
-		return types.ErrInvalidSenders
+		return nil, types.ErrInvalidSenders
 	}
 
 	k.spendUTXOs(ctx, uTx)
 
-	return nil
+	return &txHash, nil
 }
 
 // spendUTXOs spends locked utxos
