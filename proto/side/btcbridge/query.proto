@@ -31,6 +31,10 @@ service Query {
   rpc QuerySigningRequest(QuerySigningRequestRequest) returns (QuerySigningRequestResponse) {
     option (google.api.http).get = "/sideprotocol/side/btcbridge/signing/request";
   }
+  // QuerySigningRequestByAddress queries the signing request by the given address.
+  rpc QuerySigningRequestByAddress(QuerySigningRequestByAddressRequest) returns (QuerySigningRequestByAddressResponse) {
+    option (google.api.http).get = "/sideprotocol/side/btcbridge/signing/request/{address}";
+  }
   // UTXOs queries all utxos.
   rpc QueryUTXOs(QueryUTXOsRequest) returns (QueryUTXOsResponse) {
     option (google.api.http).get = "/sideprotocol/side/btcbridge/utxos";
@@ -49,6 +53,18 @@ message QuerySigningRequestRequest {
 
 // QuerySigningRequestResponse is response type for the Query/SigningRequest RPC method.
 message QuerySigningRequestResponse {
+  repeated BitcoinSigningRequest requests = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination            = 2;
+}
+
+// QuerySigningRequestByAddressRequest is request type for the Query/SigningRequestByAddress RPC method.
+message QuerySigningRequestByAddressRequest {
+  string address = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination            = 2;
+}
+
+// QuerySigningRequestByAddressResponse is response type for the Query/SigningRequestByAddress RPC method.
+message QuerySigningRequestByAddressResponse {
   repeated BitcoinSigningRequest requests = 1;
   cosmos.base.query.v1beta1.PageResponse pagination            = 2;
 }

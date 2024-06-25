@@ -143,6 +143,22 @@ func (k Keeper) FilterSigningRequestsByStatus(ctx sdk.Context, req *types.QueryS
 	return signingRequests
 }
 
+// filter SigningRequest by address with pagination
+func (k Keeper) FilterSigningRequestsByAddr(ctx sdk.Context, req *types.QuerySigningRequestByAddressRequest) []*types.BitcoinSigningRequest {
+	var signingRequests []*types.BitcoinSigningRequest
+	k.IterateSigningRequests(ctx, func(signingRequest types.BitcoinSigningRequest) (stop bool) {
+		if signingRequest.Address == req.Address {
+			signingRequests = append(signingRequests, &signingRequest)
+		}
+		// pagination TODO: limit the number of signing requests
+		if len(signingRequests) >= 100 {
+			return true
+		}
+		return false
+	})
+	return signingRequests
+}
+
 // Process Bitcoin Withdraw Transaction
 func (k Keeper) ProcessBitcoinWithdrawTransaction(ctx sdk.Context, msg *types.MsgSubmitWithdrawTransactionRequest) error {
 
