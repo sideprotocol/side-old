@@ -1,4 +1,4 @@
-package btclightclient
+package btcbridge
 
 import (
 	"context"
