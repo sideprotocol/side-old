@@ -17,7 +17,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func BtcLightClientKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
+func BtcBridgeKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	app := app.InitSideTestApp(false)
 
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)

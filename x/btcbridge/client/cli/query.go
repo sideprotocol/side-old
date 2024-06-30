@@ -131,8 +131,8 @@ func CmdQueryBlock() *cobra.Command {
 // CmdQuerySigningRequest returns the command to query signing request
 func CmdQuerySigningRequest() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "signing-request [status]",
-		Short: "Query all signing requests",
+		Use:   "signing-request [status or address]",
+		Short: "Query signing requests by status or address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -144,7 +144,17 @@ func CmdQuerySigningRequest() *cobra.Command {
 
 			status, err := strconv.ParseInt(args[0], 10, 32)
 			if err != nil {
-				return err
+				_, err = sdk.AccAddressFromBech32(args[0])
+				if err != nil {
+					return err
+				}
+
+				res, err := queryClient.QuerySigningRequestByAddress(cmd.Context(), &types.QuerySigningRequestByAddressRequest{Address: args[0]})
+				if err != nil {
+					return err
+				}
+
+				return clientCtx.PrintProto(res)
 			}
 
 			res, err := queryClient.QuerySigningRequest(cmd.Context(), &types.QuerySigningRequestRequest{Status: types.SigningStatus(status)})

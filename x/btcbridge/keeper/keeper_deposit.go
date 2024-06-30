@@ -15,25 +15,25 @@ import (
 )
 
 // Process Bitcoin Deposit Transaction
-func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.MsgSubmitDepositTransactionRequest) error {
+func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.MsgSubmitDepositTransactionRequest) (*chainhash.Hash, btcutil.Address, error) {
 	ctx.Logger().Info("accept bitcoin deposit tx", "blockhash", msg.Blockhash)
 
 	param := k.GetParams(ctx)
 
 	if !param.IsAuthorizedSender(msg.Sender) {
-		return types.ErrSenderAddressNotAuthorized
+		return nil, nil, types.ErrSenderAddressNotAuthorized
 	}
 
 	header := k.GetBlockHeader(ctx, msg.Blockhash)
 	// Check if block confirmed
 	if header == nil || header.Height == 0 {
-		return types.ErrBlockNotFound
+		return nil, nil, types.ErrBlockNotFound
 	}
 
 	best := k.GetBestBlockHeader(ctx)
 	// Check if the block is confirmed
 	if best.Height-header.Height < uint64(param.Confirmations) {
-		return types.ErrNotConfirmed
+		return nil, nil, types.ErrNotConfirmed
 	}
 	// Check if the block is within the acceptable depth
 	// if best.Height-header.Height > param.MaxAcceptableBlockDepth {
@@ -44,7 +44,7 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 	txBytes, err := base64.StdEncoding.DecodeString(msg.TxBytes)
 	if err != nil {
 		fmt.Println("Error decoding transaction from base64:", err)
-		return err
+		return nil, nil, err
 	}
 
 	// Create a new transaction
@@ -52,24 +52,24 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 	err = tx.Deserialize(bytes.NewReader(txBytes))
 	if err != nil {
 		fmt.Println("Error deserializing transaction:", err)
-		return err
+		return nil, nil, err
 	}
 	uTx := btcutil.NewTx(&tx)
 	if len(uTx.MsgTx().TxIn) < 1 {
-		return types.ErrInvalidBtcTransaction
+		return nil, nil, types.ErrInvalidBtcTransaction
 	}
 
 	// Validate the transaction
 	if err := blockchain.CheckTransactionSanity(uTx); err != nil {
 		fmt.Println("Transaction is not valid:", err)
-		return err
+		return nil, nil, err
 	}
 
 	// Decode the previous transaction
 	prevTxBytes, err := base64.StdEncoding.DecodeString(msg.PrevTxBytes)
 	if err != nil {
 		fmt.Println("Error decoding transaction from base64:", err)
-		return err
+		return nil, nil, err
 	}
 
 	// Create a new transaction
@@ -77,21 +77,21 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 	err = prevMsgTx.Deserialize(bytes.NewReader(prevTxBytes))
 	if err != nil {
 		fmt.Println("Error deserializing transaction:", err)
-		return err
+		return nil, nil, err
 	}
 
 	prevTx := btcutil.NewTx(&prevMsgTx)
 	if len(prevTx.MsgTx().TxOut) < 1 {
-		return types.ErrInvalidBtcTransaction
+		return nil, nil, types.ErrInvalidBtcTransaction
 	}
 	// Validate the transaction
 	if err := blockchain.CheckTransactionSanity(prevTx); err != nil {
 		fmt.Println("Transaction is not valid:", err)
-		return err
+		return nil, nil, err
 	}
 
 	if uTx.MsgTx().TxIn[0].PreviousOutPoint.Hash.String() != prevTx.Hash().String() {
-		return types.ErrInvalidBtcTransaction
+		return nil, nil, types.ErrInvalidBtcTransaction
 	}
 
 	chainCfg := sdk.GetConfig().GetBtcChainCfg()
@@ -99,7 +99,7 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 	// Extract the recipient address
 	recipient, err := types.ExtractRecipientAddr(&tx, &prevMsgTx, param.Vaults, chainCfg)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 
 	// if pk.Class() != txscript.WitnessV1TaprootTy || pk.Class() != txscript.WitnessV0PubKeyHashTy || pk.Class() != txscript.WitnessV0ScriptHashTy {
@@ -110,13 +110,13 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 	// check if the proof is valid
 	root, err := chainhash.NewHashFromStr(header.MerkleRoot)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 
 	txhash := uTx.MsgTx().TxHash()
 	if !types.VerifyMerkleProof(msg.Proof, &txhash, root) {
 		k.Logger(ctx).Error("Invalid merkle proof", "txhash", tx, "root", root, "proof", msg.Proof)
-		return types.ErrTransactionNotIncluded
+		return nil, nil, types.ErrTransactionNotIncluded
 	}
 
 	// mint voucher token and save utxo if the receiver is a vault address
@@ -124,11 +124,11 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 		// check if the output is a valid address
 		pks, err := txscript.ParsePkScript(out.PkScript)
 		if err != nil {
-			return err
+			return nil, nil, err
 		}
 		addr, err := pks.Address(chainCfg)
 		if err != nil {
-			return err
+			return nil, nil, err
 		}
 		// check if the receiver is one of the voucher addresses
 		vault := types.SelectVaultByBitcoinAddress(param.Vaults, addr.EncodeAddress())
@@ -142,14 +142,14 @@ func (k Keeper) ProcessBitcoinDepositTransaction(ctx sdk.Context, msg *types.Msg
 		case types.AssetType_ASSET_TYPE_BTC:
 			err := k.mintBTC(ctx, uTx, header.Height, recipient.EncodeAddress(), vault, out, i, param.BtcVoucherDenom)
 			if err != nil {
-				return err
+				return nil, nil, err
 			}
 		case types.AssetType_ASSET_TYPE_RUNE:
 			k.mintRUNE(ctx, uTx, header.Height, recipient.EncodeAddress(), vault, out, i, "rune")
 		}
 	}
 
-	return nil
+	return &txhash, recipient, nil
 }
 
 func (k Keeper) mintBTC(ctx sdk.Context, uTx *btcutil.Tx, height uint64, sender string, vault *types.Vault, out *wire.TxOut, vout int, denom string) error {

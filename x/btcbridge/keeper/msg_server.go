@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
+	"strconv"
 
 	"github.com/btcsuite/btcd/btcutil/psbt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -57,7 +58,8 @@ func (m msgServer) SubmitDepositTransaction(goCtx context.Context, msg *types.Ms
 		return nil, err
 	}
 
-	if err := m.ProcessBitcoinDepositTransaction(ctx, msg); err != nil {
+	txHash, recipient, err := m.ProcessBitcoinDepositTransaction(ctx, msg)
+	if err != nil {
 		ctx.Logger().Error("Error processing bitcoin deposit transaction", "error", err)
 		return nil, err
 	}
@@ -66,6 +68,8 @@ func (m msgServer) SubmitDepositTransaction(goCtx context.Context, msg *types.Ms
 	m.EmitEvent(ctx, msg.Sender,
 		sdk.NewAttribute("blockhash", msg.Blockhash),
 		sdk.NewAttribute("txBytes", msg.TxBytes),
+		sdk.NewAttribute("txid", txHash.String()),
+		sdk.NewAttribute("recipient", recipient.EncodeAddress()),
 	)
 
 	return &types.MsgSubmitDepositTransactionResponse{}, nil
@@ -83,8 +87,9 @@ func (m msgServer) SubmitWithdrawTransaction(goCtx context.Context, msg *types.M
 		return nil, err
 	}
 
-	if err := m.ProcessBitcoinWithdrawTransaction(ctx, msg); err != nil {
-		ctx.Logger().Error("Error processing bitcoin deposit transaction", "error", err)
+	txHash, err := m.ProcessBitcoinWithdrawTransaction(ctx, msg)
+	if err != nil {
+		ctx.Logger().Error("Error processing bitcoin withdraw transaction", "error", err)
 		return nil, err
 	}
 
@@ -92,6 +97,7 @@ func (m msgServer) SubmitWithdrawTransaction(goCtx context.Context, msg *types.M
 	m.EmitEvent(ctx, msg.Sender,
 		sdk.NewAttribute("blockhash", msg.Blockhash),
 		sdk.NewAttribute("txBytes", msg.TxBytes),
+		sdk.NewAttribute("txid", txHash.String()),
 	)
 
 	return &types.MsgSubmitWithdrawTransactionResponse{}, nil
@@ -135,14 +141,20 @@ func (m msgServer) WithdrawBitcoin(goCtx context.Context, msg *types.MsgWithdraw
 		return nil, err
 	}
 
-	_, err = m.Keeper.NewSigningRequest(ctx, msg.Sender, coin, msg.FeeRate, "")
+	feeRate, err := strconv.ParseInt(msg.FeeRate, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := m.Keeper.NewSigningRequest(ctx, msg.Sender, coin, feeRate, "")
 	if err != nil {
 		return nil, err
 	}
 
 	// Emit events
 	m.EmitEvent(ctx, msg.Sender,
-		sdk.NewAttribute("withdraw", msg.Amount),
+		sdk.NewAttribute("amount", msg.Amount),
+		sdk.NewAttribute("txid", req.Txid),
 	)
 
 	return &types.MsgWithdrawBitcoinResponse{}, nil

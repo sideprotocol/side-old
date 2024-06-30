@@ -1,6 +1,6 @@
-package btclightclient_test
+package btcbridge_test
 
-// Path: x/btclightclient/genesis_test.go
+// Path: x/btcbridge/genesis_test.go
 
 import (
 	"bytes"
@@ -11,7 +11,7 @@ import (
 	"github.com/btcsuite/btcd/wire"
 	keepertest "github.com/sideprotocol/side/testutil/keeper"
 	"github.com/sideprotocol/side/testutil/nullify"
-	btclightclient "github.com/sideprotocol/side/x/btcbridge"
+	"github.com/sideprotocol/side/x/btcbridge"
 	"github.com/sideprotocol/side/x/btcbridge/types"
 	"github.com/stretchr/testify/require"
 )
@@ -26,9 +26,9 @@ func TestGenesis(t *testing.T) {
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
-	k, ctx := keepertest.BtcLightClientKeeper(t)
-	btclightclient.InitGenesis(ctx, *k, genesisState)
-	got := btclightclient.ExportGenesis(ctx, *k)
+	k, ctx := keepertest.BtcBridgeKeeper(t)
+	btcbridge.InitGenesis(ctx, *k, genesisState)
+	got := btcbridge.ExportGenesis(ctx, *k)
 	require.NotNil(t, got)
 
 	nullify.Fill(&genesisState)
@@ -42,7 +42,7 @@ func TestGenesis(t *testing.T) {
 
 // 	// test tx: https://blockchain.info/tx/b657e22827039461a9493ede7bdf55b01579254c1630b0bfc9185ec564fc05ab?format=json
 
-// 	k, ctx := keepertest.BtcLightClientKeeper(t)
+// 	k, ctx := keepertest.BtcbridgeClientKeeper(t)
 
 // 	txHex := "02000000000101e5df234dbeff74d6da14754ebeea8ab0e2f60b1884566846cf6b36e8ceb5f5350100000000fdffffff02f0490200000000001600142ac13073e8d491428790481321a636696d00107681d7e205000000001600142bf3aa186cbdcbe88b70a67edcd5a32ce5e8e6d8024730440220081ee61d749ce8cedcf6eedde885579af2eb65ca67d29e6ae2c37109d81cbbb202203a1891ce45f91f159ccf04348ef37a3d1a12d89e5e01426e061326057e6c128d012103036bbdd77c9a932f37bd66175967c7fb7eb75ece06b87c1ad1716770cb3ca4ee79fc2a00"
 // 	prevTxHex := "0200000000010183372652f2af9ab34b3a003efada6b054c75583185ac130de72599dfdf4e462b0100000000fdffffff02f0490200000000001600142ac13073e8d491428790481321a636696d001076a64ee50500000000160014a03614eef338681373de94a2dc2574de55da1980024730440220274250f6036bea0947daf4455ab4976f81721257d163fd952fb5b0c70470edc602202fba816be260219bbc40a8983c459cf05cf2209bf1e62e7ccbf78aec54db607f0121031cee21ef69fe68b240c3032616fa310c6a60a856c0a7e0c1298815c92fb2c61788fb2a00"

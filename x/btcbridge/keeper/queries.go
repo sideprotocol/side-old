@@ -78,6 +78,18 @@ func (k Keeper) QuerySigningRequest(goCtx context.Context, req *types.QuerySigni
 	return &types.QuerySigningRequestResponse{Requests: requests}, nil
 }
 
+func (k Keeper) QuerySigningRequestByAddress(goCtx context.Context, req *types.QuerySigningRequestByAddressRequest) (*types.QuerySigningRequestByAddressResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	requests := k.FilterSigningRequestsByAddr(ctx, req)
+
+	return &types.QuerySigningRequestByAddressResponse{Requests: requests}, nil
+}
+
 func (k Keeper) QueryUTXOs(goCtx context.Context, req *types.QueryUTXOsRequest) (*types.QueryUTXOsResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")

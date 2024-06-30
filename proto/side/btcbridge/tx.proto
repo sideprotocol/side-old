@@ -96,7 +96,7 @@ message MsgWithdrawBitcoinRequest {
   // withdraw amount in satoshi, etc: 100000000sat = 1btc
   string amount = 2;
   // fee rate in sats/vB
-  int64 fee_rate = 3;
+  string fee_rate = 3;
 }
 
 // MsgWithdrawBitcoinResponse defines the Msg/WithdrawBitcoin response type.
