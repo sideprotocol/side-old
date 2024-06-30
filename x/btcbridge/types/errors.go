@@ -35,7 +35,11 @@ var (
 
 	ErrInvalidAmount       = errorsmod.Register(ModuleName, 6100, "invalid amount")
 	ErrInvalidFeeRate      = errorsmod.Register(ModuleName, 6101, "invalid fee rate")
-	ErrDustOutput          = errorsmod.Register(ModuleName, 6102, "dust output value")
-	ErrInsufficientUTXOs   = errorsmod.Register(ModuleName, 6103, "insufficient utxos")
-	ErrFailToSerializePsbt = errorsmod.Register(ModuleName, 6104, "failed to serialize psbt")
+	ErrAssetNotSupported   = errorsmod.Register(ModuleName, 6102, "asset not supported")
+	ErrDustOutput          = errorsmod.Register(ModuleName, 6103, "too small output amount")
+	ErrInsufficientUTXOs   = errorsmod.Register(ModuleName, 6104, "insufficient utxos")
+	ErrFailToSerializePsbt = errorsmod.Register(ModuleName, 6105, "failed to serialize psbt")
+
+	ErrInvalidRunes  = errorsmod.Register(ModuleName, 7100, "invalid runes")
+	ErrInvalidRuneId = errorsmod.Register(ModuleName, 7101, "invalid rune id")
 )

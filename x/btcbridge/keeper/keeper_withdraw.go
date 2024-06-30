@@ -6,6 +6,8 @@ import (
 	"encoding/hex"
 	"fmt"
 
+	"lukechampine.com/uint128"
+
 	"github.com/btcsuite/btcd/blockchain"
 	"github.com/btcsuite/btcd/btcutil"
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
@@ -34,24 +36,26 @@ func (k Keeper) IncrementRequestSequence(ctx sdk.Context) uint64 {
 	return seq
 }
 
-// New signing request
-// sender: the address of the sender
-// txBytes: the transaction bytes
-// vault: the address of the vault, default is empty.
-// If empty, the vault will be Bitcoin vault, otherwise it will be Ordinals or Runes vault
-func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin, feeRate int64, vault string) (*types.BitcoinSigningRequest, error) {
-	if len(vault) == 0 {
-		// default to the first vault in the params for now
-		// TODO: select an appropriate vault according to the utxos
-		p := k.GetParams(ctx)
-		for i, v := range p.Vaults {
-			if v.AssetType == types.AssetType_ASSET_TYPE_BTC {
-				vault = p.Vaults[i].Address
-				break
-			}
-		}
-	}
+// NewSigningRequest creates a new signing request
+func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin, feeRate int64) (*types.BitcoinSigningRequest, error) {
+	p := k.GetParams(ctx)
+	btcVault := types.SelectVaultByAssetType(p.Vaults, types.AssetType_ASSET_TYPE_BTC)
 
+	switch types.AssetTypeFromDenom(coin.Denom, p) {
+	case types.AssetType_ASSET_TYPE_BTC:
+		return k.NewBtcSigningRequest(ctx, sender, coin, feeRate, btcVault.Address)
+
+	case types.AssetType_ASSET_TYPE_RUNE:
+		runesVault := types.SelectVaultByAssetType(p.Vaults, types.AssetType_ASSET_TYPE_RUNE)
+		return k.NewRunesSigningRequest(ctx, sender, coin, feeRate, runesVault.Address, btcVault.Address)
+
+	default:
+		return nil, types.ErrAssetNotSupported
+	}
+}
+
+// NewBtcSigningRequest creates a signing request for btc withdrawal
+func (k Keeper) NewBtcSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin, feeRate int64, vault string) (*types.BitcoinSigningRequest, error) {
 	utxos := k.GetOrderedUTXOsByAddr(ctx, vault)
 	if len(utxos) == 0 {
 		return nil, types.ErrInsufficientUTXOs
@@ -73,6 +77,63 @@ func (k Keeper) NewSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin,
 	// save the change utxo and mark minted
 	if changeUTXO != nil {
 		k.saveUTXO(ctx, changeUTXO)
+		k.addToMintHistory(ctx, psbt.UnsignedTx.TxHash().String())
+	}
+
+	signingRequest := &types.BitcoinSigningRequest{
+		Address:      sender,
+		Txid:         psbt.UnsignedTx.TxHash().String(),
+		Psbt:         psbtB64,
+		Status:       types.SigningStatus_SIGNING_STATUS_CREATED,
+		Sequence:     k.IncrementRequestSequence(ctx),
+		VaultAddress: vault,
+	}
+
+	k.SetSigningRequest(ctx, signingRequest)
+
+	return signingRequest, nil
+}
+
+// NewBtcSigningRequest creates a signing request for runes withdrawal
+func (k Keeper) NewRunesSigningRequest(ctx sdk.Context, sender string, coin sdk.Coin, feeRate int64, vault string, btcVault string) (*types.BitcoinSigningRequest, error) {
+	var runeId types.RuneId
+	runeId.FromDenom(coin.Denom)
+
+	amount := uint128.FromBig(coin.Amount.BigInt())
+
+	runesUTXOs, amountDelta := k.GetTargetRunesUTXOs(ctx, vault, runeId.ToString(), amount)
+	if len(runesUTXOs) == 0 {
+		return nil, types.ErrInsufficientUTXOs
+	}
+
+	paymentUTXOs := k.GetOrderedUTXOsByAddr(ctx, btcVault)
+	if len(paymentUTXOs) == 0 {
+		return nil, types.ErrInsufficientUTXOs
+	}
+
+	psbt, selectedUTXOs, changeUTXO, runesChangeUTXO, err := types.BuildRunesPsbt(runesUTXOs, paymentUTXOs, sender, runeId.ToString(), amount, feeRate, amountDelta, vault, btcVault)
+	if err != nil {
+		return nil, err
+	}
+
+	psbtB64, err := psbt.B64Encode()
+	if err != nil {
+		return nil, types.ErrFailToSerializePsbt
+	}
+
+	// lock the involved utxos
+	_ = k.LockUTXOs(ctx, runesUTXOs)
+	_ = k.LockUTXOs(ctx, selectedUTXOs)
+
+	// save the change utxo and mark minted
+	if changeUTXO != nil {
+		k.saveUTXO(ctx, changeUTXO)
+		k.addToMintHistory(ctx, psbt.UnsignedTx.TxHash().String())
+	}
+
+	// save the runes change utxo and mark minted
+	if runesChangeUTXO != nil {
+		k.saveUTXO(ctx, runesChangeUTXO)
 		k.addToMintHistory(ctx, psbt.UnsignedTx.TxHash().String())
 	}
 
@@ -162,11 +223,9 @@ func (k Keeper) FilterSigningRequestsByAddr(ctx sdk.Context, req *types.QuerySig
 
 // Process Bitcoin Withdraw Transaction
 func (k Keeper) ProcessBitcoinWithdrawTransaction(ctx sdk.Context, msg *types.MsgSubmitWithdrawTransactionRequest) (*chainhash.Hash, error) {
-
 	ctx.Logger().Info("accept bitcoin withdraw tx", "blockhash", msg.Blockhash)
 
 	param := k.GetParams(ctx)
-
 	if !param.IsAuthorizedSender(msg.Sender) {
 		return nil, types.ErrSenderAddressNotAuthorized
 	}

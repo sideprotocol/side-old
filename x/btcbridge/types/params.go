@@ -1,6 +1,13 @@
 package types
 
-import sdk "github.com/cosmos/cosmos-sdk/types"
+import (
+	"bytes"
+
+	"github.com/btcsuite/btcd/btcutil"
+	"github.com/btcsuite/btcd/txscript"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
 
 // NewParams creates a new Params instance
 func NewParams(relayers []string) Params {
@@ -63,6 +70,40 @@ func SelectVaultByBitcoinAddress(vaults []*Vault, address string) *Vault {
 func SelectVaultByPubKey(vaults []*Vault, pubKey string) *Vault {
 	for _, v := range vaults {
 		if v.PubKey == pubKey {
+			return v
+		}
+	}
+
+	return nil
+}
+
+// SelectVaultByAssetType returns the vault by the asset type
+func SelectVaultByAssetType(vaults []*Vault, assetType AssetType) *Vault {
+	for _, v := range vaults {
+		if v.AssetType == assetType {
+			return v
+		}
+	}
+
+	return nil
+}
+
+// SelectVaultByPkScript returns the vault by the pk script
+func SelectVaultByPkScript(vaults []*Vault, pkScript []byte) *Vault {
+	chainCfg := sdk.GetConfig().GetBtcChainCfg()
+
+	for _, v := range vaults {
+		addr, err := btcutil.DecodeAddress(v.Address, chainCfg)
+		if err != nil {
+			continue
+		}
+
+		addrScript, err := txscript.PayToAddrScript(addr)
+		if err != nil {
+			continue
+		}
+
+		if bytes.Equal(addrScript, pkScript) {
 			return v
 		}
 	}

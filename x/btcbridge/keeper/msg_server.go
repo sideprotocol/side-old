@@ -130,6 +130,7 @@ func (m msgServer) WithdrawBitcoin(goCtx context.Context, msg *types.MsgWithdraw
 	if err := msg.ValidateBasic(); err != nil {
 		return nil, err
 	}
+
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	sender := sdk.MustAccAddressFromBech32(msg.Sender)
@@ -143,12 +144,18 @@ func (m msgServer) WithdrawBitcoin(goCtx context.Context, msg *types.MsgWithdraw
 		return nil, err
 	}
 
+	if coin.Denom == m.GetParams(ctx).BtcVoucherDenom {
+		if err := types.CheckOutputAmount(msg.Sender, coin.Amount.Int64()); err != nil {
+			return nil, err
+		}
+	}
+
 	feeRate, err := strconv.ParseInt(msg.FeeRate, 10, 64)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := m.Keeper.NewSigningRequest(ctx, msg.Sender, coin, feeRate, "")
+	req, err := m.Keeper.NewSigningRequest(ctx, msg.Sender, coin, feeRate)
 	if err != nil {
 		return nil, err
 	}

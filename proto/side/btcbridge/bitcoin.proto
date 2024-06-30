@@ -56,5 +56,29 @@ message UTXO {
   bytes pub_key_script = 6;
   bool is_coinbase = 7;
   bool is_locked = 8;
+  // rune balances associated with the UTXO
+  repeated RuneBalance runes = 9;
 }
 
+// Rune Balance
+message RuneBalance {
+  // serialized rune id
+  string id = 1;
+  // rune amount
+  string amount = 2;
+}
+
+// Rune ID
+message RuneId {
+  // block height
+  uint64 block = 1;
+  // tx index
+  uint32 tx = 2;
+}
+
+// Rune Edict
+message Edict {
+  RuneId id = 1;
+  string amount = 2;
+  uint32 output = 3;
+}
