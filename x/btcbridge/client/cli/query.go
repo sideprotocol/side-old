@@ -7,6 +7,7 @@ import (
 
 	// "strings"
 
+	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/sideprotocol/side/x/btcbridge/types"
 	"github.com/spf13/cobra"
 
@@ -132,8 +133,8 @@ func CmdQueryBlock() *cobra.Command {
 // CmdQuerySigningRequest returns the command to query signing request
 func CmdQuerySigningRequest() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "signing-request [status or address]",
-		Short: "Query signing requests by status or address",
+		Use:   "signing-request [status | address | tx hash]",
+		Short: "Query signing requests by status, address or tx hash",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -147,7 +148,17 @@ func CmdQuerySigningRequest() *cobra.Command {
 			if err != nil {
 				_, err = sdk.AccAddressFromBech32(args[0])
 				if err != nil {
-					return err
+					_, err := chainhash.NewHashFromStr(args[0])
+					if err != nil {
+						return fmt.Errorf("invalid arg, neither status, address nor tx hash: %s", args[0])
+					}
+
+					res, err := queryClient.QuerySigningRequestByTxHash(cmd.Context(), &types.QuerySigningRequestByTxHashRequest{Txid: args[0]})
+					if err != nil {
+						return err
+					}
+
+					return clientCtx.PrintProto(res)
 				}
 
 				res, err := queryClient.QuerySigningRequestByAddress(cmd.Context(), &types.QuerySigningRequestByAddressRequest{Address: args[0]})
