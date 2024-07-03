@@ -3,7 +3,6 @@ package keeper
 import (
 	"bytes"
 	"encoding/base64"
-	"encoding/hex"
 	"fmt"
 
 	"lukechampine.com/uint128"
@@ -283,18 +282,6 @@ func (k Keeper) ProcessBitcoinWithdrawTransaction(ctx sdk.Context, msg *types.Ms
 	if err := blockchain.CheckTransactionSanity(uTx); err != nil {
 		fmt.Println("Transaction is not valid:", err)
 		return nil, err
-	}
-
-	if len(uTx.MsgTx().TxIn[0].Witness) != 2 {
-		return nil, types.ErrInvalidSenders
-	}
-
-	senderPubKey := uTx.MsgTx().TxIn[0].Witness[1]
-
-	// check if the first sender is one of the vault addresses
-	vault := types.SelectVaultByPubKey(param.Vaults, hex.EncodeToString(senderPubKey))
-	if vault == nil {
-		return nil, types.ErrInvalidSenders
 	}
 
 	k.spendUTXOs(ctx, uTx)

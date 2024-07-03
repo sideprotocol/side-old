@@ -20,8 +20,8 @@ const (
 	// default minimum relay fee
 	MinRelayFee = 1000
 
-	// default hash type for signature
-	SigHashType = txscript.SigHashAll
+	// default sig hash type
+	DefaultSigHashType = txscript.SigHashAll
 )
 
 // BuildPsbt builds a bitcoin psbt from the given params.
@@ -58,7 +58,7 @@ func BuildPsbt(utxos []*UTXO, recipient string, amount int64, feeRate int64, cha
 	}
 
 	for i, utxo := range selectedUTXOs {
-		p.Inputs[i].SighashType = txscript.SigHashAll
+		p.Inputs[i].SighashType = DefaultSigHashType
 		p.Inputs[i].WitnessUtxo = wire.NewTxOut(int64(utxo.Amount), utxo.PubKeyScript)
 	}
 
@@ -140,12 +140,12 @@ func BuildRunesPsbt(utxos []*UTXO, paymentUTXOs []*UTXO, recipient string, runeI
 	}
 
 	for i, utxo := range utxos {
-		p.Inputs[i].SighashType = txscript.SigHashAll
+		p.Inputs[i].SighashType = DefaultSigHashType
 		p.Inputs[i].WitnessUtxo = wire.NewTxOut(int64(utxo.Amount), utxo.PubKeyScript)
 	}
 
 	for i, utxo := range selectedUTXOs {
-		p.Inputs[i+len(utxos)].SighashType = txscript.SigHashAll
+		p.Inputs[i+len(utxos)].SighashType = DefaultSigHashType
 		p.Inputs[i+len(utxos)].WitnessUtxo = wire.NewTxOut(int64(utxo.Amount), utxo.PubKeyScript)
 	}
 
