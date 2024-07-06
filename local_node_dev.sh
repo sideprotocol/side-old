@@ -1,6 +1,6 @@
 #!/bin/bash
 
-KEYS=("dev0" "dev1" "dev2")
+KEYS=("validator" "test" "relayer")
 CHAINID="devnet"
 MONIKER="Side Labs"
 BINARY="$HOME/go/bin/sided"
