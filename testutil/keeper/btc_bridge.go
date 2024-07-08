@@ -11,6 +11,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/sideprotocol/side/app"
 	"github.com/sideprotocol/side/x/btcbridge/keeper"
 	"github.com/sideprotocol/side/x/btcbridge/types"
@@ -32,10 +34,13 @@ func BtcBridgeKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	registry := codectypes.NewInterfaceRegistry()
 	cdc := codec.NewProtoCodec(registry)
 
+	authority := authtypes.NewModuleAddress(govtypes.ModuleName).String()
+
 	k := keeper.NewKeeper(
 		cdc,
 		storeKey,
 		memStoreKey,
+		authority,
 		app.BankKeeper,
 	)
 

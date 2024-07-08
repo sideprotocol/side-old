@@ -19,6 +19,8 @@ type (
 		storeKey storetypes.StoreKey
 		memKey   storetypes.StoreKey
 
+		authority string
+
 		bankKeeper types.BankKeeper
 	}
 )
@@ -27,13 +29,14 @@ func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeKey,
 	memKey storetypes.StoreKey,
-
+	authority string,
 	bankKeeper types.BankKeeper,
 ) *Keeper {
 	return &Keeper{
 		cdc:            cdc,
 		storeKey:       storeKey,
 		memKey:         memKey,
+		authority:      authority,
 		bankKeeper:     bankKeeper,
 		BaseUTXOKeeper: *NewBaseUTXOKeeper(cdc, storeKey),
 	}
