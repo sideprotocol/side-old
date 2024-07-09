@@ -17,7 +17,6 @@ import (
 )
 
 func TestGenesis(t *testing.T) {
-
 	mnemonic := "sunny bamboo garlic fold reopen exile letter addict forest vessel square lunar shell number deliver cruise calm artist fire just kangaroo suit wheel extend"
 	println(mnemonic)
 

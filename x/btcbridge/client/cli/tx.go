@@ -50,7 +50,6 @@ func CmdSubmitBlocks() *cobra.Command {
 		Short: "Submit Bitcoin block headers to the chain",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err

@@ -35,5 +35,4 @@ func VerifyMerkleProof(proofs []string, txHash, root *chainhash.Hash) bool {
 	}
 
 	return current.IsEqual(root)
-
 }

@@ -21,7 +21,6 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	for _, utxo := range genState.Utxos {
 		k.SetUTXO(ctx, utxo)
 	}
-
 }
 
 // ExportGenesis returns the module's exported genesis

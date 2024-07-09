@@ -14,7 +14,7 @@ import (
 func TestVolumeQuery(t *testing.T) {
 	keeper, ctx := testkeeper.GmmKeeper(t)
 	amp := sdkmath.NewInt(100)
-	//params := types.DefaultParams()
+	// params := types.DefaultParams()
 	mockAssets := []types.PoolAsset{}
 	weight := sdkmath.NewInt(6)
 	tokenIn := sdk.NewCoin("usdt", sdk.NewInt(100))
@@ -73,5 +73,4 @@ func TestVolumeQuery(t *testing.T) {
 	require.Len(t, volumeInDay, 2, "24-hour volume should have two coins")
 	require.Equal(t, expected24HourVolumeUsdc, volumeInDay[0].Amount, "24-hour USDT volume does not match")
 	require.Equal(t, expected24HourVolumeUsdt, volumeInDay[1].Amount, "24-hour USDC volume does not match")
-
 }
