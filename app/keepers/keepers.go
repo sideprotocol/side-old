@@ -396,6 +396,7 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		appCodec,
 		appKeepers.keys[btcbridgetypes.StoreKey],
 		appKeepers.keys[btcbridgetypes.StoreKey],
+		govAuthor,
 		appKeepers.BankKeeper,
 	)
 
@@ -471,6 +472,7 @@ func (appKeepers *AppKeepers) initParamsKeeper(appCodec codec.BinaryCodec, legac
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(gmmmoduletypes.ModuleName)
 	paramsKeeper.Subspace(yieldmoduletypes.ModuleName)
+	paramsKeeper.Subspace(btcbridgetypes.ModuleName)
 
 	return paramsKeeper
 }

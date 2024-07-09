@@ -24,7 +24,11 @@ service Msg {
   rpc SubmitWithdrawSignatures (MsgSubmitWithdrawSignaturesRequest) returns (MsgSubmitWithdrawSignaturesResponse);
   // SubmitWithdrawStatus submits the status of the withdraw transaction.
   rpc SubmitWithdrawStatus (MsgSubmitWithdrawStatusRequest) returns (MsgSubmitWithdrawStatusResponse);
-
+  // UpdateParams defines a governance operation for updating the x/btcbridge module
+  // parameters. The authority defaults to the x/gov module account.
+  //
+  // Since: cosmos-sdk 0.47
+  rpc UpdateParams(MsgUpdateParamsRequest) returns (MsgUpdateParamsResponse);
 }
 
 // MsgSubmitWithdrawStatusRequest defines the Msg/SubmitWithdrawStatus request type.
@@ -114,3 +118,20 @@ message MsgSubmitWithdrawSignaturesRequest {
 message MsgSubmitWithdrawSignaturesResponse {
 }
 
+// MsgUpdateParamsRequest is the Msg/UpdateParams request type.
+//
+// Since: cosmos-sdk 0.47
+message MsgUpdateParamsRequest {
+  // authority is the address that controls the module (defaults to x/gov unless overwritten).
+  string authority = 1;
+
+  // params defines the x/btcbridge parameters to be updated.
+  //
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [(gogoproto.nullable) = false];
+}
+
+// MsgUpdateParamsResponse defines the Msg/UpdateParams response type.
+//
+// Since: cosmos-sdk 0.47
+message MsgUpdateParamsResponse {}

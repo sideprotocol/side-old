@@ -1,11 +1,11 @@
 #!/bin/bash
 
-KEYS=("dev0" "dev1" "dev2")
+KEYS=("validator" "test" "relayer")
 CHAINID="devnet"
 MONIKER="Side Labs"
 BINARY="$HOME/go/bin/sided"
-DENOM_STR="uside,sat"
-INITIAL_ACCOUNT_STR=""
+DENOM_STR="uside,sat,uusdc,uusdt"
+INITIAL_ACCOUNT_STR="tb1qcr8te4kr609gcawutmrza0j4xv80jy8zmfp6l0"
 set -f
 IFS=,
 DENOMS=($DENOM_STR)
@@ -91,9 +91,15 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	# setup relayers
 	RELAYER=$($BINARY keys show "${KEYS[2]}" -a --keyring-backend $KEYRING --home "$HOMEDIR")
 	jq --arg relayer "$RELAYER" '.app_state["btcbridge"]["params"]["authorized_relayers"][0]=$relayer' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	jq --arg relayer "$RELAYER" '.app_state["btcbridge"]["params"]["vaults"][0]["address"]=$relayer' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	PUKEY=$($BINARY keys show "${KEYS[2]}" --pubkeyhex --keyring-backend $KEYRING --home "$HOMEDIR")
+	# setup vaults
+	VAULT1=$($BINARY keys show "${KEYS[1]}" -a --keyring-backend $KEYRING --home "$HOMEDIR")
+	jq --arg vault1 "$VAULT1" '.app_state["btcbridge"]["params"]["vaults"][0]["address"]=$vault1' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	PUKEY=$($BINARY keys show "${KEYS[1]}" --pubkeyhex --keyring-backend $KEYRING --home "$HOMEDIR")
 	jq --arg pubkey "$PUKEY" '.app_state["btcbridge"]["params"]["vaults"][0]["pub_key"]=$pubkey' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	VAULT2=$RELAYER
+	jq --arg vault2 "$VAULT2" '.app_state["btcbridge"]["params"]["vaults"][1]["address"]=$vault2' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	PUKEY=$($BINARY keys show "${KEYS[2]}" --pubkeyhex --keyring-backend $KEYRING --home "$HOMEDIR")
+	jq --arg pubkey "$PUKEY" '.app_state["btcbridge"]["params"]["vaults"][1]["pub_key"]=$pubkey' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
 	# set custom pruning settings
 	sed -i.bak 's/pruning = "default"/pruning = "custom"/g' "$APP_TOML"

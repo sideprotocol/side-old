@@ -4,6 +4,8 @@ import (
 	"math/big"
 	"sort"
 
+	"lukechampine.com/uint128"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -21,6 +23,8 @@ type UTXOViewKeeper interface {
 	GetUTXOsByAddr(ctx sdk.Context, addr string) []*types.UTXO
 	GetUnlockedUTXOsByAddr(ctx sdk.Context, addr string) []*types.UTXO
 	GetOrderedUTXOsByAddr(ctx sdk.Context, addr string) []*types.UTXO
+
+	GetTargetRunesUTXOs(ctx sdk.Context, addr string, runeId string, targetAmount uint128.Uint128) ([]*types.UTXO, uint128.Uint128)
 
 	IterateAllUTXOs(ctx sdk.Context, cb func(utxo *types.UTXO) (stop bool))
 	IterateUTXOsByAddr(ctx sdk.Context, addr string, cb func(addr string, utxo *types.UTXO) (stop bool))
@@ -136,6 +140,31 @@ func (bvk *BaseUTXOViewKeeper) GetOrderedUTXOsByAddr(ctx sdk.Context, addr strin
 	return utxos
 }
 
+// GetTargetRunesUTXOs gets the unlocked runes utxos targeted by the given params
+func (bvk *BaseUTXOViewKeeper) GetTargetRunesUTXOs(ctx sdk.Context, addr string, runeId string, targetAmount uint128.Uint128) ([]*types.UTXO, uint128.Uint128) {
+	utxos := make([]*types.UTXO, 0)
+
+	totalAmount := uint128.Zero
+
+	bvk.IterateRunesUTXOs(ctx, addr, runeId, func(addr string, id string, amount uint128.Uint128, utxo *types.UTXO) (stop bool) {
+		if utxo.IsLocked {
+			return false
+		}
+
+		utxos = append(utxos, utxo)
+
+		totalAmount = totalAmount.Add(amount)
+
+		return totalAmount.Cmp(targetAmount) >= 0
+	})
+
+	if totalAmount.Cmp(targetAmount) < 0 {
+		return nil, uint128.Zero
+	}
+
+	return utxos, totalAmount.Sub(targetAmount)
+}
+
 func (bvk *BaseUTXOViewKeeper) IterateAllUTXOs(ctx sdk.Context, cb func(utxo *types.UTXO) (stop bool)) {
 	store := ctx.KVStore(bvk.storeKey)
 
@@ -171,6 +200,30 @@ func (bvk *BaseUTXOViewKeeper) IterateUTXOsByAddr(ctx sdk.Context, addr string, 
 	}
 }
 
+func (bvk *BaseUTXOViewKeeper) IterateRunesUTXOs(ctx sdk.Context, addr string, id string, cb func(addr string, id string, amount uint128.Uint128, utxo *types.UTXO) (stop bool)) {
+	store := ctx.KVStore(bvk.storeKey)
+
+	iterator := sdk.KVStorePrefixIterator(store, append(append(types.BtcOwnerRunesUtxoKeyPrefix, []byte(addr)...), []byte(id)...))
+	defer iterator.Close()
+
+	prefixLen := 1 + len(addr) + len(id)
+
+	for ; iterator.Valid(); iterator.Next() {
+		key := iterator.Key()
+		value := iterator.Value()
+
+		hash := key[prefixLen : prefixLen+64]
+		vout := key[prefixLen+64:]
+
+		amount := types.RuneAmountFromString(string(value))
+
+		utxo := bvk.GetUTXO(ctx, string(hash), new(big.Int).SetBytes(vout).Uint64())
+		if cb(addr, id, amount, utxo) {
+			break
+		}
+	}
+}
+
 type BaseUTXOKeeper struct {
 	BaseUTXOViewKeeper
 
@@ -196,7 +249,13 @@ func (bk *BaseUTXOKeeper) SetUTXO(ctx sdk.Context, utxo *types.UTXO) {
 func (bk *BaseUTXOKeeper) SetOwnerUTXO(ctx sdk.Context, utxo *types.UTXO) {
 	store := ctx.KVStore(bk.storeKey)
 
-	store.Set(types.BtcOwnerUtxoKey(utxo.Address, utxo.Txid, utxo.Vout), []byte{1})
+	store.Set(types.BtcOwnerUtxoKey(utxo.Address, utxo.Txid, utxo.Vout), []byte{})
+}
+
+func (bk *BaseUTXOKeeper) SetOwnerRunesUTXO(ctx sdk.Context, utxo *types.UTXO, id string, amount string) {
+	store := ctx.KVStore(bk.storeKey)
+
+	store.Set(types.BtcOwnerRunesUtxoKey(utxo.Address, id, utxo.Txid, utxo.Vout), []byte(amount))
 }
 
 func (bk *BaseUTXOKeeper) LockUTXO(ctx sdk.Context, hash string, vout uint64) error {
@@ -275,6 +334,10 @@ func (bk *BaseUTXOKeeper) SpendUTXOs(ctx sdk.Context, utxos []*types.UTXO) error
 func (bk *BaseUTXOKeeper) saveUTXO(ctx sdk.Context, utxo *types.UTXO) {
 	bk.SetUTXO(ctx, utxo)
 	bk.SetOwnerUTXO(ctx, utxo)
+
+	for _, r := range utxo.Runes {
+		bk.SetOwnerRunesUTXO(ctx, utxo, r.Id, r.Amount)
+	}
 }
 
 // removeUTXO deletes the given utxo which is assumed to exist.
@@ -284,4 +347,8 @@ func (bk *BaseUTXOKeeper) removeUTXO(ctx sdk.Context, hash string, vout uint64) 
 
 	store.Delete(types.BtcUtxoKey(hash, vout))
 	store.Delete(types.BtcOwnerUtxoKey(utxo.Address, hash, vout))
+
+	for _, r := range utxo.Runes {
+		store.Delete(types.BtcOwnerRunesUtxoKey(utxo.Address, r.Id, hash, vout))
+	}
 }

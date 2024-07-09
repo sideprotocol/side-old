@@ -1,6 +1,15 @@
 package types
 
-import sdk "github.com/cosmos/cosmos-sdk/types"
+import (
+	"bytes"
+	"encoding/hex"
+
+	secp256k1 "github.com/btcsuite/btcd/btcec/v2"
+	"github.com/btcsuite/btcd/btcutil"
+	"github.com/btcsuite/btcd/txscript"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
 
 // NewParams creates a new Params instance
 func NewParams(relayers []string) Params {
@@ -34,6 +43,41 @@ func (p Params) Validate() error {
 			return err
 		}
 	}
+
+	if err := sdk.ValidateDenom(p.BtcVoucherDenom); err != nil {
+		return err
+	}
+
+	vaults := make(map[string]bool)
+
+	for _, vault := range p.Vaults {
+		_, ok := vaults[vault.Address]
+		if ok {
+			return ErrInvalidParams
+		}
+
+		_, err := sdk.AccAddressFromBech32(vault.Address)
+		if err != nil {
+			return err
+		}
+
+		if len(vault.PubKey) != 0 {
+			pkBytes, err := hex.DecodeString(vault.PubKey)
+			if err != nil {
+				return err
+			}
+
+			_, err = secp256k1.ParsePubKey(pkBytes)
+			if err != nil {
+				return err
+			}
+		}
+
+		if vault.AssetType == AssetType_ASSET_TYPE_UNSPECIFIED {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -63,6 +107,40 @@ func SelectVaultByBitcoinAddress(vaults []*Vault, address string) *Vault {
 func SelectVaultByPubKey(vaults []*Vault, pubKey string) *Vault {
 	for _, v := range vaults {
 		if v.PubKey == pubKey {
+			return v
+		}
+	}
+
+	return nil
+}
+
+// SelectVaultByAssetType returns the vault by the asset type
+func SelectVaultByAssetType(vaults []*Vault, assetType AssetType) *Vault {
+	for _, v := range vaults {
+		if v.AssetType == assetType {
+			return v
+		}
+	}
+
+	return nil
+}
+
+// SelectVaultByPkScript returns the vault by the pk script
+func SelectVaultByPkScript(vaults []*Vault, pkScript []byte) *Vault {
+	chainCfg := sdk.GetConfig().GetBtcChainCfg()
+
+	for _, v := range vaults {
+		addr, err := btcutil.DecodeAddress(v.Address, chainCfg)
+		if err != nil {
+			continue
+		}
+
+		addrScript, err := txscript.PayToAddrScript(addr)
+		if err != nil {
+			continue
+		}
+
+		if bytes.Equal(addrScript, pkScript) {
 			return v
 		}
 	}

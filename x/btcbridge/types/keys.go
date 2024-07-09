@@ -32,11 +32,11 @@ var (
 	BtcBestBlockHeaderKey      = []byte{0x13} // key for the best block height
 	BtcSigningRequestPrefix    = []byte{0x14} // prefix for each key to a signing request
 
-	BtcUtxoKeyPrefix      = []byte{0x15} // prefix for each key to a utxo
-	BtcOwnerUtxoKeyPrefix = []byte{0x16} // prefix for each key to an owned utxo
+	BtcUtxoKeyPrefix           = []byte{0x15} // prefix for each key to a utxo
+	BtcOwnerUtxoKeyPrefix      = []byte{0x16} // prefix for each key to an owned utxo
+	BtcOwnerRunesUtxoKeyPrefix = []byte{0x17} // prefix for each key to an owned runes utxo
 
-	BtcMintedTxHashKeyPrefix = []byte{0x17} // prefix for each key to a minted tx hash
-
+	BtcMintedTxHashKeyPrefix = []byte{0x18} // prefix for each key to a minted tx hash
 )
 
 func Int64ToBytes(number uint64) []byte {
@@ -51,6 +51,14 @@ func BtcUtxoKey(hash string, vout uint64) []byte {
 
 func BtcOwnerUtxoKey(owner string, hash string, vout uint64) []byte {
 	key := append(append(BtcOwnerUtxoKeyPrefix, []byte(owner)...), []byte(hash)...)
+	key = append(key, Int64ToBytes(vout)...)
+
+	return key
+}
+
+func BtcOwnerRunesUtxoKey(owner string, id string, hash string, vout uint64) []byte {
+	key := append(append(BtcOwnerRunesUtxoKeyPrefix, []byte(owner)...), []byte(id)...)
+	key = append(key, []byte(hash)...)
 	key = append(key, Int64ToBytes(vout)...)
 
 	return key

@@ -90,6 +90,22 @@ func (k Keeper) QuerySigningRequestByAddress(goCtx context.Context, req *types.Q
 	return &types.QuerySigningRequestByAddressResponse{Requests: requests}, nil
 }
 
+func (k Keeper) QuerySigningRequestByTxHash(goCtx context.Context, req *types.QuerySigningRequestByTxHashRequest) (*types.QuerySigningRequestByTxHashResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	var request *types.BitcoinSigningRequest
+
+	if k.HasSigningRequest(ctx, req.Txid) {
+		request = k.GetSigningRequest(ctx, req.Txid)
+	}
+
+	return &types.QuerySigningRequestByTxHashResponse{Request: request}, nil
+}
+
 func (k Keeper) QueryUTXOs(goCtx context.Context, req *types.QueryUTXOsRequest) (*types.QueryUTXOsResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
