@@ -6,7 +6,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 )
 
-// x/yield module sentinel errors
+// x/btcbridge module sentinel errors
 var (
 	ErrSenderAddressNotAuthorized = errorsmod.Register(ModuleName, 1000, "sender address not authorized")
 	ErrInvalidHeader              = errorsmod.Register(ModuleName, 1100, "invalid block header")
@@ -42,4 +42,6 @@ var (
 
 	ErrInvalidRunes  = errorsmod.Register(ModuleName, 7100, "invalid runes")
 	ErrInvalidRuneId = errorsmod.Register(ModuleName, 7101, "invalid rune id")
+
+	ErrInvalidParams = errorsmod.Register(ModuleName, 8100, "invalid module params")
 )

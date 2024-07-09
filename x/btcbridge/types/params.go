@@ -3,6 +3,7 @@ package types
 import (
 	"bytes"
 
+	secp256k1 "github.com/btcsuite/btcd/btcec/v2"
 	"github.com/btcsuite/btcd/btcutil"
 	"github.com/btcsuite/btcd/txscript"
 
@@ -41,6 +42,36 @@ func (p Params) Validate() error {
 			return err
 		}
 	}
+
+	if err := sdk.ValidateDenom(p.BtcVoucherDenom); err != nil {
+		return err
+	}
+
+	vaults := make(map[string]bool)
+
+	for _, vault := range p.Vaults {
+		_, ok := vaults[vault.Address]
+		if ok {
+			return ErrInvalidParams
+		}
+
+		_, err := sdk.AccAddressFromBech32(vault.Address)
+		if err != nil {
+			return err
+		}
+
+		if len(vault.PubKey) != 0 {
+			_, err := secp256k1.ParsePubKey([]byte(vault.PubKey))
+			if err != nil {
+				return err
+			}
+		}
+
+		if vault.AssetType == AssetType_ASSET_TYPE_UNSPECIFIED {
+			return err
+		}
+	}
+
 	return nil
 }
 
