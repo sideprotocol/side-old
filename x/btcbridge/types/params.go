@@ -2,6 +2,7 @@ package types
 
 import (
 	"bytes"
+	"encoding/hex"
 
 	secp256k1 "github.com/btcsuite/btcd/btcec/v2"
 	"github.com/btcsuite/btcd/btcutil"
@@ -61,7 +62,12 @@ func (p Params) Validate() error {
 		}
 
 		if len(vault.PubKey) != 0 {
-			_, err := secp256k1.ParsePubKey([]byte(vault.PubKey))
+			pkBytes, err := hex.DecodeString(vault.PubKey)
+			if err != nil {
+				return err
+			}
+
+			_, err = secp256k1.ParsePubKey(pkBytes)
 			if err != nil {
 				return err
 			}
