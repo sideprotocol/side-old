@@ -1,11 +1,11 @@
 #!/bin/bash
 
-KEYS=("dev0" "dev1")
-CHAINID="S2-testnet-1"
+KEYS=("validator" "test" "relayer" "btc-vault" "runes-vault")
+CHAINID="grimoria-testnet-1"
 MONIKER="Side Labs"
 BINARY="$HOME/go/bin/sided"
-DENOM_STR="uside,ubtct,uusdc,uusdc.axl,uusdc.noble,uusdt,uusdt.kava,uusdt.axl,uwbtc.axl,uwbtc.osmo,uwbtc"
-INITIAL_ACCOUNT_STR="bc1q4h88d5xg2cxxcm2kaej32lx6gkdfrxslfaxm8n"
+DENOM_STR="uside,sat,uusdc,uusdt"
+INITIAL_ACCOUNT_STR="tb1qcr8te4kr609gcawutmrza0j4xv80jy8zmfp6l0"
 set -f
 IFS=,
 DENOMS=($DENOM_STR)
@@ -73,6 +73,10 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
     # 	$BINARY keys add "$KEY" --keyring-backend $KEYRING --algo $KEYALGO --recover --home "$HOMEDIR"
 	# done
 
+	echo ""
+	echo "☝️ Copy the above mnemonic phrases and import them to relayer! Press [Enter] to continue..."
+	read -r continue
+
 	# Set moniker and chain-id for Cascadia (Moniker can be anything, chain-id must be an integer)
 	$BINARY init $MONIKER -o --chain-id $CHAINID --home "$HOMEDIR"
 
@@ -84,6 +88,19 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	jq --arg gas "$BLOCK_GAS" '.app_state["feemarket"]["block_gas"]=$gas' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 	# Set gas limit in genesis
 	jq --arg max_gas "$MAX_GAS" '.consensus_params["block"]["max_gas"]=$max_gas' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	# setup relayers
+	RELAYER=$($BINARY keys show "${KEYS[2]}" -a --keyring-backend $KEYRING --home "$HOMEDIR")
+	jq --arg relayer "$RELAYER" '.app_state["btcbridge"]["params"]["authorized_relayers"][0]=$relayer' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	# setup vaults
+	BTC_VAULT=$($BINARY keys show "${KEYS[3]}" -a --keyring-backend $KEYRING --home "$HOMEDIR")
+	jq --arg btc_vault "$BTC_VAULT" '.app_state["btcbridge"]["params"]["vaults"][0]["address"]=$btc_vault' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	PUKEY=$($BINARY keys show "${KEYS[3]}" --pubkeyhex --keyring-backend $KEYRING --home "$HOMEDIR")
+	jq --arg pubkey "$PUKEY" '.app_state["btcbridge"]["params"]["vaults"][0]["pub_key"]=$pubkey' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	RUNES_VAULT=$($BINARY keys show "${KEYS[4]}" -a --keyring-backend $KEYRING --home "$HOMEDIR")
+	jq --arg runes_vault "$RUNES_VAULT" '.app_state["btcbridge"]["params"]["vaults"][1]["address"]=$runes_vault' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	PUKEY=$($BINARY keys show "${KEYS[4]}" --pubkeyhex --keyring-backend $KEYRING --home "$HOMEDIR")
+	jq --arg pubkey "$PUKEY" '.app_state["btcbridge"]["params"]["vaults"][1]["pub_key"]=$pubkey' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+
 	# set custom pruning settings
 	sed -i.bak 's/pruning = "default"/pruning = "custom"/g' "$APP_TOML"
 	sed -i.bak 's/pruning-keep-recent = "0"/pruning-keep-recent = "2"/g' "$APP_TOML"
@@ -103,6 +120,8 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	    $BINARY add-genesis-account "$KEY" ${BALANCES:1} --keyring-backend $KEYRING --home "$HOMEDIR"
 	done
 
+	echo "Genesis accounts allocated for local accounts"
+
 	# Allocate genesis accounts (cosmos formatted addresses)
 	for ADDR in "${INITIAL_ACCOUNTS[@]}"; do
 	    BALANCES=""
@@ -112,12 +131,14 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	    echo ${BALANCES:1}
 	    $BINARY add-genesis-account "$ADDR" ${BALANCES:1} --home "$HOMEDIR"
 	done
+	echo "Genesis accounts allocated for initial accounts"
 
 
 
 	# Sign genesis transaction
-	echo $INITIAL_SUPPLY${DENOMS[0]}
+	# echo $INITIAL_SUPPLY${DENOMS[0]}
 	$BINARY gentx "${KEYS[0]}" $INITIAL_SUPPLY${DENOMS[0]} --keyring-backend $KEYRING --chain-id $CHAINID --identity "666AC57CC678BEC4" --website="https://side.one" --home "$HOMEDIR"
+	echo "Genesis transaction signed"
 
 	## In case you want to create multiple validators at genesis
 	## 1. Back to `$BINARY keys add` step, init more keys
@@ -128,9 +149,11 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 
 	# Collect genesis tx
 	$BINARY collect-gentxs --home "$HOMEDIR"
+	echo "Genesis transactions collected"
 
 	# Run this to ensure everything worked and that the genesis file is setup correctly
 	$BINARY validate-genesis --home "$HOMEDIR"
+	echo "Genesis file validated"
 
 	if [[ $1 == "pending" ]]; then
 		echo "pending mode is on, please wait for the first block committed."
@@ -139,4 +162,4 @@ fi
 
 
 # Start the node (remove the --pruning=nothing flag if historical queries are not needed)
-$BINARY start --log_level info --minimum-gas-prices=0.0001${DENOMS[0]}
+$BINARY start --log_level info --minimum-gas-prices=0.0001${DENOMS[0]} --home "$HOMEDIR"

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-KEYS=("validator" "test" "relayer")
+KEYS=("validator" "test" "relayer" "btc-vault" "runes-vault")
 CHAINID="devnet"
 MONIKER="Side Labs"
 BINARY="$HOME/go/bin/sided"
@@ -92,13 +92,13 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	RELAYER=$($BINARY keys show "${KEYS[2]}" -a --keyring-backend $KEYRING --home "$HOMEDIR")
 	jq --arg relayer "$RELAYER" '.app_state["btcbridge"]["params"]["authorized_relayers"][0]=$relayer' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 	# setup vaults
-	VAULT1=$($BINARY keys show "${KEYS[1]}" -a --keyring-backend $KEYRING --home "$HOMEDIR")
-	jq --arg vault1 "$VAULT1" '.app_state["btcbridge"]["params"]["vaults"][0]["address"]=$vault1' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	PUKEY=$($BINARY keys show "${KEYS[1]}" --pubkeyhex --keyring-backend $KEYRING --home "$HOMEDIR")
+	BTC_VAULT=$($BINARY keys show "${KEYS[3]}" -a --keyring-backend $KEYRING --home "$HOMEDIR")
+	jq --arg btc_vault "$BTC_VAULT" '.app_state["btcbridge"]["params"]["vaults"][0]["address"]=$btc_vault' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	PUKEY=$($BINARY keys show "${KEYS[3]}" --pubkeyhex --keyring-backend $KEYRING --home "$HOMEDIR")
 	jq --arg pubkey "$PUKEY" '.app_state["btcbridge"]["params"]["vaults"][0]["pub_key"]=$pubkey' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	VAULT2=$RELAYER
-	jq --arg vault2 "$VAULT2" '.app_state["btcbridge"]["params"]["vaults"][1]["address"]=$vault2' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	PUKEY=$($BINARY keys show "${KEYS[2]}" --pubkeyhex --keyring-backend $KEYRING --home "$HOMEDIR")
+	RUNES_VAULT=$($BINARY keys show "${KEYS[4]}" -a --keyring-backend $KEYRING --home "$HOMEDIR")
+	jq --arg runes_vault "$RUNES_VAULT" '.app_state["btcbridge"]["params"]["vaults"][1]["address"]=$runes_vault' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	PUKEY=$($BINARY keys show "${KEYS[4]}" --pubkeyhex --keyring-backend $KEYRING --home "$HOMEDIR")
 	jq --arg pubkey "$PUKEY" '.app_state["btcbridge"]["params"]["vaults"][1]["pub_key"]=$pubkey' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
 	# set custom pruning settings
@@ -162,4 +162,4 @@ fi
 
 
 # Start the node (remove the --pruning=nothing flag if historical queries are not needed)
-$BINARY start --log_level info --minimum-gas-prices=0.0001${DENOMS[0]}
+$BINARY start --log_level info --minimum-gas-prices=0.0001${DENOMS[0]} --home "$HOMEDIR"
