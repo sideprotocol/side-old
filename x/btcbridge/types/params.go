@@ -74,7 +74,7 @@ func (p Params) Validate() error {
 		}
 
 		if vault.AssetType == AssetType_ASSET_TYPE_UNSPECIFIED {
-			return err
+			return ErrInvalidParams
 		}
 	}
 

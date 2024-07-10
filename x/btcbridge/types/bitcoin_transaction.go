@@ -341,3 +341,19 @@ func CheckOutputAmount(address string, amount int64) error {
 func IsOpReturnOutput(out *wire.TxOut) bool {
 	return len(out.PkScript) > 0 && out.PkScript[0] == txscript.OP_RETURN
 }
+
+// MustPkScriptFromAddress returns the public script of the given address
+// Panic if any error occurred
+func MustPkScriptFromAddress(address string) []byte {
+	addr, err := btcutil.DecodeAddress(address, sdk.GetConfig().GetBtcChainCfg())
+	if err != nil {
+		panic(err)
+	}
+
+	pkScript, err := txscript.PayToAddrScript(addr)
+	if err != nil {
+		panic(err)
+	}
+
+	return pkScript
+}

@@ -9,6 +9,7 @@ import (
 
 	"github.com/btcsuite/btcd/blockchain"
 	"github.com/btcsuite/btcd/btcutil"
+	"github.com/btcsuite/btcd/btcutil/psbt"
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/wire"
 
@@ -60,7 +61,12 @@ func (k Keeper) NewBtcSigningRequest(ctx sdk.Context, sender string, coin sdk.Co
 		return nil, types.ErrInsufficientUTXOs
 	}
 
-	psbt, selectedUTXOs, changeUTXO, err := types.BuildPsbt(utxos, sender, coin.Amount.Int64(), feeRate, vault)
+	psbt, selectedUTXOs, _, err := types.BuildPsbt(utxos, sender, coin.Amount.Int64(), feeRate, vault)
+	if err != nil {
+		return nil, err
+	}
+
+	changeUTXO, err := k.handleBtcTxFee(psbt, vault)
 	if err != nil {
 		return nil, err
 	}
@@ -74,10 +80,8 @@ func (k Keeper) NewBtcSigningRequest(ctx sdk.Context, sender string, coin sdk.Co
 	_ = k.LockUTXOs(ctx, selectedUTXOs)
 
 	// save the change utxo and mark minted
-	if changeUTXO != nil {
-		k.saveUTXO(ctx, changeUTXO)
-		k.addToMintHistory(ctx, psbt.UnsignedTx.TxHash().String())
-	}
+	k.saveUTXO(ctx, changeUTXO)
+	k.addToMintHistory(ctx, psbt.UnsignedTx.TxHash().String())
 
 	signingRequest := &types.BitcoinSigningRequest{
 		Address:      sender,
@@ -112,6 +116,10 @@ func (k Keeper) NewRunesSigningRequest(ctx sdk.Context, sender string, coin sdk.
 
 	psbt, selectedUTXOs, changeUTXO, runesChangeUTXO, err := types.BuildRunesPsbt(runesUTXOs, paymentUTXOs, sender, runeId.ToString(), amount, feeRate, amountDelta, vault, btcVault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := k.handleRunesTxFee(ctx, psbt, sender); err != nil {
 		return nil, err
 	}
 
@@ -284,7 +292,13 @@ func (k Keeper) ProcessBitcoinWithdrawTransaction(ctx sdk.Context, msg *types.Ms
 		return nil, err
 	}
 
+	// spend the locked utxos
 	k.spendUTXOs(ctx, uTx)
+
+	// burn the locked asset
+	if err := k.burnLockedAsset(ctx, txHash.String()); err != nil {
+		return nil, err
+	}
 
 	return &txHash, nil
 }
@@ -299,4 +313,91 @@ func (k Keeper) spendUTXOs(ctx sdk.Context, uTx *btcutil.Tx) {
 			_ = k.SpendUTXO(ctx, hash, uint64(vout))
 		}
 	}
+}
+
+// handleTxFee performs the fee handling for the btc withdrawal tx
+// Make sure that the given psbt is valid
+// There are at most two outputs and the change output is the last one if any
+func (k Keeper) handleBtcTxFee(p *psbt.Packet, changeAddr string) (*types.UTXO, error) {
+	recipientOut := p.UnsignedTx.TxOut[0]
+
+	changeOut := new(wire.TxOut)
+	if len(p.UnsignedTx.TxOut) > 1 {
+		changeOut = p.UnsignedTx.TxOut[1]
+	} else {
+		changeOut = wire.NewTxOut(0, types.MustPkScriptFromAddress(changeAddr))
+		p.UnsignedTx.TxOut = append(p.UnsignedTx.TxOut, changeOut)
+	}
+
+	txFee, err := p.GetTxFee()
+	if err != nil {
+		return nil, err
+	}
+
+	recipientOut.Value -= int64(txFee)
+	changeOut.Value += int64(txFee)
+
+	if types.IsDustOut(recipientOut) || types.IsDustOut(changeOut) {
+		return nil, types.ErrDustOutput
+	}
+
+	return &types.UTXO{
+		Txid:         p.UnsignedTx.TxHash().String(),
+		Vout:         1,
+		Address:      changeAddr,
+		Amount:       uint64(changeOut.Value),
+		PubKeyScript: changeOut.PkScript,
+	}, nil
+}
+
+// handleRunesTxFee performs the fee handling for the runes withdrawal tx
+func (k Keeper) handleRunesTxFee(ctx sdk.Context, p *psbt.Packet, recipient string) error {
+	txFee, err := p.GetTxFee()
+	if err != nil {
+		return err
+	}
+
+	feeCoin := sdk.NewCoin(k.GetParams(ctx).BtcVoucherDenom, sdk.NewInt(int64(txFee)))
+	if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, sdk.MustAccAddressFromBech32(recipient), types.ModuleName, sdk.NewCoins(feeCoin)); err != nil {
+		return err
+	}
+
+	k.lockAsset(ctx, p.UnsignedTx.TxHash().String(), feeCoin)
+
+	return nil
+}
+
+// lockAsset locks the given asset by the tx hash
+func (k Keeper) lockAsset(ctx sdk.Context, txHash string, coin sdk.Coin) {
+	store := ctx.KVStore(k.storeKey)
+
+	bz := k.cdc.MustMarshal(&coin)
+	store.Set(types.BtcLockedAssetKey(txHash), bz)
+}
+
+// getLockedAsset gets the locked asset by the tx hash
+func (k Keeper) getLockedAsset(ctx sdk.Context, txHash string) sdk.Coin {
+	store := ctx.KVStore(k.storeKey)
+	bz := store.Get(types.BtcLockedAssetKey(txHash))
+
+	var coin sdk.Coin
+	k.cdc.MustUnmarshal(bz, &coin)
+
+	return coin
+}
+
+// burnLockedAsset burns the locked asset
+func (k Keeper) burnLockedAsset(ctx sdk.Context, txHash string) error {
+	store := ctx.KVStore(k.storeKey)
+
+	if store.Has(types.BtcLockedAssetKey(txHash)) {
+		lockedCoin := k.getLockedAsset(ctx, txHash)
+		if err := k.bankKeeper.BurnCoins(ctx, types.ModuleName, sdk.NewCoins(lockedCoin)); err != nil {
+			return err
+		}
+
+		store.Delete(types.BtcLockedAssetKey(txHash))
+	}
+
+	return nil
 }

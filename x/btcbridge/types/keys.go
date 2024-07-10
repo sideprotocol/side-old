@@ -37,6 +37,8 @@ var (
 	BtcOwnerRunesUtxoKeyPrefix = []byte{0x17} // prefix for each key to an owned runes utxo
 
 	BtcMintedTxHashKeyPrefix = []byte{0x18} // prefix for each key to a minted tx hash
+
+	BtcLockedAssetKeyPrefix = []byte{0x19} // prefix for each key to the locked asset
 )
 
 func Int64ToBytes(number uint64) []byte {
@@ -83,4 +85,8 @@ func BtcSigningRequestHashKey(txid string) []byte {
 
 func BtcMintedTxHashKey(hash string) []byte {
 	return append(BtcMintedTxHashKeyPrefix, []byte(hash)...)
+}
+
+func BtcLockedAssetKey(txHash string) []byte {
+	return append(BtcLockedAssetKeyPrefix, []byte(txHash)...)
 }
