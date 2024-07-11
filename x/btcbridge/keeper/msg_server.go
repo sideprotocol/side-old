@@ -142,10 +142,6 @@ func (m msgServer) WithdrawBitcoin(goCtx context.Context, msg *types.MsgWithdraw
 		return nil, err
 	}
 
-	if err = m.bankKeeper.SendCoinsFromAccountToModule(ctx, sender, types.ModuleName, sdk.NewCoins(coin)); err != nil {
-		return nil, err
-	}
-
 	if coin.Denom == m.GetParams(ctx).BtcVoucherDenom {
 		if err := types.CheckOutputAmount(msg.Sender, coin.Amount.Int64()); err != nil {
 			return nil, err
@@ -161,6 +157,12 @@ func (m msgServer) WithdrawBitcoin(goCtx context.Context, msg *types.MsgWithdraw
 	if err != nil {
 		return nil, err
 	}
+
+	if err = m.bankKeeper.SendCoinsFromAccountToModule(ctx, sender, types.ModuleName, sdk.NewCoins(coin)); err != nil {
+		return nil, err
+	}
+
+	m.lockAsset(ctx, req.Txid, coin)
 
 	// Emit events
 	m.EmitEvent(ctx, msg.Sender,

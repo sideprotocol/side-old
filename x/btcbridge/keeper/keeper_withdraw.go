@@ -368,35 +368,32 @@ func (k Keeper) handleRunesTxFee(ctx sdk.Context, p *psbt.Packet, recipient stri
 }
 
 // lockAsset locks the given asset by the tx hash
+// we can guarantee that the keys do not overlap
 func (k Keeper) lockAsset(ctx sdk.Context, txHash string, coin sdk.Coin) {
 	store := ctx.KVStore(k.storeKey)
 
 	bz := k.cdc.MustMarshal(&coin)
-	store.Set(types.BtcLockedAssetKey(txHash), bz)
-}
-
-// getLockedAsset gets the locked asset by the tx hash
-func (k Keeper) getLockedAsset(ctx sdk.Context, txHash string) sdk.Coin {
-	store := ctx.KVStore(k.storeKey)
-	bz := store.Get(types.BtcLockedAssetKey(txHash))
-
-	var coin sdk.Coin
-	k.cdc.MustUnmarshal(bz, &coin)
-
-	return coin
+	store.Set(types.BtcLockedAssetKey(txHash, bz), []byte{})
 }
 
 // burnLockedAsset burns the locked asset
 func (k Keeper) burnLockedAsset(ctx sdk.Context, txHash string) error {
 	store := ctx.KVStore(k.storeKey)
 
-	if store.Has(types.BtcLockedAssetKey(txHash)) {
-		lockedCoin := k.getLockedAsset(ctx, txHash)
-		if err := k.bankKeeper.BurnCoins(ctx, types.ModuleName, sdk.NewCoins(lockedCoin)); err != nil {
+	iterator := sdk.KVStorePrefixIterator(store, append(types.BtcLockedAssetKeyPrefix, []byte(txHash)...))
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		key := iterator.Key()
+
+		var lockedAsset sdk.Coin
+		k.cdc.MustUnmarshal(key[1+len(txHash):], &lockedAsset)
+
+		if err := k.bankKeeper.BurnCoins(ctx, types.ModuleName, sdk.NewCoins(lockedAsset)); err != nil {
 			return err
 		}
 
-		store.Delete(types.BtcLockedAssetKey(txHash))
+		store.Delete(key)
 	}
 
 	return nil

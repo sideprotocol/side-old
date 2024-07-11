@@ -87,6 +87,6 @@ func BtcMintedTxHashKey(hash string) []byte {
 	return append(BtcMintedTxHashKeyPrefix, []byte(hash)...)
 }
 
-func BtcLockedAssetKey(txHash string) []byte {
-	return append(BtcLockedAssetKeyPrefix, []byte(txHash)...)
+func BtcLockedAssetKey(txHash string, coin []byte) []byte {
+	return append(append(BtcLockedAssetKeyPrefix, []byte(txHash)...), coin...)
 }
