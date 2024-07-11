@@ -13,39 +13,39 @@ option go_package = "github.com/sideprotocol/side/x/btcbridge/types";
 service Query {
   // Parameters queries the parameters of the module.
   rpc QueryParams(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/sideprotocol/side/btcbridge/params";
+    option (google.api.http).get = "/side/btcbridge/params";
   }
   // ChainTip queries the chain tip of the module.
   rpc QueryChainTip(QueryChainTipRequest) returns (QueryChainTipResponse) {
-    option (google.api.http).get = "/sideprotocol/side/btcbridge/tip";
+    option (google.api.http).get = "/side/btcbridge/tip";
   }
   // BlockHeaderByHeight queries the block header by height.
   rpc QueryBlockHeaderByHeight(QueryBlockHeaderByHeightRequest) returns (QueryBlockHeaderByHeightResponse) {
-    option (google.api.http).get = "/sideprotocol/side/btcbridge/height/{height}";
+    option (google.api.http).get = "/side/btcbridge/height/{height}";
   }
   // BlockHeaderByHash queries the block header by hash.
   rpc QueryBlockHeaderByHash(QueryBlockHeaderByHashRequest) returns (QueryBlockHeaderByHashResponse) {
-    option (google.api.http).get = "/sideprotocol/side/btcbridge/hash/{hash}";
+    option (google.api.http).get = "/side/btcbridge/hash/{hash}";
   }
   // QuerySigningRequest queries the request to sign.
   rpc QuerySigningRequest(QuerySigningRequestRequest) returns (QuerySigningRequestResponse) {
-    option (google.api.http).get = "/sideprotocol/side/btcbridge/signing/request";
+    option (google.api.http).get = "/side/btcbridge/signing/request";
   }
   // QuerySigningRequestByAddress queries the signing request by the given address.
   rpc QuerySigningRequestByAddress(QuerySigningRequestByAddressRequest) returns (QuerySigningRequestByAddressResponse) {
-    option (google.api.http).get = "/sideprotocol/side/btcbridge/signing/request/{address}";
+    option (google.api.http).get = "/side/btcbridge/signing/request/address/{address}";
   }
   // QuerySigningRequestByTxHash queries the signing request by the given tx hash.
   rpc QuerySigningRequestByTxHash(QuerySigningRequestByTxHashRequest) returns (QuerySigningRequestByTxHashResponse) {
-    option (google.api.http).get = "/sideprotocol/side/btcbridge/signing/request/{txid}";
+    option (google.api.http).get = "/side/btcbridge/signing/request/tx/{txid}";
   }
   // UTXOs queries all utxos.
   rpc QueryUTXOs(QueryUTXOsRequest) returns (QueryUTXOsResponse) {
-    option (google.api.http).get = "/sideprotocol/side/btcbridge/utxos";
+    option (google.api.http).get = "/side/btcbridge/utxos";
   }
   // UTXOsByAddress queries the utxos of the given address.
   rpc QueryUTXOsByAddress(QueryUTXOsByAddressRequest) returns (QueryUTXOsByAddressResponse) {
-    option (google.api.http).get = "/sideprotocol/side/btcbridge/utxos/{address}";
+    option (google.api.http).get = "/side/btcbridge/utxos/{address}";
   }
 }
 
