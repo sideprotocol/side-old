@@ -849,23 +849,23 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_QueryParams_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"sideprotocol", "side", "btcbridge", "params"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_QueryParams_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"side", "btcbridge", "params"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_QueryChainTip_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"sideprotocol", "side", "btcbridge", "tip"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_QueryChainTip_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"side", "btcbridge", "tip"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_QueryBlockHeaderByHeight_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"sideprotocol", "side", "btcbridge", "height"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_QueryBlockHeaderByHeight_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 2}, []string{"side", "btcbridge", "height"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_QueryBlockHeaderByHash_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"sideprotocol", "side", "btcbridge", "hash"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_QueryBlockHeaderByHash_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 2}, []string{"side", "btcbridge", "hash"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_QuerySigningRequest_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"sideprotocol", "side", "btcbridge", "signing", "request"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_QuerySigningRequest_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"side", "btcbridge", "signing", "request"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_QuerySigningRequestByAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"sideprotocol", "side", "btcbridge", "signing", "request", "address"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_QuerySigningRequestByAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 1, 0, 4, 1, 5, 4}, []string{"side", "btcbridge", "signing", "request", "address"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_QuerySigningRequestByTxHash_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"sideprotocol", "side", "btcbridge", "signing", "request", "txid"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_QuerySigningRequestByTxHash_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"side", "btcbridge", "signing", "request", "tx", "txid"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_QueryUTXOs_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"sideprotocol", "side", "btcbridge", "utxos"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_QueryUTXOs_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"side", "btcbridge", "utxos"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_QueryUTXOsByAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"sideprotocol", "side", "btcbridge", "utxos", "address"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_QueryUTXOsByAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"side", "btcbridge", "utxos", "address"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

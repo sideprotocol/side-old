@@ -39,6 +39,7 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 			cdc := clientCtx.Codec
+
 			serverCtx := server.GetServerContextFromCmd(cmd)
 			config := serverCtx.Config
 
@@ -57,6 +58,7 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 					return err
 				}
 
+				// attempt to lookup address from Keybase if no address was provided
 				kb, err := keyring.New(sdk.KeyringServiceName(), keyringBackend, clientCtx.HomeDir, inBuf, cdc)
 				if err != nil {
 					return err
@@ -188,10 +190,3 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 
 	return cmd
 }
-
-// func getBitcoinCodec() codec.Codec {
-// 	registry := codectypes.NewInterfaceRegistry()
-// 	bitcoincdc.RegisterInterfaces(registry)
-// 	cryptocodec.RegisterInterfaces(registry)
-// 	return codec.NewProtoCodec(registry)
-// }

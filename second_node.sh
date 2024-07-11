@@ -1,10 +1,10 @@
 #!/bin/bash
 
 KEYS=("dev0" "dev1")
-CHAINID="S2-testnet-1"
+CHAINID="grimoria-testnet-1"
 MONIKER="Side Labs"
 BINARY="$HOME/go/bin/sided"
-DENOM_STR="uside,ubtct,uusdc,uusdc.axl,uusdc.noble,uusdt,uusdt.kava,uusdt.axl,uwbtc.axl,uwbtc.osmo,uwbtc"
+DENOM_STR="uside,uusdt,uusdc"
 
 set -f
 IFS=,

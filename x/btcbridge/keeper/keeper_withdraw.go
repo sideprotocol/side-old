@@ -295,8 +295,8 @@ func (k Keeper) ProcessBitcoinWithdrawTransaction(ctx sdk.Context, msg *types.Ms
 	// spend the locked utxos
 	k.spendUTXOs(ctx, uTx)
 
-	// burn the locked asset
-	if err := k.burnLockedAsset(ctx, txHash.String()); err != nil {
+	// burn the locked assets
+	if err := k.burnLockedAssets(ctx, txHash.String()); err != nil {
 		return nil, err
 	}
 
@@ -376,8 +376,8 @@ func (k Keeper) lockAsset(ctx sdk.Context, txHash string, coin sdk.Coin) {
 	store.Set(types.BtcLockedAssetKey(txHash, bz), []byte{})
 }
 
-// burnLockedAsset burns the locked asset
-func (k Keeper) burnLockedAsset(ctx sdk.Context, txHash string) error {
+// burnLockedAssets burns the locked assets
+func (k Keeper) burnLockedAssets(ctx sdk.Context, txHash string) error {
 	store := ctx.KVStore(k.storeKey)
 
 	iterator := sdk.KVStorePrefixIterator(store, append(types.BtcLockedAssetKeyPrefix, []byte(txHash)...))

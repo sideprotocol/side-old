@@ -4,7 +4,7 @@ KEYS=("validator" "test" "relayer" "btc-vault" "runes-vault")
 CHAINID="grimoria-testnet-1"
 MONIKER="Side Labs"
 BINARY="$HOME/go/bin/sided"
-DENOM_STR="uside,sat,uusdc,uusdt"
+DENOM_STR="uside,uusdc,uusdt"
 INITIAL_ACCOUNT_STR="tb1qcr8te4kr609gcawutmrza0j4xv80jy8zmfp6l0"
 set -f
 IFS=,

@@ -2,7 +2,6 @@ package docs
 
 import (
 	"embed"
-	"fmt"
 	httptemplate "html/template"
 	"net/http"
 
@@ -30,14 +29,12 @@ func handler(title string) http.HandlerFunc {
 	t, _ := httptemplate.ParseFS(template, indexFile)
 
 	return func(w http.ResponseWriter, req *http.Request) {
-		if err := t.Execute(w, struct {
+		t.Execute(w, struct {
 			Title string
 			URL   string
 		}{
 			title,
 			apiFile,
-		}); err != nil {
-			fmt.Println(err)
-		}
+		})
 	}
 }

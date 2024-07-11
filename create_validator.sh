@@ -1,7 +1,7 @@
 #!/bin/bash
 
 KEYS=("dev0" "dev1")
-CHAINID="S2-testnet-1"
+CHAINID="grimoria-testnet-1"
 MONIKER="Side Labs"
 BINARY="$HOME/go/bin/sided"
 
@@ -39,4 +39,3 @@ $BINARY config chain-id $CHAINID --home "$HOMEDIR"
 $BINARY tx staking create-validator -y --moniker segwit --pubkey=$($BINARY tendermint show-validator --home $HOMEDIR) --amount="10000000uside" --commission-rate 0.1 --commission-max-rate 0.1 --commission-max-change-rate 0.1 --min-self-delegation 1 --chain-id $CHAINID --fees 2000uside --home "$HOMEDIR" --from segwit_key
 sleep 6
 $BINARY tx staking create-validator -y --moniker secp256 --pubkey=$($BINARY tendermint show-validator --home $HOMEDIR) --amount="15000000uside" --commission-rate 0.1 --commission-max-rate 0.1 --commission-max-change-rate 0.1 --min-self-delegation 1 --chain-id $CHAINID --fees 2000uside --home "$HOMEDIR" --from secp256k1_key
-

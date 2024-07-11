@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -19,7 +18,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/debug"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
-	"github.com/cosmos/cosmos-sdk/client/pruning"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
 	"github.com/cosmos/cosmos-sdk/server"
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
@@ -38,8 +36,8 @@ import (
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-
 	// this line is used by starport scaffolding # root/moduleImport
+
 	"github.com/sideprotocol/side/app"
 	appparams "github.com/sideprotocol/side/app/params"
 )
@@ -53,14 +51,13 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 		WithTxConfig(encodingConfig.TxConfig).
 		WithLegacyAmino(encodingConfig.Amino).
 		WithInput(os.Stdin).
-		// WithKeyringOptions(sidekr.Option()).
 		WithAccountRetriever(types.AccountRetriever{}).
 		WithHomeDir(app.DefaultNodeHome).
 		WithViper("")
 
 	rootCmd := &cobra.Command{
 		Use:   app.Name + "d",
-		Short: "Start sidechain node",
+		Short: "Start side node",
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			// set the default command outputs
 			cmd.SetOut(cmd.OutOrStdout())
@@ -108,9 +105,6 @@ func initRootCmd(
 ) {
 	// Set config
 	initSDKConfig()
-	a := appCreator{
-		encodingConfig,
-	}
 
 	gentxModule := app.ModuleBasics[genutiltypes.ModuleName].(genutil.AppModuleBasic)
 	rootCmd.AddCommand(
@@ -128,9 +122,12 @@ func initRootCmd(
 		tmcli.NewCompletionCmd(rootCmd, true),
 		debug.Cmd(),
 		config.Cmd(),
-		pruning.PruningCmd(a.newApp),
 		// this line is used by starport scaffolding # root/commands
 	)
+
+	a := appCreator{
+		encodingConfig,
+	}
 
 	// add server commands
 	server.AddCommands(
@@ -211,9 +208,7 @@ func overwriteFlagDefaults(c *cobra.Command, defaults map[string]string) {
 	set := func(s *pflag.FlagSet, key, val string) {
 		if f := s.Lookup(key); f != nil {
 			f.DefValue = val
-			if err := f.Value.Set(val); err != nil {
-				fmt.Println(err)
-			}
+			f.Value.Set(val)
 		}
 	}
 	for key, val := range defaults {
